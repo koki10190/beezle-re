@@ -1,0 +1,1 @@
+curl -H "Content-Type: application/json" -X POST -d '{"content": "This is my first post"}' localhost:3000/echo

@@ -1,0 +1,6 @@
+POST http://localhost:3000/echo
+Content-Type: "application/json"
+
+{
+  "content": "hi"
+}
