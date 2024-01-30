@@ -8,14 +8,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/koki10190/beezle-2.0.git"
+    "url": "git+https://github.com/koki10190/beezle-re.git"
   },
   "author": "koki10190 | Zekticezy",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/koki10190/beezle-2.0/issues"
+    "url": "https://github.com/koki10190/beezle-re/issues"
   },
-  "homepage": "https://github.com/koki10190/beezle-2.0#readme",
+  "homepage": "https://github.com/koki10190/beezle-re/blob/master/README.md",
   "dependencies": {
     "express": "^4.18.2"
   },
