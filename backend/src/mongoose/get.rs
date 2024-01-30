@@ -14,7 +14,6 @@ pub async fn get_document(
     let result = coll.find_one(Some(filter), None).await;
     match result {
         Ok(doc) => doc,
-        Ok(None) => None,
         Err(_) => None,
     }
 }

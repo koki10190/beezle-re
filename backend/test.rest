@@ -3,7 +3,7 @@ Content-Type: application/json
 
 {
   "username": "koki1019",
-  "handle": "111",
-  "email": "w@wa.com",
+  "handle": "111231231",
+  "email": "w123123@wa.com",
   "password": "1234"
 }

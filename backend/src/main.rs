@@ -1,13 +1,16 @@
 extern crate dotenv;
 use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
 use dotenv::dotenv;
+use mail_send::mail_builder::MessageBuilder;
+use mail_send::{Credentials, SmtpClientBuilder};
+use mongodb::options::Credential;
 use serde::Deserialize;
 use serde_json::ser;
 use std::env;
 
-// Routes
 use mongodb::bson::doc;
 use mongodb::{options::ClientOptions, Client};
+
 mod beezle;
 mod mongoose;
 mod routes;
@@ -15,6 +18,14 @@ mod routes;
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     dotenv().ok();
+
+    println!(
+        "{}",
+        env::var("GMAIL_MAIL").unwrap().as_str(),
+        // env::var("MAIL_PASSWORD").unwrap().as_str()
+    );
+
+    // beezle::mail::send("john@example.com", "Subject", "Body").await;
 
     beezle::print("Starting MongoDB Database");
 
