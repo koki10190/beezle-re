@@ -4,7 +4,7 @@
   "description": "Social media platform",
   "main": "index.js",
   "scripts": {
-    "start-server": "cargo run --package backend --bin backend "
+    "start-server": "cd backend && cargo run --package backend --bin backend"
   },
   "repository": {
     "type": "git",
