@@ -12,6 +12,7 @@ pub struct User {
     pub hash_password: String,
     #[serde(with = "chrono_datetime_as_bson_datetime")]
     pub creation_date: chrono::DateTime<chrono::Utc>,
+    pub verified: bool,
 }
 
 #[derive(Serialize, Deserialize, Debug)]

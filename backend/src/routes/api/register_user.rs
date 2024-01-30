@@ -1,8 +1,8 @@
-use bson::{doc, Document};
+use bson::{doc, uuid, Document};
 use serde::Deserialize;
 use std::env;
 
-use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
+use actix_web::{get, post, web, App, HttpRequest, HttpResponse, HttpServer, Responder};
 
 use crate::{beezle, mongoose};
 
@@ -17,6 +17,7 @@ struct RegistrationInfo {
 #[post("/api/register_user")]
 pub async fn route(
     client: web::Data<mongodb::Client>,
+    req: HttpRequest,
     body: web::Json<RegistrationInfo>,
 ) -> impl Responder {
     let mut doc = mongoose::get_document(
@@ -43,6 +44,7 @@ pub async fn route(
                 email: body.email.to_string(),
                 hash_password: beezle::crypt::hash_password(&body.password).to_string(),
                 creation_date: chrono::offset::Utc::now(),
+                verified: false,
             };
 
             let serialized_user_doc = mongodb::bson::to_bson(&struct_user_doc).unwrap();
@@ -57,6 +59,34 @@ pub async fn route(
                 doc! {"email": struct_user_doc.email, "handle": struct_user_doc.handle},
             )
             .await;
+            let authID = uuid::Uuid::new();
+            let struct_auth_doc = mongoose::structures::auth::Auth {
+                id: None,
+                handle: body.handle.to_string(),
+                email: body.email.to_string(),
+                auth_id: authID.to_string(),
+            };
+
+            let serialized_auth_doc = mongodb::bson::to_bson(&struct_auth_doc).unwrap();
+            let auth_document = serialized_auth_doc.as_document().unwrap();
+
+            mongoose::insert_document(&client, "beezle", "Auths", auth_document.clone()).await;
+
+            if let Some(val) = req.peer_addr() {
+                beezle::mail::send(
+                    &body.email,
+                    "Verify your account",
+                    format!(
+                        "Hello {}!\nClick the URL to verify your account \"@{}\": {}\n\nDO NOT Click on the link if the account wasn't made by you!\nIP Address of the requester: {}",
+                        body.handle.as_str(),
+                        body.handle.as_str(),
+                        format!("http://localhost:3000/api/verify?auth_id={}", authID).as_str(),
+                        val.to_string().as_str()
+                    )
+                    .as_str(),
+                )
+                .await;
+            };
 
             HttpResponse::Ok().json(doc)
         }

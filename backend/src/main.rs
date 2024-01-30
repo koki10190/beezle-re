@@ -34,6 +34,8 @@ async fn main() -> std::io::Result<()> {
         .unwrap();
 
     let client = Client::with_options(client_options).unwrap();
+    mongoose::create_collection(&client, "beezle", "Users").await;
+    mongoose::create_collection(&client, "beezle", "Auths").await;
 
     beezle::print("Starting Server...");
 
@@ -44,6 +46,8 @@ async fn main() -> std::io::Result<()> {
             .app_data(web::Data::new(client.clone()))
             .service(routes::main_route::route)
             .service(routes::api::register_user::route)
+            .service(routes::api::verification::route)
+            .service(routes::api::get_user::route)
     })
     .bind((env::var("ADDRESS").unwrap(), port))?
     .run()
