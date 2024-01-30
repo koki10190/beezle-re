@@ -1,0 +1,36 @@
+    mongoose::create_collection(&client, "beezle", "Users").await;
+
+    let struct_user_doc = mongoose::structures::User {
+        id: None,
+        handle: "koki".to_string(),
+        username: "koki1019".to_string(),
+    };
+
+    let serialized_user_doc = mongodb::bson::to_bson(&struct_user_doc).unwrap();
+    let document = serialized_user_doc.as_document().unwrap();
+
+    mongoose::insert_document(&client, "beezle", "Users", document.clone()).await;
+
+    let mut doc = mongoose::get_document(&client, "beezle", "Users", doc! {"handle": "koki"}).await.unwrap();
+
+    println!(
+        "Name before: {}",
+        serde_json::to_string(&doc.get("username"))?.as_str()
+    );
+
+    mongoose::update_document(
+        &client,
+        "beezle",
+        "Users",
+        doc! {"handle": "koki"},
+        doc! {"$set": {"username": "koki10180"}},
+    ).await;
+
+    doc = mongoose::get_document(&client, "beezle", "Users", doc! {"handle": "koki"}).await.unwrap();
+
+    println!(
+        "Name after: {}",
+        serde_json::to_string(&doc.get("username"))?.as_str()
+    );
+
+    mongoose::delete_document(&client, "beezle", "Users", doc! {"handle": "koki"}).await;
