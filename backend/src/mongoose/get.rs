@@ -11,9 +11,13 @@ pub async fn get_document(
     let db = client.database(db_name);
     let coll: mongodb::Collection<Document> = db.collection(coll_name);
 
-    let result = coll.find_one(Some(filter), None).await.unwrap();
+    let result = coll.find_one(Some(filter), None).await;
     match result {
-        Some(doc) => Some(doc),
-        None => None,
+        Ok(doc) => {
+            println!("Found doc");
+            doc
+        }
+        Ok(None) => None,
+        Err(_) => None,
     }
 }

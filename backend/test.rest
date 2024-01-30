@@ -1,6 +1,9 @@
-POST http://localhost:3000/echo
-Content-Type: "application/json"
+POST http://localhost:3000/api/register_user
+Content-Type: application/json
 
 {
-  "content": "hi"
+  "username": "koki1019",
+  "handle": "111",
+  "email": "w@wa.com",
+  "password": "1234"
 }

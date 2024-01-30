@@ -1,3 +1,4 @@
+use bson::serde_helpers::chrono_datetime_as_bson_datetime;
 use mongodb::bson::oid::ObjectId;
 use serde::{Deserialize, Serialize};
 
@@ -7,4 +8,17 @@ pub struct User {
     pub id: Option<ObjectId>,
     pub handle: String,
     pub username: String,
+    pub email: String,
+    pub hash_password: String,
+    #[serde(with = "chrono_datetime_as_bson_datetime")]
+    pub creation_date: chrono::DateTime<chrono::Utc>,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct JwtUser {
+    pub handle: String,
+    pub username: String,
+    pub email: String,
+    #[serde(with = "chrono_datetime_as_bson_datetime")]
+    pub creation_date: chrono::DateTime<chrono::Utc>,
 }

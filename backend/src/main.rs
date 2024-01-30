@@ -8,7 +8,6 @@ use std::env;
 // Routes
 use mongodb::bson::doc;
 use mongodb::{options::ClientOptions, Client};
-
 mod beezle;
 mod mongoose;
 mod routes;
@@ -29,10 +28,11 @@ async fn main() -> std::io::Result<()> {
 
     let port = env::var("PORT").unwrap().parse::<u16>().unwrap();
 
-    HttpServer::new(|| {
+    HttpServer::new(move || {
         App::new()
+            .app_data(web::Data::new(client.clone()))
             .service(routes::main_route::route)
-            .service(routes::echo::route)
+            .service(routes::api::register_user::route)
     })
     .bind((env::var("ADDRESS").unwrap(), port))?
     .run()
