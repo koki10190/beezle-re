@@ -4,6 +4,24 @@ Content-Type: application/json
 {
   "username": "koki1019",
   "handle": "koki",
-  "email": "email",
+  "email": "lukaodzelashvili@gmail.com",
   "password": "1234"
+}
+
+###
+
+POST http://localhost:3000/api/is_verified
+Content-Type: application/json
+
+{
+  "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJoYW5kbGUiOiJrb2tpIiwidXNlcm5hbWUiOiJrb2tpMTAxOSIsImVtYWlsIjoibHVrYW9kemVsYXNodmlsaUBnbWFpbC5jb20iLCJleHAiOjI1MjQ2MDgwMDB9.WG_EDPbVm03bGMxNnigVVhzMNED2Ux3sukR69NoT_xc"
+}
+
+###
+
+POST http://localhost:3000/api/get_user
+Content-Type: application/json
+
+{
+  "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJoYW5kbGUiOiJrb2tpIiwidXNlcm5hbWUiOiJrb2tpMTAxOSIsImVtYWlsIjoibHVrYW9kemVsYXNodmlsaUBnbWFpbC5jb20iLCJleHAiOjI1MjQ2MDgwMDB9.WG_EDPbVm03bGMxNnigVVhzMNED2Ux3sukR69NoT_xc"
 }

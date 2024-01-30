@@ -1,4 +1,6 @@
 use bson::{doc, uuid, Document};
+use chrono::Utc;
+use jsonwebtoken::{EncodingKey, Header};
 use serde::Deserialize;
 use std::env;
 
@@ -88,7 +90,23 @@ pub async fn route(
                 .await;
             };
 
-            HttpResponse::Ok().json(doc)
+            let jwt_user = mongoose::structures::user::JwtUser {
+                handle: body.handle.to_string(),
+                username: body.username.to_string(),
+                email: body.email.to_string(),
+                exp: chrono::TimeZone::with_ymd_and_hms(&Utc, 2050, 1, 1, 0, 0, 0)
+                    .unwrap()
+                    .timestamp() as usize,
+            };
+
+            let token = jsonwebtoken::encode(
+                &Header::default(),
+                &jwt_user,
+                &EncodingKey::from_secret(env::var("TOKEN_SECRET").unwrap().as_ref()),
+            )
+            .unwrap();
+
+            HttpResponse::Ok().json(doc! {"token": token})
         }
         Document => HttpResponse::Ok()
             .json(doc! { "error": "User with the same email and/or handle exists!" }),

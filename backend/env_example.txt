@@ -4,3 +4,4 @@ DATABASE=beezle
 ADDRESS=127.0.0.1
 GMAIL_MAIL="example@example.com"
 GMAIL_MAIL_PASSWORD="example_pass"
+TOKEN_SECRET=my_secret

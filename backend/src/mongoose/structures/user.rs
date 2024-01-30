@@ -20,6 +20,5 @@ pub struct JwtUser {
     pub handle: String,
     pub username: String,
     pub email: String,
-    #[serde(with = "chrono_datetime_as_bson_datetime")]
-    pub creation_date: chrono::DateTime<chrono::Utc>,
+    pub exp: usize,
 }

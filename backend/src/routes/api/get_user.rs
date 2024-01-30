@@ -1,4 +1,5 @@
 use bson::{doc, Document};
+use jsonwebtoken::{decode, DecodingKey, EncodingKey, Header, Validation};
 use mail_send::mail_auth::flate2::Status;
 use serde::Deserialize;
 use std::env;
@@ -12,19 +13,27 @@ use crate::{
 
 #[derive(Deserialize)]
 struct GetUserQuery {
-    handle: String,
+    token: String,
 }
 
-#[get("/api/get_user")]
+#[post("/api/get_user")]
 pub async fn route(
     client: web::Data<mongodb::Client>,
-    params: web::Query<GetUserQuery>,
+    body: web::Json<GetUserQuery>,
 ) -> impl Responder {
+    let token_data = decode::<mongoose::structures::user::JwtUser>(
+        &body.token,
+        &DecodingKey::from_secret(env::var("TOKEN_SECRET").unwrap().as_ref()),
+        &Validation::default(),
+    )
+    .unwrap()
+    .claims;
+
     let auth_doc = mongoose::get_document(
         &client,
         "beezle",
         "Users",
-        doc! { "handle": &params.handle },
+        doc! { "handle": &token_data.handle },
     )
     .await;
 

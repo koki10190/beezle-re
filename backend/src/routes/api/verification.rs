@@ -75,6 +75,14 @@ pub async fn route(
                 .await;
             }
 
+            mongoose::delete_document(
+                &client,
+                "beezle",
+                "Auths",
+                doc! { "auth_id": &params.auth_id },
+            )
+            .await;
+
             HttpResponse::Ok().body(format!(
                 "Your account \"{}\" has been authenticated!",
                 handle.as_str()
