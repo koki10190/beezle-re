@@ -28,21 +28,23 @@ async fn main() -> std::io::Result<()> {
 
     // beezle::mail::send("john@example.com", "Subject", "Body").await;
 
-    beezle::print("Starting MongoDB Database");
+    beezle::print("Starting MongoDB Database...");
 
     let client_options = ClientOptions::parse(env::var("MONGO_URI").unwrap())
         .await
         .unwrap();
 
+    beezle::print("Started MongoDB Database");
+
     let client = Client::with_options(client_options).unwrap();
     mongoose::create_collection(&client, "beezle", "Users").await;
     mongoose::create_collection(&client, "beezle", "Auths").await;
 
-    beezle::print("Starting Server...");
+    beezle::print("Starting HTTP Server...");
 
     let port = env::var("PORT").unwrap().parse::<u16>().unwrap();
 
-    HttpServer::new(move || {
+    let http_server = HttpServer::new(move || {
         App::new()
             .app_data(web::Data::new(client.clone()))
             .wrap(Cors::permissive())
@@ -57,6 +59,9 @@ async fn main() -> std::io::Result<()> {
             .service(routes::api::change_username::route)
     })
     .bind((env::var("ADDRESS").unwrap(), port))?
-    .run()
-    .await
+    .run();
+
+    beezle::print("Started HTTP Server");
+
+    http_server.await
 }
