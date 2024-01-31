@@ -1,0 +1,138 @@
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;500&display=swap");
+
+@font-face {
+    font-family: vga-font;
+    src: url(/vga.ttf);
+}
+
+body {
+    background: black;
+    color: white;
+}
+
+input,
+button {
+    background: rgb(255, 167, 52);
+    outline: none;
+    border: none;
+    display: block;
+    font-size: 25px;
+    margin-bottom: 10px;
+}
+
+body {
+    margin: none;
+    padding: none;
+}
+
+body,
+input,
+button,
+a {
+    font-family: "Open Sans", sans-serif;
+}
+
+.home-box {
+    height: 100vh;
+    width: 50%;
+    box-sizing: border-box;
+    padding-right: 35px;
+    padding-left: 35px; /* width: ; */
+}
+
+.homebox1 {
+    background-color: rgb(12, 12, 12);
+}
+.homebox2 {
+    background-color: black;
+    text-align: right;
+    clear: both;
+}
+.homebox2 h1 {
+    font-size: 55px;
+    margin-top: 70px;
+}
+.homebox2 button {
+    width: 100%;
+}
+.homebox2 > div > form {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+form {
+    width: 100%;
+    background-color: red;
+    box-sizing: border-box;
+    padding-top: 0px;
+    padding-left: 15px;
+}
+
+.homebox2 > div {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.home-boxes {
+    top: 0;
+    left: 0;
+    position: absolute;
+    display: flex;
+    width: 100%;
+}
+
+.home-box-title {
+    font-size: 80px;
+    font-weight: 1000;
+    background: -webkit-linear-gradient(45deg, #ff8800, #ffc56d);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.home-box-title-re {
+    font-size: 90px;
+    font-family: vga-font;
+    background: -webkit-linear-gradient(45deg, #ff8800, #ffc56d);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+@media only screen and (max-width: 800px) {
+    .home-boxes {
+        flex-direction: column;
+    }
+    .homebox1 {
+        display: flex;
+        align-items: center;
+        align-content: center;
+        text-align: center;
+        flex-direction: column;
+    }
+    .homebox2 {
+        text-align: left;
+    }
+    .home-box {
+        height: 50vh;
+        width: 100%;
+    }
+    .home-box-title {
+        font-size: 60px;
+    }
+
+    .home-box-title-re {
+        font-size: 75px;
+    }
+
+    .homebox2 > div > form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .homebox2 > div {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+}
