@@ -5,6 +5,10 @@
     src: url(/vga.ttf);
 }
 
+button {
+    cursor: pointer;
+}
+
 body {
     background: black;
     color: white;
@@ -12,7 +16,7 @@ body {
 
 input,
 button {
-    background: rgb(255, 167, 52);
+    /* background: rgb(255, 167, 52); */
     outline: none;
     border: none;
     display: block;
@@ -32,7 +36,12 @@ a {
     font-family: "Open Sans", sans-serif;
 }
 
+form > a {
+    word-wrap: break-word;
+}
+
 .home-box {
+    overflow: auto;
     height: 100vh;
     width: 50%;
     box-sizing: border-box;
@@ -61,12 +70,15 @@ a {
     align-items: flex-end;
 }
 
-form {
+.homebox2 form {
     width: 100%;
-    background-color: red;
+    border-radius: 5px;
+    background-color: rgb(31, 31, 31);
     box-sizing: border-box;
     padding-top: 0px;
     padding-left: 15px;
+    padding-right: 15px;
+    padding-bottom: 10px;
 }
 
 .homebox2 > div {
@@ -135,4 +147,82 @@ form {
         flex-direction: column;
         align-items: center;
     }
+}
+
+/* INPUT FIELD */
+.input-field {
+    background-color: rgb(17, 17, 17);
+    color: white;
+    box-sizing: border-box;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid rgb(17, 17, 17);
+    transition: ease-in-out 150ms;
+}
+
+.input-field:hover {
+    border: 1px solid rgba(255, 138, 71, 0.368);
+}
+
+.input-field:focus {
+    border: 1px solid rgb(255, 139, 71);
+}
+/* BUTTON FIELD */
+
+.button-field {
+    background-color: rgb(255, 144, 70);
+    color: white;
+    box-sizing: border-box;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid rgb(17, 17, 17);
+    transition: ease-in-out 150ms;
+}
+
+.button-field:hover {
+    background-color: rgb(212, 121, 59);
+}
+
+.button-field-grayblack {
+    background-color: rgb(49, 49, 49);
+}
+
+.button-field-grayblack:hover {
+    background-color: rgb(32, 32, 32);
+}
+
+.button-field-blurple {
+    background-color: rgb(81, 107, 255);
+}
+
+.button-field-blurple:hover {
+    background-color: rgb(61, 82, 196);
+}
+
+.button-field-blue {
+    background-color: rgb(81, 185, 255);
+}
+
+.button-field-blue:hover {
+    background-color: rgb(57, 130, 179);
+}
+
+.button-field-red {
+    background-color: rgb(255, 81, 81);
+}
+
+.button-field-red:hover {
+    background-color: rgb(194, 62, 62);
+}
+
+.instead-anchor {
+    color: rgba(255, 255, 255, 0.3);
+    cursor: pointer;
+}
+
+.homepage-links button {
+    display: inline-block;
+    margin-right: 15px;
+    width: 55px;
+    height: 55px;
 }

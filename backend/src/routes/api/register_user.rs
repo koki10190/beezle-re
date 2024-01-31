@@ -22,6 +22,26 @@ pub async fn route(
     req: HttpRequest,
     body: web::Json<RegistrationInfo>,
 ) -> impl Responder {
+    if body.email == "" {
+        return HttpResponse::Ok().json(doc! { "error": "No email provided!" });
+    }
+
+    if body.handle == "" {
+        return HttpResponse::Ok().json(doc! { "error": "No handle provided!" });
+    }
+
+    if body.password == "" {
+        return HttpResponse::Ok().json(doc! { "error": "No password provided!" });
+    }
+
+    if body.password.len() < 8 {
+        return HttpResponse::Ok().json(doc! { "error": "Password must be atleast 8 characters!" });
+    }
+
+    if body.username == "" {
+        return HttpResponse::Ok().json(doc! { "error": "No username provided!" });
+    }
+
     let mut doc = mongoose::get_document(
         &client,
         "beezle",
