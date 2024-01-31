@@ -1,4 +1,5 @@
 extern crate dotenv;
+use actix_cors::Cors;
 use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
 use dotenv::dotenv;
 use mail_send::mail_builder::MessageBuilder;
@@ -44,11 +45,13 @@ async fn main() -> std::io::Result<()> {
     HttpServer::new(move || {
         App::new()
             .app_data(web::Data::new(client.clone()))
+            .wrap(Cors::permissive())
             .service(routes::main_route::route)
             .service(routes::api::register_user::route)
             .service(routes::api::verification::route)
             .service(routes::api::get_user::route)
             .service(routes::api::is_verified::route)
+            .service(routes::api::login_user::route)
     })
     .bind((env::var("ADDRESS").unwrap(), port))?
     .run()

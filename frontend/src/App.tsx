@@ -1,35 +1,38 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-
+import axios from 'axios';
+import { FormEvent, useRef, useState } from 'react'
 function App() {
-  const [count, setCount] = useState(0)
+	const handle = useRef<HTMLInputElement>(null);
+	const username = useRef<HTMLInputElement>(null);
+	const email = useRef<HTMLInputElement>(null);
+	const password = useRef<HTMLInputElement>(null);
+	
+	const register = (e: FormEvent<HTMLFormElement>) => {
+		e.preventDefault();
+		console.log(handle.current!.value);
+		axios.post("http://localhost:3000/api/register_user", 
+			{
+				username: "koki1019",
+				handle: "koki",
+				email: "lukaodzelashvili@gmail.com",
+				password: "1234"
+			}
+		).then(res => {
+			console.log(res.data);
+		})
+	}
 
-  return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+	return (
+		<>
+			<h1>Register</h1>
+			<form onSubmit={register}>
+				<input ref={handle} name="handle" placeholder='handle'></input>
+				<input name="username" placeholder='username'></input>
+				<input name="email" placeholder='email'></input>
+				<input name="password" placeholder='password'></input>
+				<button>submit</button>
+			</form>
+		</>
+	)
 }
 
 export default App

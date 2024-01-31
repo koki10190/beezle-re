@@ -47,6 +47,9 @@ pub async fn route(
                 hash_password: beezle::crypt::hash_password(&body.password).to_string(),
                 creation_date: chrono::offset::Utc::now(),
                 verified: false,
+                avatar: "https://i.imgur.com/yiuTHhc.png".to_string(),
+                banner: "https://i.imgur.com/yiuTHhc.png".to_string(),
+                about_me: "Hello! I'm new here!".to_string(),
             };
 
             let serialized_user_doc = mongodb::bson::to_bson(&struct_user_doc).unwrap();
