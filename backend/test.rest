@@ -34,3 +34,12 @@ Content-Type: application/json
   "email": "koki",
   "password": "1234"
 }
+
+###
+POST http://localhost:3000/api/change_username
+Content-Type: application/json
+
+{
+  "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJoYW5kbGUiOiJrb2tpIiwidXNlcm5hbWUiOiJrb2tpMTAxOSIsImVtYWlsIjoibHVrYW9kemVsYXNodmlsaUBnbWFpbC5jb20iLCJleHAiOjI1MjQ2MDgwMDB9.WG_EDPbVm03bGMxNnigVVhzMNED2Ux3sukR69NoT_xc",
+  "username": "kokitoaaa"
+}
