@@ -2,10 +2,10 @@ POST http://localhost:3000/api/register_user
 Content-Type: application/json
 
 {
-  "username": "koki1019",
-  "handle": "koki",
-  "email": "lukaodzelashvili@gmail.com",
-  "password": "1234"
+  "username": "fdsfsdf",
+  "handle": "adasd",
+  "email": "w@gmail.com",
+  "password": "1234567890"
 }
 
 ###
@@ -14,7 +14,7 @@ POST http://localhost:3000/api/is_verified
 Content-Type: application/json
 
 {
-  "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJoYW5kbGUiOiJrb2tpIiwidXNlcm5hbWUiOiJrb2tpMTAxOSIsImVtYWlsIjoibHVrYW9kemVsYXNodmlsaUBnbWFpbC5jb20iLCJleHAiOjI1MjQ2MDgwMDB9.WG_EDPbVm03bGMxNnigVVhzMNED2Ux3sukR69NoT_xc"
+  "token": ""
 }
 
 ###
@@ -23,7 +23,7 @@ POST http://localhost:3000/api/get_user
 Content-Type: application/json
 
 {
-  "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJoYW5kbGUiOiJrb2tpIiwidXNlcm5hbWUiOiJrb2tpMTAxOSIsImVtYWlsIjoibHVrYW9kemVsYXNodmlsaUBnbWFpbC5jb20iLCJleHAiOjI1MjQ2MDgwMDB9.WG_EDPbVm03bGMxNnigVVhzMNED2Ux3sukR69NoT_xc"
+  "token": ""
 }
 
 ### 
@@ -31,8 +31,8 @@ POST http://localhost:3000/api/login_user
 Content-Type: application/json
 
 {
-  "email": "koki",
-  "password": "1234"
+  "email": "asdasd",
+  "password": "asdfsadf"
 }
 
 ###
@@ -40,6 +40,6 @@ POST http://localhost:3000/api/change_username
 Content-Type: application/json
 
 {
-  "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJoYW5kbGUiOiJrb2tpIiwidXNlcm5hbWUiOiJrb2tpMTAxOSIsImVtYWlsIjoibHVrYW9kemVsYXNodmlsaUBnbWFpbC5jb20iLCJleHAiOjI1MjQ2MDgwMDB9.WG_EDPbVm03bGMxNnigVVhzMNED2Ux3sukR69NoT_xc",
+  "token": "",
   "username": "kokitoaaa"
 }
