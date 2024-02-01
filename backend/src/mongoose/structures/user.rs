@@ -23,5 +23,6 @@ pub struct JwtUser {
     pub handle: String,
     pub username: String,
     pub email: String,
+    pub hash_password: String,
     pub exp: usize,
 }

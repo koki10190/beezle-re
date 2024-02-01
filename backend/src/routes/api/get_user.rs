@@ -33,7 +33,7 @@ pub async fn route(
         &client,
         "beezle",
         "Users",
-        doc! { "handle": &token_data.handle },
+        doc! { "handle": &token_data.handle, "hash_password": &token_data.hash_password },
     )
     .await;
 

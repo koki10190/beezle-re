@@ -31,8 +31,8 @@ POST http://localhost:3000/api/login_user
 Content-Type: application/json
 
 {
-  "email": "asdasd",
-  "password": "asdfsadf"
+  "email": "koki",
+  "password": "12345678"
 }
 
 ###

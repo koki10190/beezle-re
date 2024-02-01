@@ -75,6 +75,7 @@ pub async fn route(
                         handle: handle.to_string(),
                         username: username.to_string(),
                         email: email.to_string(),
+                        hash_password: password.to_string(),
                         exp: chrono::TimeZone::with_ymd_and_hms(&Utc, 2050, 1, 1, 0, 0, 0)
                             .unwrap()
                             .timestamp() as usize,
