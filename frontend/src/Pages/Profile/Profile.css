@@ -1,0 +1,92 @@
+body {
+    padding: 0;
+    margin: 0;
+}
+
+.sides-container {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: row;
+    position: absolute;
+}
+
+.page-sides {
+    width: 33.3%;
+    height: 100vh;
+}
+
+.side-left {
+    width: 25%;
+    border-right: 1px solid rgba(255, 170, 90, 0.3);
+}
+
+.side-middle {
+    width: 50%;
+}
+
+.side-right {
+    width: 25%;
+    border-left: 1px solid rgba(255, 170, 90, 0.3);
+}
+
+.edit-profile .banner {
+    width: 100%;
+    height: 250px;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    border-radius: 10px;
+    margin-bottom: -20px;
+}
+
+.edit-profile .pfp {
+    width: 100px;
+    height: 100px;
+    border-radius: 100%;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    border: 7px solid rgb(0, 0, 0);
+    background-image: url();
+}
+
+.edit-profile .username {
+    font-size: 25px;
+    margin-top: -86px;
+    margin-left: 120px;
+}
+
+.edit-profile .handle {
+    color: gray;
+    font-size: 20px;
+    margin-top: -20px;
+    margin-left: 120px;
+}
+
+.edit-profile .about_me {
+    font-size: 20px;
+    margin-top: 20px;
+}
+
+.edit-profile .profile-container {
+    width: 100%;
+    height: fit-content;
+    background-color: rgba(255, 143, 98, 0.8);
+    box-sizing: border-box;
+    padding: 5px;
+    padding-left: 20px;
+    padding-right: 20px;
+    border-radius: 15px;
+    margin-top: 30px;
+    margin-bottom: -17px;
+}
+
+.edit-profile {
+    padding: 15px;
+}
+
+.profile-container-header {
+    margin-bottom: -15px;
+    color: rgba(255, 255, 255, 0.7);
+}

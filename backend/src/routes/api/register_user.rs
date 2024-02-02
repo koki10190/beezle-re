@@ -123,14 +123,8 @@ pub async fn route(
                     .timestamp() as usize,
             };
 
-            let token = jsonwebtoken::encode(
-                &Header::default(),
-                &jwt_user,
-                &EncodingKey::from_secret(env::var("TOKEN_SECRET").unwrap().as_ref()),
-            )
-            .unwrap();
-
-            HttpResponse::Ok().json(doc! {"token": token})
+            HttpResponse::Ok()
+                .json(doc! {"message": "Check your email (and spam) to verify your account."})
         }
         Document => HttpResponse::Ok()
             .json(doc! { "error": "User with the same email and/or handle exists!" }),

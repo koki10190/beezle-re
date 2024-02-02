@@ -52,8 +52,7 @@ function RegisterForm({ setRegister, isRegister }: Params) {
                 if (data.error) {
                     setError(data.error);
                 } else {
-                    setSuccess("Check your email (and spam) to verify your account.");
-                    localStorage.setItem("access_token", data.token);
+                    setSuccess(data.message);
                 }
             });
     };

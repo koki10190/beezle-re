@@ -1,12 +1,16 @@
 import axios from "axios";
 import { FormEvent, useRef, useState } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, redirect } from "react-router-dom";
 import RegisterForm from "./RegisterForm";
 import LoginForm from "./LoginForm";
 import { discord, github, twitter, youtube } from "../links";
 
 function Home() {
     const [isRegister, setRegister] = useState(false);
+
+    if (localStorage.getItem("access_token")) {
+        window.location.replace("/home");
+    }
 
     return (
         <>

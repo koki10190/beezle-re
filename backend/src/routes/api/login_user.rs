@@ -81,6 +81,18 @@ pub async fn route(
                             .timestamp() as usize,
                     };
 
+                    let is_verified = _document
+                        .unwrap()
+                        .clone()
+                        .get("verified")
+                        .unwrap()
+                        .as_bool()
+                        .unwrap();
+
+                    if !is_verified {
+                        return HttpResponse::Ok().json(doc! {"error": "Account is not verified!"});
+                    }
+
                     let token = jsonwebtoken::encode(
                         &Header::default(),
                         &jwt_user,

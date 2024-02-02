@@ -52,6 +52,7 @@ async fn main() -> std::io::Result<()> {
             .service(routes::api::register_user::route)
             .service(routes::api::verification::route)
             .service(routes::api::get_user::route)
+            .service(routes::api::get_user_public::route)
             .service(routes::api::is_verified::route)
             .service(routes::api::login_user::route)
             .service(routes::api::change_avatar::route)
