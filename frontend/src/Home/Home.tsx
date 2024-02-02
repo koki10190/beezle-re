@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route, redirect } from "react-router-dom";
 import RegisterForm from "./RegisterForm";
 import LoginForm from "./LoginForm";
 import { discord, github, twitter, youtube } from "../links";
+import react from "react";
 
 function Home() {
     const [isRegister, setRegister] = useState(false);

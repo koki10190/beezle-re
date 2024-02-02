@@ -42,6 +42,7 @@ function LoginForm({ setRegister, isRegister }: Params) {
             } else {
                 setSuccess("Logging in...");
                 localStorage.setItem("access_token", data.token);
+                window.location.replace("/home");
             }
         });
     };

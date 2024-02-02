@@ -7,6 +7,7 @@ async function fetchUserPrivate(): Promise<UserPrivate | null> {
     if (!token) window.location.replace("/");
 
     const res = await axios.post(`${api_uri}/api/get_user`, { token });
+
     const data = res.data;
 
     if (data.error) {
