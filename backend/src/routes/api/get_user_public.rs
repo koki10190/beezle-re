@@ -35,6 +35,7 @@ pub async fn route(
             "banner": beezle::rem_first_and_last(&_document.clone().unwrap().get("banner").unwrap().to_string()),
             "about_me": beezle::rem_first_and_last(&_document.clone().unwrap().get("about_me").unwrap().to_string()),
             "creation_date": _document.clone().unwrap().get("creation_date").unwrap().as_datetime(),
+            "badges":  _document.clone().unwrap().get("badges").unwrap().as_array().unwrap().to_vec()
         }) },
     }
 }

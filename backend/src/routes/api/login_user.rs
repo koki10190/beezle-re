@@ -61,6 +61,9 @@ pub async fn route(
                 .unwrap()
                 .to_string();
 
+            let badges_doc = _document.clone().unwrap();
+            let badges = badges_doc.get("badges").unwrap().as_array().unwrap();
+
             email = beezle::rem_first_and_last(&email).to_string();
             username = beezle::rem_first_and_last(&username).to_string();
             handle = beezle::rem_first_and_last(&handle).to_string();
@@ -79,6 +82,7 @@ pub async fn route(
                         exp: chrono::TimeZone::with_ymd_and_hms(&Utc, 2050, 1, 1, 0, 0, 0)
                             .unwrap()
                             .timestamp() as usize,
+                        badges: badges.to_vec(),
                     };
 
                     let is_verified = _document

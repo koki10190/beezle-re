@@ -58,6 +58,7 @@ async fn main() -> std::io::Result<()> {
             .service(routes::api::change_avatar::route)
             .service(routes::api::change_banner::route)
             .service(routes::api::change_username::route)
+            .service(routes::api::edit_profile::route)
     })
     .bind((env::var("ADDRESS").unwrap(), port))?
     .run();

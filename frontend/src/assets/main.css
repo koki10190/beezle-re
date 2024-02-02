@@ -32,7 +32,8 @@ body {
 body,
 input,
 button,
-a {
+a,
+textarea {
     font-family: "Open Sans", sans-serif;
 }
 
@@ -237,8 +238,20 @@ form > a {
     height: 55px;
 }
 
-.button-field-fixed {
-    box-sizing: border-box;
-    min-width: 55px;
-    min-height: 55px;
+.pfp {
+    background-color: black;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+textarea.input-field {
+    width: 100%;
+    outline: none;
+    transition: none;
+    resize: vertical;
+}
+
+.display-none {
+    display: none;
 }

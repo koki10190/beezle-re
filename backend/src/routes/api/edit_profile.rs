@@ -15,9 +15,12 @@ use crate::{
 struct GetUserQuery {
     token: String,
     username: String,
+    avatar: String,
+    banner: String,
+    about_me: String,
 }
 
-#[post("/api/change_username")]
+#[post("/api/profile/edit")]
 pub async fn route(
     client: web::Data<mongodb::Client>,
     body: web::Json<GetUserQuery>,
@@ -37,6 +40,22 @@ pub async fn route(
         doc! { "handle": &token_data.handle, "hash_password": &token_data.hash_password },
     )
     .await;
+    beezle::print(&body.avatar);
+    let mut s_Avatar = body.avatar.clone();
+    let mut s_Banner = body.banner.clone();
+
+    if body.username == "" {
+        return HttpResponse::Ok()
+            .json(doc! {"changed": false, "error": "Username cannot be null!"});
+    }
+
+    // if body.avatar == "" {
+    //     s_Avatar = "https://i.imgur.com/yiuTHhc.png".to_string();
+    // }
+
+    // if body.banner == "" {
+    //     s_Banner = "https://i.imgur.com/yiuTHhc.png".to_string();
+    // }
 
     match auth_doc {
         None => HttpResponse::Ok().json(doc! {"changed": false, "error": "User not found!"}),
@@ -46,12 +65,14 @@ pub async fn route(
                 "beezle",
                 "Users",
                 doc! {
-
                     "handle": &token_data.handle,
                 },
                 doc! {
                     "$set": {
-                        "username": &body.username
+                        "username": &body.username,
+                        "about_me": &body.about_me,
+                        "avatar": &s_Avatar,
+                        "banner": &s_Banner,
                     }
                 },
             )

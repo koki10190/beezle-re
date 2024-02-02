@@ -1,0 +1,15 @@
+.post-typer {
+    width: 100%;
+    min-height: 200px;
+    background: none;
+    border: none;
+    outline: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    font-size: 25px;
+    resize: vertical;
+}
+.post-typer-button {
+    width: 100%;
+    margin-top: 20px;
+}

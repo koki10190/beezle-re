@@ -1,3 +1,9 @@
+enum BadgeType {
+    VERIFIED,
+    DONATOR,
+    MODERATOR,
+}
+
 interface UserPrivate {
     handle: string;
     username: string;
@@ -12,6 +18,7 @@ interface UserPrivate {
             $numberLong: string;
         };
     };
+    badges: Array<BadgeType>;
 }
 
 interface UserPublic {
@@ -26,6 +33,8 @@ interface UserPublic {
             $numberLong: string;
         };
     };
+    badges: Array<BadgeType>;
 }
 
+export { BadgeType };
 export type { UserPrivate, UserPublic };

@@ -70,6 +70,7 @@ pub async fn route(
                 avatar: "https://i.imgur.com/yiuTHhc.png".to_string(),
                 banner: "https://i.imgur.com/yiuTHhc.png".to_string(),
                 about_me: "Hello! I'm new here!".to_string(),
+                badges: [].to_vec(),
             };
 
             let serialized_user_doc = mongodb::bson::to_bson(&struct_user_doc).unwrap();
@@ -111,16 +112,6 @@ pub async fn route(
                     .as_str(),
                 )
                 .await;
-            };
-
-            let jwt_user = mongoose::structures::user::JwtUser {
-                handle: body.handle.to_string(),
-                username: body.username.to_string(),
-                email: body.email.to_string(),
-                hash_password: body.password.to_string(),
-                exp: chrono::TimeZone::with_ymd_and_hms(&Utc, 2050, 1, 1, 0, 0, 0)
-                    .unwrap()
-                    .timestamp() as usize,
             };
 
             HttpResponse::Ok()

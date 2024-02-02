@@ -16,34 +16,33 @@ function LeftSide() {
                 </span>
             </h1>
             <h2 style={{ marginTop: "-20px", color: "rgba(255,255,255,0.2)" }}>Alpha v0.0</h2>
-            <div>
+            <div className="left-side-media">
                 <button
                     onClick={() => window.open(github, "_blank")?.focus()}
-                    style={{ display: "inline-block", marginRight: "15px" }}
-                    className="button-field button-field-fixed button-field-grayblack"
+                    className="button-field button-field-grayblack"
                 >
-                    <i style={{ display: "inline-block", marginRight: "15px" }} className="fa-brands fa-github-alt"></i>
+                    <i className="fa-brands fa-github-alt"></i>
                 </button>
                 <button
+                    style={{ width: "65px" }}
                     onClick={() => window.open(discord, "_blank")?.focus()}
-                    style={{ display: "inline-block", marginRight: "15px" }}
-                    className="button-field button-field-fixed button-field-blurple"
+                    className="button-field button-field-blurple"
                 >
-                    <i style={{ display: "inline-block", marginRight: "15px" }} className="fa-brands fa-discord"></i>
+                    <i className="fa-brands fa-discord"></i>
                 </button>
                 <button
+                    style={{ width: "57px" }}
                     onClick={() => window.open(twitter, "_blank")?.focus()}
-                    style={{ display: "inline-block", marginRight: "15px" }}
-                    className="button-field button-field-fixed button-field-blue"
+                    className="button-field button-field-blue"
                 >
-                    <i style={{ display: "inline-block", marginRight: "15px" }} className="fa-brands fa-twitter"></i>
+                    <i className="fa-brands fa-twitter"></i>
                 </button>
                 <button
+                    style={{ width: "60px" }}
                     onClick={() => window.open(youtube, "_blank")?.focus()}
-                    style={{ display: "inline-block", marginRight: "15px" }}
-                    className="button-field button-field-fixed button-field-red"
+                    className="button-field button-field-red"
                 >
-                    <i style={{ display: "inline-block", marginRight: "15px" }} className="fa-brands fa-youtube"></i>
+                    <i className="fa-brands fa-youtube"></i>
                 </button>
             </div>
         </div>

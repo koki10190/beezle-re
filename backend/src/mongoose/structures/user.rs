@@ -1,4 +1,4 @@
-use bson::serde_helpers::chrono_datetime_as_bson_datetime;
+use bson::{serde_helpers::chrono_datetime_as_bson_datetime, Array};
 use mongodb::bson::oid::ObjectId;
 use serde::{Deserialize, Serialize};
 
@@ -16,6 +16,7 @@ pub struct User {
     pub avatar: String,
     pub banner: String,
     pub about_me: String,
+    pub badges: Array,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -25,4 +26,5 @@ pub struct JwtUser {
     pub email: String,
     pub hash_password: String,
     pub exp: usize,
+    pub badges: Array,
 }

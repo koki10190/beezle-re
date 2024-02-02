@@ -46,7 +46,7 @@ pub async fn route(
                 "beezle",
                 "Users",
                 doc! {
-                    "email": &token_data.email,
+
                     "handle": &token_data.handle,
                 },
                 doc! {

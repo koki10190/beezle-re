@@ -1,0 +1,37 @@
+.post-box {
+    width: 100%;
+    background-color: rgb(231, 129, 98);
+    border-radius: 15px;
+    box-sizing: border-box;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    padding-left: 20px;
+    padding-right: 20px;
+
+    word-wrap: break-word;
+}
+
+.post-box .pfp {
+    background-image: url(https://i.imgur.com/FfYwZan.jpg);
+    width: 55px;
+    height: 55px;
+    border: none;
+    border-radius: 100%;
+}
+
+.post-box .username {
+    font-size: 20px;
+    margin-top: -54px;
+    margin-left: 65px;
+}
+
+.post-box .handle {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 15px;
+    margin-left: 65px;
+    margin-top: -20px;
+}
+
+.user-detail {
+    cursor: pointer;
+}

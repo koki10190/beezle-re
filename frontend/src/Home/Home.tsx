@@ -38,18 +38,21 @@ function Home() {
                             <i className="fa-brands fa-github-alt"></i>
                         </button>
                         <button
+                            style={{ width: "65px" }}
                             onClick={() => window.open(discord, "_blank")?.focus()}
                             className="button-field button-field-blurple"
                         >
                             <i className="fa-brands fa-discord"></i>
                         </button>
                         <button
+                            style={{ width: "57px" }}
                             onClick={() => window.open(twitter, "_blank")?.focus()}
                             className="button-field button-field-blue"
                         >
                             <i className="fa-brands fa-twitter"></i>
                         </button>
                         <button
+                            style={{ width: "60px" }}
                             onClick={() => window.open(youtube, "_blank")?.focus()}
                             className="button-field button-field-red"
                         >

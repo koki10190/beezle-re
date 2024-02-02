@@ -2,6 +2,7 @@ pub mod change_about_me;
 pub mod change_avatar;
 pub mod change_banner;
 pub mod change_username;
+pub mod edit_profile;
 pub mod get_user;
 pub mod get_user_public;
 pub mod is_verified;
