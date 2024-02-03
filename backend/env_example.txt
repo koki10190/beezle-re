@@ -5,3 +5,5 @@ ADDRESS=127.0.0.1
 GMAIL_MAIL="example@example.com"
 GMAIL_MAIL_PASSWORD="example_pass"
 TOKEN_SECRET=my_secret
+IMGUR_CLIENT_SECRET=secret
+IMGUR_CLIENT_ID=id
