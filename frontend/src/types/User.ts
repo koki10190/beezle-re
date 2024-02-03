@@ -20,6 +20,10 @@ interface UserPrivate {
         };
     };
     badges: Array<BadgeType>;
+    followers: Array<string>;
+    following: Array<string>;
+    reputation: number;
+    coins: number;
 }
 
 interface UserPublic {
@@ -35,6 +39,10 @@ interface UserPublic {
         };
     };
     badges: Array<BadgeType>;
+    followers: Array<string>;
+    following: Array<string>;
+    reputation: number;
+    coins: number;
 }
 
 export { BadgeType };

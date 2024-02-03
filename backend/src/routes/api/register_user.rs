@@ -72,6 +72,10 @@ pub async fn route(
                 about_me: "Hello! I'm new here!".to_string(),
                 badges: [].to_vec(),
                 bookmarks: vec![],
+                followers: vec![],
+                following: vec![],
+                reputation: 100,
+                coins: 0,
             };
 
             let serialized_user_doc = mongodb::bson::to_bson(&struct_user_doc).unwrap();

@@ -12,6 +12,7 @@ pub struct Post {
     pub likes: Array,
     pub reposts: Array,
     pub post_id: String,
+    pub edited: bool,
     #[serde(with = "chrono_datetime_as_bson_datetime")]
     pub creation_date: chrono::DateTime<chrono::Utc>,
 }
@@ -27,6 +28,7 @@ pub struct Repost {
     pub repost: bool,
     pub likes: Array,
     pub reposts: Array,
+    pub edited: bool,
     pub post_id: String,
     #[serde(with = "chrono_datetime_as_bson_datetime")]
     pub creation_date: chrono::DateTime<chrono::Utc>,

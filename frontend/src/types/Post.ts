@@ -7,6 +7,7 @@ interface Post {
     likes: Array<string>;
     reposts: Array<string>;
     post_op_id: string;
+    edited: boolean;
     creation_date: {
         $date: {
             $numberLong: string;

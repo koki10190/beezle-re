@@ -99,6 +99,7 @@ pub async fn route(
                     repost: true,
                     likes: vec![],
                     reposts: vec![],
+                    edited: original_post_doc.get("edited").unwrap().as_bool().unwrap(),
                     post_id: uuid::Uuid::new().to_string(),
                     post_op_id: beezle::rem_first_and_last(
                         &original_post_doc.get("post_id").unwrap().to_string(),

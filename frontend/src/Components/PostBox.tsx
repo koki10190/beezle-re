@@ -14,9 +14,10 @@ interface PostBoxData {
     post: Post;
     self_user: UserPrivate;
     setPosts: any;
+    delete_post_on_bookmark_remove?: boolean;
 }
 
-function PostBox({ post, self_user, setPosts }: PostBoxData) {
+function PostBox({ post, self_user, setPosts, delete_post_on_bookmark_remove = false }: PostBoxData) {
     const [user, setUser] = useState<UserPublic>();
     const [isLiked, setLiked] = useState(false);
     const [isReposted, setReposted] = useState(false);
@@ -96,9 +97,9 @@ function PostBox({ post, self_user, setPosts }: PostBoxData) {
                 post_id: post.post_id,
                 remove_bookmark: true,
             });
-            setReposted(false);
+            setBookmarked(false);
 
-            if (setPosts) {
+            if (setPosts && delete_post_on_bookmark_remove) {
                 setPosts((old: Array<Post>) => {
                     old.splice(
                         old.findIndex(x => x.post_id == post.post_id),
@@ -120,11 +121,68 @@ function PostBox({ post, self_user, setPosts }: PostBoxData) {
         setBookmarked(true);
     };
 
+    const [isEditing, setEditing] = useState(false);
+    const [editContent, setEditContent] = useState(post.content);
+    const [finalContent, setFinalContent] = useState(post.content);
+    const [isPostEdited, setPostEdited] = useState(post.edited);
+
+    const EditInteraction = async () => {
+        setEditing(!isEditing);
+    };
+
+    const SaveEditChanges = async () => {
+        setEditing(false);
+        const res = await axios.post(`${api_uri}/api/post/edit`, {
+            token: localStorage.getItem("access_token"),
+            post_id: post.post_id,
+            content: editContent,
+        });
+
+        if (res.data.error) {
+            alert(res.data.error);
+        } else {
+            alert("Edited post successfully.");
+            setFinalContent(editContent);
+        }
+
+        setPostEdited(true);
+    };
+
+    const DeleteInteraction = async () => {
+        const res = await axios.post(`${api_uri}/api/post/delete`, {
+            token: localStorage.getItem("access_token"),
+            post_id: post.post_id,
+        });
+
+        if (res.data.error) {
+            alert(res.data.error);
+        } else {
+            alert(res.data.message);
+            if (setPosts) {
+                setPosts((old: Array<Post>) => {
+                    old.splice(
+                        old.findIndex(x => x.post_id == post.post_id),
+                        1
+                    );
+                    return [...old];
+                });
+            }
+        }
+    };
+
     return (
         <div className="post-box">
             {post.repost ? (
                 <h4 onClick={() => window.location.replace(`/profile/${post.handle}`)} className="post-attr">
                     <i className="fa-solid fa-repeat"></i> Repost by @{post.handle}
+                </h4>
+            ) : (
+                ""
+            )}
+
+            {isPostEdited ? (
+                <h4 className="post-attr">
+                    <i className="fa-solid fa-pencil"></i> Edited
                 </h4>
             ) : (
                 ""
@@ -160,7 +218,25 @@ function PostBox({ post, self_user, setPosts }: PostBoxData) {
                     </span>
                 </p>
             </div>
-            <p className="content">{post.content}</p>
+            {isEditing ? (
+                <>
+                    <textarea
+                        placeholder="Edit Post"
+                        value={editContent}
+                        onChange={e => setEditContent(e.target.value)}
+                        className="input-field"
+                    ></textarea>
+                    <button
+                        onClick={SaveEditChanges}
+                        style={{ marginTop: "10px" }}
+                        className="button-field shadow fixed-100"
+                    >
+                        Save Changes
+                    </button>
+                </>
+            ) : (
+                <p className="content">{finalContent}</p>
+            )}
             {user ? (
                 <div className="post-interaction-btn">
                     <a
@@ -206,6 +282,19 @@ function PostBox({ post, self_user, setPosts }: PostBoxData) {
                     >
                         <i className=" fa-solid fa-bookmark"></i>
                     </a>
+
+                    {self_user.handle == post.handle && !post.repost ? (
+                        <>
+                            <a onClick={EditInteraction} className="post-inter">
+                                <i className=" fa-solid fa-pen-to-square"></i>
+                            </a>
+                            <a onClick={DeleteInteraction} className="post-inter-red">
+                                <i className=" fa-solid fa-trash"></i>
+                            </a>
+                        </>
+                    ) : (
+                        ""
+                    )}
                 </div>
             ) : (
                 ""

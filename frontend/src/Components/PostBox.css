@@ -74,6 +74,10 @@
     transform: scale(1.3);
 }
 
+.post-inter:hover {
+    color: rgba(255, 255, 255, 1);
+}
+
 .post-inter-red:hover {
     color: rgb(255, 73, 73);
 }

@@ -9,6 +9,7 @@ import { UserPrivate, UserPublic } from "../../types/User";
 import "./Profile.css";
 import { fetchUserPublic } from "../../functions/fetchUserPublic";
 import { BadgesToJSX } from "../../functions/badgesToJSX";
+import RepToParagraph from "../../Components/RepToParagraph";
 
 function Loading() {
     return (
@@ -21,6 +22,21 @@ function Loading() {
 }
 
 function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPrivate | null }) {
+    const [isFollowing, setFollowing] = useState(user.followers.find(x => x === self?.handle) ? true : false);
+    const [followingCount, setFollowingCount] = useState(user.following.length);
+    const [followersCount, setFollowersCount] = useState(user.followers.length);
+
+    const FollowInteraction = async () => {
+        const res = await axios.post(`${api_uri}/api/user/follow`, {
+            token: localStorage.getItem("access_token"),
+            handle: user.handle,
+            follow: !isFollowing,
+        });
+
+        setFollowersCount(!isFollowing ? followersCount + 1 : followersCount - 1);
+        setFollowing(!isFollowing);
+    };
+
     return (
         <div className="profile">
             <div
@@ -39,12 +55,24 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                 {user.username} <BadgesToJSX badges={user.badges} className="profile-badge" />
             </p>
             <p className="handle">@{user.handle}</p>
-            <button
-                onClick={() => window.location.replace("/edit/profile")}
-                className="button-field profile-edit-button"
-            >
-                Edit Profile
-            </button>
+            <div className="inline-stats">
+                <p>
+                    <i className="fa-solid fa-coins"></i> {user.coins.toLocaleString("en-US")}
+                </p>
+                <RepToParagraph reputation={user.reputation} />
+            </div>
+            {user.handle === self?.handle ? (
+                <button
+                    onClick={() => window.location.replace("/edit/profile")}
+                    className="button-field profile-edit-button"
+                >
+                    Edit Profile
+                </button>
+            ) : (
+                <button onClick={FollowInteraction} className="button-field profile-edit-button">
+                    {isFollowing ? "Unfollow" : "Follow"}
+                </button>
+            )}
             {user.about_me !== "" ? (
                 <div className="profile-container">
                     <p className="profile-container-header">About Me</p>
@@ -63,6 +91,14 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                     {", "}
                     {new Date(parseInt(user.creation_date.$date.$numberLong)).getFullYear()}
                 </p>
+            </div>
+            <div className="followers-and-following">
+                <h4>
+                    Following <span>{followersCount}</span>
+                </h4>
+                <h4>
+                    Followers <span>{followingCount}</span>
+                </h4>
             </div>
         </div>
     );

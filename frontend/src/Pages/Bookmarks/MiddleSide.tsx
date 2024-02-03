@@ -35,7 +35,15 @@ function MiddleSide() {
             <Divider />
             {self_user
                 ? posts.map((post: Post) => {
-                      return <PostBox setPosts={setPosts} self_user={self_user} key={post.post_id} post={post} />;
+                      return (
+                          <PostBox
+                              delete_post_on_bookmark_remove={true}
+                              setPosts={setPosts}
+                              self_user={self_user}
+                              key={post.post_id}
+                              post={post}
+                          />
+                      );
                   })
                 : ""}
         </div>

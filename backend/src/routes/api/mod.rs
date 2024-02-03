@@ -10,4 +10,5 @@ pub mod is_verified;
 pub mod login_user;
 pub mod post;
 pub mod register_user;
+pub mod user;
 pub mod verification;

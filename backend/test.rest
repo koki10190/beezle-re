@@ -78,3 +78,21 @@ Content-Type: application/json
   "post_id": "cba950ed-8a7f-4ddd-8400-d80f45018d0f",
   "remove_bookmark": false
 }
+###
+POST http://localhost:3000/api/post/edit
+Content-Type: application/json
+
+{
+  "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJoYW5kbGUiOiJrb2tpIiwidXNlcm5hbWUiOiJwb3d3IiwiZW1haWwiOiJsdWthb2R6ZWxhc2h2aWxpQGdtYWlsLmNvbSIsImhhc2hfcGFzc3dvcmQiOiIkMmIkMTIkOUdTNDUvVDlWWUVzUVhEaHdITWV6T0FzNEdXRElLelF6dnRRSldkQUNYaFNmWnFVTVRBTjIiLCJleHAiOjI1MjQ2MDgwMDAsImJhZGdlcyI6W119.MTsdTOWG01WPPfZFnINupIomoBHVFQZe2scrXnhnuw8",
+  "post_id": "cba950ed-8a7f-4ddd-8400-d80f45018d0f",
+  "content": "hello guys!"
+}
+###
+POST http://localhost:3000/api/user/follow
+Content-Type: application/json
+
+{
+  "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJoYW5kbGUiOiJrb2tpIiwidXNlcm5hbWUiOiJwb3d3IiwiZW1haWwiOiJsdWthb2R6ZWxhc2h2aWxpQGdtYWlsLmNvbSIsImhhc2hfcGFzc3dvcmQiOiIkMmIkMTIkOUdTNDUvVDlWWUVzUVhEaHdITWV6T0FzNEdXRElLelF6dnRRSldkQUNYaFNmWnFVTVRBTjIiLCJleHAiOjI1MjQ2MDgwMDAsImJhZGdlcyI6W119.MTsdTOWG01WPPfZFnINupIomoBHVFQZe2scrXnhnuw8",
+  "handle": "test",
+  "follow": false
+}

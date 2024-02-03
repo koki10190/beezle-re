@@ -18,6 +18,10 @@ pub struct User {
     pub about_me: String,
     pub badges: Array,
     pub bookmarks: Array,
+    pub followers: Array,
+    pub following: Array,
+    pub reputation: i64,
+    pub coins: i64,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
