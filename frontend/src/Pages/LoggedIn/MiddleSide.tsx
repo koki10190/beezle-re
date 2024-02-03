@@ -10,10 +10,11 @@ import Divider from "../../Components/Divider";
 import PostBox from "../../Components/PostBox";
 import { fetchUserPrivate } from "../../functions/fetchUserPrivate";
 import { UserPrivate, UserPublic } from "../../types/User";
+import { Post } from "../../types/Post";
+import { RefreshPosts } from "../../functions/RefreshPosts";
 
 function MiddleSide() {
     checkToken();
-    const textarea = useRef<HTMLTextAreaElement>(null);
     const data: {
         username: string;
         handle: string;
@@ -25,21 +26,26 @@ function MiddleSide() {
         date: new Date(),
         content: "lorem!",
     };
-    const [self_user, setSelfUser] = useState<UserPrivate | null>(null);
+    // const [self_user, setSelfUser] = useState<UserPrivate | null>(null);
+    const [posts, setPosts] = useState<Array<Post>>([]);
 
     useEffect(() => {
         (async () => {
-            if (localStorage.getItem("access_token")) {
-                setSelfUser(await fetchUserPrivate());
-            }
+            setPosts((await axios.get(`${api_uri}/api/post/get/explore`)).data);
         })();
     }, []);
 
+    const OnTyperSend = (data: Post) => {
+        setPosts(old => [data, ...old]);
+    };
+
     return (
         <div className="page-sides side-middle home-middle">
-            <PostTyper ref={textarea} />
+            <PostTyper onSend={OnTyperSend} />
             <Divider />
-            {self_user ? <PostBox post={data} user={self_user as UserPublic} /> : <></>}
+            {posts.map((post: Post) => {
+                return <PostBox key={post.post_id} post={post} />;
+            })}
         </div>
     );
 }

@@ -56,12 +56,12 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
             <div className="profile-container">
                 <p className="profile-container-header">Joined At</p>
                 <p className="about_me">
-                    {new Date(parseFloat(user.creation_date.$date.$numberLong)).toLocaleString("default", {
+                    {new Date(parseInt(user.creation_date.$date.$numberLong)).toLocaleString("default", {
                         month: "long",
                     })}{" "}
-                    {new Date(parseFloat(user.creation_date.$date.$numberLong)).getDay()}
+                    {new Date(parseInt(user.creation_date.$date.$numberLong)).getDay()}
                     {", "}
-                    {new Date(parseFloat(user.creation_date.$date.$numberLong)).getFullYear()}
+                    {new Date(parseInt(user.creation_date.$date.$numberLong)).getFullYear()}
                 </p>
             </div>
         </div>

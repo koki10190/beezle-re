@@ -35,3 +35,21 @@
 .user-detail {
     cursor: pointer;
 }
+
+.post-box {
+    margin-bottom: 10px;
+}
+
+.post-box .post-attr {
+    margin-top: 0px;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.post-attr {
+    cursor: pointer;
+    transition: color ease-in-out 150ms;
+}
+
+.post-attr:hover {
+    color: rgba(255, 255, 255, 1);
+}

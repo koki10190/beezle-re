@@ -39,6 +39,7 @@ async fn main() -> std::io::Result<()> {
     let client = Client::with_options(client_options).unwrap();
     mongoose::create_collection(&client, "beezle", "Users").await;
     mongoose::create_collection(&client, "beezle", "Auths").await;
+    mongoose::create_collection(&client, "beezle", "Posts").await;
 
     beezle::print("Starting HTTP Server...");
 
@@ -59,6 +60,11 @@ async fn main() -> std::io::Result<()> {
             .service(routes::api::change_banner::route)
             .service(routes::api::change_username::route)
             .service(routes::api::edit_profile::route)
+            .service(routes::api::get_user_many::route)
+            .service(routes::api::post::create::route)
+            .service(routes::api::post::get::explore::route)
+            .service(routes::api::post::like::route)
+            .service(routes::api::post::repost::route)
     })
     .bind((env::var("ADDRESS").unwrap(), port))?
     .run();

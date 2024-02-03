@@ -14,3 +14,6 @@ pub mod update;
 pub use update::update_document;
 
 pub mod structures;
+
+pub mod get_many;
+pub use get_many::get_many_document;

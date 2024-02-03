@@ -31,7 +31,7 @@ POST http://localhost:3000/api/login_user
 Content-Type: application/json
 
 {
-  "email": "koki",
+  "email": "koki2",
   "password": "12345678"
 }
 
@@ -42,4 +42,30 @@ Content-Type: application/json
 {
   "token": "",
   "username": "kokitoaaa"
+}
+###
+POST http://localhost:3000/api/post/create
+Content-Type: application/json
+
+{
+  "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJoYW5kbGUiOiJrb2tpMiIsInVzZXJuYW1lIjoia29raXRvIiwiZW1haWwiOiJjb2tpdGlsMjk2QGV2dmdvLmNvbSIsImhhc2hfcGFzc3dvcmQiOiIkMmIkMTIkTy9TdVBVaW9McGZxOEFYVXNDZGt6ZXQzRnRJWHhycC92VGxHM0V1a0FZQUp2cjJVUDRYb3EiLCJleHAiOjI1MjQ2MDgwMDAsImJhZGdlcyI6W119.L1WzCMk6S5PGhhmEkhSzvDQg1A8zVXYGeTaVi5tM_o0",
+  "content": "Hello!"
+}
+###
+POST http://localhost:3000/api/post/like
+Content-Type: application/json
+
+{
+  "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJoYW5kbGUiOiJrb2tpMiIsInVzZXJuYW1lIjoia29raXRvIiwiZW1haWwiOiJjb2tpdGlsMjk2QGV2dmdvLmNvbSIsImhhc2hfcGFzc3dvcmQiOiIkMmIkMTIkTy9TdVBVaW9McGZxOEFYVXNDZGt6ZXQzRnRJWHhycC92VGxHM0V1a0FZQUp2cjJVUDRYb3EiLCJleHAiOjI1MjQ2MDgwMDAsImJhZGdlcyI6W119.L1WzCMk6S5PGhhmEkhSzvDQg1A8zVXYGeTaVi5tM_o0",
+  "post_id": "fe79880b-7924-45ce-ae5d-2fb4209ead89",
+  "remove_like": true
+}
+###
+POST http://localhost:3000/api/post/repost
+Content-Type: application/json
+
+{
+  "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJoYW5kbGUiOiJrb2tpMiIsInVzZXJuYW1lIjoia29raXRvIiwiZW1haWwiOiJjb2tpdGlsMjk2QGV2dmdvLmNvbSIsImhhc2hfcGFzc3dvcmQiOiIkMmIkMTIkTy9TdVBVaW9McGZxOEFYVXNDZGt6ZXQzRnRJWHhycC92VGxHM0V1a0FZQUp2cjJVUDRYb3EiLCJleHAiOjI1MjQ2MDgwMDAsImJhZGdlcyI6W119.L1WzCMk6S5PGhhmEkhSzvDQg1A8zVXYGeTaVi5tM_o0",
+  "post_id": "d2abb821-0b67-4f76-acb3-5e164d9d914a",
+  "remove_repost": false
 }
