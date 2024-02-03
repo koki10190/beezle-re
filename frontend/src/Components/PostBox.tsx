@@ -69,6 +69,17 @@ function PostBox({ post }: PostBoxData) {
                 </p>
             </div>
             <p className="content">{post.content}</p>
+            <div className="post-interaction-btn">
+                <a className="post-inter-red">
+                    <i className=" fa-solid fa-heart"></i>
+                </a>
+                <a className="post-inter-lime">
+                    <i className=" fa-solid fa-repeat"></i>
+                </a>
+                <a className="post-inter-blue">
+                    <i className=" fa-solid fa-bookmark"></i>
+                </a>
+            </div>
         </div>
     );
 }
