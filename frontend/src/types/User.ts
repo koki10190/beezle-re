@@ -13,6 +13,7 @@ interface UserPrivate {
     avatar: string;
     banner: string;
     about_me: string;
+    bookmarks: Array<string>;
     creation_date: {
         $date: {
             $numberLong: string;

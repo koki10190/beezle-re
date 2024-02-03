@@ -65,6 +65,8 @@ async fn main() -> std::io::Result<()> {
             .service(routes::api::post::get::explore::route)
             .service(routes::api::post::like::route)
             .service(routes::api::post::repost::route)
+            .service(routes::api::post::bookmark::route)
+            .service(routes::api::post::get::one::route)
     })
     .bind((env::var("ADDRESS").unwrap(), port))?
     .run();

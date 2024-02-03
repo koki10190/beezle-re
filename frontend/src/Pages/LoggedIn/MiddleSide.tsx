@@ -28,10 +28,12 @@ function MiddleSide() {
     };
     // const [self_user, setSelfUser] = useState<UserPrivate | null>(null);
     const [posts, setPosts] = useState<Array<Post>>([]);
+    const [self_user, setSelfUser] = useState<UserPrivate>();
 
     useEffect(() => {
         (async () => {
             setPosts((await axios.get(`${api_uri}/api/post/get/explore`)).data);
+            setSelfUser((await fetchUserPrivate()) as UserPrivate);
         })();
     }, []);
 
@@ -43,9 +45,11 @@ function MiddleSide() {
         <div className="page-sides side-middle home-middle">
             <PostTyper onSend={OnTyperSend} />
             <Divider />
-            {posts.map((post: Post) => {
-                return <PostBox key={post.post_id} post={post} />;
-            })}
+            {self_user
+                ? posts.map((post: Post) => {
+                      return <PostBox setPosts={setPosts} self_user={self_user} key={post.post_id} post={post} />;
+                  })
+                : ""}
         </div>
     );
 }

@@ -96,7 +96,7 @@ pub async fn route(
                     )
                     .to_string(),
                     creation_date: chrono::Utc::now(),
-                    repost: false,
+                    repost: true,
                     likes: vec![],
                     reposts: vec![],
                     post_id: uuid::Uuid::new().to_string(),

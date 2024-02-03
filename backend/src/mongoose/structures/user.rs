@@ -17,6 +17,7 @@ pub struct User {
     pub banner: String,
     pub about_me: String,
     pub badges: Array,
+    pub bookmarks: Array,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
