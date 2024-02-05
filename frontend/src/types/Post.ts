@@ -8,6 +8,8 @@ interface Post {
     reposts: Array<string>;
     post_op_id: string;
     edited: boolean;
+    replying_to: string;
+    is_reply: boolean;
     creation_date: {
         $date: {
             $numberLong: string;

@@ -17,3 +17,11 @@ pub async fn get_document(
         Err(_) => None,
     }
 }
+
+pub async fn get_count(client: &Client, db_name: &str, coll_name: &str, filter: Document) -> u64 {
+    let db = client.database(db_name);
+    let coll: mongodb::Collection<Document> = db.collection(coll_name);
+
+    let result = coll.count_documents(Some(filter), None).await;
+    result.unwrap()
+}

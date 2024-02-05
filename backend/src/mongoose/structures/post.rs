@@ -13,6 +13,8 @@ pub struct Post {
     pub reposts: Array,
     pub post_id: String,
     pub edited: bool,
+    pub is_reply: bool,
+    pub replying_to: String,
     #[serde(with = "chrono_datetime_as_bson_datetime")]
     pub creation_date: chrono::DateTime<chrono::Utc>,
 }
@@ -30,6 +32,8 @@ pub struct Repost {
     pub reposts: Array,
     pub edited: bool,
     pub post_id: String,
+    pub is_reply: bool,
+    pub replying_to: String,
     #[serde(with = "chrono_datetime_as_bson_datetime")]
     pub creation_date: chrono::DateTime<chrono::Utc>,
 }

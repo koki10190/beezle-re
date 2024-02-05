@@ -43,6 +43,17 @@ pub async fn route(
             )
             .await;
 
+            mongoose::delete_document(
+                &client,
+                "beezle",
+                "Posts",
+                doc! {
+                    "post_op_handle": &data.claims.handle,
+                    "post_op_id": &body.post_id
+                },
+            )
+            .await;
+
             return HttpResponse::Ok().json(doc! {"message": "Deleted post successfully."});
         }
         Err(_) => HttpResponse::Ok().json(doc! {"error": "Couldn't decode token"}),

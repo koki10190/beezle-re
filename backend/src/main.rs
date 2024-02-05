@@ -1,7 +1,8 @@
 extern crate dotenv;
 use actix_cors::Cors;
-use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
+use actix_web::{get, middleware, post, web, App, HttpResponse, HttpServer, Responder};
 use dotenv::dotenv;
+use futures::StreamExt;
 use mail_send::mail_builder::MessageBuilder;
 use mail_send::{Credentials, SmtpClientBuilder};
 use mongodb::options::Credential;
@@ -15,10 +16,12 @@ use mongodb::{options::ClientOptions, Client};
 mod beezle;
 mod mongoose;
 mod routes;
+mod ws;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     dotenv().ok();
+    env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
 
     println!(
         "{}",
@@ -68,8 +71,14 @@ async fn main() -> std::io::Result<()> {
             .service(routes::api::post::bookmark::route)
             .service(routes::api::post::get::one::route)
             .service(routes::api::post::edit::route)
+            .service(routes::api::post::get::profile::route)
             .service(routes::api::post::delete::route)
             .service(routes::api::user::follow::route)
+            .service(routes::api::post::get::replies::route)
+            .service(routes::api::post::get::reply_count::route)
+            .service(routes::api::post::get::now::route)
+            .route("/ws", web::get().to(ws::spawn::spawn))
+            .wrap(middleware::Logger::default())
     })
     .bind((env::var("ADDRESS").unwrap(), port))?
     .run();

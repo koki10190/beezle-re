@@ -49,6 +49,12 @@ pub async fn route(
             .json(doc! {"changed": false, "error": "Username cannot be null!"});
     }
 
+    if body.username.len() > 12 {
+        return HttpResponse::Ok().json(
+            doc! { "changed": false, "error": "Username must be shorter than 12 characters!" },
+        );
+    }
+
     // if body.avatar == "" {
     //     s_Avatar = "https://i.imgur.com/yiuTHhc.png".to_string();
     // }

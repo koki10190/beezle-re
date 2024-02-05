@@ -10,6 +10,9 @@ import "./Profile.css";
 import { fetchUserPublic } from "../../functions/fetchUserPublic";
 import { BadgesToJSX } from "../../functions/badgesToJSX";
 import RepToParagraph from "../../Components/RepToParagraph";
+import { Post } from "../../types/Post";
+import Divider from "../../Components/Divider";
+import PostBox from "../../Components/PostBox";
 
 function Loading() {
     return (
@@ -36,6 +39,14 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
         setFollowersCount(!isFollowing ? followersCount + 1 : followersCount - 1);
         setFollowing(!isFollowing);
     };
+
+    const [posts, setPosts] = useState<Array<Post>>([]);
+
+    useEffect(() => {
+        (async () => {
+            setPosts((await axios.get(`${api_uri}/api/post/get/profile?handle=${user.handle}`)).data);
+        })();
+    }, []);
 
     return (
         <div className="profile">
@@ -100,6 +111,10 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                     Followers <span>{followingCount}</span>
                 </h4>
             </div>
+            <Divider />
+            {posts.map((post: Post) => {
+                return <PostBox setPosts={setPosts} self_user={self as UserPrivate} key={post.post_id} post={post} />;
+            })}
         </div>
     );
 }

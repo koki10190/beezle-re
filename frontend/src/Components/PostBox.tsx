@@ -9,24 +9,34 @@ import { fetchUserPublic } from "../functions/fetchUserPublic";
 import { api_uri } from "../links";
 import FlipNumbers from "react-flip-numbers";
 import millify from "millify";
+import { BadgesToJSX } from "../functions/badgesToJSX";
 
 interface PostBoxData {
     post: Post;
     self_user: UserPrivate;
     setPosts: any;
     delete_post_on_bookmark_remove?: boolean;
+    allow_reply_attribute?: boolean;
 }
 
-function PostBox({ post, self_user, setPosts, delete_post_on_bookmark_remove = false }: PostBoxData) {
+function PostBox({
+    post,
+    self_user,
+    setPosts,
+    delete_post_on_bookmark_remove = false,
+    allow_reply_attribute = false,
+}: PostBoxData) {
     const [user, setUser] = useState<UserPublic>();
     const [isLiked, setLiked] = useState(false);
     const [isReposted, setReposted] = useState(false);
     const [isBookmarked, setBookmarked] = useState(false);
     const [LikeCount, setLikeCount] = useState(post.likes.length);
     const [RepostCount, setRepostCount] = useState(post.reposts.length);
+    const [ReplyCount, setReplyCount] = useState(0);
 
     const [isLikeHovered, setLikeHovered] = useState(false);
     const [isRepostHovered, setRepostHovered] = useState(false);
+    const [replyingToPost, setReplyingToPost] = useState<Post>();
 
     useEffect(() => {
         (async () => {
@@ -39,12 +49,23 @@ function PostBox({ post, self_user, setPosts, delete_post_on_bookmark_remove = f
             setLiked(post.likes.find(s => s === self_user.handle) ? true : false);
             setReposted(post.reposts.find(s => s === self_user.handle) ? true : false);
             setBookmarked(self_user.bookmarks.find(s => s === post.post_id) ? true : false);
+            setReplyCount(
+                (await axios.get(`${api_uri}/api/post/get/reply_count?post_id=${post.post_id}`)).data.count as number
+            );
+
+            if (post.is_reply) {
+                setReplyingToPost((await axios.get(`${api_uri}/api/post/get/one?post_id=${post.replying_to}`)).data);
+            }
         })();
     }, []);
 
     useEffect(() => {
         console.log("Post", post.content, "Handle", post.handle);
     }, [user]);
+
+    const ReplyInteraction = async () => {
+        window.location.href = `/post/${post.post_id}`;
+    };
 
     const LikeInteraction = async () => {
         if (isLiked) {
@@ -187,15 +208,27 @@ function PostBox({ post, self_user, setPosts, delete_post_on_bookmark_remove = f
             ) : (
                 ""
             )}
+
+            {allow_reply_attribute && post.is_reply ? (
+                <h4 onClick={() => (window.location.href = `/post/${post.replying_to}`)} className="post-attr">
+                    <i className="fa-solid fa-comment"></i> Replying to{" "}
+                    {replyingToPost?.content.replace(/(.{12})..+/, "$1…")}
+                </h4>
+            ) : (
+                ""
+            )}
             <div
                 style={{
                     backgroundImage: `url(${user ? user.avatar : ""})`,
                 }}
-                className="pfp"
+                className="pfp-post"
             ></div>
             <div onClick={() => window.location.replace(`/profile/${user ? user.handle : ""}`)} className="user-detail">
-                <p className="username">{user ? user.username : ""}</p>
-                <p className="handle">
+                <p className="username-post">
+                    {user ? user.username : ""}{" "}
+                    <BadgesToJSX badges={user ? user.badges : []} className="profile-badge profile-badge-shadow" />
+                </p>
+                <p className="handle-post">
                     @{user ? user.handle : ""}{" "}
                     <span style={{ color: "white" }}>
                         -{" "}
@@ -239,14 +272,8 @@ function PostBox({ post, self_user, setPosts, delete_post_on_bookmark_remove = f
             )}
             {user ? (
                 <div className="post-interaction-btn">
-                    <a
-                        onMouseEnter={() => setLikeHovered(true)}
-                        onMouseLeave={() => setLikeHovered(false)}
-                        onClick={LikeInteraction}
-                        style={isLiked ? { color: "rgb(255, 73, 73)" } : {}}
-                        className="post-inter-red"
-                    >
-                        <i className=" fa-solid fa-heart"></i>{" "}
+                    <a onClick={ReplyInteraction} className="post-inter-blue">
+                        <i className=" fa-solid fa-comment"></i>{" "}
                         <FlipNumbers
                             height={15}
                             width={15}
@@ -255,7 +282,7 @@ function PostBox({ post, self_user, setPosts, delete_post_on_bookmark_remove = f
                             nonNumberClassName="like-flip"
                             numberClassName="like-flip"
                             perspective={100}
-                            numbers={millify(LikeCount)}
+                            numbers={millify(ReplyCount)}
                         />
                     </a>
                     <a
@@ -273,6 +300,25 @@ function PostBox({ post, self_user, setPosts, delete_post_on_bookmark_remove = f
                             numberClassName="like-flip"
                             perspective={100}
                             numbers={millify(RepostCount)}
+                        />
+                    </a>
+                    <a
+                        onMouseEnter={() => setLikeHovered(true)}
+                        onMouseLeave={() => setLikeHovered(false)}
+                        onClick={LikeInteraction}
+                        style={isLiked ? { color: "rgb(255, 73, 73)" } : {}}
+                        className="post-inter-red"
+                    >
+                        <i className=" fa-solid fa-heart"></i>{" "}
+                        <FlipNumbers
+                            height={15}
+                            width={15}
+                            color=""
+                            play
+                            nonNumberClassName="like-flip"
+                            numberClassName="like-flip"
+                            perspective={100}
+                            numbers={millify(LikeCount)}
                         />
                     </a>
                     <a

@@ -4,7 +4,6 @@ import { BrowserRouter, Routes, Route, redirect } from "react-router-dom";
 import { api_uri } from "../../links";
 import { checkToken } from "../../functions/checkToken";
 
-import "./ScopeLoggedIn.css";
 import PostTyper from "../../Components/PostTyper";
 import Divider from "../../Components/Divider";
 import PostBox from "../../Components/PostBox";
@@ -32,7 +31,7 @@ function MiddleSide() {
 
     useEffect(() => {
         (async () => {
-            setPosts((await axios.get(`${api_uri}/api/post/get/explore`)).data);
+            setPosts((await axios.get(`${api_uri}/api/post/get/now`)).data);
             setSelfUser((await fetchUserPrivate()) as UserPrivate);
         })();
     }, []);

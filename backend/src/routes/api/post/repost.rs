@@ -109,6 +109,17 @@ pub async fn route(
                         &original_post_doc.get("handle").unwrap().to_string(),
                     )
                     .to_string(),
+                    replying_to: original_post_doc
+                        .get("replying_to")
+                        .unwrap()
+                        .as_str()
+                        .unwrap()
+                        .to_string(),
+                    is_reply: original_post_doc
+                        .get("is_reply")
+                        .unwrap()
+                        .as_bool()
+                        .unwrap(),
                 };
 
                 let serialized_post_doc = mongodb::bson::to_bson(&struct_post_doc).unwrap();

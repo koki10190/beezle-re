@@ -1,0 +1,27 @@
+.post-page-container {
+    width: 100%;
+}
+
+.post-page-pfp {
+    width: 75px;
+    height: 75px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    border-radius: 100%;
+}
+
+.post-page-username {
+    margin-top: -60px;
+    margin-left: 90px;
+    font-weight: 1000;
+}
+
+.post-page-handle {
+    font-size: 15px;
+    margin-left: 90px;
+    margin-top: -15px;
+    font-weight: 1000;
+    margin-bottom: 30px;
+    color: rgba(255, 255, 255, 0.5);
+}

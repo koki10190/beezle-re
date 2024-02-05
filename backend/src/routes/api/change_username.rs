@@ -38,6 +38,15 @@ pub async fn route(
     )
     .await;
 
+    if body.username.len() > 12 {
+        return HttpResponse::Ok()
+            .json(doc! { "error": "Username must be shorter than 12 characters!" });
+    }
+
+    if body.username == "" {
+        return HttpResponse::Ok().json(doc! { "error": "No username provided!" });
+    }
+
     match auth_doc {
         None => HttpResponse::Ok().json(doc! {"changed": false, "error": "User not found!"}),
         _document => {

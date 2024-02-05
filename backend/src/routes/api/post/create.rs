@@ -11,6 +11,8 @@ use crate::{beezle, mongoose};
 struct TokenInfo {
     token: String,
     content: String,
+    replying_to: String,
+    is_reply: bool,
 }
 
 #[post("/api/post/create")]
@@ -38,6 +40,8 @@ pub async fn route(
                 reposts: vec![],
                 post_id: uuid::Uuid::new().to_string(),
                 edited: false,
+                replying_to: body.replying_to.to_string(),
+                is_reply: body.is_reply,
             };
 
             let serialized_post_doc = mongodb::bson::to_bson(&struct_post_doc).unwrap();

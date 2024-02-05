@@ -7,7 +7,7 @@ function BadgesToJSX({ badges, className = "" }: { badges: Array<BadgeType>; cla
     return (
         <>
             {badges.map((badge: BadgeType) => {
-                return <BadgeToIcon badge={badge} className={className} />;
+                return <BadgeToIcon key={badge} badge={badge} className={className} />;
             })}
         </>
     );

@@ -4,3 +4,17 @@
     padding-right: 20px;
     box-sizing: border-box;
 }
+
+.open-panel-button {
+    color: white;
+    position: absolute;
+    top: 5px;
+    right: 15px;
+    font-size: 30px;
+    transition: color ease-in-out 150ms;
+    cursor: pointer;
+}
+
+.open-panel-button:hover {
+    color: rgba(150, 150, 150);
+}

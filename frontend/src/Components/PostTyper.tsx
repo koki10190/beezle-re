@@ -5,7 +5,7 @@ import "./PostTyper.css";
 import { api_uri } from "../links";
 import { Post } from "../types/Post";
 
-function PostTyper({ onSend }: { onSend: (data: Post) => void }) {
+function PostTyper({ onSend, replying_to = "" }: { onSend: (data: Post) => void; replying_to?: string }) {
     const textarea = useRef<HTMLTextAreaElement>(null);
     const [canCreate, setCanCreate] = useState(true);
 
@@ -16,6 +16,8 @@ function PostTyper({ onSend }: { onSend: (data: Post) => void }) {
             const res = await axios.post(`${api_uri}/api/post/create`, {
                 token: localStorage.getItem("access_token"),
                 content: textarea.current.value,
+                replying_to,
+                is_reply: replying_to !== "",
             });
 
             console.log(res.data);

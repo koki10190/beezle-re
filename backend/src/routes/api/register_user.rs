@@ -42,6 +42,11 @@ pub async fn route(
         return HttpResponse::Ok().json(doc! { "error": "No username provided!" });
     }
 
+    if body.username.len() > 12 {
+        return HttpResponse::Ok()
+            .json(doc! { "error": "Username must be shorter than 12 characters!" });
+    }
+
     let mut doc = mongoose::get_document(
         &client,
         "beezle",
