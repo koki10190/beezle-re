@@ -17,11 +17,13 @@ struct AuthQuery {
 
 #[get("/api/verify")]
 pub async fn route(
-    client: web::Data<mongodb::Client>,
     params: web::Query<AuthQuery>,
+    app: web::Data<std::sync::Mutex<crate::data_struct::AppData>>,
 ) -> impl Responder {
+    let mut app_data = app.lock().unwrap();
+
     let auth_doc = mongoose::get_document(
-        &client,
+        &app_data.client,
         "beezle",
         "Auths",
         doc! { "auth_id": &params.auth_id },
@@ -43,7 +45,7 @@ pub async fn route(
             email = beezle::rem_first_and_last(&email).to_string();
 
             let user_doc = mongoose::get_document(
-                &client,
+                &app_data.client,
                 "beezle",
                 "Auths",
                 doc! {
@@ -55,7 +57,7 @@ pub async fn route(
 
             if user_doc.is_some() {
                 mongoose::update_document(
-                    &client,
+                    &app_data.client,
                     "beezle",
                     "Users",
                     doc! {"handle": &handle, "email": &email},
@@ -76,7 +78,7 @@ pub async fn route(
             }
 
             mongoose::delete_document(
-                &client,
+                &app_data.client,
                 "beezle",
                 "Auths",
                 doc! { "auth_id": &params.auth_id },

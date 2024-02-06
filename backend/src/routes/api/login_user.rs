@@ -16,12 +16,13 @@ struct LoginInfo {
 
 #[post("/api/login_user")]
 pub async fn route(
-    client: web::Data<mongodb::Client>,
     req: HttpRequest,
     body: web::Json<LoginInfo>,
+    app: web::Data<std::sync::Mutex<crate::data_struct::AppData>>,
 ) -> impl Responder {
+    let mut app_data = app.lock().unwrap();
     let mut doc = mongoose::get_document(
-        &client,
+        &app_data.client,
         "beezle",
         "Users",
         doc! {"$or": [

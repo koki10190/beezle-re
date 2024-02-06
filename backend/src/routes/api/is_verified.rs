@@ -14,9 +14,10 @@ struct TokenInfo {
 
 #[post("/api/is_verified")]
 pub async fn route(
-    client: web::Data<mongodb::Client>,
     body: web::Json<TokenInfo>,
+    app: web::Data<std::sync::Mutex<crate::data_struct::AppData>>,
 ) -> impl Responder {
+    let mut app_data = app.lock().unwrap();
     let token = decode::<mongoose::structures::user::JwtUser>(
         &body.token,
         &DecodingKey::from_secret(env::var("TOKEN_SECRET").unwrap().as_ref()),
@@ -27,7 +28,7 @@ pub async fn route(
         Ok(_) => {
             let data = token.unwrap();
             let user = mongoose::get_document(
-                &client,
+                &app_data.client,
                 "beezle",
                 "Users",
                 doc! {

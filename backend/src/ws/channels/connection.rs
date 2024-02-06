@@ -1,24 +1,34 @@
 use actix_ws::Session;
+use bson::doc;
 use serde::Deserialize;
+use std::collections::HashMap;
 
 use crate::{
     beezle,
-    ws::{lib::send::send_back, structures::ws_data::WsData},
+    data_struct::AppData,
+    ws::{
+        lib::send::send_back,
+        structures::{user_data::WsUserData, ws_data::WsData},
+    },
 };
 
-#[derive(Deserialize)]
-struct ConnectionData {
-    some_data: String,
-}
-
-pub async fn socket(data: WsData, session: &mut Session) {
+pub async fn socket(data: WsData, session: &mut Session) -> String {
     if data.channel != "connection" {
-        return;
+        return "".to_string();
     }
 
-    let m_data: ConnectionData = serde_json::from_str(&data.json_data).unwrap();
+    let m_data: WsUserData = serde_json::from_str(&data.json_data).unwrap();
 
-    beezle::print(&m_data.some_data);
+    beezle::print(&m_data.handle);
 
-    send_back(session, data).await;
+    send_back(
+        session,
+        WsData {
+            channel: "connected".to_string(),
+            json_data: serde_json::to_string(&doc! {"message": "Connected"}).unwrap(),
+        },
+    )
+    .await;
+
+    m_data.handle
 }

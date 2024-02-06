@@ -18,11 +18,17 @@ struct GetUserPublicQuery {
 
 #[get("/api/get_user")]
 pub async fn route(
-    client: web::Data<mongodb::Client>,
     body: web::Query<GetUserPublicQuery>,
+    app: web::Data<std::sync::Mutex<crate::data_struct::AppData>>,
 ) -> impl Responder {
-    let auth_doc =
-        mongoose::get_document(&client, "beezle", "Users", doc! { "handle": &body.handle }).await;
+    let mut app_data = app.lock().unwrap();
+    let auth_doc = mongoose::get_document(
+        &app_data.client,
+        "beezle",
+        "Users",
+        doc! { "handle": &body.handle },
+    )
+    .await;
 
     match auth_doc {
         None => HttpResponse::Ok().json(doc! {"error": "Not Found!"}),
@@ -30,7 +36,7 @@ pub async fn route(
             HttpResponse::Ok().json(doc! {
             "handle": beezle::rem_first_and_last(&_document.clone().unwrap().get("handle").unwrap().to_string()),
             "username": beezle::rem_first_and_last(&_document.clone().unwrap().get("username").unwrap().to_string()),
-            "verified": beezle::rem_first_and_last(&_document.clone().unwrap().get("verified").unwrap().to_string()),
+            "verified": _document.clone().unwrap().get("verified").unwrap().as_bool().unwrap(),
             "avatar": beezle::rem_first_and_last(&_document.clone().unwrap().get("avatar").unwrap().to_string()),
             "banner": beezle::rem_first_and_last(&_document.clone().unwrap().get("banner").unwrap().to_string()),
             "about_me": beezle::rem_first_and_last(&_document.clone().unwrap().get("about_me").unwrap().to_string()),

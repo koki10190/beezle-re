@@ -12,11 +12,15 @@ use crate::{
 };
 
 #[get("/api/post/get/explore")]
-pub async fn route(client: web::Data<mongodb::Client>) -> impl Responder {
+pub async fn route(
+    app: web::Data<std::sync::Mutex<crate::data_struct::AppData>>,
+) -> impl Responder {
+    let mut app_data = app.lock().unwrap();
     //TODO: do this
 
     let many =
-        mongoose::get_many::get_many_random_document(&client, "beezle", "Posts", doc! {}).await;
+        mongoose::get_many::get_many_random_document(&app_data.client, "beezle", "Posts", doc! {})
+            .await;
 
     HttpResponse::Ok().json(many)
 }

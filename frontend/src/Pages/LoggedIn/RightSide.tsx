@@ -6,6 +6,8 @@ import React from "react";
 import { checkToken } from "../../functions/checkToken";
 import { UserPrivate } from "../../types/User";
 import { fetchUserPrivate } from "../../functions/fetchUserPrivate";
+import { socket } from "../../ws/socket";
+import { NotificationData } from "../../types/Notification";
 
 function SettingsButton({
     redirect,
@@ -26,11 +28,10 @@ function SettingsButton({
 }
 
 function RightSide() {
-    checkToken();
-
     const [self_user, setSelfUser] = useState<UserPrivate | null>(null);
     const [isExpanded, setExpanded] = useState(false);
     const [window_width, setWindowWidth] = useState(window.innerWidth);
+    const [notifCount, setNotifCount] = useState(0);
 
     const ExpandRightSide = () => {
         const middle = document.querySelector(".side-middle") as HTMLDivElement;
@@ -57,22 +58,34 @@ function RightSide() {
         };
 
         window.addEventListener("resize", onResize);
+    }, [self_user]);
 
+    useEffect(() => {
         (async () => {
             if (localStorage.getItem("access_token")) {
                 setSelfUser(await fetchUserPrivate());
             }
         })();
-    }, [self_user]);
+
+        socket.listen("get-notif", (_: object) => {
+            const data = _ as NotificationData;
+            console.log("get-notif", data);
+            setNotifCount(notifCount + 1);
+
+            if (!localStorage.getItem("notifs")) localStorage.setItem("notifs", "[]");
+
+            localStorage.setItem("notifs", JSON.stringify([data, ...JSON.parse(localStorage.getItem("notifs")!)]));
+        });
+    }, []);
 
     return (
         <>
             <div className="page-sides side-right">
                 <SettingsButton redirect="/home" iconClass="fa-solid fa-house" text="Home" style={undefined} />
                 <SettingsButton
-                    redirect="/notifs"
+                    redirect="/notifications"
                     iconClass="fa-solid fa-bell"
-                    text="Notifications"
+                    text={`Notifs (${notifCount})`}
                     style={undefined}
                 />
                 <SettingsButton redirect="/explore" iconClass="fa-solid fa-globe" text="Explore" style={undefined} />

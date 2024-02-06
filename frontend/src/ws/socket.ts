@@ -38,4 +38,5 @@ class BeezleSocket {
     }
 }
 
-export default BeezleSocket;
+const socket = new BeezleSocket();
+export { BeezleSocket, socket };

@@ -2,6 +2,13 @@ use bson::{serde_helpers::chrono_datetime_as_bson_datetime, Array};
 use mongodb::bson::oid::ObjectId;
 use serde::{Deserialize, Serialize};
 
+pub enum UserStatus {
+    ONLINE,
+    IDLE,
+    DND,
+    INVISIBLE,
+}
+
 #[derive(Serialize, Deserialize, Debug)]
 pub struct User {
     #[serde(rename = "_id", skip_serializing_if = "Option::is_none")]

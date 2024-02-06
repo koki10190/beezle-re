@@ -9,8 +9,6 @@ import { Post } from "../../types/Post";
 import FetchPost from "../../functions/FetchPost";
 
 function MiddleSide() {
-    checkToken();
-
     const [posts, setPosts] = useState<Array<Post>>([]);
     const [self_user, setSelfUser] = useState<UserPrivate>();
 

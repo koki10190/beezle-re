@@ -12,10 +12,13 @@ use crate::{
 };
 
 #[get("/api/get_user_many")]
-pub async fn route(client: web::Data<mongodb::Client>) -> impl Responder {
+pub async fn route(
+    app: web::Data<std::sync::Mutex<crate::data_struct::AppData>>,
+) -> impl Responder {
+    let mut app_data = app.lock().unwrap();
     //TODO: do this
 
-    let mut many = mongoose::get_many_document(&client, "beezle", "Users", doc! {}).await;
+    let mut many = mongoose::get_many_document(&app_data.client, "beezle", "Users", doc! {}).await;
 
     HttpResponse::Ok().json(many)
 }

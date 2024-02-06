@@ -17,9 +17,10 @@ struct TokenInfo {
 
 #[post("/api/post/create")]
 pub async fn route(
-    client: web::Data<mongodb::Client>,
     body: web::Json<TokenInfo>,
+    app: web::Data<std::sync::Mutex<crate::data_struct::AppData>>,
 ) -> impl Responder {
+    let mut app_data = app.lock().unwrap();
     let token = decode::<mongoose::structures::user::JwtUser>(
         &body.token,
         &DecodingKey::from_secret(env::var("TOKEN_SECRET").unwrap().as_ref()),
@@ -47,7 +48,7 @@ pub async fn route(
             let serialized_post_doc = mongodb::bson::to_bson(&struct_post_doc).unwrap();
             let document = serialized_post_doc.as_document().unwrap();
 
-            mongoose::insert_document(&client, "beezle", "Posts", document.clone()).await;
+            mongoose::insert_document(&app_data.client, "beezle", "Posts", document.clone()).await;
 
             HttpResponse::Ok().json(document)
         }

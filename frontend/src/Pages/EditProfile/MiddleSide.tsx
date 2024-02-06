@@ -144,7 +144,6 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
 }
 
 function MiddleSide() {
-    checkToken();
     const [self_user, setSelfUser] = useState<UserPrivate | null>(null);
 
     useEffect(() => {

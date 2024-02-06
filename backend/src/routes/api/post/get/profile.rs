@@ -18,13 +18,14 @@ struct ProfileQuery {
 
 #[get("/api/post/get/profile")]
 pub async fn route(
-    client: web::Data<mongodb::Client>,
     body: web::Query<ProfileQuery>,
+    app: web::Data<std::sync::Mutex<crate::data_struct::AppData>>,
 ) -> impl Responder {
+    let mut app_data = app.lock().unwrap();
     //TODO: do this
 
     let mut many = mongoose::get_many::get_many_document(
-        &client,
+        &app_data.client,
         "beezle",
         "Posts",
         doc! {

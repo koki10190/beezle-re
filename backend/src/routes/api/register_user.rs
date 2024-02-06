@@ -18,10 +18,11 @@ struct RegistrationInfo {
 
 #[post("/api/register_user")]
 pub async fn route(
-    client: web::Data<mongodb::Client>,
     req: HttpRequest,
     body: web::Json<RegistrationInfo>,
+    app: web::Data<std::sync::Mutex<crate::data_struct::AppData>>,
 ) -> impl Responder {
+    let mut app_data = app.lock().unwrap();
     if body.email == "" {
         return HttpResponse::Ok().json(doc! { "error": "No email provided!" });
     }
@@ -48,7 +49,7 @@ pub async fn route(
     }
 
     let mut doc = mongoose::get_document(
-        &client,
+        &app_data.client,
         "beezle",
         "Users",
         doc! {"$or": [
@@ -86,10 +87,10 @@ pub async fn route(
             let serialized_user_doc = mongodb::bson::to_bson(&struct_user_doc).unwrap();
             let document = serialized_user_doc.as_document().unwrap();
 
-            mongoose::insert_document(&client, "beezle", "Users", document.clone()).await;
+            mongoose::insert_document(&app_data.client, "beezle", "Users", document.clone()).await;
 
             doc = mongoose::get_document(
-                &client,
+                &app_data.client,
                 "beezle",
                 "Users",
                 doc! {"email": struct_user_doc.email, "handle": struct_user_doc.handle},
@@ -106,7 +107,8 @@ pub async fn route(
             let serialized_auth_doc = mongodb::bson::to_bson(&struct_auth_doc).unwrap();
             let auth_document = serialized_auth_doc.as_document().unwrap();
 
-            mongoose::insert_document(&client, "beezle", "Auths", auth_document.clone()).await;
+            mongoose::insert_document(&app_data.client, "beezle", "Auths", auth_document.clone())
+                .await;
 
             if let Some(val) = req.peer_addr() {
                 beezle::mail::send(

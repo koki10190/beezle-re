@@ -7,31 +7,43 @@ import EditProfile_Home from "./Pages/EditProfile/Home";
 import Logout_Home from "./Pages/Logout/Home";
 import Post_Home from "./Pages/Post/Home";
 import Now_Home from "./Pages/Now/Home";
+import Notifications_Home from "./Pages/Notifications/Home";
 import { api_uri } from "./links";
-import { useEffect } from "react";
-import BeezleSocket from "./ws/socket";
+import { useEffect, useState } from "react";
+import { socket } from "./ws/socket";
+import { fetchUserPrivate } from "./functions/fetchUserPrivate";
 
-interface ConnectionData {
-    hello: "hi socket!";
+enum UserStatus {
+    ONLINE,
+    IDLE,
+    DND,
+    INVISIBLE,
 }
 
+interface WsUserData {
+    handle: "hi socket!";
+    status: UserStatus;
+}
 function App() {
-    useEffect(() => {
-        const proto = location.protocol.startsWith("https") ? "wss" : "ws";
-        const wsUri = `${proto}://localhost:3000/ws`;
-
-        const socket = new BeezleSocket();
-        socket.webSocket.onopen = () => {
-            socket.send("connection", {
-                some_data: "bleehhh",
-            });
-        };
-
-        socket.listen("pingpong", (data: object) => {
-            const c = data as ConnectionData;
-
-            console.log(c.hello);
+    socket.webSocket.onopen = async () => {
+        console.log("opened socket");
+        const user = await fetchUserPrivate();
+        socket.send("connection", {
+            handle: user?.handle,
+            status: UserStatus.ONLINE,
         });
+    };
+
+    socket.listen("connected", (data: object) => {
+        console.log(data);
+    });
+
+    socket.listen("test_session", (data: object) => {
+        console.log("test_session", data);
+    });
+
+    useEffect(() => {
+        // Socket setup
     }, []);
 
     return (
@@ -46,6 +58,7 @@ function App() {
                 <Route path="/logout" element={<Logout_Home />} />
                 <Route path="/bookmarks" element={<Bookmarks_Home />} />
                 <Route path="/post/:post_id" element={<Post_Home />} />
+                <Route path="/notifications" element={<Notifications_Home />} />
             </Routes>
         </BrowserRouter>
     );

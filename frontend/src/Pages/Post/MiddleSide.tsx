@@ -19,8 +19,6 @@ import millify from "millify";
 import PostTyper from "../../Components/PostTyper";
 
 function MiddleSide() {
-    checkToken();
-
     const { post_id } = useParams();
     const [post, setPost] = useState<Post>();
     const [replies, setReplies] = useState<Array<Post>>([]);

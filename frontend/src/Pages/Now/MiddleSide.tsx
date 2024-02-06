@@ -13,7 +13,6 @@ import { Post } from "../../types/Post";
 import { RefreshPosts } from "../../functions/RefreshPosts";
 
 function MiddleSide() {
-    checkToken();
     const data: {
         username: string;
         handle: string;

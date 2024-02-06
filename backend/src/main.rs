@@ -8,12 +8,16 @@ use mail_send::{Credentials, SmtpClientBuilder};
 use mongodb::options::Credential;
 use serde::Deserialize;
 use serde_json::ser;
+use socketioxide::extract::Data;
+use std::collections::HashMap;
 use std::env;
+use std::sync::Mutex;
 
 use mongodb::bson::doc;
 use mongodb::{options::ClientOptions, Client};
 
 mod beezle;
+mod data_struct;
 mod mongoose;
 mod routes;
 mod ws;
@@ -48,9 +52,15 @@ async fn main() -> std::io::Result<()> {
 
     let port = env::var("PORT").unwrap().parse::<u16>().unwrap();
 
+    let app_data = data_struct::AppData {
+        client: client.clone(),
+        connections: HashMap::new(),
+    };
+    let mutex_app_data = web::Data::new(Mutex::new(app_data));
+
     let http_server = HttpServer::new(move || {
         App::new()
-            .app_data(web::Data::new(client.clone()))
+            .app_data(web::Data::clone(&mutex_app_data))
             .wrap(Cors::permissive())
             .service(routes::main_route::route)
             .service(routes::api::register_user::route)

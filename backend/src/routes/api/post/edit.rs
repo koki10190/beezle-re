@@ -20,9 +20,10 @@ struct PostEditData {
 
 #[post("/api/post/edit")]
 pub async fn route(
-    client: web::Data<mongodb::Client>,
     body: web::Json<PostEditData>,
+    app: web::Data<std::sync::Mutex<crate::data_struct::AppData>>,
 ) -> impl Responder {
+    let mut app_data = app.lock().unwrap();
     let token = decode::<mongoose::structures::user::JwtUser>(
         &body.token,
         &DecodingKey::from_secret(env::var("TOKEN_SECRET").unwrap().as_ref()),
@@ -38,7 +39,7 @@ pub async fn route(
             let data = token.unwrap();
 
             mongoose::update_document(
-                &client,
+                &app_data.client,
                 "beezle",
                 "Posts",
                 doc! {
@@ -56,8 +57,13 @@ pub async fn route(
             .await;
 
             return HttpResponse::Ok().json(
-                mongoose::get_document(&client, "beezle", "Posts", doc! {"post_id": &body.post_id})
-                    .await,
+                mongoose::get_document(
+                    &app_data.client,
+                    "beezle",
+                    "Posts",
+                    doc! {"post_id": &body.post_id},
+                )
+                .await,
             );
         }
         Err(_) => HttpResponse::Ok().json(doc! {"error": "Couldn't decode token"}),

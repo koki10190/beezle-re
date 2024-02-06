@@ -10,6 +10,7 @@ import { api_uri } from "../links";
 import FlipNumbers from "react-flip-numbers";
 import millify from "millify";
 import { BadgesToJSX } from "../functions/badgesToJSX";
+import { socket } from "../ws/socket";
 
 interface PostBoxData {
     post: Post;
@@ -78,6 +79,13 @@ function PostBox({
             setLikeCount(LikeCount - 1);
             return;
         }
+
+        console.log("CHANNEL: notification");
+        socket.send("notification", {
+            handle: self_user.handle,
+            post,
+            message: "liked your post!",
+        });
 
         await axios.post(`${api_uri}/api/post/like`, {
             token: localStorage.getItem("access_token"),

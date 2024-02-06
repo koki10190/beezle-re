@@ -18,13 +18,14 @@ struct GetRepliesQuery {
 
 #[get("/api/post/get/reply_count")]
 pub async fn route(
-    client: web::Data<mongodb::Client>,
     body: web::Query<GetRepliesQuery>,
+    app: web::Data<std::sync::Mutex<crate::data_struct::AppData>>,
 ) -> impl Responder {
+    let mut app_data = app.lock().unwrap();
     //TODO: do this
 
     let count = mongoose::get_count(
-        &client,
+        &app_data.client,
         "beezle",
         "Posts",
         doc! {

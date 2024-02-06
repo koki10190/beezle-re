@@ -20,9 +20,10 @@ struct FollowData {
 
 #[post("/api/user/follow")]
 pub async fn route(
-    client: web::Data<mongodb::Client>,
     body: web::Json<FollowData>,
+    app: web::Data<std::sync::Mutex<crate::data_struct::AppData>>,
 ) -> impl Responder {
+    let mut app_data = app.lock().unwrap();
     let token_data = decode::<mongoose::structures::user::JwtUser>(
         &body.token,
         &DecodingKey::from_secret(env::var("TOKEN_SECRET").unwrap().as_ref()),
@@ -31,8 +32,13 @@ pub async fn route(
     .unwrap()
     .claims;
 
-    let to_follow =
-        mongoose::get_document(&client, "beezle", "Users", doc! { "handle": &body.handle }).await;
+    let to_follow = mongoose::get_document(
+        &app_data.client,
+        "beezle",
+        "Users",
+        doc! { "handle": &body.handle },
+    )
+    .await;
 
     match to_follow {
         None => HttpResponse::Ok().json(doc! {"error": "Not Found!"}),
@@ -43,7 +49,7 @@ pub async fn route(
             if body.follow {
                 // MODIFY THE REQUESTER
                 mongoose::update_document(
-                    &client,
+                    &app_data.client,
                     "beezle",
                     "Users",
                     doc! {
@@ -59,7 +65,7 @@ pub async fn route(
 
                 // MODIFY THE GUY WE'RE GONNA FOLLOW
                 mongoose::update_document(
-                    &client,
+                    &app_data.client,
                     "beezle",
                     "Users",
                     doc! {
@@ -75,7 +81,7 @@ pub async fn route(
             } else {
                 // MODIFY THE REQUESTER
                 mongoose::update_document(
-                    &client,
+                    &app_data.client,
                     "beezle",
                     "Users",
                     doc! {
@@ -91,7 +97,7 @@ pub async fn route(
 
                 // MODIFY THE GUY WE'RE UNFOLLOWING
                 mongoose::update_document(
-                    &client,
+                    &app_data.client,
                     "beezle",
                     "Users",
                     doc! {

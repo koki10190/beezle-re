@@ -18,11 +18,12 @@ struct GetUserPublicQuery {
 
 #[get("/api/post/get/one")]
 pub async fn route(
-    client: web::Data<mongodb::Client>,
     body: web::Query<GetUserPublicQuery>,
+    app: web::Data<std::sync::Mutex<crate::data_struct::AppData>>,
 ) -> impl Responder {
+    let mut app_data = app.lock().unwrap();
     let auth_doc = mongoose::get_document(
-        &client,
+        &app_data.client,
         "beezle",
         "Posts",
         doc! { "post_id": &body.post_id },

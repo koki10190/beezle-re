@@ -120,7 +120,6 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
 }
 
 function MiddleSide({ handle }: { handle: string }) {
-    checkToken();
     const [user, setUser] = useState<UserPublic | UserPrivate | null>(null);
     const [self_user, setSelfUser] = useState<UserPrivate | null>(null);
 
@@ -130,6 +129,7 @@ function MiddleSide({ handle }: { handle: string }) {
                 setSelfUser(await fetchUserPrivate());
             }
             setUser(await fetchUserPublic(handle));
+            console.log("use effect in middelside");
         })();
     }, []);
 
