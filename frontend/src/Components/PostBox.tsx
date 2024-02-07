@@ -378,7 +378,7 @@ function PostBox({
                         onMouseEnter={() => setLikeHovered(true)}
                         onMouseLeave={() => setLikeHovered(false)}
                         onClick={LikeInteraction}
-                        style={isLiked ? { color: "rgb(255, 73, 73)" } : {}}
+                        style={isLiked ? { color: "rgb(225, 54, 54)" } : {}}
                         className="post-inter-red"
                     >
                         <i className=" fa-solid fa-heart"></i>{" "}
