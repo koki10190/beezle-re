@@ -13,6 +13,7 @@ import RepToParagraph from "../../Components/RepToParagraph";
 import { Post } from "../../types/Post";
 import Divider from "../../Components/Divider";
 import PostBox from "../../Components/PostBox";
+import SetLevelColor from "../../functions/SetLevelColor";
 
 function Loading() {
     return (
@@ -28,6 +29,7 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
     const [isFollowing, setFollowing] = useState(user.followers.find(x => x === self?.handle) ? true : false);
     const [followingCount, setFollowingCount] = useState(user.following.length);
     const [followersCount, setFollowersCount] = useState(user.followers.length);
+    const levelBox = useRef<HTMLSpanElement>(null);
 
     const FollowInteraction = async () => {
         const res = await axios.post(`${api_uri}/api/user/follow`, {
@@ -41,6 +43,10 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
     };
 
     const [posts, setPosts] = useState<Array<Post>>([]);
+
+    useEffect(() => {
+        SetLevelColor(user, levelBox.current!);
+    }, [levelBox]);
 
     useEffect(() => {
         (async () => {
@@ -65,10 +71,39 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
             <p className="username">
                 {user.username} <BadgesToJSX badges={user.badges} className="profile-badge" />
             </p>
-            <p className="handle">@{user.handle}</p>
+            <p className="handle">@{user.handle} </p>
+            <p style={{ color: "white", marginTop: "-20px", fontSize: "20px" }} className="handle">
+                <span
+                    className="test-gradient"
+                    // style={{
+                    // 	background: "-webkit-linear-gradient(45deg, #fc0b03, #0398fc)",
+                    // 	WebkitBackgroundClip: "text",
+                    // 	WebkitTextFillColor: "transparent",
+                    // }}
+                >
+                    Level{" "}
+                    <span ref={levelBox} className="level-box">
+                        {user.levels
+                            ? user.levels.level
+                                ? user.levels.level.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                                : 0
+                            : (0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                    </span>
+                    <span style={{ color: "rgba(255,255,255,0.6)" }}>
+                        {" - XP "}{" "}
+                        {user.levels
+                            ? user.levels.xp
+                                ? user.levels.xp.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                                : 0
+                            : (0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                        /1,000
+                    </span>
+                </span>
+            </p>
             <div className="inline-stats">
                 <p>
-                    <i className="fa-solid fa-coins"></i> {user.coins.toLocaleString("en-US")}
+                    <i style={{ color: "rgb(255, 208, 108)" }} className="fa-solid fa-coins"></i>{" "}
+                    {user.coins.toLocaleString("en-US")}
                 </p>
                 <RepToParagraph reputation={user.reputation} />
             </div>
@@ -103,6 +138,14 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                     {new Date(parseInt(user.creation_date.$date.$numberLong)).getFullYear()}
                 </p>
             </div>
+            {user.activity.replace(/ /g, "") != "" ? (
+                <div className="profile-container">
+                    <p className="profile-container-header">Activity</p>
+                    <p className="about_me">{user.activity.replace(/(.{12})..+/, "$1…")}</p>
+                </div>
+            ) : (
+                ""
+            )}
             <div className="followers-and-following">
                 <h4>
                     Following <span>{followersCount}</span>

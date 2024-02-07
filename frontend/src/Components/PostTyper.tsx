@@ -26,11 +26,14 @@ function PostTyper({ onSend, replying_to = "" }: { onSend: (data: Post) => void;
     const [files, setFiles] = useState([] as Array<FileType>);
     const fileRef = useRef<HTMLInputElement>(null);
     const filesToUploadRef = useRef<HTMLDivElement>(null);
+    const sendButtonRef = useRef<HTMLButtonElement>(null);
 
     const CreatePost = () => {
         (async () => {
             if (!textarea.current || !canCreate) return;
             let links = "";
+            sendButtonRef.current!.disabled = true;
+            sendButtonRef.current!.innerText = "Posting...";
 
             for (const file of files) {
                 let vid = await UploadToImgurVideoByFile(file.file);
@@ -52,6 +55,9 @@ function PostTyper({ onSend, replying_to = "" }: { onSend: (data: Post) => void;
 
             setFiles([]);
             filesToUploadRef.current!.innerHTML = "";
+
+            sendButtonRef.current!.disabled = false;
+            sendButtonRef.current!.innerText = "Send";
 
             setTimeout(() => {
                 setCanCreate(true);
@@ -134,7 +140,7 @@ function PostTyper({ onSend, replying_to = "" }: { onSend: (data: Post) => void;
             ) : (
                 ""
             )}
-            <button onClick={CreatePost} className="button-field post-typer-button">
+            <button ref={sendButtonRef} onClick={CreatePost} className="button-field post-typer-button">
                 Send
             </button>
         </div>

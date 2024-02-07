@@ -63,6 +63,8 @@ pub async fn route(
                     },
                 )
                 .await;
+
+                mongoose::add_coins(&client, data.claims.handle.as_str(), -5).await;
             } else {
                 mongoose::update_document(
                     &client,
@@ -90,7 +92,7 @@ pub async fn route(
 
                 let struct_post_doc = mongoose::structures::post::Repost {
                     id: None,
-                    handle: data.claims.handle,
+                    handle: data.claims.handle.to_string(),
                     content: beezle::rem_first_and_last(
                         &original_post_doc.get("content").unwrap().to_string(),
                     )
@@ -126,6 +128,8 @@ pub async fn route(
                 let document = serialized_post_doc.as_document().unwrap();
 
                 mongoose::insert_document(&client, "beezle", "Posts", document.clone()).await;
+                mongoose::add_coins(&client, data.claims.handle.as_str(), 5).await;
+                mongoose::add_xp(&client, &data.claims.handle, 9).await;
             }
 
             return HttpResponse::Ok().json(

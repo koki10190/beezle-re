@@ -27,6 +27,11 @@ interface UserPrivate {
     reputation: number;
     coins: number;
     notifications: Array<NotificationData>;
+    levels: {
+        level: number;
+        xp: number;
+    };
+    activity: string;
 }
 
 interface UserPublic {
@@ -47,6 +52,11 @@ interface UserPublic {
     reputation: number;
     coins: number;
     notifications: Array<NotificationData>;
+    levels: {
+        level: number;
+        xp: number;
+    };
+    activity: string;
 }
 
 export { BadgeType };

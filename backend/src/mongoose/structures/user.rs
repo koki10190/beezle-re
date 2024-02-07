@@ -10,6 +10,12 @@ pub enum UserStatus {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
+pub struct UserLevels {
+    pub level: i64,
+    pub xp: i64,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
 pub struct User {
     #[serde(rename = "_id", skip_serializing_if = "Option::is_none")]
     pub id: Option<ObjectId>,
@@ -30,6 +36,8 @@ pub struct User {
     pub reputation: i64,
     pub coins: i64,
     pub notifs: Array,
+    pub levels: UserLevels,
+    pub activity: String,
 }
 
 #[derive(Serialize, Deserialize, Debug)]

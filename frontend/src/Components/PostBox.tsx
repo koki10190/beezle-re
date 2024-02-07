@@ -14,6 +14,7 @@ import { socket } from "../ws/socket";
 import ReactDOMServer from "react-dom/server";
 import ImageEmbed from "./ImageEmbed";
 import VideoEmbed from "./VideoEmbed";
+import sanitize from "sanitize-html";
 
 interface PostBoxData {
     post: Post;
@@ -297,25 +298,31 @@ function PostBox({
                 </p>
                 <p className="handle-post">
                     @{user ? user.handle : ""}{" "}
-                    <span style={{ color: "white" }}>
-                        -{" "}
-                        {user
-                            ? moment(new Date(parseInt(post.creation_date.$date.$numberLong)))
-                                  .fromNow(true)
-                                  .replace("minutes", "m")
-                                  .replace(" ", "")
-                                  .replace("hours", "h")
-                                  .replace("afew seconds", "1s")
-                                  .replace("aminute", "1m")
-                                  .replace("ahour", "1h")
-                                  .replace("anhour", "1h")
-                                  .replace("aday", "1d")
-                                  .replace("days", "d")
-                                  .replace("day", "1d")
-                                  .replace("months", " months")
-                                  .replace("amonth", "1 month")
-                            : "0"}
-                    </span>
+                    {user?.activity.replace(/ /g, "") !== "" && user ? (
+                        <span style={{ color: "white" }}>
+                            - {sanitize(user.activity.replace(/(.{35})..+/, "$1…"), { allowedTags: [] })}
+                        </span>
+                    ) : (
+                        ""
+                    )}
+                </p>
+                <p className="post-date">
+                    {user
+                        ? moment(new Date(parseInt(post.creation_date.$date.$numberLong)))
+                              .fromNow(true)
+                              .replace("minutes", "m")
+                              .replace(" ", "")
+                              .replace("hours", "h")
+                              .replace("afew seconds", "1s")
+                              .replace("aminute", "1m")
+                              .replace("ahour", "1h")
+                              .replace("anhour", "1h")
+                              .replace("aday", "1d")
+                              .replace("days", "d")
+                              .replace("day", "1d")
+                              .replace("months", " months")
+                              .replace("amonth", "1 month")
+                        : "0"}
                 </p>
             </div>
             {isEditing ? (

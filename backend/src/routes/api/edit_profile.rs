@@ -19,6 +19,7 @@ struct GetUserQuery {
     avatar: String,
     banner: String,
     about_me: String,
+    activity: String,
 }
 
 #[post("/api/profile/edit")]
@@ -80,6 +81,7 @@ pub async fn route(
                         "about_me": &body.about_me,
                         "avatar": &s_Avatar,
                         "banner": &s_Banner,
+                        "activity": &body.activity
                     }
                 },
             )

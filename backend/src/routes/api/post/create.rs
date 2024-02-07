@@ -5,7 +5,11 @@ use std::env;
 
 use actix_web::{get, post, web, App, HttpRequest, HttpResponse, HttpServer, Responder};
 
-use crate::{beezle, mongoose, poison::LockResultExt};
+use crate::{
+    beezle,
+    mongoose::{self, add_coins, add_xp},
+    poison::LockResultExt,
+};
 
 #[derive(Deserialize)]
 struct TokenInfo {
@@ -32,7 +36,7 @@ pub async fn route(
 
             let struct_post_doc = mongoose::structures::post::Post {
                 id: None,
-                handle: data.claims.handle,
+                handle: data.claims.handle.to_string(),
                 content: body.content.to_string(),
                 creation_date: chrono::Utc::now(),
                 repost: false,
@@ -48,6 +52,8 @@ pub async fn route(
             let document = serialized_post_doc.as_document().unwrap();
 
             mongoose::insert_document(&client, "beezle", "Posts", document.clone()).await;
+            add_xp(&client, data.claims.handle.as_str(), 13).await;
+            add_coins(&client, data.claims.handle.as_str(), 15).await;
 
             HttpResponse::Ok().json(document)
         }

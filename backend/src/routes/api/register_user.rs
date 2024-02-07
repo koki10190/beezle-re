@@ -6,7 +6,11 @@ use std::env;
 
 use actix_web::{get, post, web, App, HttpRequest, HttpResponse, HttpServer, Responder};
 
-use crate::{beezle, mongoose, poison::LockResultExt};
+use crate::{
+    beezle,
+    mongoose::{self, structures::user::UserLevels},
+    poison::LockResultExt,
+};
 
 #[derive(Deserialize)]
 struct RegistrationInfo {
@@ -25,8 +29,10 @@ pub async fn route(
     if body.email == "" {
         return HttpResponse::Ok().json(doc! { "error": "No email provided!" });
     }
+    let mut act_handle: String = body.handle.chars().filter(|c| !c.is_whitespace()).collect();
+    act_handle = act_handle.to_lowercase();
 
-    if body.handle == "" {
+    if act_handle == "" {
         return HttpResponse::Ok().json(doc! { "error": "No handle provided!" });
     }
 
@@ -56,7 +62,7 @@ pub async fn route(
                 "email": body.email.clone()
             },
             {
-                "handle": body.handle.clone()
+                "handle": act_handle.clone()
             }
         ]},
     )
@@ -66,7 +72,7 @@ pub async fn route(
         None => {
             let struct_user_doc = mongoose::structures::User {
                 id: None,
-                handle: body.handle.to_string(),
+                handle: act_handle.clone(),
                 username: body.username.to_string(),
                 email: body.email.to_string(),
                 hash_password: beezle::crypt::hash_password(&body.password).to_string(),
@@ -82,6 +88,8 @@ pub async fn route(
                 reputation: 100,
                 coins: 0,
                 notifs: vec![],
+                levels: UserLevels { level: 0, xp: 0 },
+                activity: "".to_string(),
             };
 
             let serialized_user_doc = mongodb::bson::to_bson(&struct_user_doc).unwrap();
@@ -93,13 +101,13 @@ pub async fn route(
                 &client,
                 "beezle",
                 "Users",
-                doc! {"email": struct_user_doc.email, "handle": struct_user_doc.handle},
+                doc! {"email": struct_user_doc.email, "handle": struct_user_doc.handle.to_lowercase()},
             )
             .await;
             let authID = uuid::Uuid::new();
             let struct_auth_doc = mongoose::structures::auth::Auth {
                 id: None,
-                handle: body.handle.to_string(),
+                handle: act_handle.to_lowercase(),
                 email: body.email.to_string(),
                 auth_id: authID.to_string(),
             };
@@ -115,8 +123,8 @@ pub async fn route(
                     "Verify your account",
                     format!(
                         "Hello {}!\nClick the URL to verify your account \"@{}\": {}\n\nDO NOT Click on the link if the account wasn't made by you!\nIP Address of the requester: {}",
-                        body.handle.as_str(),
-                        body.handle.as_str(),
+                        act_handle.to_lowercase().as_str(),
+                        act_handle.to_lowercase().as_str(),
                         format!("http://localhost:3000/api/verify?auth_id={}", authID).as_str(),
                         val.to_string().as_str()
                     )

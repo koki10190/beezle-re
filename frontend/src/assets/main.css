@@ -190,6 +190,10 @@ form > a {
     transition: ease-in-out 150ms;
 }
 
+.button-field:disabled {
+    background-color: rgb(255, 144, 70);
+}
+
 .button-field:hover {
     background-color: rgb(212, 121, 59);
 }

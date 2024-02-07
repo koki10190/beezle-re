@@ -24,12 +24,14 @@ function Loading() {
 function Loaded({ user }: { user: UserPublic | UserPrivate }) {
     const [username, setUsername] = useState<string>(user.username);
     const [about_me, setAboutMe] = useState<string>(user.about_me);
+    const [activity, setActivity] = useState<string>(user.activity);
     const bannerOverlay = useRef<HTMLDivElement>(null);
     const avatarOverlay = useRef<HTMLDivElement>(null);
     const avatarInput = useRef<HTMLInputElement>(null);
     const bannerInput = useRef<HTMLInputElement>(null);
     const avatarDiv = useRef<HTMLDivElement>(null);
     const bannerDiv = useRef<HTMLDivElement>(null);
+    const buttonRef = useRef<HTMLButtonElement>(null);
 
     const ActivateOverlay = (ref: HTMLDivElement) => {
         ref.style.display = "flex";
@@ -46,6 +48,8 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
         let banner: string | null = null;
 
         (async () => {
+            buttonRef.current!.disabled = true;
+            buttonRef.current!.innerText = "Saving Changes...";
             if (avatarInput.current!.files && avatarInput.current!.files.length > 0)
                 avatar = ((await UploadToImgur(avatarInput.current!)) as any).data.link;
             if (bannerInput.current!.files && bannerInput.current!.files.length > 0)
@@ -57,6 +61,7 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
                 avatar: avatar ? avatar : user.avatar,
                 banner: banner ? banner : user.banner,
                 about_me,
+                activity,
             };
             const m_data = (await axios.post(`${api_uri}/api/profile/edit`, data)).data;
             if (m_data.changed) {
@@ -64,6 +69,9 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
             } else {
                 alert(m_data.error);
             }
+
+            buttonRef.current!.disabled = false;
+            buttonRef.current!.innerText = "Save Changes";
         })();
     };
 
@@ -136,7 +144,18 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
                     {user.about_me}
                 </textarea>
             </div>
-            <button type="submit" style={{ marginTop: "80px" }} className="button-field fixed-100">
+            <div className="profile-container">
+                <p className="profile-container-header">Activity</p>
+                <textarea
+                    maxLength={35}
+                    value={activity}
+                    onChange={e => setActivity(e.target.value)}
+                    className="about_me input-field"
+                >
+                    {user.activity}
+                </textarea>
+            </div>
+            <button ref={buttonRef} type="submit" style={{ marginTop: "80px" }} className="button-field fixed-100">
                 Save Changes
             </button>
         </form>

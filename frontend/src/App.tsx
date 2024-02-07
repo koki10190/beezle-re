@@ -8,6 +8,7 @@ import Logout_Home from "./Pages/Logout/Home";
 import Post_Home from "./Pages/Post/Home";
 import Now_Home from "./Pages/Now/Home";
 import Notifications_Home from "./Pages/Notifications/Home";
+import Settings_Home from "./Pages/Settings/Home";
 import { api_uri } from "./links";
 import { useEffect, useState } from "react";
 import { socket } from "./ws/socket";
@@ -67,6 +68,7 @@ function App() {
                 <Route path="/bookmarks" element={<Bookmarks_Home />} />
                 <Route path="/post/:post_id" element={<Post_Home />} />
                 <Route path="/notifications" element={<Notifications_Home />} />
+                <Route path="/settings" element={<Settings_Home />} />
             </Routes>
         </BrowserRouter>
     );

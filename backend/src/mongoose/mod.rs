@@ -19,3 +19,10 @@ pub mod structures;
 
 pub mod get_many;
 pub use get_many::get_many_document;
+
+pub mod xp;
+pub use xp::add_xp;
+
+pub mod coins;
+pub use coins::add_coins;
+pub use coins::get_coins;

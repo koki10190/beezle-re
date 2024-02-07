@@ -1,0 +1,15 @@
+.settings-areyousure {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+.settings-areyousure h1 {
+    color: red;
+    margin-bottom: -20px;
+}
