@@ -4,6 +4,7 @@ enum BadgeType {
     VERIFIED,
     DONATOR,
     MODERATOR,
+    OWNER,
 }
 
 interface UserPrivate {

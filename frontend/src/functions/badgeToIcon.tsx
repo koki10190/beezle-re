@@ -30,6 +30,15 @@ function BadgeToIcon({ badge, className = "" }: { badge: BadgeType; className: s
                 ></i>
             );
         }
+        case BadgeType.OWNER: {
+            return (
+                <i
+                    title="Owner"
+                    style={{ color: "rgb(74, 255, 128)" }}
+                    className={`${className} fa-solid fa-gear-complex-code`}
+                ></i>
+            );
+        }
     }
 }
 

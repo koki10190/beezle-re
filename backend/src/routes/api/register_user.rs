@@ -117,7 +117,7 @@ pub async fn route(
 
             mongoose::insert_document(&client, "beezle", "Auths", auth_document.clone()).await;
 
-            if let Some(val) = req.peer_addr() {
+            if let Some(val) = req.connection_info().realip_remote_addr() {
                 beezle::mail::send(
                     &body.email,
                     "Verify your account",
@@ -126,7 +126,7 @@ pub async fn route(
                         act_handle.to_lowercase().as_str(),
                         act_handle.to_lowercase().as_str(),
                         format!("http://localhost:3000/api/verify?auth_id={}", authID).as_str(),
-                        val.to_string().as_str()
+                        val
                     )
                     .as_str(),
                 )

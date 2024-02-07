@@ -10,3 +10,13 @@ pub struct Auth {
     pub email: String,
     pub auth_id: String,
 }
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct ChangePassAuth {
+    #[serde(rename = "_id", skip_serializing_if = "Option::is_none")]
+    pub id: Option<ObjectId>,
+    pub handle: String,
+    pub email: String,
+    pub auth_id: String,
+    pub hash_password: String,
+}

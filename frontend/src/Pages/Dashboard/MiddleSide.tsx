@@ -4,7 +4,7 @@ import { checkToken } from "../../functions/checkToken";
 import Divider from "../../Components/Divider";
 import PostBox from "../../Components/PostBox";
 import { fetchUserPrivate } from "../../functions/fetchUserPrivate";
-import { UserPrivate } from "../../types/User";
+import { BadgeType, UserPrivate } from "../../types/User";
 import { Post } from "../../types/Post";
 import FetchPost from "../../functions/FetchPost";
 import { socket } from "../../ws/socket";
@@ -12,11 +12,10 @@ import { NotificationData } from "../../types/Notification";
 import "./Settings.css";
 import axios from "axios";
 import { api_uri } from "../../links";
-import Details from "./Pages/Details";
-import API from "./Pages/API";
-import Report from "./Pages/Report";
+import Report from "./Pages/Reports";
+import BanUser from "./Pages/BanUser";
 
-function SettingsButton({
+function DashboardButton({
     redirect = "",
     iconClass,
     text,
@@ -45,9 +44,8 @@ function SettingsButton({
 }
 
 enum Pages {
-    DETAILS,
-    API,
-    REPORT,
+    REPORTS,
+    BAN_USER,
 }
 
 function RightSide({ setPage }: { setPage: any }) {
@@ -67,6 +65,7 @@ function RightSide({ setPage }: { setPage: any }) {
 
         setExpanded(!isExpanded);
     };
+
     useEffect(() => {
         const onResize = () => {
             if (window.innerWidth > 1100) {
@@ -84,62 +83,22 @@ function RightSide({ setPage }: { setPage: any }) {
         window.addEventListener("resize", onResize);
     }, [self_user]);
 
-    const DeleteAccount = async () => {
-        await axios.post(`${api_uri}/api/user/delete`, {
-            token: localStorage.getItem("access_token"),
-        });
-        alert("Account has been deleted.");
-        window.location.href = "/logout";
-    };
-
     return (
         <>
-            <div ref={sureRef} className="settings-areyousure">
-                <h1>ARE YOU SURE?</h1>
-                <h2>This will delete your entire account!</h2>
-                <div>
-                    <button
-                        onClick={DeleteAccount}
-                        style={{ marginRight: "20px", display: "inline-block" }}
-                        className="button-field-red button-field"
-                    >
-                        Delete My Account
-                    </button>
-                    <button
-                        onClick={() => (sureRef.current!.style.display = "none")}
-                        style={{ display: "inline-block" }}
-                        className="button-field"
-                    >
-                        Cancel
-                    </button>
-                </div>
-            </div>
             <div className="page-sides side-right">
-                <SettingsButton
-                    onClick={() => setPage(Pages.DETAILS)}
-                    iconClass="fa-solid fa-id-badge"
-                    text="Details"
-                    style={undefined}
-                />
-                <SettingsButton
-                    onClick={() => setPage(Pages.API)}
-                    iconClass="fa-solid fa-square-code"
-                    text="API"
-                    style={undefined}
-                />
-                <SettingsButton
-                    onClick={() => setPage(Pages.REPORT)}
+                <DashboardButton
+                    onClick={() => setPage(Pages.REPORTS)}
                     iconClass="fa-solid fa-flag"
-                    text="Report"
+                    text="Reports"
                     style={undefined}
                 />
-                <SettingsButton redirect="/home" iconClass="fa-solid fa-home" text="Go Back" style={undefined} />
-                <SettingsButton
-                    iconClass="fa-solid fa-trash"
-                    text="Delete Account"
-                    onClick={() => (sureRef.current!.style.display = "flex")}
-                    style={{ color: "red" }}
+                <DashboardButton
+                    onClick={() => setPage(Pages.BAN_USER)}
+                    iconClass="fa-solid fa-hammer-crash"
+                    text="Ban User"
+                    style={undefined}
                 />
+                <DashboardButton redirect="/home" iconClass="fa-solid fa-home" text="Go Back" style={undefined} />
             </div>
             {window_width < 1100 ? (
                 <a onClick={ExpandRightSide} className="open-panel-button">
@@ -154,12 +113,23 @@ function RightSide({ setPage }: { setPage: any }) {
 
 function MiddleSide() {
     const [self_user, setSelfUser] = useState<UserPrivate>();
-    const [page, setPage] = useState<Pages>(Pages.DETAILS);
+    const [page, setPage] = useState<Pages>(Pages.REPORTS);
 
     useEffect(() => {
         (async () => {
             const user = (await fetchUserPrivate()) as UserPrivate;
             setSelfUser(user);
+
+            let hasBadge = false;
+            user.badges.forEach(badge => {
+                if (badge == BadgeType.MODERATOR || badge == BadgeType.OWNER) {
+                    hasBadge = true;
+                }
+            });
+
+            if (!hasBadge) {
+                window.location.href = "/home";
+            }
         })();
     }, []);
     return (
@@ -167,12 +137,10 @@ function MiddleSide() {
             {self_user
                 ? (() => {
                       switch (page) {
-                          case Pages.DETAILS:
-                              return <Details user={self_user} />;
-                          case Pages.API:
-                              return <API user={self_user} />;
-                          case Pages.REPORT:
+                          case Pages.REPORTS:
                               return <Report user={self_user} />;
+                          case Pages.BAN_USER:
+                              return <BanUser user={self_user} />;
                       }
                   })()
                 : ""}

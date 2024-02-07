@@ -103,3 +103,14 @@ Content-Type: application/json
 {
   "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJoYW5kbGUiOiJrb2tpIiwidXNlcm5hbWUiOiJwb3d3IiwiZW1haWwiOiJsdWthb2R6ZWxhc2h2aWxpQGdtYWlsLmNvbSIsImhhc2hfcGFzc3dvcmQiOiIkMmIkMTIkMHhvNVZVNUpWZU9rRTZRTUM5RWlVT3ljYjRkNlIzTFBjbDRLUnAuVVAucWFTUlladFFtaXkiLCJleHAiOjI1MjQ2MDgwMDAsImJhZGdlcyI6WzEsMl19.er_sM-uGOSv1SbOdKxkYPr5th5AWbbGzsfLf3BNohn4"
 }
+
+###
+POST http://localhost:3000/api/report
+Content-Type: application/json
+
+{
+  "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJoYW5kbGUiOiJrb2tpIiwidXNlcm5hbWUiOiJwb3d3IiwiZW1haWwiOiJsdWthb2R6ZWxhc2h2aWxpQGdtYWlsLmNvbSIsImhhc2hfcGFzc3dvcmQiOiIkMmIkMTIkSHhnQ21QNDZYMC9VdHhjQXhkTVdTZVVZanZTdmdsWXl6UGpPMlZGazUwQ2djZ3NOVTFWcEMiLCJleHAiOjI1MjQ2MDgwMDAsImJhZGdlcyI6WzEsMl19.b74HdHVb4TdRbjT3zy9PR23vyo5Ots26GbNNvQ10GT4",
+  "reporting": "test",
+  "subject": "He did something bad",
+  "context": "bla bla bla he did this and that bla bla bla"
+}

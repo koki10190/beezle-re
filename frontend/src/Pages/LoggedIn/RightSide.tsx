@@ -4,7 +4,7 @@ import { BrowserRouter, Routes, Route, redirect } from "react-router-dom";
 import { api_uri } from "../../links";
 import React from "react";
 import { checkToken } from "../../functions/checkToken";
-import { UserPrivate } from "../../types/User";
+import { BadgeType, UserPrivate } from "../../types/User";
 import { fetchUserPrivate } from "../../functions/fetchUserPrivate";
 import { socket } from "../../ws/socket";
 import { NotificationData } from "../../types/Notification";
@@ -103,6 +103,20 @@ function RightSide() {
                     style={undefined}
                 />
                 <SettingsButton redirect="/settings" iconClass="fa-solid fa-cog" text="Settings" style={undefined} />
+                {self_user ? (
+                    self_user.badges.findIndex(x => x == BadgeType.OWNER || x == BadgeType.MODERATOR) > -1 ? (
+                        <SettingsButton
+                            redirect="/dashboard"
+                            iconClass="fa-solid fa-shield"
+                            text="Dashboard"
+                            style={undefined}
+                        />
+                    ) : (
+                        ""
+                    )
+                ) : (
+                    ""
+                )}
 
                 <a href={`/profile/${self_user?.handle}`} className="settings-button">
                     <div style={{ backgroundImage: `url(${self_user?.avatar})` }} className="pfp"></div> Profile

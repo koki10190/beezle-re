@@ -5,7 +5,9 @@ use mongodb::options::Predicate;
 use serde::Deserialize;
 use std::env;
 
-use actix_web::{get, http::StatusCode, post, web, App, HttpResponse, HttpServer, Responder};
+use actix_web::{
+    delete, get, http::StatusCode, post, web, App, HttpResponse, HttpServer, Responder,
+};
 
 use crate::{
     beezle,
@@ -18,12 +20,11 @@ struct GetUserQuery {
     token: String,
 }
 
-#[post("/api/get_user")]
+#[post("/api/user/delete")]
 pub async fn route(
     body: web::Json<GetUserQuery>,
     client: web::Data<mongodb::Client>,
 ) -> impl Responder {
-    beezle::print(&body.token);
     let token_data = decode::<mongoose::structures::user::JwtUser>(
         &body.token,
         &DecodingKey::from_secret(env::var("TOKEN_SECRET").unwrap().as_ref()),
@@ -41,7 +42,28 @@ pub async fn route(
     .await;
 
     match auth_doc {
-        None => HttpResponse::Ok().json(doc! {"error": "Not Found!"}),
-        _document => HttpResponse::Ok().json(_document),
+        None => HttpResponse::Ok().json(doc! {"deleted": false,"error": "Not Found!"}),
+        _document => {
+            mongoose::delete_document(
+                &client,
+                "beezle",
+                "Users",
+                doc! {
+                    "handle": &token_data.handle,
+                    "hash_password": token_data.hash_password
+                },
+            )
+            .await;
+            mongoose::delete_many_document(
+                &client,
+                "beezle",
+                "Posts",
+                doc! {
+                    "handle": &token_data.handle,
+                },
+            )
+            .await;
+            HttpResponse::Ok().json(doc! {"deleted": true})
+        }
     }
 }

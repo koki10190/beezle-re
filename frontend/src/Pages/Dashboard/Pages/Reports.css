@@ -1,0 +1,24 @@
+.report-pfp {
+    width: 50px;
+    height: 50px;
+    background-position: center;
+    background-size: cover;
+    border-radius: 100%;
+}
+.report-handle {
+    margin-top: -37px;
+    margin-left: 60px;
+}
+
+.reporter h2 {
+    margin-bottom: -10px;
+}
+
+.reporter-content {
+    width: 100%;
+    background-color: rgb(255, 142, 97);
+    box-sizing: border-box;
+    border-radius: 5px;
+    cursor: pointer;
+    padding: 15px;
+}
