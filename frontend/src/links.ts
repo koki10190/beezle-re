@@ -6,5 +6,6 @@ const youtube = "https://www.youtube.com/@koki10190";
 const production_mode = false;
 
 const api_uri = production_mode ? "server link here when it gets hosted" : "http://localhost:3000";
+const tenor_api_key = "AIzaSyDlDh8g6uyw8HA3vDSKCDWyYrSb2OxpbiE";
 
-export { github, discord, twitter, youtube, api_uri };
+export { github, discord, twitter, youtube, api_uri, tenor_api_key };

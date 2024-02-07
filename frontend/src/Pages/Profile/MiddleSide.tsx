@@ -74,7 +74,7 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
             </div>
             {user.handle === self?.handle ? (
                 <button
-                    onClick={() => window.location.replace("/edit/profile")}
+                    onClick={() => (window.location.href = "/edit/profile")}
                     className="button-field profile-edit-button"
                 >
                     Edit Profile

@@ -11,6 +11,9 @@ import FlipNumbers from "react-flip-numbers";
 import millify from "millify";
 import { BadgesToJSX } from "../functions/badgesToJSX";
 import { socket } from "../ws/socket";
+import ReactDOMServer from "react-dom/server";
+import ImageEmbed from "./ImageEmbed";
+import VideoEmbed from "./VideoEmbed";
 
 interface PostBoxData {
     post: Post;
@@ -18,6 +21,62 @@ interface PostBoxData {
     setPosts: any;
     delete_post_on_bookmark_remove?: boolean;
     allow_reply_attribute?: boolean;
+}
+
+function parseURLs(content: string): string {
+    let htmlToEmbed = "";
+    {
+        const matched = content.match(/\bhttps?:\/\/media\.tenor\.com\S+/gi);
+
+        let i = 0;
+        matched?.forEach(match => {
+            content = content.replace(match, "");
+            if (i > 2) return;
+
+            const isVideo = match.match(/.mp4|.wmv/gi) ? true : false;
+            const embed = ReactDOMServer.renderToStaticMarkup(
+                isVideo ? <VideoEmbed url={match} /> : <ImageEmbed url={match} />
+            );
+            htmlToEmbed += embed;
+            i++;
+        });
+    }
+
+    {
+        const matched = content.match(/\bhttps?:\/\/i\.tenor\.com\S+/gi);
+
+        let i = 0;
+        matched?.forEach(match => {
+            content = content.replace(match, "");
+            if (i > 2) return;
+
+            const isVideo = match.match(/.mp4|.wmv/gi) ? true : false;
+            const embed = ReactDOMServer.renderToStaticMarkup(
+                isVideo ? <VideoEmbed url={match} /> : <ImageEmbed url={match} />
+            );
+            htmlToEmbed += embed;
+            i++;
+        });
+    }
+
+    {
+        const matched = content.match(/\bhttps?:\/\/i\.imgur\.com\S+/gi);
+
+        let i = 0;
+        matched?.forEach(match => {
+            content = content.replace(match, "");
+            if (i > 2) return;
+
+            const isVideo = match.match(/.mp4|.wmv/gi) ? true : false;
+            const embed = ReactDOMServer.renderToStaticMarkup(
+                isVideo ? <VideoEmbed url={match} /> : <ImageEmbed url={match} />
+            );
+            htmlToEmbed += embed;
+            i++;
+        });
+    }
+
+    return content + "<br/>" + htmlToEmbed;
 }
 
 function PostBox({
@@ -202,7 +261,7 @@ function PostBox({
     return (
         <div className="post-box">
             {post.repost ? (
-                <h4 onClick={() => window.location.replace(`/profile/${post.handle}`)} className="post-attr">
+                <h4 onClick={() => (window.location.href = `/profile/${post.handle}`)} className="post-attr">
                     <i className="fa-solid fa-repeat"></i> Repost by @{post.handle}
                 </h4>
             ) : (
@@ -231,7 +290,7 @@ function PostBox({
                 }}
                 className="pfp-post"
             ></div>
-            <div onClick={() => window.location.replace(`/profile/${user ? user.handle : ""}`)} className="user-detail">
+            <div onClick={() => (window.location.href = `/profile/${user ? user.handle : ""}`)} className="user-detail">
                 <p className="username-post">
                     {user ? user.username : ""}{" "}
                     <BadgesToJSX badges={user ? user.badges : []} className="profile-badge profile-badge-shadow" />
@@ -276,7 +335,12 @@ function PostBox({
                     </button>
                 </>
             ) : (
-                <p className="content">{finalContent}</p>
+                <p
+                    dangerouslySetInnerHTML={{
+                        __html: parseURLs(finalContent),
+                    }}
+                    className="content"
+                ></p>
             )}
             {user ? (
                 <div className="post-interaction-btn">

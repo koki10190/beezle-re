@@ -7,7 +7,7 @@
     border-radius: 100%;
     display: inline-block;
     box-sizing: border-box;
-    border: 3px solid rgb(223, 123, 57);
+    border: 3px solid rgb(231, 129, 98);
     transition: border ease-in-out 150ms;
 }
 
@@ -28,7 +28,7 @@
     cursor: pointer;
     width: 100%;
     height: fit-content;
-    background-color: rgb(223, 123, 57);
+    background-color: rgb(231, 129, 98);
     margin-bottom: 10px;
     box-sizing: border-box;
     padding: 15px;
@@ -43,5 +43,5 @@
 }
 
 .notif-handle:hover {
-    color: rgb(255, 122, 78);
+    color: rgb(255, 250, 249);
 }

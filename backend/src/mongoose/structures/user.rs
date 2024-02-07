@@ -29,6 +29,7 @@ pub struct User {
     pub following: Array,
     pub reputation: i64,
     pub coins: i64,
+    pub notifs: Array,
 }
 
 #[derive(Serialize, Deserialize, Debug)]

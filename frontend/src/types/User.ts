@@ -1,3 +1,5 @@
+import { NotificationData } from "./Notification";
+
 enum BadgeType {
     VERIFIED,
     DONATOR,
@@ -24,6 +26,7 @@ interface UserPrivate {
     following: Array<string>;
     reputation: number;
     coins: number;
+    notifications: Array<NotificationData>;
 }
 
 interface UserPublic {
@@ -43,6 +46,7 @@ interface UserPublic {
     following: Array<string>;
     reputation: number;
     coins: number;
+    notifications: Array<NotificationData>;
 }
 
 export { BadgeType };

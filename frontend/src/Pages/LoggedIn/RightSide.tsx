@@ -63,7 +63,9 @@ function RightSide() {
     useEffect(() => {
         (async () => {
             if (localStorage.getItem("access_token")) {
-                setSelfUser(await fetchUserPrivate());
+                const user = await fetchUserPrivate();
+                setSelfUser(user);
+                setNotifCount(user!.notifications.length);
             }
         })();
 
@@ -71,10 +73,9 @@ function RightSide() {
             const data = _ as NotificationData;
             console.log("get-notif", data);
             setNotifCount(notifCount + 1);
+            // if (!localStorage.getItem("notifs")) localStorage.setItem("notifs", "[]");
 
-            if (!localStorage.getItem("notifs")) localStorage.setItem("notifs", "[]");
-
-            localStorage.setItem("notifs", JSON.stringify([data, ...JSON.parse(localStorage.getItem("notifs")!)]));
+            // localStorage.setItem("notifs", JSON.stringify([data, ...JSON.parse(localStorage.getItem("notifs")!)]));
         });
     }, []);
 

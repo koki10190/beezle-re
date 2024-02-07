@@ -75,12 +75,13 @@ pub async fn route(
                 avatar: "https://i.imgur.com/yiuTHhc.png".to_string(),
                 banner: "https://i.imgur.com/yiuTHhc.png".to_string(),
                 about_me: "Hello! I'm new here!".to_string(),
-                badges: [].to_vec(),
+                badges: vec![],
                 bookmarks: vec![],
                 followers: vec![],
                 following: vec![],
                 reputation: 100,
                 coins: 0,
+                notifs: vec![],
             };
 
             let serialized_user_doc = mongodb::bson::to_bson(&struct_user_doc).unwrap();

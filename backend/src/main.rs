@@ -90,6 +90,7 @@ async fn main() -> std::io::Result<()> {
             .service(routes::api::post::get::replies::route)
             .service(routes::api::post::get::reply_count::route)
             .service(routes::api::post::get::now::route)
+            .service(routes::api::user::clear_notifs::route)
             .route("/ws", web::get().to(ws::spawn::spawn))
             .wrap(middleware::Logger::default())
     })

@@ -13,3 +13,35 @@
     width: 100%;
     margin-top: 20px;
 }
+
+.post-typer-emoji-picker {
+    width: 100%;
+    max-width: 100%;
+    min-width: 100%;
+    margin-top: 15px;
+    margin-bottom: 10px;
+    border: 5px solid red;
+}
+
+.post-typer-buttons {
+    margin-top: 10px;
+}
+
+.post-typer-button {
+    cursor: pointer;
+    font-size: 25px;
+    color: rgba(255, 255, 255, 0.3);
+    margin-right: 10px;
+    transition: color ease-in-out 150ms;
+}
+
+.post-typer-button:hover {
+    color: rgba(255, 255, 255, 1);
+}
+
+.GifPickerReact {
+    width: 100%;
+    max-width: 100%;
+    min-width: 100%;
+    margin-top: 15px;
+}

@@ -1,0 +1,11 @@
+.notif-clear {
+    font-weight: 1000;
+    font-size: 20px;
+    color: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+    transition: color ease-in-out 150ms;
+}
+
+.notif-clear:hover {
+    color: rgba(255, 255, 255, 1);
+}

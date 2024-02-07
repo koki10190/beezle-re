@@ -17,6 +17,7 @@ pub async fn spawn(
     req: actix_web::HttpRequest,
     body: web::Payload,
     fapp: web::Data<std::sync::Mutex<crate::data_struct::AppData>>,
+    client: web::Data<mongodb::Client>,
 ) -> Result<HttpResponse, actix_web::Error> {
     let (response, mut session, mut msg_stream) = actix_ws::handle(&req, body)?;
 
@@ -59,6 +60,7 @@ pub async fn spawn(
                         },
                         &mut session,
                         &mut app_data.connections,
+                        &client,
                     )
                     .await;
 

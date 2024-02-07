@@ -905,6 +905,13 @@ electron-to-chromium@^1.4.648:
   resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.649.tgz#684ab7a0392c146c934601ddad0bd9521ff45205"
   integrity sha512-dq/owIaALxZGqWm5RXpKQ4baX6aDC19e2Z16c8SXYN+I71PyEKjbVqQUgm7kcuk8CRqljTKXbolo0XXDjxnh2w==
 
+emoji-picker-react@^4.7.12:
+  version "4.7.12"
+  resolved "https://registry.yarnpkg.com/emoji-picker-react/-/emoji-picker-react-4.7.12.tgz#76a336da1aead2dc56defee4901e80b2ee57d271"
+  integrity sha512-SV625gwJHk3z2H62Iy03MISvP6jcSbYW6IqY23mWDX3rnfE0Mb9UfMdzf3pB2C9c1ruU9qe+L6S0deSZsab1cA==
+  dependencies:
+    flairup "0.0.37"
+
 emoji-regex@^8.0.0:
   version "8.0.0"
   resolved "https://registry.yarnpkg.com/emoji-regex/-/emoji-regex-8.0.0.tgz#e818fd69ce5ccfcb404594f842963bf53164cc37"
@@ -1109,6 +1116,11 @@ find-up@^5.0.0:
     locate-path "^6.0.0"
     path-exists "^4.0.0"
 
+flairup@0.0.37:
+  version "0.0.37"
+  resolved "https://registry.yarnpkg.com/flairup/-/flairup-0.0.37.tgz#5a3c64a7a25d826d520a280def14fca672ffce66"
+  integrity sha512-GY7coNGpJQczEIfBsgByKhkclQZC2OosDyyGTfFfm2rXEzwq7MbWQgGo/GwM7TdU53Ow4rPznKPMC8Q3iympjQ==
+
 flat-cache@^3.0.4:
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/flat-cache/-/flat-cache-3.2.0.tgz#2c0c2d5040c99b1632771a9d105725c0115363ee"
@@ -1156,6 +1168,11 @@ get-caller-file@^2.0.5:
   version "2.0.5"
   resolved "https://registry.yarnpkg.com/get-caller-file/-/get-caller-file-2.0.5.tgz#4f94412a82db32f36e3b0b9741f8a97feb031f7e"
   integrity sha512-DyFP3BM/3YHTQOCUL/w0OZHR0lpKeGrxotcHWcqNEdnltqFwXVfhEBQ94eIo34AfQpo0rGki4cyIiftY06h2Fg==
+
+gif-picker-react@^1.3.2:
+  version "1.3.2"
+  resolved "https://registry.yarnpkg.com/gif-picker-react/-/gif-picker-react-1.3.2.tgz#453f18cbeec7f10e3ebb55b0823dec40d8051037"
+  integrity sha512-Ve3x43nyTkfakPG3Yd2cW7faw0bsCooVLImNIvhFnJoImmsuZ/mlFoXdpb07fh+IrCQ2pTYam691YKlqJgBeIw==
 
 glob-parent@^5.1.2:
   version "5.1.2"

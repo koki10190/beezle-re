@@ -2,7 +2,7 @@ function Home() {
     return (
         <>
             {localStorage.removeItem("access_token")}
-            {window.location.replace("/")}
+            {(window.location.href = "/")}
         </>
     );
 }

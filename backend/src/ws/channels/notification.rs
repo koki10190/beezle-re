@@ -7,6 +7,7 @@ use std::collections::HashMap;
 use crate::{
     beezle,
     data_struct::AppData,
+    mongoose,
     ws::{
         lib::send::send_back,
         structures::{
@@ -19,6 +20,7 @@ pub async fn socket(
     data: WsData,
     session: &mut Session,
     sessions: &mut HashMap<String, actix_ws::Session>,
+    client: &mongodb::Client,
 ) -> String {
     if data.channel != "notification" {
         return "".to_string();
@@ -44,6 +46,25 @@ pub async fn socket(
         };
         send_back(receiver_session, data).await;
     }
+
+    mongoose::update_document(
+        &client,
+        "beezle",
+        "Users",
+        doc! {
+            "handle": &m_data.post.handle
+        },
+        doc! {
+            "$addToSet": {
+                "notifications": {
+                    "caller": &m_data.handle,
+                    "post_id": &m_data.post.post_id,
+                    "message": &m_data.message
+                }
+            }
+        },
+    )
+    .await;
 
     m_data.handle
 }

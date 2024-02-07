@@ -14,11 +14,16 @@ function NotifBox({ notif }: { notif: NotificationData }) {
     }, []);
 
     return (
-        <div className="notif">
+        <div
+            onClick={() => {
+                window.location.href = `/post/${notif.post_id}`;
+            }}
+            className="notif"
+        >
             {user ? (
                 <>
                     <div style={{ backgroundImage: `url(${user.avatar})` }} className="notif-pfp"></div>
-                    <p onClick={() => (window.location.href = `/post/${notif.post_id}`)} className="notif-message">
+                    <p className="notif-message">
                         <span
                             onClick={(e: any) => {
                                 e.stopPropagation();

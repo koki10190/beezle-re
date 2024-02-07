@@ -96,3 +96,10 @@ Content-Type: application/json
   "handle": "test",
   "follow": false
 }
+###
+POST http://localhost:3000/api/user/clear_notifs
+Content-Type: application/json
+
+{
+  "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJoYW5kbGUiOiJrb2tpIiwidXNlcm5hbWUiOiJwb3d3IiwiZW1haWwiOiJsdWthb2R6ZWxhc2h2aWxpQGdtYWlsLmNvbSIsImhhc2hfcGFzc3dvcmQiOiIkMmIkMTIkMHhvNVZVNUpWZU9rRTZRTUM5RWlVT3ljYjRkNlIzTFBjbDRLUnAuVVAucWFTUlladFFtaXkiLCJleHAiOjI1MjQ2MDgwMDAsImJhZGdlcyI6WzEsMl19.er_sM-uGOSv1SbOdKxkYPr5th5AWbbGzsfLf3BNohn4"
+}
