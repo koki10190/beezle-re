@@ -27,11 +27,19 @@ interface WsUserData {
 function App() {
     socket.webSocket.onopen = async () => {
         console.log("opened socket");
-        const user = await fetchUserPrivate();
-        socket.send("connection", {
-            handle: user?.handle,
-            status: UserStatus.ONLINE,
-        });
+
+        let _ = setInterval(async () => {
+            console.log("Intervalling..");
+            const user = await fetchUserPrivate();
+            if (!user) return;
+
+            socket.send("connection", {
+                handle: user.handle,
+                status: UserStatus.ONLINE,
+            });
+
+            clearInterval(_);
+        }, 1000);
     };
 
     socket.listen("connected", (data: object) => {

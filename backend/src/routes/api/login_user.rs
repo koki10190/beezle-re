@@ -6,7 +6,7 @@ use std::env;
 
 use actix_web::{get, post, web, App, HttpRequest, HttpResponse, HttpServer, Responder};
 
-use crate::{beezle, mongoose};
+use crate::{beezle, mongoose, poison::LockResultExt};
 
 #[derive(Deserialize)]
 struct LoginInfo {
@@ -18,11 +18,11 @@ struct LoginInfo {
 pub async fn route(
     req: HttpRequest,
     body: web::Json<LoginInfo>,
-    app: web::Data<std::sync::Mutex<crate::data_struct::AppData>>,
+    client: web::Data<mongodb::Client>,
 ) -> impl Responder {
-    let mut app_data = app.lock().unwrap();
+    beezle::print("yo");
     let mut doc = mongoose::get_document(
-        &app_data.client,
+        &client,
         "beezle",
         "Users",
         doc! {"$or": [
@@ -35,6 +35,7 @@ pub async fn route(
         ]},
     )
     .await;
+    beezle::print("ayy");
 
     match doc {
         None => HttpResponse::Ok().json(doc! {"error": "Invalid Email or Handle!"}),

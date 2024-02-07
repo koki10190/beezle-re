@@ -8,6 +8,7 @@ use actix_web::{get, http::StatusCode, post, web, App, HttpResponse, HttpServer,
 use crate::{
     beezle,
     mongoose::{self, structures::user},
+    poison::LockResultExt,
 };
 
 #[derive(Deserialize)]
@@ -18,12 +19,10 @@ struct AuthQuery {
 #[get("/api/verify")]
 pub async fn route(
     params: web::Query<AuthQuery>,
-    app: web::Data<std::sync::Mutex<crate::data_struct::AppData>>,
+    client: web::Data<mongodb::Client>,
 ) -> impl Responder {
-    let mut app_data = app.lock().unwrap();
-
     let auth_doc = mongoose::get_document(
-        &app_data.client,
+        &client,
         "beezle",
         "Auths",
         doc! { "auth_id": &params.auth_id },
@@ -45,7 +44,7 @@ pub async fn route(
             email = beezle::rem_first_and_last(&email).to_string();
 
             let user_doc = mongoose::get_document(
-                &app_data.client,
+                &client,
                 "beezle",
                 "Auths",
                 doc! {
@@ -57,7 +56,7 @@ pub async fn route(
 
             if user_doc.is_some() {
                 mongoose::update_document(
-                    &app_data.client,
+                    &client,
                     "beezle",
                     "Users",
                     doc! {"handle": &handle, "email": &email},
@@ -78,7 +77,7 @@ pub async fn route(
             }
 
             mongoose::delete_document(
-                &app_data.client,
+                &client,
                 "beezle",
                 "Auths",
                 doc! { "auth_id": &params.auth_id },

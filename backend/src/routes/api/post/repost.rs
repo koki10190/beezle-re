@@ -5,7 +5,7 @@ use std::env;
 
 use actix_web::{get, post, web, App, HttpRequest, HttpResponse, HttpServer, Responder};
 
-use crate::{beezle, mongoose};
+use crate::{beezle, mongoose, poison::LockResultExt};
 
 #[derive(Deserialize)]
 struct TokenInfo {
@@ -17,9 +17,8 @@ struct TokenInfo {
 #[post("/api/post/repost")]
 pub async fn route(
     body: web::Json<TokenInfo>,
-    app: web::Data<std::sync::Mutex<crate::data_struct::AppData>>,
+    client: web::Data<mongodb::Client>,
 ) -> impl Responder {
-    let mut app_data = app.lock().unwrap();
     let token = decode::<mongoose::structures::user::JwtUser>(
         &body.token,
         &DecodingKey::from_secret(env::var("TOKEN_SECRET").unwrap().as_ref()),
@@ -31,7 +30,7 @@ pub async fn route(
             let data = token.unwrap();
 
             let post_doc = mongoose::get_document(
-                &app_data.client,
+                &client,
                 "beezle",
                 "Posts",
                 doc! {
@@ -42,7 +41,7 @@ pub async fn route(
 
             if body.remove_repost {
                 mongoose::update_document(
-                    &app_data.client,
+                    &client,
                     "beezle",
                     "Posts",
                     doc! {"post_id": &body.post_id},
@@ -55,7 +54,7 @@ pub async fn route(
                 .await;
 
                 mongoose::delete_document(
-                    &app_data.client,
+                    &client,
                     "beezle",
                     "Posts",
                     doc! {
@@ -66,7 +65,7 @@ pub async fn route(
                 .await;
             } else {
                 mongoose::update_document(
-                    &app_data.client,
+                    &client,
                     "beezle",
                     "Posts",
                     doc! {"post_id": &body.post_id},
@@ -79,7 +78,7 @@ pub async fn route(
                 .await;
 
                 let original_post_doc = mongoose::get_document(
-                    &app_data.client,
+                    &client,
                     "beezle",
                     "Posts",
                     doc! {
@@ -126,18 +125,12 @@ pub async fn route(
                 let serialized_post_doc = mongodb::bson::to_bson(&struct_post_doc).unwrap();
                 let document = serialized_post_doc.as_document().unwrap();
 
-                mongoose::insert_document(&app_data.client, "beezle", "Posts", document.clone())
-                    .await;
+                mongoose::insert_document(&client, "beezle", "Posts", document.clone()).await;
             }
 
             return HttpResponse::Ok().json(
-                mongoose::get_document(
-                    &app_data.client,
-                    "beezle",
-                    "Posts",
-                    doc! {"post_id": &body.post_id},
-                )
-                .await,
+                mongoose::get_document(&client, "beezle", "Posts", doc! {"post_id": &body.post_id})
+                    .await,
             );
         }
         Err(_) => HttpResponse::Ok().json(doc! {"error": "Couldn't decode token"}),

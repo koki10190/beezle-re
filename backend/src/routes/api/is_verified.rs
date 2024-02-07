@@ -5,7 +5,7 @@ use std::env;
 
 use actix_web::{get, post, web, App, HttpRequest, HttpResponse, HttpServer, Responder};
 
-use crate::{beezle, mongoose};
+use crate::{beezle, mongoose, poison::LockResultExt};
 
 #[derive(Deserialize)]
 struct TokenInfo {
@@ -15,9 +15,8 @@ struct TokenInfo {
 #[post("/api/is_verified")]
 pub async fn route(
     body: web::Json<TokenInfo>,
-    app: web::Data<std::sync::Mutex<crate::data_struct::AppData>>,
+    client: web::Data<mongodb::Client>,
 ) -> impl Responder {
-    let mut app_data = app.lock().unwrap();
     let token = decode::<mongoose::structures::user::JwtUser>(
         &body.token,
         &DecodingKey::from_secret(env::var("TOKEN_SECRET").unwrap().as_ref()),
@@ -28,7 +27,7 @@ pub async fn route(
         Ok(_) => {
             let data = token.unwrap();
             let user = mongoose::get_document(
-                &app_data.client,
+                &client,
                 "beezle",
                 "Users",
                 doc! {

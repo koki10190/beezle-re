@@ -15,7 +15,17 @@ function MiddleSide() {
     const [Notifs, setNotifs] = useState<Array<NotificationData>>([]);
 
     useEffect(() => {
-        let notifs = JSON.parse(localStorage.getItem("notifs") ? localStorage.getItem("notifs")! : "[]");
+        let notifs = JSON.parse(
+            localStorage.getItem("notifs") ? localStorage.getItem("notifs")! : "[]"
+        ) as Array<NotificationData>;
+
+        notifs.forEach((notif: NotificationData) => {
+            (async () => {
+                notif.react_key_prop_id = Math.random().toString();
+                // notif.user = await fetchUserPublic(notif.caller);
+            })();
+        });
+
         setNotifs(notifs);
     }, []);
     return (

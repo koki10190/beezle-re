@@ -1,20 +1,39 @@
 import { useEffect, useState } from "react";
 import { NotificationData } from "../types/Notification";
 import "./NotifBox.css";
+import { UserPublic } from "../types/User";
+import { fetchUserPublic } from "../functions/fetchUserPublic";
 
 function NotifBox({ notif }: { notif: NotificationData }) {
+    const [user, setUser] = useState<UserPublic | null>();
+
+    useEffect(() => {
+        (async () => {
+            setUser(await fetchUserPublic(notif.caller));
+        })();
+    }, []);
+
     return (
         <div className="notif">
-            <div style={{ backgroundImage: `url(${notif.user?.avatar})` }} className="notif-pfp"></div>
-            <p onClick={() => (window.location.href = `/post/${notif.post_id}`)} className="notif-message">
-                <span
-                    onClick={() => (window.location.href = `/profile/${notif.user?.handle}`)}
-                    className="notif-handle"
-                >
-                    @{notif.user?.handle}
-                </span>
-                <span className="notif-content">{notif.message}</span>
-            </p>
+            {user ? (
+                <>
+                    <div style={{ backgroundImage: `url(${user.avatar})` }} className="notif-pfp"></div>
+                    <p onClick={() => (window.location.href = `/post/${notif.post_id}`)} className="notif-message">
+                        <span
+                            onClick={(e: any) => {
+                                e.stopPropagation();
+                                window.location.href = `/profile/${user.handle}`;
+                            }}
+                            className="notif-handle"
+                        >
+                            @{notif.caller}
+                        </span>{" "}
+                        <span className="notif-content">{notif.message}</span>
+                    </p>
+                </>
+            ) : (
+                ""
+            )}
         </div>
     );
 }

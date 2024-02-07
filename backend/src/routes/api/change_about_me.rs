@@ -1,6 +1,7 @@
 use bson::{doc, Document};
 use jsonwebtoken::{decode, DecodingKey, EncodingKey, Header, Validation};
 use mail_send::mail_auth::flate2::Status;
+use mongodb::Client;
 use serde::Deserialize;
 use std::{env, ops::Deref};
 
@@ -10,6 +11,7 @@ use crate::{
     beezle,
     data_struct::AppData,
     mongoose::{self, structures::user},
+    poison::LockResultExt,
 };
 
 #[derive(Deserialize)]
@@ -19,12 +21,7 @@ struct GetUserQuery {
 }
 
 #[post("/api/change_about_me")]
-pub async fn route(
-    body: web::Json<GetUserQuery>,
-    app: web::Data<std::sync::Mutex<AppData>>,
-) -> impl Responder {
-    let mut app_data = app.lock().unwrap();
-
+pub async fn route(body: web::Json<GetUserQuery>, client: web::Data<Client>) -> impl Responder {
     let token_data = decode::<mongoose::structures::user::JwtUser>(
         &body.token,
         &DecodingKey::from_secret(env::var("TOKEN_SECRET").unwrap().as_ref()),
@@ -34,7 +31,7 @@ pub async fn route(
     .claims;
 
     let auth_doc = mongoose::get_document(
-        &app_data.client,
+        &client,
         "beezle",
         "Users",
         doc! { "handle": &token_data.handle, "hash_password": &token_data.hash_password },
@@ -45,7 +42,7 @@ pub async fn route(
         None => HttpResponse::Ok().json(doc! {"changed": false, "error": "User not found!"}),
         _document => {
             mongoose::update_document(
-                &app_data.client,
+                &client,
                 "beezle",
                 "Users",
                 doc! {

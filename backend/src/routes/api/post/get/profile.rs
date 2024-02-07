@@ -9,6 +9,7 @@ use actix_web::{get, http::StatusCode, post, web, App, HttpResponse, HttpServer,
 use crate::{
     beezle,
     mongoose::{self, get_many::vec_to_str, structures::user},
+    poison::LockResultExt,
 };
 
 #[derive(Deserialize)]
@@ -19,13 +20,12 @@ struct ProfileQuery {
 #[get("/api/post/get/profile")]
 pub async fn route(
     body: web::Query<ProfileQuery>,
-    app: web::Data<std::sync::Mutex<crate::data_struct::AppData>>,
+    client: web::Data<mongodb::Client>,
 ) -> impl Responder {
-    let mut app_data = app.lock().unwrap();
     //TODO: do this
 
     let mut many = mongoose::get_many::get_many_document(
-        &app_data.client,
+        &client,
         "beezle",
         "Posts",
         doc! {

@@ -9,6 +9,7 @@ use actix_web::{get, http::StatusCode, post, web, App, HttpResponse, HttpServer,
 use crate::{
     beezle,
     mongoose::{self, get_many::vec_to_str, structures::user},
+    poison::LockResultExt,
 };
 
 #[derive(Deserialize)]
@@ -19,13 +20,10 @@ struct GetRepliesQuery {
 #[get("/api/post/get/reply_count")]
 pub async fn route(
     body: web::Query<GetRepliesQuery>,
-    app: web::Data<std::sync::Mutex<crate::data_struct::AppData>>,
+    client: web::Data<mongodb::Client>,
 ) -> impl Responder {
-    let mut app_data = app.lock().unwrap();
-    //TODO: do this
-
     let count = mongoose::get_count(
-        &app_data.client,
+        &client,
         "beezle",
         "Posts",
         doc! {

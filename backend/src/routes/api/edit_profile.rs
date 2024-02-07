@@ -9,6 +9,7 @@ use actix_web::{get, http::StatusCode, post, web, App, HttpResponse, HttpServer,
 use crate::{
     beezle,
     mongoose::{self, structures::user},
+    poison::LockResultExt,
 };
 
 #[derive(Deserialize)]
@@ -23,9 +24,8 @@ struct GetUserQuery {
 #[post("/api/profile/edit")]
 pub async fn route(
     body: web::Json<GetUserQuery>,
-    app: web::Data<std::sync::Mutex<crate::data_struct::AppData>>,
+    client: web::Data<mongodb::Client>,
 ) -> impl Responder {
-    let mut app_data = app.lock().unwrap();
     let token_data = decode::<mongoose::structures::user::JwtUser>(
         &body.token,
         &DecodingKey::from_secret(env::var("TOKEN_SECRET").unwrap().as_ref()),
@@ -35,7 +35,7 @@ pub async fn route(
     .claims;
 
     let auth_doc = mongoose::get_document(
-        &app_data.client,
+        &client,
         "beezle",
         "Users",
         doc! { "handle": &token_data.handle, "hash_password": &token_data.hash_password },
@@ -68,7 +68,7 @@ pub async fn route(
         None => HttpResponse::Ok().json(doc! {"changed": false, "error": "User not found!"}),
         _document => {
             mongoose::update_document(
-                &app_data.client,
+                &client,
                 "beezle",
                 "Users",
                 doc! {

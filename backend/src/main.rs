@@ -19,6 +19,7 @@ use mongodb::{options::ClientOptions, Client};
 mod beezle;
 mod data_struct;
 mod mongoose;
+mod poison;
 mod routes;
 mod ws;
 
@@ -56,11 +57,13 @@ async fn main() -> std::io::Result<()> {
         client: client.clone(),
         connections: HashMap::new(),
     };
+    let session_map: HashMap<String, actix_ws::Session> = HashMap::new();
     let mutex_app_data = web::Data::new(Mutex::new(app_data));
 
     let http_server = HttpServer::new(move || {
         App::new()
             .app_data(web::Data::clone(&mutex_app_data))
+            .app_data(web::Data::new(client.clone()))
             .wrap(Cors::permissive())
             .service(routes::main_route::route)
             .service(routes::api::register_user::route)

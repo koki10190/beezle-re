@@ -4,7 +4,7 @@ import { UserPublic } from "../types/User";
 
 async function fetchUserPublic(handle: string): Promise<UserPublic | null> {
     const token = localStorage.getItem("access_token");
-    if (!token) window.location.replace("/");
+    // if (!token) window.location.replace("/");
 
     const res = await axios.get(`${api_uri}/api/get_user?handle=${handle}`);
     const data = res.data;

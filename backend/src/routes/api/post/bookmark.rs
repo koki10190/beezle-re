@@ -5,7 +5,7 @@ use std::env;
 
 use actix_web::{get, post, web, App, HttpRequest, HttpResponse, HttpServer, Responder};
 
-use crate::{beezle, mongoose};
+use crate::{beezle, mongoose, poison::LockResultExt};
 
 #[derive(Deserialize)]
 struct TokenInfo {
@@ -17,9 +17,8 @@ struct TokenInfo {
 #[post("/api/post/bookmark")]
 pub async fn route(
     body: web::Json<TokenInfo>,
-    app: web::Data<std::sync::Mutex<crate::data_struct::AppData>>,
+    client: web::Data<mongodb::Client>,
 ) -> impl Responder {
-    let mut app_data = app.lock().unwrap();
     let token = decode::<mongoose::structures::user::JwtUser>(
         &body.token,
         &DecodingKey::from_secret(env::var("TOKEN_SECRET").unwrap().as_ref()),
@@ -32,7 +31,7 @@ pub async fn route(
 
             if body.remove_bookmark {
                 mongoose::update_document(
-                    &app_data.client,
+                    &client,
                     "beezle",
                     "Users",
                     doc! {"handle": &data.claims.handle},
@@ -45,7 +44,7 @@ pub async fn route(
                 .await;
             } else {
                 mongoose::update_document(
-                    &app_data.client,
+                    &client,
                     "beezle",
                     "Users",
                     doc! {"handle": &data.claims.handle},
@@ -59,13 +58,8 @@ pub async fn route(
             }
 
             return HttpResponse::Ok().json(
-                mongoose::get_document(
-                    &app_data.client,
-                    "beezle",
-                    "Posts",
-                    doc! {"post_id": &body.post_id},
-                )
-                .await,
+                mongoose::get_document(&client, "beezle", "Posts", doc! {"post_id": &body.post_id})
+                    .await,
             );
         }
         Err(_) => HttpResponse::Ok().json(doc! {"error": "Couldn't decode token"}),

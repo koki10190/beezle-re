@@ -10,7 +10,7 @@ function Home() {
     const [isRegister, setRegister] = useState(false);
 
     if (localStorage.getItem("access_token")) {
-        window.location.replace("/home");
+        // window.location.replace("/home");
     }
 
     return (

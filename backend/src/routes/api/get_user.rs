@@ -1,6 +1,7 @@
 use bson::{doc, Document};
 use jsonwebtoken::{decode, DecodingKey, EncodingKey, Header, Validation};
 use mail_send::mail_auth::flate2::Status;
+use mongodb::options::Predicate;
 use serde::Deserialize;
 use std::env;
 
@@ -9,6 +10,7 @@ use actix_web::{get, http::StatusCode, post, web, App, HttpResponse, HttpServer,
 use crate::{
     beezle,
     mongoose::{self, structures::user},
+    poison::LockResultExt,
 };
 
 #[derive(Deserialize)]
@@ -19,9 +21,9 @@ struct GetUserQuery {
 #[post("/api/get_user")]
 pub async fn route(
     body: web::Json<GetUserQuery>,
-    app: web::Data<std::sync::Mutex<crate::data_struct::AppData>>,
+    client: web::Data<mongodb::Client>,
 ) -> impl Responder {
-    let mut app_data = app.lock().unwrap();
+    beezle::print(&body.token);
     let token_data = decode::<mongoose::structures::user::JwtUser>(
         &body.token,
         &DecodingKey::from_secret(env::var("TOKEN_SECRET").unwrap().as_ref()),
@@ -29,14 +31,16 @@ pub async fn route(
     )
     .unwrap()
     .claims;
+    beezle::print("get_user private 2");
 
     let auth_doc = mongoose::get_document(
-        &app_data.client,
+        &client,
         "beezle",
         "Users",
         doc! { "handle": &token_data.handle, "hash_password": &token_data.hash_password },
     )
     .await;
+    beezle::print("get_user private 3");
 
     match auth_doc {
         None => HttpResponse::Ok().json(doc! {"error": "Not Found!"}),

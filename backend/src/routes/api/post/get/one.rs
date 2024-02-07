@@ -9,6 +9,7 @@ use actix_web::{get, http::StatusCode, post, web, App, HttpResponse, HttpServer,
 use crate::{
     beezle,
     mongoose::{self, structures::user},
+    poison::LockResultExt,
 };
 
 #[derive(Deserialize)]
@@ -19,11 +20,10 @@ struct GetUserPublicQuery {
 #[get("/api/post/get/one")]
 pub async fn route(
     body: web::Query<GetUserPublicQuery>,
-    app: web::Data<std::sync::Mutex<crate::data_struct::AppData>>,
+    client: web::Data<mongodb::Client>,
 ) -> impl Responder {
-    let mut app_data = app.lock().unwrap();
     let auth_doc = mongoose::get_document(
-        &app_data.client,
+        &client,
         "beezle",
         "Posts",
         doc! { "post_id": &body.post_id },

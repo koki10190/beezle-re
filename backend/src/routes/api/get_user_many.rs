@@ -9,16 +9,14 @@ use actix_web::{get, http::StatusCode, post, web, App, HttpResponse, HttpServer,
 use crate::{
     beezle,
     mongoose::{self, get_many::vec_to_str, structures::user},
+    poison::LockResultExt,
 };
 
 #[get("/api/get_user_many")]
-pub async fn route(
-    app: web::Data<std::sync::Mutex<crate::data_struct::AppData>>,
-) -> impl Responder {
-    let mut app_data = app.lock().unwrap();
+pub async fn route(client: web::Data<mongodb::Client>) -> impl Responder {
     //TODO: do this
 
-    let mut many = mongoose::get_many_document(&app_data.client, "beezle", "Users", doc! {}).await;
+    let mut many = mongoose::get_many_document(&client, "beezle", "Users", doc! {}).await;
 
     HttpResponse::Ok().json(many)
 }
