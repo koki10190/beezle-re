@@ -14,6 +14,7 @@ import axios from "axios";
 import { api_uri } from "../../links";
 import Report from "./Pages/Reports";
 import BanUser from "./Pages/BanUser";
+import DeletePost from "./Pages/DeletePost";
 
 function DashboardButton({
     redirect = "",
@@ -46,6 +47,7 @@ function DashboardButton({
 enum Pages {
     REPORTS,
     BAN_USER,
+    DELETE_POST,
 }
 
 function RightSide({ setPage }: { setPage: any }) {
@@ -98,6 +100,12 @@ function RightSide({ setPage }: { setPage: any }) {
                     text="Ban User"
                     style={undefined}
                 />
+                <DashboardButton
+                    onClick={() => setPage(Pages.DELETE_POST)}
+                    iconClass="fa-solid fa-trash"
+                    text="Delete Post"
+                    style={undefined}
+                />
                 <DashboardButton redirect="/home" iconClass="fa-solid fa-home" text="Go Back" style={undefined} />
             </div>
             {window_width < 1100 ? (
@@ -141,6 +149,8 @@ function MiddleSide() {
                               return <Report user={self_user} />;
                           case Pages.BAN_USER:
                               return <BanUser user={self_user} />;
+                          case Pages.DELETE_POST:
+                              return <DeletePost user={self_user} />;
                       }
                   })()
                 : ""}

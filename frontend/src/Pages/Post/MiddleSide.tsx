@@ -17,6 +17,7 @@ import { BadgesToJSX } from "../../functions/badgesToJSX";
 import FlipNumbers from "react-flip-numbers";
 import millify from "millify";
 import PostTyper from "../../Components/PostTyper";
+import parseURLs from "../../functions/parseURLs";
 
 function MiddleSide() {
     const { post_id } = useParams();
@@ -225,7 +226,11 @@ function MiddleSide() {
                         </button>
                     </>
                 ) : (
-                    <p>{finalContent}</p>
+                    <p
+                        dangerouslySetInnerHTML={{
+                            __html: parseURLs(finalContent),
+                        }}
+                    ></p>
                 )}
                 <div className="post-interaction-btn">
                     <a

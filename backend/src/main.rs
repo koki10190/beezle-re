@@ -98,6 +98,7 @@ async fn main() -> std::io::Result<()> {
             .service(routes::api::report::route)
             .service(routes::api::resolve_report::route)
             .service(routes::api::user::ban::route)
+            .service(routes::api::post::mod_delete::route)
             .route("/ws", web::get().to(ws::spawn::spawn))
             .wrap(middleware::Logger::default())
     })
