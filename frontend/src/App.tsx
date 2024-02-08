@@ -15,6 +15,8 @@ import { api_uri } from "./links";
 import { useEffect, useState } from "react";
 import { socket } from "./ws/socket";
 import { fetchUserPrivate } from "./functions/fetchUserPrivate";
+import Verify from "./Verify/Verify";
+import VerifyPass from "./Verify/VerifyPass";
 
 enum UserStatus {
     ONLINE,
@@ -72,6 +74,8 @@ function App() {
                 <Route path="/notifications" element={<Notifications_Home />} />
                 <Route path="/settings" element={<Settings_Home />} />
                 <Route path="/dashboard" element={<Dashboard_Home />} />
+                <Route path="/verify/:auth_id" element={<Verify />} />
+                <Route path="/verify_pass/:auth_id" element={<VerifyPass />} />
                 <Route path="/privacy-and-terms" element={<PrivacyPolicy_Home />} />
             </Routes>
         </BrowserRouter>

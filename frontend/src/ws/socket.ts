@@ -1,3 +1,5 @@
+import { ws_uri } from "../links";
+
 type ChannelCallback = (data: object) => void;
 
 class Channel {
@@ -15,7 +17,7 @@ class BeezleSocket {
     channels: Map<string, Channel>;
 
     constructor() {
-        this.webSocket = new WebSocket("ws://localhost:3000/ws");
+        this.webSocket = new WebSocket(ws_uri);
         this.channels = new Map();
 
         this.webSocket.onmessage = (msg: MessageEvent<any>) => {

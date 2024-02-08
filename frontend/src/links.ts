@@ -3,9 +3,10 @@ const discord = "https://discord.gg/GNRwq9ruQb";
 const twitter = "https://twitter.com/beezle_lol";
 const youtube = "https://www.youtube.com/@koki10190";
 
-const production_mode = false;
+const production_mode = true;
 
-const api_uri = production_mode ? "https://1313-95-83-232-242.ngrok-free.app" : "http://localhost:3000";
+const api_uri = production_mode ? "http://185.124.109.164:3000" : "http://localhost:3000";
+const ws_uri = production_mode ? "ws://185.124.109.164:3000/ws" : "ws://localhost:3000/ws";
 const tenor_api_key = "AIzaSyDlDh8g6uyw8HA3vDSKCDWyYrSb2OxpbiE";
 
-export { github, discord, twitter, youtube, api_uri, tenor_api_key };
+export { github, discord, twitter, youtube, api_uri, tenor_api_key, ws_uri };

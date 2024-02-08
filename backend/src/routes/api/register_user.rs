@@ -125,7 +125,7 @@ pub async fn route(
                         "Hello {}!\nClick the URL to verify your account \"@{}\": {}\n\nDO NOT Click on the link if the account wasn't made by you!\nIP Address of the requester: {}",
                         act_handle.to_lowercase().as_str(),
                         act_handle.to_lowercase().as_str(),
-                        format!("https://1313-95-83-232-242.ngrok-free.app/api/verify?auth_id={}", authID).as_str(),
+                        format!("https://beezle.lol/verify/{}", authID).as_str(),
                         val
                     )
                     .as_str(),
