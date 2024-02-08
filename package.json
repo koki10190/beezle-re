@@ -6,7 +6,8 @@
     "scripts": {
         "start-server": "cd backend && cargo run --package backend --bin backend",
         "watch-server": "cd backend && cargo watch -c -w src -x run",
-        "start": "concurrently --kill-others \"cd frontend && yarn dev\" \"cd backend && cargo run --package backend --bin backend\""
+        "start": "concurrently --kill-others \"cd frontend && yarn dev\" \"cd backend && cargo run --package backend --bin backend\"",
+        "nohup": "nohup ./backend/target/debug/backend"
     },
     "repository": {
         "type": "git",
