@@ -16,6 +16,7 @@ import ImageEmbed from "./ImageEmbed";
 import VideoEmbed from "./VideoEmbed";
 import sanitize from "sanitize-html";
 import parseURLs from "../functions/parseURLs";
+import RepToIcon from "./RepToIcon";
 
 interface PostBoxData {
     post: Post;
@@ -242,7 +243,15 @@ function PostBox({
                     <BadgesToJSX badges={user ? user.badges : []} className="profile-badge profile-badge-shadow" />
                 </p>
                 <p className="handle-post">
-                    @{user ? user.handle : ""}{" "}
+                    @{user ? user.handle : ""}
+                    {user ? (
+                        <>
+                            {" "}
+                            <RepToIcon reputation={user.reputation} />
+                        </>
+                    ) : (
+                        ""
+                    )}{" "}
                     {user?.activity.replace(/ /g, "") !== "" && user ? (
                         <span style={{ color: "white" }}>
                             - {sanitize(user.activity.replace(/(.{35})..+/, "$1…"), { allowedTags: [] })}

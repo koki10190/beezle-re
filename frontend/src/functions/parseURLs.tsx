@@ -57,7 +57,8 @@ function parseURLs(content: string): string {
         });
     }
 
-    return sanitize(content) + "<br/>" + htmlToEmbed;
+    const final = sanitize(content).replace(/@([a-z\d_\.-]+)/gi, `<a class="mention" href="/profile/$1">@$1</a>`);
+    return final + (final.replace(/ /g, "") !== "" ? "<br/>" : "") + htmlToEmbed;
 }
 
 export default parseURLs;

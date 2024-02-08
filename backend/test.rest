@@ -114,3 +114,11 @@ Content-Type: application/json
   "subject": "He did something bad",
   "context": "bla bla bla he did this and that bla bla bla"
 }
+###
+post http://185.124.109.164:3000/api/login_user
+Content-Type: application/json
+
+{
+  "email": "koki",
+  "password": "12345678"
+}

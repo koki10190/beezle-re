@@ -6,6 +6,8 @@ import LoginForm from "./LoginForm";
 import { discord, github, twitter, youtube } from "../links";
 import react from "react";
 
+import "../Main.css";
+
 function Home() {
     const [isRegister, setRegister] = useState(false);
 
@@ -23,6 +25,12 @@ function Home() {
                         ) : (
                             <LoginForm setRegister={setRegister} isRegister={isRegister} />
                         )}
+                        <p>
+                            Once you login/register you're agreeing with our{" "}
+                            <a className="link" target="_blank" href="/privacy-and-terms">
+                                Privacy Policy & Terms of Service
+                            </a>
+                        </p>
                     </div>
                 </div>
                 <div className="home-box homebox1">

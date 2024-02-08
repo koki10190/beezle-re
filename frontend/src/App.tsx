@@ -9,6 +9,7 @@ import Post_Home from "./Pages/Post/Home";
 import Now_Home from "./Pages/Now/Home";
 import Notifications_Home from "./Pages/Notifications/Home";
 import Settings_Home from "./Pages/Settings/Home";
+import PrivacyPolicy_Home from "./PrivacyPolicy/Home";
 import Dashboard_Home from "./Pages/Dashboard/Home";
 import { api_uri } from "./links";
 import { useEffect, useState } from "react";
@@ -71,6 +72,7 @@ function App() {
                 <Route path="/notifications" element={<Notifications_Home />} />
                 <Route path="/settings" element={<Settings_Home />} />
                 <Route path="/dashboard" element={<Dashboard_Home />} />
+                <Route path="/privacy-and-terms" element={<PrivacyPolicy_Home />} />
             </Routes>
         </BrowserRouter>
     );

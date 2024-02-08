@@ -180,3 +180,13 @@
     top: -15px;
     right: 5px;
 }
+
+.mention {
+    cursor: pointer;
+    color: rgb(131, 205, 255);
+    text-decoration: none;
+}
+
+.mention:hover {
+    color: rgb(27, 164, 255);
+}
