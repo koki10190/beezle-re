@@ -1,9 +1,8 @@
-import axios from "axios";
-import { FormEvent, useEffect, useRef, useState } from "react";
+import axios, { all } from "axios";
+import { FormEvent, useEffect, useRef, useState, UIEvent } from "react";
 import { BrowserRouter, Routes, Route, redirect } from "react-router-dom";
 import { api_uri } from "../../links";
 import { checkToken } from "../../functions/checkToken";
-
 import PostTyper from "../../Components/PostTyper";
 import Divider from "../../Components/Divider";
 import PostBox from "../../Components/PostBox";
@@ -27,10 +26,25 @@ function MiddleSide() {
     // const [self_user, setSelfUser] = useState<UserPrivate | null>(null);
     const [posts, setPosts] = useState<Array<Post>>([]);
     const [self_user, setSelfUser] = useState<UserPrivate>();
+    const [postOffset, setPostOffset] = useState(0);
+
+    const handleScroll = async (event: UIEvent<HTMLDivElement>) => {
+        const element = event.target! as HTMLDivElement;
+        if (!(element.scrollHeight - element.scrollTop === element.clientHeight)) return;
+
+        // detected bottom
+
+        console.log("at bottom!");
+        const posts = (await axios.get(`${api_uri}/api/post/get/now?offset=${postOffset}`)).data;
+        setPosts(old => [...old, ...posts.posts]);
+        setPostOffset(posts.offset);
+    };
 
     useEffect(() => {
         (async () => {
-            setPosts((await axios.get(`${api_uri}/api/post/get/now`)).data);
+            const posts = (await axios.get(`${api_uri}/api/post/get/now?offset=${postOffset}`)).data;
+            setPosts(posts.posts);
+            setPostOffset(posts.offset);
             setSelfUser((await fetchUserPrivate()) as UserPrivate);
         })();
     }, []);
@@ -40,7 +54,7 @@ function MiddleSide() {
     };
 
     return (
-        <div className="page-sides side-middle home-middle">
+        <div onScroll={handleScroll} className="page-sides side-middle home-middle">
             <PostTyper onSend={OnTyperSend} />
             <Divider />
             {self_user

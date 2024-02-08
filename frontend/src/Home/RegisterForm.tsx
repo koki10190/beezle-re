@@ -39,6 +39,11 @@ function RegisterForm({ setRegister, isRegister }: Params) {
             setError("Password cannot be shorter than 8 characters!");
             return;
         }
+        let regex = new RegExp("[^0-9a-zA-Z-,_.:s]+");
+        if (regex.test(s_handle)) {
+            setError("No special characters are allowed in handles!");
+            return;
+        }
 
         axios
             .post(`${api_uri}/api/register_user`, {

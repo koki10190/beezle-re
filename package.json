@@ -1,26 +1,28 @@
 {
-  "name": "beezle",
-  "version": "1.0.0",
-  "description": "Social media platform",
-  "main": "index.js",
-  "scripts": {
-    "start-server": "cd backend && cargo run --package backend --bin backend",
-    "watch-server": "cd backend && cargo watch -c -w src -x run"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/koki10190/beezle-re.git"
-  },
-  "author": "koki10190 | Zekticezy",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/koki10190/beezle-re/issues"
-  },
-  "homepage": "https://github.com/koki10190/beezle-re/blob/master/README.md",
-  "dependencies": {
-    "express": "^4.18.2"
-  },
-  "devDependencies": {
-    "@types/express": "^4.17.21"
-  }
+    "name": "beezle",
+    "version": "1.0.0",
+    "description": "Social media platform",
+    "main": "index.js",
+    "scripts": {
+        "start-server": "cd backend && cargo run --package backend --bin backend",
+        "watch-server": "cd backend && cargo watch -c -w src -x run",
+        "start": "concurrently --kill-others \"cd frontend && yarn dev\" \"cd backend && cargo run --package backend --bin backend\""
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/koki10190/beezle-re.git"
+    },
+    "author": "koki10190 | Zekticezy",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/koki10190/beezle-re/issues"
+    },
+    "homepage": "https://github.com/koki10190/beezle-re/blob/master/README.md",
+    "dependencies": {
+        "express": "^4.18.2"
+    },
+    "devDependencies": {
+        "@types/express": "^4.17.21",
+        "concurrently": "^8.2.2"
+    }
 }

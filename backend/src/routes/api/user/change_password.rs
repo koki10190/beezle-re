@@ -78,7 +78,7 @@ pub async fn route(
                     "Hello {}!\nClick the URL to change your pasword for your account \"@{}\": {}\n\n<h1>DO NOT Click on the link if you did not request this!</h1>\nIP Address of the requester: {}",
                     token_data.handle.as_str(),
                     token_data.handle.as_str(),
-                    format!("http://localhost:3000/api/verify_pass?auth_id={}", authID).as_str(),
+                    format!("https://1313-95-83-232-242.ngrok-free.app/api/verify_pass?auth_id={}", authID).as_str(),
                     req.connection_info().realip_remote_addr().unwrap().to_string()
                 )
                 .as_str(),
