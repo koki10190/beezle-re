@@ -1,11 +1,13 @@
 extern crate dotenv;
 use actix_cors::Cors;
 use actix_web::{get, middleware, post, web, App, HttpResponse, HttpServer, Responder};
+use actix_web_middleware_redirect_https::RedirectHTTPS;
 use dotenv::dotenv;
 use futures::StreamExt;
 use mail_send::mail_builder::MessageBuilder;
 use mail_send::{Credentials, SmtpClientBuilder};
 use mongodb::options::Credential;
+use openssl::ssl::{SslAcceptor, SslFiletype, SslMethod};
 use serde::Deserialize;
 use serde_json::ser;
 use socketioxide::extract::Data;
@@ -101,11 +103,24 @@ async fn main() -> std::io::Result<()> {
             .service(routes::api::post::mod_delete::route)
             .route("/ws", web::get().to(ws::spawn::spawn))
             .wrap(middleware::Logger::default())
-    })
-    .bind((env::var("ADDRESS").unwrap(), port))?
-    .run();
+    });
 
     beezle::print("Started HTTP Server");
+    if env::var("USE_SSL").unwrap() == "yes" {
+        let mut builder = SslAcceptor::mozilla_intermediate(SslMethod::tls()).unwrap();
+        builder
+            .set_private_key_file("priv.key", SslFiletype::PEM)
+            .unwrap();
+        builder.set_certificate_chain_file("cert.crt").unwrap();
 
-    http_server.await
+        http_server
+            .bind_openssl((env::var("ADDRESS").unwrap(), port), builder)?
+            .run()
+            .await
+    } else {
+        http_server
+            .bind((env::var("ADDRESS").unwrap(), port))?
+            .run()
+            .await
+    }
 }
