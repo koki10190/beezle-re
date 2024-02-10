@@ -1,4 +1,5 @@
 pub mod explore;
+pub mod following;
 pub mod now;
 pub mod one;
 pub mod profile;

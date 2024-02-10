@@ -31,6 +31,7 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
     const [isFollowing, setFollowing] = useState(user.followers.find(x => x === self?.handle) ? true : false);
     const [followingCount, setFollowingCount] = useState(user.following.length);
     const [followersCount, setFollowersCount] = useState(user.followers.length);
+    const [followsYou, setFollowsYou] = useState(self.followers.find(x => x === user.handle) ? true : false);
     const levelBox = useRef<HTMLSpanElement>(null);
 
     const FollowInteraction = async () => {
@@ -132,6 +133,8 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                     </p>
                     <RepToParagraph reputation={user.reputation} />
                 </div>
+                {followsYou ? <p className="follows-you">Follows you</p> : ""}
+
                 {user.handle === self?.handle ? (
                     <button
                         onClick={() => (window.location.href = "/edit/profile")}
@@ -172,12 +175,12 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                     ""
                 )}
                 <div className="followers-and-following">
-                    <h4>
-                        Following <span>{followersCount}</span>
-                    </h4>
-                    <h4>
-                        Followers <span>{followingCount}</span>
-                    </h4>
+                    <a href={`/following/${user.handle}`}>
+                        Following <span>{followingCount}</span>
+                    </a>
+                    <a href={`/followers/${user.handle}`}>
+                        Followers <span>{followersCount}</span>
+                    </a>
                 </div>
                 <Divider />
                 {posts.map((post: Post) => {

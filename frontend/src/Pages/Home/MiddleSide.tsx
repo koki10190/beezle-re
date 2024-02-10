@@ -1,10 +1,8 @@
-import axios from "axios";
+import axios, { all } from "axios";
 import { FormEvent, useEffect, useRef, useState, UIEvent } from "react";
 import { BrowserRouter, Routes, Route, redirect } from "react-router-dom";
 import { api_uri } from "../../links";
 import { checkToken } from "../../functions/checkToken";
-
-import "./ScopeLoggedIn.css";
 import PostTyper from "../../Components/PostTyper";
 import Divider from "../../Components/Divider";
 import PostBox from "../../Components/PostBox";
@@ -27,8 +25,8 @@ function MiddleSide() {
     };
     // const [self_user, setSelfUser] = useState<UserPrivate | null>(null);
     const [posts, setPosts] = useState<Array<Post>>([]);
-    const [offset, setOffset] = useState(0);
     const [self_user, setSelfUser] = useState<UserPrivate>();
+    const [postOffset, setPostOffset] = useState(0);
 
     const handleScroll = async (event: UIEvent<HTMLDivElement>) => {
         const element = event.target! as HTMLDivElement;
@@ -37,20 +35,28 @@ function MiddleSide() {
         // detected bottom
 
         console.log("at bottom!");
-        const data = (await axios.get(`${api_uri}/api/post/get/explore?offset=${offset}`)).data;
-
-        setPosts(old => [...old, ...(data.posts as Array<Post>)]);
-
-        setOffset(data.offset as number);
-        // setAllPosts(old => {})
+        const posts = (
+            await axios.post(`${api_uri}/api/post/get/following`, {
+                offset: postOffset,
+                filter_users: self_user.following,
+            })
+        ).data;
+        setPosts(old => [...old, ...posts.posts]);
+        setPostOffset(posts.offset);
     };
 
     useEffect(() => {
         (async () => {
-            const data = (await axios.get(`${api_uri}/api/post/get/explore?offset=${offset}`)).data;
-            setPosts(data.posts as Array<Post>);
-            setOffset(data.offset as number);
-            setSelfUser((await fetchUserPrivate()) as UserPrivate);
+            const m_user = (await fetchUserPrivate()) as UserPrivate;
+            setSelfUser(m_user);
+            const posts = (
+                await axios.post(`${api_uri}/api/post/get/following`, {
+                    offset: postOffset,
+                    filter_users: m_user.following,
+                })
+            ).data;
+            setPosts(posts.posts);
+            setPostOffset(posts.offset);
         })();
     }, []);
 
@@ -62,8 +68,7 @@ function MiddleSide() {
         <div onScroll={handleScroll} className="page-sides side-middle home-middle">
             <PostTyper onSend={OnTyperSend} />
             <Divider />
-            <p>You're viewing Explore</p>
-
+            <p>You're viewing Home</p>
             {self_user
                 ? posts.map((post: Post) => {
                       return (

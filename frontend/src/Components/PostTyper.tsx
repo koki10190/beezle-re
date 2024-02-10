@@ -31,6 +31,7 @@ function PostTyper({ onSend, replying_to = "" }: { onSend: (data: Post) => void;
     const CreatePost = () => {
         (async () => {
             if (!textarea.current || !canCreate) return;
+            if (textarea.current.value.replace(/ /g, "") == "") return;
             let links = "";
             sendButtonRef.current!.disabled = true;
             sendButtonRef.current!.innerText = "Posting...";
@@ -85,7 +86,13 @@ function PostTyper({ onSend, replying_to = "" }: { onSend: (data: Post) => void;
 
     return (
         <div>
-            <textarea ref={textarea} placeholder="Press here to type." className="post-typer"></textarea>
+            <textarea
+                minLength={1}
+                maxLength={300}
+                ref={textarea}
+                placeholder="Press here to type."
+                className="post-typer"
+            ></textarea>
             <div ref={filesToUploadRef} className="files-to-upload"></div>
             <div className="post-typer-buttons">
                 <a onClick={() => fileRef.current!.click()} className="post-typer-button">

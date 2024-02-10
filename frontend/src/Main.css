@@ -1,3 +1,9 @@
+body,
+html {
+    overflow-x: hidden;
+    overflow-y: hidden;
+}
+
 .link {
     cursor: pointer;
     text-decoration: none;
@@ -6,4 +12,8 @@
 
 .link:hover {
     text-decoration: underline;
+}
+
+textarea {
+    white-space: pre-wrap;
 }

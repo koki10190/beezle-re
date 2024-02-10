@@ -48,7 +48,10 @@ function PostBox({
     useEffect(() => {
         (async () => {
             if (post.repost) {
-                setUser((await fetchUserPublic(post.post_op_handle)) as UserPublic);
+                post = (await axios.get(`${api_uri}/api/post/get/one?post_id=${post.post_op_id}`)).data;
+                setUser((await fetchUserPublic(post.handle)) as UserPublic);
+                setLikeCount(post.likes.length);
+                setRepostCount(post.reposts.length);
             } else {
                 setUser((await fetchUserPublic(post.handle)) as UserPublic);
             }
@@ -59,7 +62,6 @@ function PostBox({
             setReplyCount(
                 (await axios.get(`${api_uri}/api/post/get/reply_count?post_id=${post.post_id}`)).data.count as number
             );
-
             if (post.is_reply) {
                 setReplyingToPost((await axios.get(`${api_uri}/api/post/get/one?post_id=${post.replying_to}`)).data);
             }
@@ -78,7 +80,7 @@ function PostBox({
         if (isLiked) {
             await axios.post(`${api_uri}/api/post/like`, {
                 token: localStorage.getItem("access_token"),
-                post_id: post.post_id,
+                post_id: post.repost ? post.post_op_id : post.post_id,
                 remove_like: true,
             });
             setLiked(false);
@@ -95,7 +97,7 @@ function PostBox({
 
         await axios.post(`${api_uri}/api/post/like`, {
             token: localStorage.getItem("access_token"),
-            post_id: post.post_id,
+            post_id: post.repost ? post.post_op_id : post.post_id,
             remove_like: false,
         });
         setLiked(true);
@@ -104,9 +106,10 @@ function PostBox({
 
     const RepostInteraction = async () => {
         if (isReposted) {
+            console.log(post.post_id);
             await axios.post(`${api_uri}/api/post/repost`, {
                 token: localStorage.getItem("access_token"),
-                post_id: post.post_id,
+                post_id: post.repost ? post.post_op_id : post.post_id,
                 remove_repost: true,
             });
             setReposted(false);
@@ -117,7 +120,7 @@ function PostBox({
 
         const res = await axios.post(`${api_uri}/api/post/repost`, {
             token: localStorage.getItem("access_token"),
-            post_id: post.post_id,
+            post_id: post.repost ? post.post_op_id : post.post_id,
             remove_repost: false,
         });
 
@@ -129,7 +132,7 @@ function PostBox({
         if (isBookmarked) {
             await axios.post(`${api_uri}/api/post/bookmark`, {
                 token: localStorage.getItem("access_token"),
-                post_id: post.post_id,
+                post_id: post.repost ? post.post_op_id : post.post_id,
                 remove_bookmark: true,
             });
             setBookmarked(false);
@@ -137,7 +140,7 @@ function PostBox({
             if (setPosts && delete_post_on_bookmark_remove) {
                 setPosts((old: Array<Post>) => {
                     old.splice(
-                        old.findIndex(x => x.post_id == post.post_id),
+                        old.findIndex(x => x.post_id == (post.repost ? post.post_op_id : post.post_id)),
                         1
                     );
                     return [...old];
@@ -149,7 +152,7 @@ function PostBox({
 
         const res = await axios.post(`${api_uri}/api/post/bookmark`, {
             token: localStorage.getItem("access_token"),
-            post_id: post.post_id,
+            post_id: post.repost ? post.post_op_id : post.post_id,
             remove_bookmark: false,
         });
 
@@ -297,6 +300,9 @@ function PostBox({
                 </>
             ) : (
                 <p
+                    style={{
+                        whiteSpace: "pre-line",
+                    }}
                     dangerouslySetInnerHTML={{
                         __html: parseURLs(finalContent),
                     }}

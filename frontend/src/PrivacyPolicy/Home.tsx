@@ -10,7 +10,10 @@ import "./PrivacyPolicy.css";
 function Home() {
     return (
         <>
-            <div className="privacy">
+            <div
+                style={{ width: "100vw", height: "100vh", overflowY: "auto", wordWrap: "break-word" }}
+                className="privacy"
+            >
                 <h1>Privacy & Terms</h1>
                 <ul>
                     <h1 className="headline">Privacy</h1>
@@ -30,6 +33,18 @@ function Home() {
                         </a>{" "}
                         to check the source code
                     </p>
+                    <br />
+                    <h1 className="headline">Terms of Service</h1>
+                    <li>
+                        We do not take any responsibility over your account getting hacked, logged into without consent
+                        etc. you're reliable for your accounts security.
+                    </li>
+                    <li>
+                        While we strongly discourage posting of NSFW/ if you have a private account you can post NSFW,
+                        we do not take any responsibility over minors getting access to +18 Private Accounts, This is
+                        the private accounts responsibility to check if the account they're giving access to is not a
+                        minor.
+                    </li>
                     <br />
                     <h1 className="headline">Rules</h1>
                     <li>

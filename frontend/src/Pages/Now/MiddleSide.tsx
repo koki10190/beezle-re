@@ -57,6 +57,8 @@ function MiddleSide() {
         <div onScroll={handleScroll} className="page-sides side-middle home-middle">
             <PostTyper onSend={OnTyperSend} />
             <Divider />
+            <p>You're viewing Right Now</p>
+
             {self_user
                 ? posts.map((post: Post) => {
                       return (

@@ -12,12 +12,14 @@ import axios from "axios";
 import { fetchUserPublic } from "../../functions/fetchUserPublic";
 import { useParams } from "react-router-dom";
 import "./Post.css";
+import "../../Components/PostBox.css";
 import moment from "moment";
 import { BadgesToJSX } from "../../functions/badgesToJSX";
 import FlipNumbers from "react-flip-numbers";
 import millify from "millify";
 import PostTyper from "../../Components/PostTyper";
 import parseURLs from "../../functions/parseURLs";
+import { Helmet } from "react-helmet";
 
 function MiddleSide() {
     const { post_id } = useParams();
@@ -39,6 +41,7 @@ function MiddleSide() {
     const [editContent, setEditContent] = useState("");
     const [finalContent, setFinalContent] = useState("");
     const [isPostEdited, setPostEdited] = useState(false);
+    const [replyingToPost, setReplyingToPost] = useState<Post>();
 
     useEffect(() => {
         (async () => {
@@ -47,11 +50,16 @@ function MiddleSide() {
 
             console.log("foreach");
             const replies_res = await axios.get(`${api_uri}/api/post/get/replies?post_id=${post_id}`);
-            const post_res = await axios.get(`${api_uri}/api/post/get/one?post_id=${post_id}`);
+            let post_res = await axios.get(`${api_uri}/api/post/get/one?post_id=${post_id}`);
             const priv = (await fetchUserPrivate()) as UserPrivate;
+
+            if (post_res.data.repost) {
+                setIsRepost(post_res.data.repost);
+                post_res = await axios.get(`${api_uri}/api/post/get/one?post_id=${post_res.data.post_op_id}`);
+            }
+
             setReplies(replies_res.data.replies);
             setSelfUser(priv);
-            setIsRepost(post_res.data.repost);
             setPost(post_res.data);
             setPostUser(
                 (await fetchUserPublic(
@@ -68,6 +76,12 @@ function MiddleSide() {
             setEditContent(post_res.data.content);
             setFinalContent(post_res.data.content);
             setPostEdited(post_res.data.edited);
+
+            if (post_res.data.is_reply) {
+                setReplyingToPost(
+                    (await axios.get(`${api_uri}/api/post/get/one?post_id=${post_res.data.replying_to}`)).data
+                );
+            }
         })();
     }, []);
 
@@ -184,35 +198,101 @@ function MiddleSide() {
     return (
         <div className="page-sides side-middle home-middle">
             <div className="post-page-container">
-                <div style={{ backgroundImage: `url(${post_user?.avatar})` }} className="post-page-pfp"></div>
-                <p className="post-page-username">
-                    {post_user?.username}{" "}
-                    <BadgesToJSX badges={post_user ? post_user.badges : []} className="profile-badge" />
-                </p>
-                <p className="post-page-handle">
-                    @{post_user?.handle} -{" "}
-                    <span style={{ color: "white" }}>
-                        {" "}
-                        {moment(new Date(parseInt(post ? post.creation_date.$date.$numberLong : "0")))
-                            .fromNow(true)
-                            .replace("minutes", "m")
-                            .replace(" ", "")
-                            .replace("hours", "h")
-                            .replace("afew seconds", "1s")
-                            .replace("aminute", "1m")
-                            .replace("ahour", "1h")
-                            .replace("anhour", "1h")
-                            .replace("aday", "1d")
-                            .replace("days", "d")
-                            .replace("day", "1d")
-                            .replace("months", " months")
-                            .replace("amonth", "1 month")}
-                    </span>
-                </p>
+                {post && post_user ? (
+                    <>
+                        <Helmet>
+                            <title>Beezle: RE - Post</title>
+                            <meta name="description" content={`${post.content.replace(/(.{64})..+/, "$1…")}`} />
+                            <meta name="keywords" content="react, meta tags, seo" />
+                            <meta name="author" content={`@${post.repost ? post.post_op_handle : post.handle}`} />
+                            <meta
+                                property="og:title"
+                                content={`Post by @${post.repost ? post.post_op_handle : post.handle}`}
+                            />
+                            <meta property="og:description" content={`${post.content.replace(/(.{64})..+/, "$1…")}`} />
+                            <meta property="og:image" content={post_user.avatar} />
+                            <meta
+                                property="og:url"
+                                content={`https://beezle.lol/post/${post.repost ? post.post_op_id : post.post_id}`}
+                            />
+                            <meta
+                                name="twitter:title"
+                                content={`Post by @${post.repost ? post.post_op_handle : post.handle}`}
+                            />
+                            <meta name="twitter:description" content={`${post.content.replace(/(.{64})..+/, "$1…")}`} />
+                            <meta name="twitter:image" content={`${post_user.avatar}`} />
+                            <meta name="twitter:card" content="summary_large_image" />
+                        </Helmet>
+                        {post.repost ? (
+                            <h4
+                                onClick={() => (window.location.href = `/profile/${post.handle}`)}
+                                className="post-attr"
+                            >
+                                <i className="fa-solid fa-repeat"></i> Repost by @{post.handle}
+                            </h4>
+                        ) : (
+                            ""
+                        )}
+
+                        {isPostEdited ? (
+                            <h4 className="post-attr">
+                                <i className="fa-solid fa-pencil"></i> Edited
+                            </h4>
+                        ) : (
+                            ""
+                        )}
+
+                        {post.is_reply && replyingToPost ? (
+                            <h4
+                                onClick={() => (window.location.href = `/post/${post.replying_to}`)}
+                                className="post-attr"
+                            >
+                                <i className="fa-solid fa-comment"></i> Replying to{" "}
+                                {replyingToPost?.content.replace(/(.{12})..+/, "$1…")}
+                            </h4>
+                        ) : (
+                            ""
+                        )}
+                    </>
+                ) : (
+                    ""
+                )}
+                <div
+                    style={{ cursor: "pointer" }}
+                    onClick={() => (window.location.href = `/profile/${post_user?.handle}`)}
+                >
+                    <div style={{ backgroundImage: `url(${post_user?.avatar})` }} className="post-page-pfp"></div>
+                    <p className="post-page-username">
+                        {post_user?.username}{" "}
+                        <BadgesToJSX badges={post_user ? post_user.badges : []} className="profile-badge" />
+                    </p>
+                    <p className="post-page-handle">
+                        @{post_user?.handle} -{" "}
+                        <span style={{ color: "white" }}>
+                            {" "}
+                            {moment(new Date(parseInt(post ? post.creation_date.$date.$numberLong : "0")))
+                                .fromNow(true)
+                                .replace("minutes", "m")
+                                .replace(" ", "")
+                                .replace("hours", "h")
+                                .replace("afew seconds", "1s")
+                                .replace("aminute", "1m")
+                                .replace("ahour", "1h")
+                                .replace("anhour", "1h")
+                                .replace("aday", "1d")
+                                .replace("days", "d")
+                                .replace("day", "1d")
+                                .replace("months", " months")
+                                .replace("amonth", "1 month")}
+                        </span>
+                    </p>
+                </div>
                 {isEditing ? (
                     <>
                         <textarea
                             placeholder="Edit Post"
+                            minLength={1}
+                            maxLength={300}
                             value={editContent}
                             onChange={e => setEditContent(e.target.value)}
                             className="input-field"

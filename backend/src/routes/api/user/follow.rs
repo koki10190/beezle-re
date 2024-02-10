@@ -23,6 +23,7 @@ struct FollowData {
 pub async fn route(
     body: web::Json<FollowData>,
     client: web::Data<mongodb::Client>,
+    fapp: web::Data<std::sync::Mutex<crate::data_struct::AppData>>,
 ) -> impl Responder {
     let token_data = decode::<mongoose::structures::user::JwtUser>(
         &body.token,
@@ -68,7 +69,12 @@ pub async fn route(
                     },
                     doc! {
                         "$addToSet": {
-                            "followers": &token_data.handle
+                            "followers": &token_data.handle,
+                            "notifications": {
+                                "caller": &token_data.handle,
+                                "handle": &token_data.handle,
+                                "message": "followed you!"
+                            }
                         }
                     },
                 )

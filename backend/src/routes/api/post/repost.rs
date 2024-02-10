@@ -37,7 +37,12 @@ pub async fn route(
                     "post_id": &body.post_id
                 },
             )
-            .await;
+            .await
+            .unwrap();
+
+            if post_doc.get("repost").unwrap().as_bool().unwrap() {
+                return HttpResponse::Ok().json(doc! {"error": "Cannot repost a repost"});
+            }
 
             if body.remove_repost {
                 mongoose::update_document(

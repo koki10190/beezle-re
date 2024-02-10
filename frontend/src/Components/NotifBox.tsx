@@ -16,7 +16,12 @@ function NotifBox({ notif }: { notif: NotificationData }) {
     return (
         <div
             onClick={() => {
-                window.location.href = `/post/${notif.post_id}`;
+                if ((notif as any).post_id) {
+                    window.location.href = `/post/${notif.post_id}`;
+                }
+                if ((notif as any).handle) {
+                    window.location.href = `/profile/${(notif as any).handle}`;
+                }
             }}
             className="notif"
         >

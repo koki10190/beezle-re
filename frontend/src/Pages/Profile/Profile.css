@@ -67,6 +67,7 @@ body {
 .profile .about_me {
     font-size: 20px;
     margin-top: 20px;
+    white-space: pre-line;
 }
 
 .profile .profile-container {
@@ -107,9 +108,12 @@ body {
     margin-top: 80px;
 }
 
-.followers-and-following h4 {
+.followers-and-following a {
+    font-weight: 1000;
+    text-decoration: none;
+
     display: inline-block;
-    margin-right: 20px;
+    margin-right: 10px;
     color: rgba(255, 255, 255, 0.5);
 }
 
@@ -165,7 +169,7 @@ body {
     }
 
     .profile .username {
-        margin-top: -95px;
+        margin-top: -105px;
         margin-left: 140px;
         font-size: 17px;
     }
@@ -181,6 +185,10 @@ body {
         margin-top: -30px;
     }
 
+    .profile .test-gradient {
+        font-size: 15px;
+    }
+
     .profile .profile-container {
         margin-top: 50px;
         margin-bottom: -37px;
@@ -193,6 +201,10 @@ body {
         font-size: 25px;
         position: static;
         padding: 2px;
+    }
+
+    .profile .inline-stats {
+        margin-top: 35px;
     }
 
     .page-sides.side-right {
@@ -210,4 +222,17 @@ body {
 .inline-stats p {
     display: inline-block;
     margin-right: 15px;
+}
+
+.follows-you {
+    width: fit-content;
+    padding: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+    border-radius: 5px;
+    font-weight: 1000;
+    background-color: rgb(255, 133, 33);
+    margin-left: 5px;
+    margin-top: 70px;
+    margin-bottom: -70px;
 }

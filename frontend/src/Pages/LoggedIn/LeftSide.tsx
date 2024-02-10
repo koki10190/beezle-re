@@ -3,8 +3,19 @@ import { FormEvent, useEffect, useRef, useState } from "react";
 import { BrowserRouter, Routes, Route, redirect } from "react-router-dom";
 import { api_uri, discord, github, twitter, youtube } from "../../links";
 import { checkToken } from "../../functions/checkToken";
+import FollowBox from "../../Components/FollowBox";
+import { UserPrivate } from "../../types/User";
+import { fetchUserPrivate } from "../../functions/fetchUserPrivate";
 
 function LeftSide() {
+    const [self_user, setSelfUser] = useState<UserPrivate | null>();
+
+    useEffect(() => {
+        (async () => {
+            setSelfUser(await fetchUserPrivate());
+        })();
+    }, []);
+
     return (
         <div className="page-sides side-left">
             <h1>
@@ -42,6 +53,17 @@ function LeftSide() {
                 >
                     <i className="fa-brands fa-youtube"></i>
                 </button>
+            </div>
+            <div className="who-to-follow">
+                <h2>Who to follow</h2>
+                {self_user ? (
+                    <>
+                        <FollowBox self_user={self_user} handle="koki" />
+                        <FollowBox self_user={self_user} handle="beezle" />
+                    </>
+                ) : (
+                    ""
+                )}
             </div>
         </div>
     );

@@ -11,6 +11,9 @@ import Notifications_Home from "./Pages/Notifications/Home";
 import Settings_Home from "./Pages/Settings/Home";
 import PrivacyPolicy_Home from "./PrivacyPolicy/Home";
 import Dashboard_Home from "./Pages/Dashboard/Home";
+import Followers_Home from "./Pages/Followers/Home";
+import Following_Home from "./Pages/Following/Home";
+import FollowingHome_Home from "./Pages/Home/Home";
 import { api_uri } from "./links";
 import { useEffect, useState } from "react";
 import { socket } from "./ws/socket";
@@ -55,15 +58,15 @@ function App() {
         console.log("test_session", data);
     });
 
-    useEffect(() => {
-        // Socket setup
-    }, []);
+    // useEffect(() => {
+    //     // Socket setup
+    // }, []);
 
     return (
         <BrowserRouter>
             <Routes>
                 <Route path="/" element={<Home />} />
-                <Route path="/home" element={<LoggedIn_Home />} />
+                <Route path="/home" element={<FollowingHome_Home />} />
                 <Route path="/explore" element={<LoggedIn_Home />} />
                 <Route path="/right-now" element={<Now_Home />} />
                 <Route path="/profile/:handle" element={<Profile_Home />} />
@@ -74,6 +77,8 @@ function App() {
                 <Route path="/notifications" element={<Notifications_Home />} />
                 <Route path="/settings" element={<Settings_Home />} />
                 <Route path="/dashboard" element={<Dashboard_Home />} />
+                <Route path="/followers/:handle" element={<Followers_Home />} />
+                <Route path="/following/:handle" element={<Following_Home />} />
                 <Route path="/verify/:auth_id" element={<Verify />} />
                 <Route path="/verify_pass/:auth_id" element={<VerifyPass />} />
                 <Route path="/privacy-and-terms" element={<PrivacyPolicy_Home />} />
