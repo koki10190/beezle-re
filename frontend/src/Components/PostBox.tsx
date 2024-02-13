@@ -263,6 +263,7 @@ function PostBox({
             <div
                 style={{
                     backgroundImage: `url(${user ? user.avatar : ""})`,
+                    borderRadius: user?.customization?.square_avatar ? "15px" : "100%",
                 }}
                 className="pfp-post"
             ></div>

@@ -30,6 +30,7 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
     const [username, setUsername] = useState<string>(user.username);
     const [about_me, setAboutMe] = useState<string>(user.about_me);
     const [activity, setActivity] = useState<string>(user.activity);
+    const [squareAvatar, setSquareAvatar] = useState<boolean>(user.customization?.square_avatar ? true : false);
     const [g1, setG1] = useState<string>(
         user.customization?.profile_gradient ? user.customization.profile_gradient.color1 : "#000000"
     );
@@ -40,7 +41,7 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
         user.customization?.name_color ? user.customization.name_color.color1 : "#000000"
     );
     const [ng2, setNG2] = useState<string>(
-        user.customization?.name_color ? user.customization.profile_gradient.color2 : "#000000"
+        user.customization?.name_color ? user.customization.name_color.color2 : "#000000"
     );
     const bannerOverlay = useRef<HTMLDivElement>(null);
     const avatarOverlay = useRef<HTMLDivElement>(null);
@@ -110,7 +111,9 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
                 profile_gradient2: g2,
                 name_color1: ng1,
                 name_color2: ng2,
+                square_avatar: squareAvatar,
             };
+            console.log(data);
             const m_data = (await axios.post(`${api_uri}/api/profile/edit`, data)).data;
             if (m_data.changed) {
                 alert("Your profile has been edited");
@@ -181,102 +184,84 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
                 </div>
             </div>
             <input className="username input-field" value={username} onChange={e => setUsername(e.target.value)} />
-            <div className="profile-container">
-                <p className="profile-container-header">About Me</p>
-                <textarea
-                    maxLength={1000}
-                    value={about_me}
-                    onChange={e => setAboutMe(e.target.value)}
-                    className="about_me input-field"
-                >
-                    {user.about_me}
-                </textarea>
-            </div>
-            <div className="profile-container">
-                <p className="profile-container-header">Activity</p>
-                <textarea
-                    maxLength={35}
-                    value={activity}
-                    onChange={e => setActivity(e.target.value)}
-                    className="about_me input-field"
-                >
-                    {user.activity}
-                </textarea>
-            </div>
-            {user.customization?.profile_gradient_bought ? (
-                <div style={{ marginBottom: "0px" }} className="profile-container">
-                    <p className="profile-container-header">Profile Gradient</p>
-                    <input
-                        value={g1}
-                        onChange={e => setG1(e.target.value)}
-                        className="about_me color-picker"
-                        type="color"
-                    />
-                    <input
-                        value={g2}
-                        onChange={e => setG2(e.target.value)}
-                        className="about_me color-picker"
-                        type="color"
-                    />
+            <div style={{ marginTop: "82px" }}>
+                <div className="profile-container-nom">
+                    <p className="profile-container-header">About Me</p>
+                    <textarea
+                        maxLength={1000}
+                        value={about_me}
+                        onChange={e => setAboutMe(e.target.value)}
+                        className="about_me input-field"
+                    >
+                        {user.about_me}
+                    </textarea>
                 </div>
-            ) : (
-                <>
-                    <h2
-                        style={{
-                            marginTop: "80px",
-                            marginBottom: "-70px",
-                        }}
+                <div className="profile-container-nom">
+                    <p className="profile-container-header">Activity</p>
+                    <textarea
+                        maxLength={35}
+                        value={activity}
+                        onChange={e => setActivity(e.target.value)}
+                        className="about_me input-field"
                     >
-                        <i className="fa-solid fa-coins" /> 15,000
-                    </h2>
-                    <button
-                        type="button"
-                        style={{ marginTop: "80px" }}
-                        onClick={() => Buy(BuyWhat.PROFILE_GRADIENT)}
-                        className="button-field button-field-blurple fixed-100"
-                    >
-                        Buy Profile Gradient
-                    </button>
-                </>
-            )}
+                        {user.activity}
+                    </textarea>
+                </div>
+                {user.customization?.profile_gradient_bought ? (
+                    <div className="profile-container-nom">
+                        <p className="profile-container-header">Profile Gradient</p>
+                        <input
+                            value={g1}
+                            onChange={e => setG1(e.target.value)}
+                            className="about_me color-picker"
+                            type="color"
+                        />
+                        <input
+                            value={g2}
+                            onChange={e => setG2(e.target.value)}
+                            className="about_me color-picker"
+                            type="color"
+                        />
+                    </div>
+                ) : (
+                    ""
+                )}
+                {user.customization?.name_color_bought ? (
+                    <div className="profile-container-nom">
+                        <p className="profile-container-header">Name Color Gradient</p>
+                        <input
+                            value={ng1}
+                            onChange={e => setNG1(e.target.value)}
+                            className="about_me color-picker"
+                            type="color"
+                        />
+                        <input
+                            value={ng2}
+                            onChange={e => setNG2(e.target.value)}
+                            className="about_me color-picker"
+                            type="color"
+                        />
+                    </div>
+                ) : (
+                    ""
+                )}
+                {user.customization?.square_avatar_bought ? (
+                    <>
+                        <p style={{ display: "inline" }}>Square Avatar</p>
+                        <input
+                            defaultChecked={squareAvatar}
+                            onChange={() => setSquareAvatar(old => !old)}
+                            style={{ marginLeft: "10px", display: "inline" }}
+                            type="checkbox"
+                        />
+                    </>
+                ) : (
+                    ""
+                )}
+            </div>
 
-            {user.customization?.name_color_bought ? (
-                <div style={{ marginTop: "10px" }} className="profile-container">
-                    <p className="profile-container-header">Name Color Gradient</p>
-                    <input
-                        value={ng1}
-                        onChange={e => setNG1(e.target.value)}
-                        className="about_me color-picker"
-                        type="color"
-                    />
-                    <input
-                        value={ng2}
-                        onChange={e => setNG2(e.target.value)}
-                        className="about_me color-picker"
-                        type="color"
-                    />
-                </div>
-            ) : (
-                <>
-                    <h2
-                        style={{
-                            marginTop: "30px",
-                            marginBottom: "-70px",
-                        }}
-                    >
-                        <i className="fa-solid fa-coins" /> 7,500
-                    </h2>
-                    <button
-                        type="button"
-                        style={{ marginTop: "80px" }}
-                        className="button-field button-field-red fixed-100"
-                        onClick={() => Buy(BuyWhat.NAME_COLOR)}
-                    >
-                        Buy Name Color
-                    </button>
-                </>
-            )}
-            <button ref={buttonRef} type="submit" style={{ marginTop: "80px" }} className="button-field fixed-100">
+            <br />
+            <button ref={buttonRef} type="submit" className="button-field fixed-100">
                 Save Changes
             </button>
         </form>

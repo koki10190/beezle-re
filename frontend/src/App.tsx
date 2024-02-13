@@ -14,6 +14,7 @@ import Dashboard_Home from "./Pages/Dashboard/Home";
 import Followers_Home from "./Pages/Followers/Home";
 import Following_Home from "./Pages/Following/Home";
 import FollowingHome_Home from "./Pages/Home/Home";
+import Shop_Home from "./Pages/Shop/Home";
 import { api_uri } from "./links";
 import { useEffect, useState } from "react";
 import { socket } from "./ws/socket";
@@ -82,6 +83,7 @@ function App() {
                 <Route path="/verify/:auth_id" element={<Verify />} />
                 <Route path="/verify_pass/:auth_id" element={<VerifyPass />} />
                 <Route path="/privacy-and-terms" element={<PrivacyPolicy_Home />} />
+                <Route path="/shop" element={<Shop_Home />} />
             </Routes>
         </BrowserRouter>
     );

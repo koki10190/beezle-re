@@ -24,6 +24,7 @@ struct GetUserQuery {
     profile_gradient2: String,
     name_color1: String,
     name_color2: String,
+    square_avatar: bool,
 }
 
 #[post("/api/profile/edit")]
@@ -46,7 +47,7 @@ pub async fn route(
         doc! { "handle": &token_data.handle, "hash_password": &token_data.hash_password },
     )
     .await;
-    beezle::print(&body.avatar);
+
     let mut s_Avatar = body.avatar.clone();
     let mut s_Banner = body.banner.clone();
 
@@ -96,6 +97,18 @@ pub async fn route(
             let mut profile_gradient_bought = false;
             if profile_gradient_bought_bson.is_some() {
                 profile_gradient_bought = profile_gradient_bought_bson.unwrap().as_bool().unwrap();
+            }
+
+            let square_avatar_bought_bson = unwrapped
+                .get("customization")
+                .unwrap()
+                .as_document()
+                .unwrap()
+                .get("square_avatar_bought");
+
+            let mut square_avatar_bought = false;
+            if square_avatar_bought_bson.is_some() {
+                square_avatar_bought = square_avatar_bought_bson.unwrap().as_bool().unwrap();
             }
 
             mongoose::update_document(
@@ -151,6 +164,23 @@ pub async fn route(
                                 "color1": &body.profile_gradient1,
                                 "color2": &body.profile_gradient2,
                             }
+                        }
+                    },
+                )
+                .await;
+            }
+
+            if square_avatar_bought {
+                mongoose::update_document(
+                    &client,
+                    "beezle",
+                    "Users",
+                    doc! {
+                        "handle": &token_data.handle,
+                    },
+                    doc! {
+                        "$set": {
+                            "customization.square_avatar": body.square_avatar
                         }
                     },
                 )

@@ -134,7 +134,7 @@ pub async fn route(
 
                 mongoose::insert_document(&client, "beezle", "Posts", document.clone()).await;
                 mongoose::add_coins(&client, data.claims.handle.as_str(), 5).await;
-                mongoose::add_xp(&client, &data.claims.handle, 9).await;
+                mongoose::add_xp(&client, &data.claims.handle, 15).await;
             }
 
             return HttpResponse::Ok().json(

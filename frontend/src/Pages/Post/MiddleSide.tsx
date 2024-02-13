@@ -262,7 +262,13 @@ function MiddleSide() {
                     style={{ cursor: "pointer" }}
                     onClick={() => (window.location.href = `/profile/${post_user?.handle}`)}
                 >
-                    <div style={{ backgroundImage: `url(${post_user?.avatar})` }} className="post-page-pfp"></div>
+                    <div
+                        style={{
+                            backgroundImage: `url(${post_user?.avatar})`,
+                            borderRadius: post_user?.customization?.square_avatar ? "15px" : "100%",
+                        }}
+                        className="post-page-pfp"
+                    ></div>
                     <p className="post-page-username">
                         {post_user ? <Username user={post_user} /> : ""}{" "}
                         <BadgesToJSX badges={post_user ? post_user.badges : []} className="profile-badge" />

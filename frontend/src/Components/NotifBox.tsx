@@ -27,7 +27,13 @@ function NotifBox({ notif }: { notif: NotificationData }) {
         >
             {user ? (
                 <>
-                    <div style={{ backgroundImage: `url(${user.avatar})` }} className="notif-pfp"></div>
+                    <div
+                        style={{
+                            backgroundImage: `url(${user.avatar})`,
+                            borderRadius: user.customization?.square_avatar ? "15px" : "100%",
+                        }}
+                        className="notif-pfp"
+                    ></div>
                     <p className="notif-message">
                         <span
                             onClick={(e: any) => {

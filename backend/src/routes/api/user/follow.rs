@@ -81,7 +81,7 @@ pub async fn route(
                 .await;
 
                 mongoose::add_coins(&client, token_data.handle.as_str(), 20).await;
-                mongoose::add_xp(&client, token_data.handle.as_str(), 9).await;
+                mongoose::add_xp(&client, token_data.handle.as_str(), 20).await;
             } else {
                 // MODIFY THE REQUESTER
                 mongoose::update_document(

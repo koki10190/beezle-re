@@ -68,7 +68,7 @@ pub async fn route(
                 )
                 .await;
                 mongoose::add_coins(&client, data.claims.handle.as_str(), 5).await;
-                mongoose::add_xp(&client, &data.claims.handle.as_str(), 9).await;
+                mongoose::add_xp(&client, &data.claims.handle.as_str(), 15).await;
             }
 
             return HttpResponse::Ok().json(

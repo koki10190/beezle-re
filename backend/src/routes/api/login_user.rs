@@ -20,7 +20,6 @@ pub async fn route(
     body: web::Json<LoginInfo>,
     client: web::Data<mongodb::Client>,
 ) -> impl Responder {
-    beezle::print("yo");
     let mut doc = mongoose::get_document(
         &client,
         "beezle",
@@ -35,7 +34,6 @@ pub async fn route(
         ]},
     )
     .await;
-    beezle::print("ayy");
 
     match doc {
         None => HttpResponse::Ok().json(doc! {"error": "Invalid Email or Handle!"}),

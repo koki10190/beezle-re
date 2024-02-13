@@ -18,6 +18,7 @@ import sanitize from "sanitize-html";
 import parseURLs from "../functions/parseURLs";
 import RepToIcon from "./RepToIcon";
 import Username from "./Username";
+import ShadeColor from "../functions/ShadeColor";
 
 interface FollowBoxData {
     handle: string;
@@ -27,11 +28,25 @@ interface FollowBoxData {
 function FollowBox({ handle, self_user }: FollowBoxData) {
     const [user, setUser] = useState<UserPublic>();
     const [isFollowing, setFollowing] = useState(false);
+    const [bgGradient, setBgGradient] = useState("");
 
     useEffect(() => {
         (async () => {
             const _user = (await fetchUserPublic(handle)) as UserPublic;
             setUser(_user);
+            setBgGradient(
+                `linear-gradient(-45deg, ${ShadeColor(
+                    _user.customization?.profile_gradient
+                        ? _user.customization.profile_gradient.color1
+                        : "rgb(231, 129, 98)",
+                    -25
+                )}, ${ShadeColor(
+                    _user.customization?.profile_gradient
+                        ? _user.customization.profile_gradient.color2
+                        : "rgb(231, 129, 98)",
+                    -25
+                )})`
+            );
             setFollowing(_user.followers.find(x => x === self_user.handle) ? true : false);
         })();
     }, []);
@@ -52,11 +67,17 @@ function FollowBox({ handle, self_user }: FollowBoxData) {
     };
 
     return (
-        <div className="post-box">
+        <div
+            style={{
+                background: bgGradient,
+            }}
+            className="post-box"
+        >
             <div onClick={() => (window.location.href = `/profile/${user ? user.handle : ""}`)} className="user-detail">
                 <div
                     style={{
                         backgroundImage: `url(${user ? user.avatar : ""})`,
+                        borderRadius: user?.customization?.square_avatar ? "15px" : "100%",
                     }}
                     className="pfp-post"
                 ></div>

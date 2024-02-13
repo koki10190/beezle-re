@@ -102,6 +102,7 @@ function RightSide() {
                     text="Bookmarks"
                     style={undefined}
                 />
+                <SettingsButton redirect="/shop" iconClass="fa-solid fa-shop" text="Shop" style={undefined} />
                 <SettingsButton redirect="/settings" iconClass="fa-solid fa-cog" text="Settings" style={undefined} />
                 {self_user ? (
                     self_user.badges.findIndex(x => x == BadgeType.OWNER || x == BadgeType.MODERATOR) > -1 ? (
@@ -119,7 +120,14 @@ function RightSide() {
                 )}
 
                 <a href={`/profile/${self_user?.handle}`} className="settings-button">
-                    <div style={{ backgroundImage: `url(${self_user?.avatar})` }} className="pfp"></div> Profile
+                    <div
+                        style={{
+                            backgroundImage: `url(${self_user?.avatar})`,
+                            borderRadius: self_user?.customization?.square_avatar ? "15px" : "100%",
+                        }}
+                        className="pfp"
+                    ></div>{" "}
+                    Profile
                 </a>
 
                 <SettingsButton

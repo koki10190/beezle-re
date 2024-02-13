@@ -45,15 +45,13 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
         )})`
     );
     const [gradient, setGradient] = useState(
-        `linear-gradient(75deg, ${
-            user.customization?.profile_gradient
-                ? user.customization.profile_gradient.color1
-                : "rgba(255, 143, 98, 0.8)"
-        }, ${
-            user.customization?.profile_gradient
-                ? user.customization.profile_gradient.color2
-                : "rgba(255, 143, 98, 0.8)"
-        })`
+        `linear-gradient(45deg, ${ShadeColor(
+            user.customization?.profile_gradient ? user.customization.profile_gradient.color1 : "#000000",
+            -25
+        )}, ${ShadeColor(
+            user.customization?.profile_gradient ? user.customization.profile_gradient.color2 : "#000000",
+            -25
+        )})`
     );
     const levelBox = useRef<HTMLSpanElement>(null);
 
@@ -120,6 +118,7 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                 <div
                     style={{
                         backgroundImage: `url(${user.avatar})`,
+                        borderRadius: user.customization?.square_avatar ? "15px" : "100%",
                     }}
                     className="pfp"
                 ></div>

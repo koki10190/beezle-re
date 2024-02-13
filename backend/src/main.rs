@@ -104,6 +104,7 @@ async fn main() -> std::io::Result<()> {
             .service(routes::api::post::get::following::route)
             .service(routes::api::user::buy::profile_gradient::route)
             .service(routes::api::user::buy::name_color::route)
+            .service(routes::api::user::buy::square_avatar::route)
             .route("/ws", web::get().to(ws::spawn::spawn))
             .wrap(middleware::Logger::default())
     });

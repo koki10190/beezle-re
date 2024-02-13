@@ -10,7 +10,7 @@ use actix_web::{get, http::StatusCode, post, web, App, HttpResponse, HttpServer,
 use crate::{
     beezle,
     data_struct::AppData,
-    mongoose::{self, get_coins, structures::user},
+    mongoose::{self, coins::get_level, get_coins, structures::user},
     poison::LockResultExt,
 };
 
@@ -42,6 +42,13 @@ pub async fn route(body: web::Json<GetUserQuery>, client: web::Data<Client>) -> 
         _document => {
             let unwrapped = _document.unwrap();
             let coins = get_coins(&client, &token_data.handle).await;
+            let level = get_level(&client, &token_data.handle).await;
+
+            if level < 15 {
+                return HttpResponse::Ok().json(
+                    doc! {"bought": false, "error": "You need to be level 15 to buy this item!"},
+                );
+            }
 
             if coins < 15000 {
                 return HttpResponse::Ok()

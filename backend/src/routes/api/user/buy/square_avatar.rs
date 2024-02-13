@@ -19,7 +19,7 @@ struct GetUserQuery {
     token: String,
 }
 
-#[post("/api/user/buy/name_color")]
+#[post("/api/user/buy/square_avatar")]
 pub async fn route(body: web::Json<GetUserQuery>, client: web::Data<Client>) -> impl Responder {
     let token_data = decode::<mongoose::structures::user::JwtUser>(
         &body.token,
@@ -44,17 +44,18 @@ pub async fn route(body: web::Json<GetUserQuery>, client: web::Data<Client>) -> 
             let coins = get_coins(&client, &token_data.handle).await;
             let level = get_level(&client, &token_data.handle).await;
 
-            if level < 10 {
+            if level < 5 {
                 return HttpResponse::Ok().json(
-                    doc! {"bought": false, "error": "You need to be level 10 to buy this item!"},
+                    doc! {"bought": false, "error": "You need to be level 5 to buy this item!"},
                 );
             }
+
             if coins < 15000 {
                 return HttpResponse::Ok()
                     .json(doc! {"bought": false, "error": "Cannot afford this item!"});
             }
 
-            mongoose::add_coins(&client, &token_data.handle, -7500).await;
+            mongoose::add_coins(&client, &token_data.handle, -15000).await;
 
             mongoose::update_document(
                 &client,
@@ -66,11 +67,8 @@ pub async fn route(body: web::Json<GetUserQuery>, client: web::Data<Client>) -> 
                 },
                 doc! {
                     "$set": {
-                        "customization.name_color": {
-                            "color1": "#ffffff",
-                            "color2": "#000000"
-                        },
-                        "customization.name_color_bought": true
+                        "customization.square_avatar": true,
+                        "customization.square_avatar_bought": true
                     }
                 },
             )

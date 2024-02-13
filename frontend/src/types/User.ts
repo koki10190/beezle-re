@@ -18,6 +18,8 @@ interface UserCustomization {
     };
     profile_gradient_bought: boolean;
     name_color_bought: boolean;
+    square_avatar_bought: boolean;
+    square_avatar: boolean;
 }
 
 interface UserPrivate {

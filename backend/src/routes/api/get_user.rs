@@ -23,7 +23,6 @@ pub async fn route(
     body: web::Json<GetUserQuery>,
     client: web::Data<mongodb::Client>,
 ) -> impl Responder {
-    beezle::print(&body.token);
     let token_data = decode::<mongoose::structures::user::JwtUser>(
         &body.token,
         &DecodingKey::from_secret(env::var("TOKEN_SECRET").unwrap().as_ref()),
