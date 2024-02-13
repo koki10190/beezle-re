@@ -278,3 +278,26 @@ body {
 .steam-game-author {
     color: rgba(255, 255, 255, 0.5);
 }
+
+@media screen and (max-width: 800px) {
+    .steam-game-name {
+        margin-top: -10px;
+        margin-left: 0px;
+    }
+    .steam-game-name p {
+        margin-bottom: 20px;
+    }
+    .steam-game-container {
+        min-width: 100%;
+        min-height: 130px;
+    }
+
+    .steam-container {
+        min-width: 250px;
+    }
+
+    .steam-game-author {
+        margin-top: -20px;
+        color: rgba(255, 255, 255, 0.5);
+    }
+}
