@@ -22,34 +22,10 @@ interface UserCustomization {
     square_avatar: boolean;
 }
 
-interface UserPrivate {
-    handle: string;
-    username: string;
-    email: string;
-    hash_password: string;
-    verified: boolean;
-    avatar: string;
-    banner: string;
-    about_me: string;
-    bookmarks: Array<string>;
-    creation_date: {
-        $date: {
-            $numberLong: string;
-        };
+interface UserConnections {
+    steam: {
+        id: string;
     };
-    badges: Array<BadgeType>;
-    followers: Array<string>;
-    following: Array<string>;
-    reputation: number;
-    coins: number;
-    notifications: Array<NotificationData>;
-    levels: {
-        level: number;
-        xp: number;
-    };
-    activity: string;
-    customization: UserCustomization;
-    pinned_post: string;
 }
 
 interface UserPublic {
@@ -77,6 +53,13 @@ interface UserPublic {
     activity: string;
     customization: UserCustomization;
     pinned_post: string;
+    connections: UserConnections;
+}
+
+interface UserPrivate extends UserPublic {
+    email: string;
+    hash_password: string;
+    bookmarks: Array<string>;
 }
 
 export { BadgeType };

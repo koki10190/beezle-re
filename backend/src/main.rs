@@ -106,6 +106,10 @@ async fn main() -> std::io::Result<()> {
             .service(routes::api::user::buy::profile_gradient::route)
             .service(routes::api::user::buy::name_color::route)
             .service(routes::api::user::buy::square_avatar::route)
+            .service(routes::api::connections::steam_auth::route)
+            .service(routes::api::connections::steam_get::route)
+            .service(routes::api::connections::steam_get_game::route)
+            .service(routes::api::connections::steam_disconnect::route)
             .route("/ws", web::get().to(ws::spawn::spawn))
             .wrap(middleware::Logger::default())
     });

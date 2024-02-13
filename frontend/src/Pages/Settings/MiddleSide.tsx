@@ -15,6 +15,7 @@ import { api_uri } from "../../links";
 import Details from "./Pages/Details";
 import API from "./Pages/API";
 import Report from "./Pages/Report";
+import Connections from "./Pages/Connections";
 
 function SettingsButton({
     redirect = "",
@@ -48,6 +49,7 @@ enum Pages {
     DETAILS,
     API,
     REPORT,
+    CONNECTIONS,
 }
 
 function RightSide({ setPage }: { setPage: any }) {
@@ -133,6 +135,12 @@ function RightSide({ setPage }: { setPage: any }) {
                     text="Report"
                     style={undefined}
                 />
+                <SettingsButton
+                    onClick={() => setPage(Pages.CONNECTIONS)}
+                    iconClass="fa-solid fa-address-card"
+                    text="Connections"
+                    style={undefined}
+                />
                 <SettingsButton redirect="/home" iconClass="fa-solid fa-home" text="Go Back" style={undefined} />
                 <SettingsButton
                     iconClass="fa-solid fa-trash"
@@ -173,6 +181,8 @@ function MiddleSide() {
                               return <API user={self_user} />;
                           case Pages.REPORT:
                               return <Report user={self_user} />;
+                          case Pages.CONNECTIONS:
+                              return <Connections user={self_user} />;
                       }
                   })()
                 : ""}

@@ -1,0 +1,13 @@
+{
+    "http://localhost:3000/api/connections/steam_auth?state": "d5083c416b1df43325a742551826c414",
+    "openid.ns": "http://specs.openid.net/auth/2.0",
+    "openid.mode": "id_res",
+    "openid.op_endpoint": "https://steamcommunity.com/openid/login",
+    "openid.claimed_id": "https://steamcommunity.com/openid/id/76561198900889234",
+    "openid.identity": "https://steamcommunity.com/openid/id/76561198900889234",
+    "openid.return_to": "http://localhost:3000/api/connections/steam_auth?state=d5083c416b1df43325a742551826c414",
+    "openid.response_nonce": "2024-02-13T15:38:27ZpcIYEVIlkbGSS/NWmwH4n9WgtLk=",
+    "openid.assoc_handle": "1234567890",
+    "openid.signed": "signed,op_endpoint,claimed_id,identity,return_to,response_nonce,assoc_handle",
+    "openid.sig": "rQggiiPVw224+6NX09ToWpGOe6k="
+}

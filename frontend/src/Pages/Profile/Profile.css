@@ -248,3 +248,33 @@ body {
     margin-top: 70px;
     margin-bottom: -70px;
 }
+
+.steam-game-header {
+    width: 245px;
+    height: 115px;
+    border-radius: 5px;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+    background-color: black;
+}
+
+.steam-game-name {
+    margin-top: -130px;
+    margin-left: 270px;
+}
+.steam-game-name p {
+    margin-bottom: -20px;
+}
+.steam-game-container {
+    min-width: 100%;
+    min-height: 130px;
+}
+
+.steam-container {
+    min-width: 250px;
+}
+
+.steam-game-author {
+    color: rgba(255, 255, 255, 0.5);
+}

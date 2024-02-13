@@ -44,7 +44,8 @@ pub async fn route(
             "levels":  _document.clone().unwrap().get("levels").unwrap(),
             "activity":  _document.clone().unwrap().get("activity").unwrap().as_str().unwrap(),
             "pinned_post":  _document.clone().unwrap().get("pinned_post").unwrap().as_str().unwrap(),
-            "customization":  _document.clone().unwrap().get("customization").unwrap().as_document().unwrap()
+            "customization":  _document.clone().unwrap().get("customization").unwrap().as_document().unwrap(),
+            "connections":  _document.clone().unwrap().get("connections").unwrap().as_document().unwrap()
         }) },
     }
 }

@@ -55,6 +55,7 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
         )})`
     );
     const levelBox = useRef<HTMLSpanElement>(null);
+    const [steamData, setSteamData] = useState<any>();
 
     const FollowInteraction = async () => {
         const res = await axios.post(`${api_uri}/api/user/follow`, {
@@ -94,6 +95,12 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
             ).data;
             setPosts(posts.posts);
             setPostOffset(posts.offset);
+
+            const steam_data = (
+                await axios.get(`${api_uri}/api/connections/steam_get_game?steam_id=${user.connections.steam.id}`)
+            ).data;
+            setSteamData(steam_data[Object.keys(steam_data)[0]].data);
+            console.log(steam_data[Object.keys(steam_data)[0]].data);
 
             if (user.pinned_post !== "") {
                 let post = (await axios.get(`${api_uri}/api/post/get/one?post_id=${user.pinned_post}`)).data;
@@ -219,6 +226,32 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                     >
                         <p className="profile-container-header">Activity</p>
                         <p className="about_me">{user.activity}</p>
+                    </div>
+                ) : (
+                    ""
+                )}
+                {steamData ? (
+                    <div
+                        style={{
+                            background: gradient,
+                        }}
+                        className="profile-container steam-container"
+                    >
+                        <p style={{ marginBottom: "5px" }} className="profile-container-header">
+                            <i className="fa-brands fa-steam" /> Playing Game
+                        </p>
+                        <div className="about_me">
+                            <div className="steam-game-container">
+                                <div
+                                    className="steam-game-header"
+                                    style={{ backgroundImage: `url(${steamData.header_image})` }}
+                                ></div>
+                                <div className="steam-game-name">
+                                    <p>{steamData.name}</p>
+                                    <p className="steam-game-author">By {steamData.developers.join(",")}</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 ) : (
                     ""

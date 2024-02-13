@@ -21,6 +21,7 @@ import { socket } from "./ws/socket";
 import { fetchUserPrivate } from "./functions/fetchUserPrivate";
 import Verify from "./Verify/Verify";
 import VerifyPass from "./Verify/VerifyPass";
+import Steam from "./Redirects/Steam";
 
 enum UserStatus {
     ONLINE,
@@ -84,6 +85,7 @@ function App() {
                 <Route path="/verify_pass/:auth_id" element={<VerifyPass />} />
                 <Route path="/privacy-and-terms" element={<PrivacyPolicy_Home />} />
                 <Route path="/shop" element={<Shop_Home />} />
+                <Route path="/connect/steam" element={<Steam />} />
             </Routes>
         </BrowserRouter>
     );
