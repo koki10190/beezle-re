@@ -49,6 +49,7 @@ interface UserPrivate {
     };
     activity: string;
     customization: UserCustomization;
+    pinned_post: string;
 }
 
 interface UserPublic {
@@ -75,6 +76,7 @@ interface UserPublic {
     };
     activity: string;
     customization: UserCustomization;
+    pinned_post: string;
 }
 
 export { BadgeType };

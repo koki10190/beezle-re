@@ -35,6 +35,7 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
     const [followingCount, setFollowingCount] = useState(user.following.length);
     const [followersCount, setFollowersCount] = useState(user.followers.length);
     const [followsYou, setFollowsYou] = useState(self.followers.find(x => x === user.handle) ? true : false);
+    const [pinnedPost, setPinnedPost] = useState<Post | null>(null);
     const [bgGradient, setBgGradient] = useState(
         `linear-gradient(-45deg, ${ShadeColor(
             user.customization?.profile_gradient ? user.customization.profile_gradient.color1 : "#000000",
@@ -93,6 +94,11 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
             ).data;
             setPosts(posts.posts);
             setPostOffset(posts.offset);
+
+            if (user.pinned_post !== "") {
+                let post = (await axios.get(`${api_uri}/api/post/get/one?post_id=${user.pinned_post}`)).data;
+                setPinnedPost(post.error ? null : post);
+            }
         })();
     }, []);
 
@@ -226,6 +232,17 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                     </a>
                 </div>
                 <Divider />
+                {pinnedPost ? (
+                    <PostBox
+                        setPosts={null}
+                        self_user={self as UserPrivate}
+                        key={pinnedPost.post_id}
+                        post={pinnedPost}
+                        pinned={true}
+                    />
+                ) : (
+                    ""
+                )}
                 {posts.map((post: Post) => {
                     return (
                         <PostBox setPosts={setPosts} self_user={self as UserPrivate} key={post.post_id} post={post} />

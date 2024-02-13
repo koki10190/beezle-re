@@ -39,6 +39,7 @@ pub struct User {
     pub levels: UserLevels,
     pub activity: String,
     pub customization: Bson,
+    pub pinned_post: String,
 }
 
 #[derive(Serialize, Deserialize, Debug)]

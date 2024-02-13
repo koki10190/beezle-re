@@ -84,6 +84,7 @@ async fn main() -> std::io::Result<()> {
             .service(routes::api::post::like::route)
             .service(routes::api::post::repost::route)
             .service(routes::api::post::bookmark::route)
+            .service(routes::api::post::pin::route)
             .service(routes::api::post::get::one::route)
             .service(routes::api::post::edit::route)
             .service(routes::api::post::get::profile::route)

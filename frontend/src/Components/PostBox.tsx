@@ -26,6 +26,7 @@ interface PostBoxData {
     setPosts: any;
     delete_post_on_bookmark_remove?: boolean;
     allow_reply_attribute?: boolean;
+    pinned?: boolean;
 }
 
 function PostBox({
@@ -34,6 +35,7 @@ function PostBox({
     setPosts,
     delete_post_on_bookmark_remove = false,
     allow_reply_attribute = false,
+    pinned = false,
 }: PostBoxData) {
     const [user, setUser] = useState<UserPublic>();
     const [isLiked, setLiked] = useState(false);
@@ -247,6 +249,14 @@ function PostBox({
             {isPostEdited ? (
                 <h4 className="post-attr">
                     <i className="fa-solid fa-pencil"></i> Edited
+                </h4>
+            ) : (
+                ""
+            )}
+
+            {pinned ? (
+                <h4 className="post-attr">
+                    <i className="fa-solid fa-thumbtack"></i> Pinned
                 </h4>
             ) : (
                 ""

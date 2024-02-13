@@ -91,6 +91,7 @@ pub async fn route(
                 levels: UserLevels { level: 0, xp: 0 },
                 activity: "".to_string(),
                 customization: doc! {}.into(),
+                pinned_post: "".to_string(),
             };
 
             let serialized_user_doc = mongodb::bson::to_bson(&struct_user_doc).unwrap();

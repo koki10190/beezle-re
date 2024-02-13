@@ -32,6 +32,7 @@ function MiddleSide() {
     const [isLiked, setLiked] = useState(false);
     const [isReposted, setReposted] = useState(false);
     const [isBookmarked, setBookmarked] = useState(false);
+    const [isPinned, setPinned] = useState(false);
     const [LikeCount, setLikeCount] = useState(0);
     const [RepostCount, setRepostCount] = useState(0);
 
@@ -71,6 +72,7 @@ function MiddleSide() {
             setLiked((post_res.data as Post).likes.find(s => s === priv.handle) ? true : false);
             setReposted((post_res.data as Post).reposts.find(s => s === priv.handle) ? true : false);
             setBookmarked(priv.bookmarks.find(s => s === (post_res.data as Post).post_id) ? true : false);
+            setPinned(priv.pinned_post === post_res.data.post_id);
             setLikeCount((post_res.data as Post).likes.length);
             setRepostCount((post_res.data as Post).reposts.length);
 
@@ -128,6 +130,26 @@ function MiddleSide() {
 
         setReposted(true);
         setRepostCount(RepostCount + 1);
+    };
+
+    const PinInteraction = async () => {
+        if (isPinned) {
+            await axios.post(`${api_uri}/api/post/pin`, {
+                token: localStorage.getItem("access_token"),
+                post_id: post!.post_id,
+                remove_pin: true,
+            });
+            setPinned(false);
+            return;
+        }
+
+        const res = await axios.post(`${api_uri}/api/post/pin`, {
+            token: localStorage.getItem("access_token"),
+            post_id: post!.post_id,
+            remove_pin: false,
+        });
+
+        setPinned(true);
     };
 
     const BookmarkInteraction = async () => {
@@ -362,6 +384,13 @@ function MiddleSide() {
                         className="post-inter-blue"
                     >
                         <i className=" fa-solid fa-bookmark"></i>
+                    </a>
+                    <a
+                        onClick={PinInteraction}
+                        style={isPinned ? { color: "rgb(60, 193, 255)" } : {}}
+                        className="post-inter-blue"
+                    >
+                        <i className=" fa-solid fa-thumbtack"></i>
                     </a>
 
                     {self_user?.handle == post?.handle && !post?.repost ? (
