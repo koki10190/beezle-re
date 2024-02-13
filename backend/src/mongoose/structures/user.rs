@@ -1,4 +1,4 @@
-use bson::{serde_helpers::chrono_datetime_as_bson_datetime, Array};
+use bson::{serde_helpers::chrono_datetime_as_bson_datetime, Array, Bson};
 use mongodb::bson::oid::ObjectId;
 use serde::{Deserialize, Serialize};
 
@@ -38,6 +38,7 @@ pub struct User {
     pub notifs: Array,
     pub levels: UserLevels,
     pub activity: String,
+    pub customization: Bson,
 }
 
 #[derive(Serialize, Deserialize, Debug)]

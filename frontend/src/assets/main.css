@@ -175,6 +175,16 @@ form > a {
 .input-field:focus {
     border: 1px solid rgb(255, 139, 71);
 }
+
+.color-picker {
+    width: 100%;
+    outline: none;
+    border-radius: 5px;
+    border: 3px solid black;
+    background: none;
+    padding: 0;
+}
+
 /* BUTTON FIELD */
 
 .button-field {

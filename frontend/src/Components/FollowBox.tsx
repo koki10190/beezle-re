@@ -17,6 +17,7 @@ import VideoEmbed from "./VideoEmbed";
 import sanitize from "sanitize-html";
 import parseURLs from "../functions/parseURLs";
 import RepToIcon from "./RepToIcon";
+import Username from "./Username";
 
 interface FollowBoxData {
     handle: string;
@@ -60,7 +61,7 @@ function FollowBox({ handle, self_user }: FollowBoxData) {
                     className="pfp-post"
                 ></div>
                 <p className="username-post">
-                    {user ? user.username : ""}{" "}
+                    {user ? <Username user={user} /> : ""}{" "}
                     <BadgesToJSX badges={user ? user.badges : []} className="profile-badge profile-badge-shadow" />
                 </p>
                 <p className="handle-post">

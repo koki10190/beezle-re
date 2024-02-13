@@ -20,6 +20,7 @@ import millify from "millify";
 import PostTyper from "../../Components/PostTyper";
 import parseURLs from "../../functions/parseURLs";
 import { Helmet } from "react-helmet";
+import Username from "../../Components/Username";
 
 function MiddleSide() {
     const { post_id } = useParams();
@@ -263,7 +264,7 @@ function MiddleSide() {
                 >
                     <div style={{ backgroundImage: `url(${post_user?.avatar})` }} className="post-page-pfp"></div>
                     <p className="post-page-username">
-                        {post_user?.username}{" "}
+                        {post_user ? <Username user={post_user} /> : ""}{" "}
                         <BadgesToJSX badges={post_user ? post_user.badges : []} className="profile-badge" />
                     </p>
                     <p className="post-page-handle">

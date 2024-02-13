@@ -17,6 +17,8 @@ import VideoEmbed from "./VideoEmbed";
 import sanitize from "sanitize-html";
 import parseURLs from "../functions/parseURLs";
 import RepToIcon from "./RepToIcon";
+import Username from "./Username";
+import ShadeColor from "../functions/ShadeColor";
 
 interface PostBoxData {
     post: Post;
@@ -45,16 +47,35 @@ function PostBox({
     const [isRepostHovered, setRepostHovered] = useState(false);
     const [replyingToPost, setReplyingToPost] = useState<Post>();
 
+    const [bgGradient, setBgGradient] = useState("");
+
     useEffect(() => {
         (async () => {
+            let user: UserPublic = {} as any;
             if (post.repost) {
                 post = (await axios.get(`${api_uri}/api/post/get/one?post_id=${post.post_op_id}`)).data;
-                setUser((await fetchUserPublic(post.handle)) as UserPublic);
+                user = (await fetchUserPublic(post.handle)) as UserPublic;
+                setUser(user);
                 setLikeCount(post.likes.length);
                 setRepostCount(post.reposts.length);
             } else {
-                setUser((await fetchUserPublic(post.handle)) as UserPublic);
+                user = (await fetchUserPublic(post.handle)) as UserPublic;
+                setUser(user);
             }
+
+            setBgGradient(
+                `linear-gradient(-45deg, ${ShadeColor(
+                    user.customization?.profile_gradient
+                        ? user.customization.profile_gradient.color1
+                        : "rgb(231, 129, 98)",
+                    -25
+                )}, ${ShadeColor(
+                    user.customization?.profile_gradient
+                        ? user.customization.profile_gradient.color2
+                        : "rgb(231, 129, 98)",
+                    -25
+                )})`
+            );
 
             setLiked(post.likes.find(s => s === self_user.handle) ? true : false);
             setReposted(post.reposts.find(s => s === self_user.handle) ? true : false);
@@ -209,7 +230,12 @@ function PostBox({
     };
 
     return (
-        <div className="post-box">
+        <div
+            style={{
+                background: bgGradient,
+            }}
+            className="post-box"
+        >
             {post.repost ? (
                 <h4 onClick={() => (window.location.href = `/profile/${post.handle}`)} className="post-attr">
                     <i className="fa-solid fa-repeat"></i> Repost by @{post.handle}
@@ -242,7 +268,7 @@ function PostBox({
             ></div>
             <div onClick={() => (window.location.href = `/profile/${user ? user.handle : ""}`)} className="user-detail">
                 <p className="username-post">
-                    {user ? user.username : ""}{" "}
+                    {user ? <Username user={user} /> : ""}{" "}
                     <BadgesToJSX badges={user ? user.badges : []} className="profile-badge profile-badge-shadow" />
                 </p>
                 <p className="handle-post">

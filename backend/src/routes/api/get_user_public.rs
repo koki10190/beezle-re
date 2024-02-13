@@ -42,7 +42,8 @@ pub async fn route(
             "coins":  _document.clone().unwrap().get("coins").unwrap().as_i64().unwrap(),
             "reputation":  _document.clone().unwrap().get("reputation").unwrap().as_i64().unwrap(),
             "levels":  _document.clone().unwrap().get("levels").unwrap(),
-            "activity":  _document.clone().unwrap().get("activity").unwrap().as_str().unwrap()
+            "activity":  _document.clone().unwrap().get("activity").unwrap().as_str().unwrap(),
+            "customization":  _document.clone().unwrap().get("customization").unwrap().as_document().unwrap()
         }) },
     }
 }

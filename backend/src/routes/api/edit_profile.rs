@@ -1,6 +1,6 @@
 use bson::{doc, Document};
 use jsonwebtoken::{decode, DecodingKey, EncodingKey, Header, Validation};
-use mail_send::mail_auth::flate2::Status;
+use mail_send::mail_auth::{flate2::Status, hickory_resolver::proto::rr::rdata::name};
 use serde::Deserialize;
 use std::env;
 
@@ -20,6 +20,10 @@ struct GetUserQuery {
     banner: String,
     about_me: String,
     activity: String,
+    profile_gradient1: String,
+    profile_gradient2: String,
+    name_color1: String,
+    name_color2: String,
 }
 
 #[post("/api/profile/edit")]
@@ -68,6 +72,32 @@ pub async fn route(
     match auth_doc {
         None => HttpResponse::Ok().json(doc! {"changed": false, "error": "User not found!"}),
         _document => {
+            let unwrapped = _document.unwrap();
+            // check unwrap
+            let name_color_bought_bson = unwrapped
+                .get("customization")
+                .unwrap()
+                .as_document()
+                .unwrap()
+                .get("name_color_bought");
+
+            let mut name_color_bought = false;
+            if name_color_bought_bson.is_some() {
+                name_color_bought = name_color_bought_bson.unwrap().as_bool().unwrap();
+            }
+
+            let profile_gradient_bought_bson = unwrapped
+                .get("customization")
+                .unwrap()
+                .as_document()
+                .unwrap()
+                .get("profile_gradient_bought");
+
+            let mut profile_gradient_bought = false;
+            if profile_gradient_bought_bson.is_some() {
+                profile_gradient_bought = profile_gradient_bought_bson.unwrap().as_bool().unwrap();
+            }
+
             mongoose::update_document(
                 &client,
                 "beezle",
@@ -86,6 +116,46 @@ pub async fn route(
                 },
             )
             .await;
+
+            if name_color_bought {
+                mongoose::update_document(
+                    &client,
+                    "beezle",
+                    "Users",
+                    doc! {
+                        "handle": &token_data.handle,
+                    },
+                    doc! {
+                        "$set": {
+                            "customization.name_color": {
+                                "color1": &body.name_color1,
+                                "color2": &body.name_color2,
+                            }
+                        }
+                    },
+                )
+                .await;
+            }
+
+            if profile_gradient_bought {
+                mongoose::update_document(
+                    &client,
+                    "beezle",
+                    "Users",
+                    doc! {
+                        "handle": &token_data.handle,
+                    },
+                    doc! {
+                        "$set": {
+                            "customization.profile_gradient": {
+                                "color1": &body.profile_gradient1,
+                                "color2": &body.profile_gradient2,
+                            }
+                        }
+                    },
+                )
+                .await;
+            }
 
             HttpResponse::Ok().json(doc! {"changed": true})
         }

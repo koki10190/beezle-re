@@ -90,6 +90,7 @@ pub async fn route(
                 notifs: vec![],
                 levels: UserLevels { level: 0, xp: 0 },
                 activity: "".to_string(),
+                customization: doc! {}.into(),
             };
 
             let serialized_user_doc = mongodb::bson::to_bson(&struct_user_doc).unwrap();

@@ -7,6 +7,19 @@ enum BadgeType {
     OWNER,
 }
 
+interface UserCustomization {
+    name_color: {
+        color1: string;
+        color2: string;
+    };
+    profile_gradient: {
+        color1: string;
+        color2: string;
+    };
+    profile_gradient_bought: boolean;
+    name_color_bought: boolean;
+}
+
 interface UserPrivate {
     handle: string;
     username: string;
@@ -33,6 +46,7 @@ interface UserPrivate {
         xp: number;
     };
     activity: string;
+    customization: UserCustomization;
 }
 
 interface UserPublic {
@@ -58,7 +72,8 @@ interface UserPublic {
         xp: number;
     };
     activity: string;
+    customization: UserCustomization;
 }
 
 export { BadgeType };
-export type { UserPrivate, UserPublic };
+export type { UserPrivate, UserPublic, UserCustomization };

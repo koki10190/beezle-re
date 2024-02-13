@@ -14,6 +14,9 @@ import { Post } from "../../types/Post";
 import Divider from "../../Components/Divider";
 import PostBox from "../../Components/PostBox";
 import SetLevelColor from "../../functions/SetLevelColor";
+import Username from "../../Components/Username";
+import pSBC from "../../functions/ShadeColor";
+import ShadeColor from "../../functions/ShadeColor";
 
 function Loading() {
     return (
@@ -32,6 +35,26 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
     const [followingCount, setFollowingCount] = useState(user.following.length);
     const [followersCount, setFollowersCount] = useState(user.followers.length);
     const [followsYou, setFollowsYou] = useState(self.followers.find(x => x === user.handle) ? true : false);
+    const [bgGradient, setBgGradient] = useState(
+        `linear-gradient(-45deg, ${ShadeColor(
+            user.customization?.profile_gradient ? user.customization.profile_gradient.color1 : "#000000",
+            -75
+        )}, ${ShadeColor(
+            user.customization?.profile_gradient ? user.customization.profile_gradient.color2 : "#000000",
+            -75
+        )})`
+    );
+    const [gradient, setGradient] = useState(
+        `linear-gradient(75deg, ${
+            user.customization?.profile_gradient
+                ? user.customization.profile_gradient.color1
+                : "rgba(255, 143, 98, 0.8)"
+        }, ${
+            user.customization?.profile_gradient
+                ? user.customization.profile_gradient.color2
+                : "rgba(255, 143, 98, 0.8)"
+        })`
+    );
     const levelBox = useRef<HTMLSpanElement>(null);
 
     const FollowInteraction = async () => {
@@ -80,7 +103,13 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
     }, [levelBox]);
 
     return (
-        <div onScroll={handleScroll} className="page-sides side-middle">
+        <div
+            style={{
+                background: bgGradient,
+            }}
+            onScroll={handleScroll}
+            className="page-sides side-middle"
+        >
             <div className="profile">
                 <div
                     style={{
@@ -95,7 +124,7 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                     className="pfp"
                 ></div>
                 <p className="username">
-                    {user.username} <BadgesToJSX badges={user.badges} className="profile-badge" />
+                    <Username user={user} /> <BadgesToJSX badges={user.badges} className="profile-badge" />
                 </p>
                 <p className="handle">@{user.handle} </p>
                 <p style={{ color: "white", marginTop: "-20px", fontSize: "20px" }} className="handle">
@@ -148,14 +177,24 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                     </button>
                 )}
                 {user.about_me !== "" ? (
-                    <div className="profile-container">
+                    <div
+                        style={{
+                            background: gradient,
+                        }}
+                        className="profile-container"
+                    >
                         <p className="profile-container-header">About Me</p>
                         <p className="about_me">{user.about_me}</p>
                     </div>
                 ) : (
                     <></>
                 )}
-                <div className="profile-container">
+                <div
+                    style={{
+                        background: gradient,
+                    }}
+                    className="profile-container"
+                >
                     <p className="profile-container-header">Joined At</p>
                     <p className="about_me">
                         {new Date(parseInt(user.creation_date.$date.$numberLong)).toLocaleString("default", {
@@ -167,7 +206,12 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                     </p>
                 </div>
                 {user.activity.replace(/ /g, "") != "" ? (
-                    <div className="profile-container">
+                    <div
+                        style={{
+                            background: gradient,
+                        }}
+                        className="profile-container"
+                    >
                         <p className="profile-container-header">Activity</p>
                         <p className="about_me">{user.activity}</p>
                     </div>

@@ -1,0 +1,5 @@
+.webkit-clip {
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background: linear-gradient(#eee, #333);
+}
