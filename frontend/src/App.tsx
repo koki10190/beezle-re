@@ -13,6 +13,7 @@ import PrivacyPolicy_Home from "./PrivacyPolicy/Home";
 import Dashboard_Home from "./Pages/Dashboard/Home";
 import Followers_Home from "./Pages/Followers/Home";
 import Following_Home from "./Pages/Following/Home";
+import Search_Home from "./Pages/Search/Home";
 import FollowingHome_Home from "./Pages/Home/Home";
 import Shop_Home from "./Pages/Shop/Home";
 import { api_uri } from "./links";
@@ -86,6 +87,7 @@ function App() {
                 <Route path="/privacy-and-terms" element={<PrivacyPolicy_Home />} />
                 <Route path="/shop" element={<Shop_Home />} />
                 <Route path="/connect/steam" element={<Steam />} />
+                <Route path="/search" element={<Search_Home />} />
             </Routes>
         </BrowserRouter>
     );
