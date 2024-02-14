@@ -50,6 +50,7 @@ function PostBox({
     const [replyingToPost, setReplyingToPost] = useState<Post>();
 
     const [bgGradient, setBgGradient] = useState("");
+    const [steamData, setSteamData] = useState<any | null>(null);
 
     useEffect(() => {
         (async () => {
@@ -88,6 +89,12 @@ function PostBox({
             if (post.is_reply) {
                 setReplyingToPost((await axios.get(`${api_uri}/api/post/get/one?post_id=${post.replying_to}`)).data);
             }
+
+            const steam_res = await axios.get(
+                `${api_uri}/api/connections/steam_get_game?steam_id=${user.connections?.steam?.id}`
+            );
+            const steam_data = steam_res.data;
+            if (steam_data) setSteamData(steam_data[Object.keys(steam_data)[0]].data);
         })();
     }, []);
 
@@ -295,6 +302,10 @@ function PostBox({
                     {user?.activity.replace(/ /g, "") !== "" && user ? (
                         <span style={{ color: "white" }}>
                             - {sanitize(user.activity.replace(/(.{35})..+/, "$1…"), { allowedTags: [] })}
+                        </span>
+                    ) : user && steamData ? (
+                        <span style={{ color: "white" }}>
+                            - <i className="fa-brands fa-steam" /> Playing {steamData.name}
                         </span>
                     ) : (
                         ""

@@ -31,6 +31,9 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
     const [about_me, setAboutMe] = useState<string>(user.about_me);
     const [activity, setActivity] = useState<string>(user.activity);
     const [squareAvatar, setSquareAvatar] = useState<boolean>(user.customization?.square_avatar ? true : false);
+    const [profileBgImg, setProfileBgImage] = useState(
+        user.customization?.profile_postbox_img_bought ? user.customization.profile_postbox_img : ""
+    );
     const [g1, setG1] = useState<string>(
         user.customization?.profile_gradient ? user.customization.profile_gradient.color1 : "#000000"
     );
@@ -47,6 +50,7 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
     const avatarOverlay = useRef<HTMLDivElement>(null);
     const avatarInput = useRef<HTMLInputElement>(null);
     const bannerInput = useRef<HTMLInputElement>(null);
+    const profileBgImgInput = useRef<HTMLInputElement>(null);
     const avatarDiv = useRef<HTMLDivElement>(null);
     const bannerDiv = useRef<HTMLDivElement>(null);
     const buttonRef = useRef<HTMLButtonElement>(null);
@@ -89,6 +93,7 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
         const form = e.target as HTMLFormElement;
         let avatar: string | null = null;
         let banner: string | null = null;
+        let __ProfileBgImage: string | null = null;
         console.log(g1);
         console.log(g2);
 
@@ -99,6 +104,10 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
                 avatar = ((await UploadToImgur(avatarInput.current!)) as any).data.link;
             if (bannerInput.current!.files && bannerInput.current!.files.length > 0)
                 banner = ((await UploadToImgur(bannerInput.current!)) as any).data.link;
+
+            // if (profileBgImg !== "") {
+            //     __ProfileBgImage = ((await UploadToImgur(profileBgImgInput.current!)) as any).data.link;
+            // }
 
             const data = {
                 username: username == "" ? user.username : username,
@@ -112,6 +121,7 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
                 name_color1: ng1,
                 name_color2: ng2,
                 square_avatar: squareAvatar,
+                profile_postbox_img: __ProfileBgImage ? __ProfileBgImage : "",
             };
             console.log(data);
             const m_data = (await axios.post(`${api_uri}/api/profile/edit`, data)).data;
@@ -245,6 +255,21 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
                 ) : (
                     ""
                 )}
+                {/* {user.customization?.profile_postbox_img_bought ? (
+                    <div className="profile-container-nom">
+                        <p className="profile-container-header">
+                            Profile Background Image (Overrides gradient on posts)
+                        </p>
+                        <input
+                            ref={profileBgImgInput}
+                            className="about_me input-field"
+                            type="file"
+                            accept=".jpeg,.gif,.png,.jpg"
+                        />
+                    </div>
+                ) : (
+                    ""
+                )} */}
                 {user.customization?.square_avatar_bought ? (
                     <>
                         <p style={{ display: "inline" }}>Square Avatar</p>

@@ -36,18 +36,18 @@ function FollowBox({ handle, self_user }: FollowBoxData) {
             setUser(_user);
             setBgGradient(
                 `linear-gradient(-45deg, ${ShadeColor(
-                    _user.customization?.profile_gradient
-                        ? _user.customization.profile_gradient.color1
+                    _user?.customization?.profile_gradient
+                        ? _user?.customization.profile_gradient.color1
                         : "rgb(231, 129, 98)",
                     -25
                 )}, ${ShadeColor(
-                    _user.customization?.profile_gradient
-                        ? _user.customization.profile_gradient.color2
+                    _user?.customization?.profile_gradient
+                        ? _user?.customization.profile_gradient.color2
                         : "rgb(231, 129, 98)",
                     -25
                 )})`
             );
-            setFollowing(_user.followers.find(x => x === self_user.handle) ? true : false);
+            setFollowing(_user?.followers.find(x => x === self_user.handle) ? true : false);
         })();
     }, []);
 

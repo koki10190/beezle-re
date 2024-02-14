@@ -95,15 +95,15 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
             ).data;
             setPosts(posts.posts);
             setPostOffset(posts.offset);
-
-            const steam_data = (
-                await axios.get(`${api_uri}/api/connections/steam_get_game?steam_id=${user.connections.steam.id}`)
-            ).data;
-            setSteamData(steam_data[Object.keys(steam_data)[0]].data);
-            console.log(steam_data[Object.keys(steam_data)[0]].data);
+            const steam_res = await axios.get(
+                `${api_uri}/api/connections/steam_get_game?steam_id=${user.connections.steam.id}`
+            );
+            const steam_data = steam_res.data;
+            if (steam_data) setSteamData(steam_data[Object.keys(steam_data)[0]].data);
 
             if (user.pinned_post !== "") {
                 let post = (await axios.get(`${api_uri}/api/post/get/one?post_id=${user.pinned_post}`)).data;
+                console.log("Pinned", post);
                 setPinnedPost(post.error ? null : post);
             }
         })();
@@ -234,8 +234,10 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                     <div
                         style={{
                             background: gradient,
+                            cursor: "pointer",
                         }}
                         className="profile-container steam-container"
+                        onClick={() => window.open(`https://store.steampowered.com/app/${steamData.steam_appid}`)}
                     >
                         <p style={{ marginBottom: "5px" }} className="profile-container-header">
                             <i className="fa-brands fa-steam" /> Playing Game

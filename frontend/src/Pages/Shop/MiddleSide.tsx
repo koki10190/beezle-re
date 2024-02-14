@@ -16,6 +16,7 @@ import axios from "axios";
 import { api_uri } from "../../links";
 
 enum BuyWhat {
+    POST_BG_IMG,
     PROFILE_GRADIENT,
     NAME_COLOR,
     SQUARE_AVATAR,
@@ -38,6 +39,12 @@ async function Buy(buy_what: BuyWhat) {
         }
         case BuyWhat.SQUARE_AVATAR: {
             res = await axios.post(`${api_uri}/api/user/buy/square_avatar`, {
+                token: localStorage.getItem("access_token"),
+            });
+            break;
+        }
+        case BuyWhat.POST_BG_IMG: {
+            res = await axios.post(`${api_uri}/api/user/buy/profile_postbox_img`, {
                 token: localStorage.getItem("access_token"),
             });
             break;
@@ -71,6 +78,15 @@ function MiddleSide() {
             <Divider />
             {self_user ? (
                 <>
+                    {/* <ShopBox
+                        title="Post Background Image"
+                        price={5000}
+                        call_on_purchase={() => Buy(BuyWhat.POST_BG_IMG)}
+                        self_user={self_user}
+                        _disabled={self_user?.customization?.profile_postbox_img_bought}
+                        level_required={true}
+                        level_needed={20}
+                    /> */}
                     <ShopBox
                         title="Profile Gradient"
                         price={15000}

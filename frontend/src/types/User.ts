@@ -20,6 +20,9 @@ interface UserCustomization {
     name_color_bought: boolean;
     square_avatar_bought: boolean;
     square_avatar: boolean;
+
+    profile_postbox_img: string;
+    profile_postbox_img_bought: boolean;
 }
 
 interface UserConnections {

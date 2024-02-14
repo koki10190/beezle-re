@@ -25,6 +25,7 @@ struct GetUserQuery {
     name_color1: String,
     name_color2: String,
     square_avatar: bool,
+    profile_postbox_img: String,
 }
 
 #[post("/api/profile/edit")]
@@ -111,6 +112,19 @@ pub async fn route(
                 square_avatar_bought = square_avatar_bought_bson.unwrap().as_bool().unwrap();
             }
 
+            let profile_postbox_img_bought_bson = unwrapped
+                .get("customization")
+                .unwrap()
+                .as_document()
+                .unwrap()
+                .get("profile_postbox_img_bought");
+
+            let mut profile_postbox_img_bought = false;
+            if profile_postbox_img_bought_bson.is_some() {
+                profile_postbox_img_bought =
+                    profile_postbox_img_bought_bson.unwrap().as_bool().unwrap();
+            }
+
             mongoose::update_document(
                 &client,
                 "beezle",
@@ -181,6 +195,23 @@ pub async fn route(
                     doc! {
                         "$set": {
                             "customization.square_avatar": body.square_avatar
+                        }
+                    },
+                )
+                .await;
+            }
+
+            if profile_postbox_img_bought {
+                mongoose::update_document(
+                    &client,
+                    "beezle",
+                    "Users",
+                    doc! {
+                        "handle": &token_data.handle,
+                    },
+                    doc! {
+                        "$set": {
+                            "customization.profile_postbox_img_bought": body.square_avatar
                         }
                     },
                 )
