@@ -38,19 +38,19 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
     const [pinnedPost, setPinnedPost] = useState<Post | null>(null);
     const [bgGradient, setBgGradient] = useState(
         `linear-gradient(-45deg, ${ShadeColor(
-            user.customization?.profile_gradient ? user.customization.profile_gradient.color1 : "#000000",
+            user.customization?.profile_gradient ? user.customization.profile_gradient.color1 : "rgb(231, 129, 98)",
             -75
         )}, ${ShadeColor(
-            user.customization?.profile_gradient ? user.customization.profile_gradient.color2 : "#000000",
+            user.customization?.profile_gradient ? user.customization.profile_gradient.color2 : "rgb(231, 129, 98)",
             -75
         )})`
     );
     const [gradient, setGradient] = useState(
         `linear-gradient(45deg, ${ShadeColor(
-            user.customization?.profile_gradient ? user.customization.profile_gradient.color1 : "#000000",
+            user.customization?.profile_gradient ? user.customization.profile_gradient.color1 : "rgb(231, 129, 98)",
             -25
         )}, ${ShadeColor(
-            user.customization?.profile_gradient ? user.customization.profile_gradient.color2 : "#000000",
+            user.customization?.profile_gradient ? user.customization.profile_gradient.color2 : "rgb(231, 129, 98)",
             -25
         )})`
     );

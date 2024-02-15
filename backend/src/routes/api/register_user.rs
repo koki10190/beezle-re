@@ -92,6 +92,7 @@ pub async fn route(
                 activity: "".to_string(),
                 customization: doc! {}.into(),
                 pinned_post: "".to_string(),
+                connections: doc! {}.into(),
             };
 
             let serialized_user_doc = mongodb::bson::to_bson(&struct_user_doc).unwrap();
