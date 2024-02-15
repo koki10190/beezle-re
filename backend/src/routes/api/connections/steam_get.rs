@@ -97,7 +97,7 @@ pub async fn route(
     let response = client
         .get("https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/")
         .query(&[
-            ("key", "D10AB0884AA1528678C01B96782F217C"),
+            ("key", env::var("STEAM_API_KEY").unwrap().as_str()),
             ("steamids", body.steam_id.as_str()),
         ])
         .send()
