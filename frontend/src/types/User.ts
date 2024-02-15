@@ -1,3 +1,4 @@
+import { CustomEmoji } from "emoji-picker-react/dist/config/customEmojiConfig";
 import { NotificationData } from "./Notification";
 
 enum BadgeType {
@@ -23,6 +24,8 @@ interface UserCustomization {
 
     profile_postbox_img: string;
     profile_postbox_img_bought: boolean;
+
+    emojis: Array<CustomEmoji>;
 }
 
 interface UserConnections {

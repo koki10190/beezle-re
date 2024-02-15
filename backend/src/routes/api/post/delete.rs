@@ -55,6 +55,8 @@ pub async fn route(
             )
             .await;
 
+            mongoose::add_coins(&client, &data.claims.handle, -40).await;
+
             return HttpResponse::Ok().json(doc! {"message": "Deleted post successfully."});
         }
         Err(_) => HttpResponse::Ok().json(doc! {"error": "Couldn't decode token"}),

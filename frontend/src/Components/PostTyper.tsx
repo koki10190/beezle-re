@@ -1,10 +1,10 @@
 import axios from "axios";
-import { FormEvent, LegacyRef, MouseEventHandler, useRef, useState } from "react";
+import { FormEvent, LegacyRef, MouseEventHandler, useEffect, useRef, useState } from "react";
 import { BrowserRouter, Routes, Route, redirect } from "react-router-dom";
 import "./PostTyper.css";
 import { api_uri, tenor_api_key } from "../links";
 import { Post } from "../types/Post";
-import EmojiPicker, { EmojiClickData, EmojiStyle, Theme } from "emoji-picker-react";
+import EmojiPicker, { Categories, Emoji, EmojiClickData, EmojiStyle, Theme } from "emoji-picker-react";
 import GifPicker, { GifPickerProps, TenorImage } from "gif-picker-react";
 import ImageEmbed from "./ImageEmbed";
 import ReactDOMServer from "react-dom/server";
@@ -12,6 +12,8 @@ import UploadToImgur from "../functions/UploadToImgur";
 import UploadToImgurFile from "../functions/UploadToImgurByFile";
 import UploadToImgurVideoByFile from "../functions/UploadToImgurVideoByFile";
 import VideoEmbed from "./VideoEmbed";
+import { UserPrivate } from "../types/User";
+import { fetchUserPrivate } from "../functions/fetchUserPrivate";
 
 interface FileType {
     file: File;
@@ -27,6 +29,13 @@ function PostTyper({ onSend, replying_to = "" }: { onSend: (data: Post) => void;
     const fileRef = useRef<HTMLInputElement>(null);
     const filesToUploadRef = useRef<HTMLDivElement>(null);
     const sendButtonRef = useRef<HTMLButtonElement>(null);
+    const [self_user, setSelfUser] = useState<UserPrivate>();
+
+    useEffect(() => {
+        (async () => {
+            setSelfUser(await fetchUserPrivate());
+        })();
+    }, []);
 
     const CreatePost = () => {
         (async () => {
@@ -127,8 +136,9 @@ function PostTyper({ onSend, replying_to = "" }: { onSend: (data: Post) => void;
             {isEmojiPickerOpened ? (
                 <EmojiPicker
                     onEmojiClick={(emojiData: EmojiClickData, event: MouseEvent) => {
-                        textarea.current!.value += emojiData.emoji;
+                        textarea.current!.value += emojiData.isCustom ? `<:${emojiData.emoji}:> ` : emojiData.emoji;
                     }}
+                    customEmojis={self_user?.customization?.emojis ? self_user?.customization?.emojis : []}
                     theme={Theme.DARK}
                     emojiStyle={EmojiStyle.NATIVE}
                     className="post-typer-emoji-picker"

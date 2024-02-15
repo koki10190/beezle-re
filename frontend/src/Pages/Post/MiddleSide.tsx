@@ -336,8 +336,11 @@ function MiddleSide() {
                     </>
                 ) : (
                     <p
+                        style={{
+                            whiteSpace: "pre-line",
+                        }}
                         dangerouslySetInnerHTML={{
-                            __html: parseURLs(finalContent),
+                            __html: parseURLs(finalContent, post_user),
                         }}
                     ></p>
                 )}

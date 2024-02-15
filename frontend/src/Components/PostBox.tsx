@@ -352,7 +352,7 @@ function PostBox({
                         whiteSpace: "pre-line",
                     }}
                     dangerouslySetInnerHTML={{
-                        __html: parseURLs(finalContent),
+                        __html: parseURLs(finalContent, user),
                     }}
                     className="content"
                 ></p>

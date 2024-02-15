@@ -4,3 +4,4 @@ pub mod change_password;
 pub mod clear_notifs;
 pub mod delete;
 pub mod follow;
+pub mod upload_emoji;

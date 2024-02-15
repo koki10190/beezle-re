@@ -108,6 +108,7 @@ async fn main() -> std::io::Result<()> {
             .service(routes::api::user::buy::name_color::route)
             .service(routes::api::user::buy::square_avatar::route)
             .service(routes::api::user::buy::profile_postbox_img::route)
+            .service(routes::api::user::upload_emoji::route)
             .service(routes::api::connections::steam_auth::route)
             .service(routes::api::connections::steam_get::route)
             .service(routes::api::connections::steam_get_game::route)

@@ -69,7 +69,7 @@ pub async fn route(
                 )
                 .await;
 
-                mongoose::add_coins(&client, data.claims.handle.as_str(), -5).await;
+                mongoose::add_coins(&client, data.claims.handle.as_str(), -25).await;
             } else {
                 mongoose::update_document(
                     &client,
@@ -133,7 +133,7 @@ pub async fn route(
                 let document = serialized_post_doc.as_document().unwrap();
 
                 mongoose::insert_document(&client, "beezle", "Posts", document.clone()).await;
-                mongoose::add_coins(&client, data.claims.handle.as_str(), 5).await;
+                mongoose::add_coins(&client, data.claims.handle.as_str(), 25).await;
                 mongoose::add_xp(&client, &data.claims.handle, 15).await;
             }
 

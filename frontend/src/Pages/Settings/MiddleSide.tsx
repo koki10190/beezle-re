@@ -16,6 +16,7 @@ import Details from "./Pages/Details";
 import API from "./Pages/API";
 import Report from "./Pages/Report";
 import Connections from "./Pages/Connections";
+import CustomEmojis from "./Pages/CustomEmojis";
 
 function SettingsButton({
     redirect = "",
@@ -50,6 +51,7 @@ enum Pages {
     API,
     REPORT,
     CONNECTIONS,
+    CUSTOM_EMOJIS,
 }
 
 function RightSide({ setPage }: { setPage: any }) {
@@ -141,6 +143,12 @@ function RightSide({ setPage }: { setPage: any }) {
                     text="Connections"
                     style={undefined}
                 />
+                <SettingsButton
+                    onClick={() => setPage(Pages.CUSTOM_EMOJIS)}
+                    iconClass="fa-solid fa-icons"
+                    text="Custom Emojis"
+                    style={undefined}
+                />
                 <SettingsButton redirect="/home" iconClass="fa-solid fa-home" text="Go Back" style={undefined} />
                 <SettingsButton
                     iconClass="fa-solid fa-trash"
@@ -183,6 +191,8 @@ function MiddleSide() {
                               return <Report user={self_user} />;
                           case Pages.CONNECTIONS:
                               return <Connections user={self_user} />;
+                          case Pages.CUSTOM_EMOJIS:
+                              return <CustomEmojis user={self_user} />;
                       }
                   })()
                 : ""}

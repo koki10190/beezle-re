@@ -53,7 +53,7 @@ pub async fn route(
 
             mongoose::insert_document(&client, "beezle", "Posts", document.clone()).await;
             add_xp(&client, data.claims.handle.as_str(), 13).await;
-            add_coins(&client, data.claims.handle.as_str(), 20).await;
+            add_coins(&client, data.claims.handle.as_str(), 45).await;
 
             HttpResponse::Ok().json(document)
         }
