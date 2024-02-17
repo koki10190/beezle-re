@@ -48,6 +48,46 @@ pub async fn route(
                 is_reply: body.is_reply,
             };
 
+            // do notifications
+
+            if body.is_reply {
+                let replying_to_post = mongoose::get_document(
+                    &client,
+                    "beezle",
+                    "Posts",
+                    doc! {
+                        "post_id": body.replying_to.to_string()
+                    },
+                )
+                .await;
+
+                if replying_to_post.is_none() {
+                    return HttpResponse::Ok().json(doc! {"error": "Invalid reply!"});
+                }
+
+                let unwrapped = replying_to_post.unwrap();
+
+                let handle = unwrapped.get("handle").unwrap().as_str().unwrap();
+                mongoose::update_document(
+                    &client,
+                    "beezle",
+                    "Users",
+                    doc! {
+                        "handle": handle
+                    },
+                    doc! {
+                        "$addToSet": {
+                            "notifications": {
+                                "caller": &data.claims.handle,
+                                "post_id": &body.replying_to,
+                                "message": "replied to your post!"
+                            }
+                        }
+                    },
+                )
+                .await;
+            }
+
             let serialized_post_doc = mongodb::bson::to_bson(&struct_post_doc).unwrap();
             let document = serialized_post_doc.as_document().unwrap();
 

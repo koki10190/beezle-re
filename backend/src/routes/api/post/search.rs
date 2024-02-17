@@ -37,28 +37,28 @@ pub async fn route(client: web::Data<mongodb::Client>, body: web::Query<_Query>)
     let cursor = coll
         .find(
             doc! {
-            "$or": [
-                {
-                    "handle": mongodb::bson::Regex {
-                        pattern: body.search.to_string(),
-                        options: "i".to_string()
+                "$or": [
+                    {
+                        "handle": mongodb::bson::Regex {
+                            pattern: body.search.to_string(),
+                            options: "i".to_string()
+                        }
+                    },
+                    {
+                        "content":  mongodb::bson::Regex {
+                            pattern: body.search.to_string(),
+                            options: "i".to_string()
+                        }
+                    },
+                    {
+                        "post_id":  mongodb::bson::Regex {
+                            pattern: body.search.to_string(),
+                            options: "i".to_string()
+                        }
                     }
-                },
-                {
-                    "content":  mongodb::bson::Regex {
-                        pattern: body.search.to_string(),
-                        options: "i".to_string()
-                    }
-                },
-                {
-                    "post_id":  mongodb::bson::Regex {
-                        pattern: body.search.to_string(),
-                        options: "i".to_string()
-                    }
-                }
-            ],
+                ],
 
-            "repost": false
+                "repost": false
             },
             options,
         )
