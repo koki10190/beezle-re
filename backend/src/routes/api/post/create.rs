@@ -48,6 +48,7 @@ pub async fn route(
                 edited: false,
                 replying_to: body.replying_to.to_string(),
                 is_reply: body.is_reply,
+                reactions: doc! {}.into(),
             };
 
             // do notifications

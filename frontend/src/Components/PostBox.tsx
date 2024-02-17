@@ -19,6 +19,8 @@ import parseURLs from "../functions/parseURLs";
 import RepToIcon from "./RepToIcon";
 import Username from "./Username";
 import ShadeColor from "../functions/ShadeColor";
+import EmojiPicker, { EmojiClickData, EmojiStyle, Theme } from "emoji-picker-react";
+import BeezleEmoji from "./Emoji";
 
 interface PostBoxData {
     post: Post;
@@ -27,6 +29,14 @@ interface PostBoxData {
     delete_post_on_bookmark_remove?: boolean;
     allow_reply_attribute?: boolean;
     pinned?: boolean;
+}
+
+interface ReactionsInter {
+    [key: string]: number;
+}
+
+interface ReactionStruct {
+    reactions: ReactionsInter | null;
 }
 
 function PostBox({
@@ -44,6 +54,7 @@ function PostBox({
     const [LikeCount, setLikeCount] = useState(post.likes.length);
     const [RepostCount, setRepostCount] = useState(post.reposts.length);
     const [ReplyCount, setReplyCount] = useState(0);
+    const [reactionOpened, setReactionOpened] = useState(false);
 
     const [isLikeHovered, setLikeHovered] = useState(false);
     const [isRepostHovered, setRepostHovered] = useState(false);
@@ -51,6 +62,65 @@ function PostBox({
 
     const [bgGradient, setBgGradient] = useState("");
     const [steamData, setSteamData] = useState<any | null>(null);
+
+    const [reactions, setReactions] = useState<ReactionStruct>({
+        reactions: (post.reactions as ReactionsInter) ? (post.reactions as ReactionsInter) : {},
+    });
+
+    const [canAddReaction, setCanAddReaction] = useState(true);
+    const ReactToPost = async (emojiData: EmojiClickData, event: MouseEvent) => {
+        if (!canAddReaction) return;
+        if (emojiData.isCustom) return alert("Custom emojis on reactions is not supported!");
+        const res = await axios.post(`${api_uri}/api/post/react`, {
+            token: localStorage.getItem("access_token"),
+            emoji: emojiData.emoji,
+            post_id: post.post_id,
+        });
+
+        if (res.data.error) {
+            alert(res.data.error);
+        } else {
+            setReactions(old => {
+                const _ = { ...old };
+                if (_.reactions[emojiData.emoji]) _.reactions[emojiData.emoji] += 1;
+                else _.reactions[emojiData.emoji] = 1;
+                return _;
+            });
+        }
+        setCanAddReaction(false);
+        setTimeout(() => {
+            setCanAddReaction(true);
+        }, 3000);
+        // textarea.current!.value += emojiData.isCustom ? `<:${emojiData.emoji}:> ` : emojiData.emoji;
+    };
+
+    const ReactSpecific = async (emoji: string) => {
+        if (!canAddReaction) return;
+        if (emoji.length > 1) return alert("Custom emojis on reactions is not supported!");
+
+        const res = await axios.post(`${api_uri}/api/post/react`, {
+            token: localStorage.getItem("access_token"),
+            emoji: emoji,
+            post_id: post.post_id,
+        });
+
+        if (res.data.error) {
+            alert(res.data.error);
+        } else {
+            setReactions(old => {
+                const _ = { ...old };
+                if (_.reactions[emoji]) _.reactions[emoji] += 1;
+                else _.reactions[emoji] = 1;
+                return _;
+            });
+        }
+
+        setCanAddReaction(false);
+        setTimeout(() => {
+            setCanAddReaction(true);
+        }, 3000);
+        // textarea.current!.value += emojiData.isCustom ? `<:${emojiData.emoji}:> ` : emojiData.emoji;
+    };
 
     useEffect(() => {
         (async () => {
@@ -189,6 +259,10 @@ function PostBox({
         setBookmarked(true);
     };
 
+    const ReactionInteraction = () => {
+        setReactionOpened(!reactionOpened);
+    };
+
     const [isEditing, setEditing] = useState(false);
     const [editContent, setEditContent] = useState(post.content);
     const [finalContent, setFinalContent] = useState(post.content);
@@ -252,7 +326,6 @@ function PostBox({
             ) : (
                 ""
             )}
-
             {isPostEdited ? (
                 <h4 className="post-attr">
                     <i className="fa-solid fa-pencil"></i> Edited
@@ -260,7 +333,6 @@ function PostBox({
             ) : (
                 ""
             )}
-
             {pinned ? (
                 <h4 className="post-attr">
                     <i className="fa-solid fa-thumbtack"></i> Pinned
@@ -268,7 +340,6 @@ function PostBox({
             ) : (
                 ""
             )}
-
             {allow_reply_attribute && post.is_reply ? (
                 <h4 onClick={() => (window.location.href = `/post/${post.replying_to}`)} className="post-attr">
                     <i className="fa-solid fa-comment"></i> Replying to{" "}
@@ -409,6 +480,14 @@ function PostBox({
                         />
                     </a>
                     <a
+                        onMouseEnter={() => setLikeHovered(true)}
+                        onMouseLeave={() => setLikeHovered(false)}
+                        onClick={ReactionInteraction}
+                        className="post-inter-orange"
+                    >
+                        <i className="fa-solid fa-face-awesome"></i>{" "}
+                    </a>
+                    <a
                         onClick={BookmarkInteraction}
                         style={isBookmarked ? { color: "rgb(60, 193, 255)" } : {}}
                         className="post-inter-blue"
@@ -432,6 +511,31 @@ function PostBox({
             ) : (
                 ""
             )}
+            {reactionOpened ? (
+                <EmojiPicker
+                    onEmojiClick={ReactToPost}
+                    theme={Theme.DARK}
+                    emojiStyle={EmojiStyle.NATIVE}
+                    reactionsDefaultOpen={true}
+                    style={{
+                        backgroundColor: "rgba(0,0,0,0.7)",
+                        border: "none",
+                    }}
+                />
+            ) : (
+                ""
+            )}
+            <div className="reactions">
+                {Object.keys(reactions.reactions).map((key: string, index: number) => {
+                    if (index > 12) return <></>;
+                    return (
+                        <p onClick={() => ReactSpecific(key)}>
+                            <span className="reaction-emoji">{key}</span>
+                            <span className="reaction-count">{reactions.reactions[key]}</span>
+                        </p>
+                    );
+                })}
+            </div>
         </div>
     );
 }

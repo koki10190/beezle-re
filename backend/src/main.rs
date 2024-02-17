@@ -113,6 +113,7 @@ async fn main() -> std::io::Result<()> {
             .service(routes::api::connections::steam_get::route)
             .service(routes::api::connections::steam_get_game::route)
             .service(routes::api::connections::steam_disconnect::route)
+            .service(routes::api::post::react::route)
             .route("/ws", web::get().to(ws::spawn::spawn))
             .wrap(middleware::Logger::default())
     });

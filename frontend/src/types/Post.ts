@@ -10,6 +10,7 @@ interface Post {
     edited: boolean;
     replying_to: string;
     is_reply: boolean;
+    reactions: object;
     creation_date: {
         $date: {
             $numberLong: string;

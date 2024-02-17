@@ -1,4 +1,4 @@
-use bson::{serde_helpers::chrono_datetime_as_bson_datetime, Array};
+use bson::{serde_helpers::chrono_datetime_as_bson_datetime, Array, Bson};
 use mongodb::bson::oid::ObjectId;
 use serde::{Deserialize, Serialize};
 
@@ -17,6 +17,7 @@ pub struct Post {
     pub replying_to: String,
     #[serde(with = "chrono_datetime_as_bson_datetime")]
     pub creation_date: chrono::DateTime<chrono::Utc>,
+    pub reactions: Bson,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
