@@ -226,6 +226,10 @@ aside li {
     transition: ease-in-out 150ms;
 }
 
+.reactions.white-bg > p {
+    background-color: rgba(30, 30, 30, 1);
+}
+
 .reactions > p:hover {
     transform: scale(1.1);
 }

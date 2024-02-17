@@ -479,12 +479,7 @@ function PostBox({
                             numbers={millify(LikeCount)}
                         />
                     </a>
-                    <a
-                        onMouseEnter={() => setLikeHovered(true)}
-                        onMouseLeave={() => setLikeHovered(false)}
-                        onClick={ReactionInteraction}
-                        className="post-inter-orange"
-                    >
+                    <a onClick={ReactionInteraction} className="post-inter-orange">
                         <i className="fa-solid fa-face-awesome"></i>{" "}
                     </a>
                     <a

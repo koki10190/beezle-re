@@ -21,6 +21,15 @@ import PostTyper from "../../Components/PostTyper";
 import parseURLs from "../../functions/parseURLs";
 import { Helmet } from "react-helmet";
 import Username from "../../Components/Username";
+import EmojiPicker, { EmojiClickData, EmojiStyle, Theme } from "emoji-picker-react";
+
+interface ReactionsInter {
+    [key: string]: number;
+}
+
+interface ReactionStruct {
+    reactions: ReactionsInter | null;
+}
 
 function MiddleSide() {
     const { post_id } = useParams();
@@ -44,6 +53,14 @@ function MiddleSide() {
     const [finalContent, setFinalContent] = useState("");
     const [isPostEdited, setPostEdited] = useState(false);
     const [replyingToPost, setReplyingToPost] = useState<Post>();
+    const [reactions, setReactions] = useState<ReactionStruct>({
+        reactions: (post?.reactions as ReactionsInter) ? (post.reactions as ReactionsInter) : {},
+    });
+    const [reactionOpened, setReactionOpened] = useState(false);
+
+    const ReactionInteraction = () => {
+        setReactionOpened(!reactionOpened);
+    };
 
     useEffect(() => {
         (async () => {
@@ -79,6 +96,13 @@ function MiddleSide() {
             setEditContent(post_res.data.content);
             setFinalContent(post_res.data.content);
             setPostEdited(post_res.data.edited);
+
+            setPost(old => {
+                setReactions({
+                    reactions: (old.reactions as ReactionsInter) ? (old.reactions as ReactionsInter) : {},
+                });
+                return old;
+            });
 
             if (post_res.data.is_reply) {
                 setReplyingToPost(
@@ -216,6 +240,61 @@ function MiddleSide() {
 
     const OnReplySend = (data: Post) => {
         setReplies(old => [data, ...old]);
+    };
+
+    const [canAddReaction, setCanAddReaction] = useState(true);
+    const ReactToPost = async (emojiData: EmojiClickData, event: MouseEvent) => {
+        if (!canAddReaction) return;
+        if (emojiData.isCustom) return alert("Custom emojis on reactions is not supported!");
+        const res = await axios.post(`${api_uri}/api/post/react`, {
+            token: localStorage.getItem("access_token"),
+            emoji: emojiData.emoji,
+            post_id: post.post_id,
+        });
+
+        if (res.data.error) {
+            alert(res.data.error);
+        } else {
+            setReactions(old => {
+                const _ = { ...old };
+                if (_.reactions[emojiData.emoji]) _.reactions[emojiData.emoji] += 1;
+                else _.reactions[emojiData.emoji] = 1;
+                return _;
+            });
+        }
+        setCanAddReaction(false);
+        setTimeout(() => {
+            setCanAddReaction(true);
+        }, 3000);
+        // textarea.current!.value += emojiData.isCustom ? `<:${emojiData.emoji}:> ` : emojiData.emoji;
+    };
+
+    const ReactSpecific = async (emoji: string) => {
+        if (!canAddReaction) return;
+        if (emoji.length > 1) return alert("Custom emojis on reactions is not supported!");
+
+        const res = await axios.post(`${api_uri}/api/post/react`, {
+            token: localStorage.getItem("access_token"),
+            emoji: emoji,
+            post_id: post.post_id,
+        });
+
+        if (res.data.error) {
+            alert(res.data.error);
+        } else {
+            setReactions(old => {
+                const _ = { ...old };
+                if (_.reactions[emoji]) _.reactions[emoji] += 1;
+                else _.reactions[emoji] = 1;
+                return _;
+            });
+        }
+
+        setCanAddReaction(false);
+        setTimeout(() => {
+            setCanAddReaction(true);
+        }, 3000);
+        // textarea.current!.value += emojiData.isCustom ? `<:${emojiData.emoji}:> ` : emojiData.emoji;
     };
 
     return (
@@ -381,6 +460,9 @@ function MiddleSide() {
                             numbers={millify(LikeCount)}
                         />
                     </a>
+                    <a onClick={ReactionInteraction} className="post-inter-orange">
+                        <i className="fa-solid fa-face-awesome"></i>{" "}
+                    </a>
                     <a
                         onClick={BookmarkInteraction}
                         style={isBookmarked ? { color: "rgb(60, 193, 255)" } : {}}
@@ -408,6 +490,31 @@ function MiddleSide() {
                     ) : (
                         ""
                     )}
+                </div>
+                {reactionOpened ? (
+                    <EmojiPicker
+                        onEmojiClick={ReactToPost}
+                        theme={Theme.DARK}
+                        emojiStyle={EmojiStyle.NATIVE}
+                        reactionsDefaultOpen={true}
+                        style={{
+                            backgroundColor: "rgba(0,0,0,0.7)",
+                            border: "none",
+                        }}
+                    />
+                ) : (
+                    ""
+                )}
+                <div className="reactions white-bg">
+                    {Object.keys(reactions.reactions).map((key: string, index: number) => {
+                        if (index > 12) return <></>;
+                        return (
+                            <p onClick={() => ReactSpecific(key)}>
+                                <span className="reaction-emoji">{key}</span>
+                                <span className="reaction-count">{reactions.reactions[key]}</span>
+                            </p>
+                        );
+                    })}
                 </div>
             </div>
             <Divider />
