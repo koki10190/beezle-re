@@ -33,7 +33,7 @@ pub async fn route(
     match token {
         Ok(_) => {
             let data = token.unwrap();
-
+            let __post_id = uuid::Uuid::new().to_string();
             let struct_post_doc = mongoose::structures::post::Post {
                 id: None,
                 handle: data.claims.handle.to_string(),
@@ -42,7 +42,7 @@ pub async fn route(
                 repost: false,
                 likes: vec![],
                 reposts: vec![],
-                post_id: uuid::Uuid::new().to_string(),
+                post_id: __post_id.to_string(),
                 edited: false,
                 replying_to: body.replying_to.to_string(),
                 is_reply: body.is_reply,
@@ -79,7 +79,7 @@ pub async fn route(
                         "$addToSet": {
                             "notifications": {
                                 "caller": &data.claims.handle,
-                                "post_id": &body.replying_to,
+                                "post_id": &__post_id,
                                 "message": "replied to your post!"
                             }
                         }
