@@ -68,23 +68,8 @@ pub async fn route(
                     return HttpResponse::Ok().json(doc! {"error": "Invalid reply!"});
                 }
 
-                let mut app_data = fapp.lock().unwrap();
                 let unwrapped = replying_to_post.unwrap();
                 let handle = unwrapped.get("handle").unwrap().as_str().unwrap();
-
-                if let Some(receiver_session) = app_data.connections.get_mut(handle) {
-                    beezle::print("Found receiver");
-                    let data = WsData {
-                        channel: "get-notif".to_string(),
-                        json_data: serde_json::to_string(&doc! {
-                            "caller": &data.claims.handle,
-                            "post_id": &__post_id,
-                            "message": "replied to your post!"
-                        })
-                        .unwrap(),
-                    };
-                    send_back(receiver_session, data).await;
-                }
 
                 mongoose::update_document(
                     &client,
