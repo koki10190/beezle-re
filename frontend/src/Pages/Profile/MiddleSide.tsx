@@ -95,16 +95,21 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
             ).data;
             setPosts(posts.posts);
             setPostOffset(posts.offset);
-            const steam_res = await axios.get(
-                `${api_uri}/api/connections/steam_get_game?steam_id=${user.connections.steam.id}`
-            );
-            const steam_data = steam_res.data;
-            if (steam_data) setSteamData(steam_data[Object.keys(steam_data)[0]].data);
 
             if (user.pinned_post !== "") {
                 let post = (await axios.get(`${api_uri}/api/post/get/one?post_id=${user.pinned_post}`)).data;
                 console.log("Pinned", post);
                 setPinnedPost(post.error ? null : post);
+            }
+
+            try {
+                const steam_res = await axios.get(
+                    `${api_uri}/api/connections/steam_get_game?steam_id=${user.connections.steam.id}`
+                );
+                const steam_data = steam_res.data;
+                if (steam_data) setSteamData(steam_data[Object.keys(steam_data)[0]].data);
+            } catch (e) {
+                console.error("STEAM ERROR CAUGHT:", e);
             }
         })();
     }, []);

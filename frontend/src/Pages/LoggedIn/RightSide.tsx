@@ -104,7 +104,7 @@ function RightSide() {
                 />
                 <SettingsButton redirect="/shop" iconClass="fa-solid fa-shop" text="Shop" style={undefined} />
                 <SettingsButton
-                    redirect="/shop"
+                    redirect="/search"
                     iconClass="fa-solid fa-magnifying-glass"
                     text="Search"
                     style={undefined}
