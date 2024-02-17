@@ -56,7 +56,10 @@ pub async fn route(client: web::Data<mongodb::Client>, body: web::Query<_Query>)
                         options: "i".to_string()
                     }
                 }
-            ]},
+            ],
+
+            "repost": false
+            },
             options,
         )
         .await
