@@ -8,6 +8,7 @@ import './Details.css';
 import Divider from '../../../Components/Divider';
 import { api_uri } from '../../../links';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 
 interface Props {
     user: UserPrivate;
