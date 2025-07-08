@@ -48,6 +48,7 @@ async fn main() -> std::io::Result<()> {
 
     let client = Client::with_options(client_options).unwrap();
     mongoose::create_collection(&client, "beezle", "Users").await;
+    mongoose::create_collection(&client, "beezle", "Reactions").await;
     mongoose::create_collection(&client, "beezle", "Auths").await;
     mongoose::create_collection(&client, "beezle", "Posts").await;
 
@@ -89,6 +90,7 @@ async fn main() -> std::io::Result<()> {
             .service(routes::api::post::get::one::route)
             .service(routes::api::post::edit::route)
             .service(routes::api::post::get::profile::route)
+            .service(routes::api::post::get::reacts::route)
             .service(routes::api::post::delete::route)
             .service(routes::api::user::follow::route)
             .service(routes::api::post::get::replies::route)

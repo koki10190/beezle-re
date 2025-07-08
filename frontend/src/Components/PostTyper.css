@@ -8,10 +8,21 @@
     color: white;
     font-size: 25px;
     resize: vertical;
+    field-sizing: content;
 }
 .post-typer-button {
     width: 100%;
-    margin-top: 20px;
+    /* margin-top: 20px; */
+    padding-left: 5px;
+    /* display: inline-block; */
+    vertical-align: top;
+}
+
+.button-field.post-typer-sender {
+    margin-top: 10px;
+    font-size: 20px;
+    padding: 5px 15px 5px 15px;
+    margin-left: 5px;
 }
 
 .post-typer-emoji-picker {

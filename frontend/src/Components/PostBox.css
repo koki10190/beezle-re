@@ -1,7 +1,11 @@
 .post-box {
     width: 100%;
     background-color: rgb(231, 129, 98);
-    border-radius: 15px;
+    background-color: rgba(231, 129, 98, 0.747);
+    /* background-color: black;
+    border: solid 2px rgb(231, 129, 98); */
+
+    border-radius: 5px;
     box-sizing: border-box;
     padding-top: 20px;
     padding-bottom: 20px;

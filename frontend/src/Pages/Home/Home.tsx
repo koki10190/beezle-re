@@ -9,6 +9,7 @@ import RightSide from "../LoggedIn/RightSide";
 import "../LoggedIn.css";
 import "../../assets/main.css";
 import React from "react";
+import dmSocket from "../../ws/dm-socket";
 
 function Home() {
     useEffect(() => {

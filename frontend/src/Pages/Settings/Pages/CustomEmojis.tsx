@@ -1,16 +1,17 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from 'react';
 
-import { fetchUserPrivate } from "../../../functions/fetchUserPrivate";
-import { UserPrivate } from "../../../types/User";
-import { Post } from "../../../types/Post";
-import FetchPost from "../../../functions/FetchPost";
-import "./Details.css";
-import Divider from "../../../Components/Divider";
-import { api_uri } from "../../../links";
-import axios from "axios";
-import PopupToSteamAuth from "../../../functions/RedirectToSteamAuth";
-import { CustomEmoji } from "emoji-picker-react/dist/config/customEmojiConfig";
-import UploadToImgur from "../../../functions/UploadToImgur";
+import { fetchUserPrivate } from '../../../functions/fetchUserPrivate';
+import { UserPrivate } from '../../../types/User';
+import { Post } from '../../../types/Post';
+import FetchPost from '../../../functions/FetchPost';
+import './Details.css';
+import Divider from '../../../Components/Divider';
+import { api_uri } from '../../../links';
+import axios from 'axios';
+import PopupToSteamAuth from '../../../functions/RedirectToSteamAuth';
+import { CustomEmoji } from 'emoji-picker-react/dist/config/customEmojiConfig';
+import UploadToImgur from '../../../functions/UploadToImgur';
+import { toast } from 'react-toastify';
 
 interface Props {
     user: UserPrivate;
@@ -25,14 +26,14 @@ function DisplayUploadedEmojis({ user, emoji }: DUE_Props) {
         <>
             <div
                 style={{
-                    width: "50px",
-                    height: "50px",
-                    marginBottom: "5px",
+                    width: '50px',
+                    height: '50px',
+                    marginBottom: '5px',
                     backgroundImage: `url(${emoji.imgUrl})`,
                 }}
                 title={emoji.id}
                 className="emoji"
-            />{" "}
+            />{' '}
         </>
     );
 }
@@ -55,28 +56,28 @@ function CustomEmojis({ user }: Props) {
         let emoji_img: string | null = null;
 
         const format = /[!@#$%^&*()+\-=\[\]{};':"\\|,.<>\/? ]+/g;
-        if (format.test(idRef.current!.value)) return alert("No special characters or spaces allowed.");
+        if (format.test(idRef.current!.value)) return toast.warn('No special characters or spaces allowed.');
         console.log(imgRef.current!);
-        if (imgRef.current!.files && imgRef.current!.files.length > 0)
-            emoji_img = ((await UploadToImgur(imgRef.current!)) as any).data.link;
+        if (imgRef.current!.files && imgRef.current!.files.length > 0) emoji_img = ((await UploadToImgur(imgRef.current!)) as any).data.link;
 
-        if (!emoji_img) return alert("Please select an image.");
+        if (!emoji_img) return toast.info('Please select an image.');
 
         buttonRef.current!.disabled = true;
-        buttonRef.current!.innerText = "Uploading...";
+        buttonRef.current!.innerText = 'Uploading...';
 
         // do stuff here
 
         const res = await axios.post(`${api_uri}/api/user/upload_emoji`, {
-            token: localStorage.getItem("access_token"),
+            token: localStorage.getItem('access_token'),
             emoji_url: emoji_img,
             emoji_id: idRef.current!.value,
         });
 
-        alert(res.data.error ? res.data.error : res.data.message);
+        if (res.data.error) toast.error(res.data.error);
+        else toast.success(res.data.message);
 
         buttonRef.current!.disabled = false;
-        buttonRef.current!.innerText = "Upload Emoji";
+        buttonRef.current!.innerText = 'Upload Emoji';
 
         window.location.reload();
     };
@@ -97,21 +98,14 @@ function CustomEmojis({ user }: Props) {
                 >
                     <div
                         style={{
-                            display: hovered ? "flex" : "none",
+                            display: hovered ? 'flex' : 'none',
                         }}
                         className="emoji-preview-text"
                     >
-                        Upload{" "}
+                        Upload{' '}
                     </div>
                 </div>
-                <input
-                    onChange={SetPreview}
-                    required
-                    style={{ display: "none" }}
-                    type="file"
-                    ref={imgRef}
-                    accept=".jpeg,.gif,.png,.jpg"
-                />
+                <input onChange={SetPreview} required style={{ display: 'none' }} type="file" ref={imgRef} accept=".jpeg,.gif,.png,.jpg" />
                 <input
                     required
                     maxLength={32}
@@ -119,24 +113,18 @@ function CustomEmojis({ user }: Props) {
                     placeholder="Emoji ID (No special characters or spaces, only _, letters and numbers)"
                     ref={idRef}
                 />
-                <p style={{ marginTop: "25px", marginBottom: "0px" }}>
+                <p style={{ marginTop: '25px', marginBottom: '0px' }}>
                     Costs <i className="fa-solid fa-coins" /> 500
                 </p>
-                <button
-                    onClick={UploadEmoji}
-                    style={{ marginBottom: "25px" }}
-                    ref={buttonRef}
-                    type="submit"
-                    className="button-field"
-                >
+                <button onClick={UploadEmoji} style={{ marginBottom: '25px' }} ref={buttonRef} type="submit" className="button-field">
                     Upload Emoji
                 </button>
 
                 {user.customization?.emojis && user.customization?.emojis?.length > 0
-                    ? user.customization?.emojis.map(emoji => {
+                    ? user.customization?.emojis.map((emoji) => {
                           return <DisplayUploadedEmojis key={emoji.id} emoji={emoji} user={user} />;
                       })
-                    : "No custom emojis uploaded."}
+                    : 'No custom emojis uploaded.'}
             </div>
         </>
     );

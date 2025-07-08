@@ -1,32 +1,33 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from 'react';
 
-import { fetchUserPrivate } from "../../../functions/fetchUserPrivate";
-import { UserPrivate } from "../../../types/User";
-import { Post } from "../../../types/Post";
-import FetchPost from "../../../functions/FetchPost";
-import "./Details.css";
-import Divider from "../../../Components/Divider";
-import { api_uri } from "../../../links";
-import axios from "axios";
+import { fetchUserPrivate } from '../../../functions/fetchUserPrivate';
+import { UserPrivate } from '../../../types/User';
+import { Post } from '../../../types/Post';
+import FetchPost from '../../../functions/FetchPost';
+import './Details.css';
+import Divider from '../../../Components/Divider';
+import { api_uri } from '../../../links';
+import axios from 'axios';
 
 interface Props {
     user: UserPrivate;
 }
 
 function Details({ user }: Props) {
-    const [password, setPassword] = useState("");
+    const [password, setPassword] = useState('');
     const statePassRef = useRef<HTMLParagraphElement>(null);
 
     const ChangePassword = async () => {
         const res = await axios.post(`${api_uri}/api/user/change_password`, {
-            token: localStorage.getItem("access_token"),
+            token: localStorage.getItem('access_token'),
             password,
         });
 
         statePassRef.current!.innerText = res.data.error ? res.data.error : res.data.message;
 
-        alert(res.data.error ? res.data.error : res.data.message);
-        window.location.href = "/logout";
+        if (res.data.error) toast.error(res.data.error);
+        else toast.success(res.data.message);
+        window.location.href = '/logout';
     };
 
     return (
@@ -40,11 +41,7 @@ function Details({ user }: Props) {
                 <h4>{user.email}</h4>
                 <Divider />
                 <h1>Change Password</h1>
-                <input
-                    onChange={e => setPassword(e.target.value)}
-                    className="input-field fixed-100"
-                    placeholder="Password"
-                />
+                <input onChange={(e) => setPassword(e.target.value)} className="input-field fixed-100" placeholder="Password" />
                 <button onClick={ChangePassword} className="button-field">
                     Change Password
                 </button>

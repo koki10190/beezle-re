@@ -1,0 +1,128 @@
+.dm-user {
+    cursor: pointer;
+    width: 100%;
+    min-height: 100px;
+    margin-bottom: 10px;
+    background-color: rgb(255, 145, 72);
+    border-radius: 5px;
+
+    box-sizing: border-box;
+    padding: 15px;
+    border: transparent 2px solid;
+    transition: border ease-in-out 150ms;
+    word-wrap: break-word;
+    white-space: pre-line;
+}
+
+.dm-user:hover {
+    border: rgb(52, 198, 255) 2px solid;
+}
+
+.dm-user-pfp {
+    width: 50px;
+    height: 50px;
+    border-radius: 100%;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.dm-user-username {
+    margin-top: -46px;
+    margin-left: 60px;
+}
+
+.dm-user-handle {
+    margin-top: -20px;
+    margin-left: 60px;
+    font-size: 15px;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.dmspace-pfp {
+    width: 50px;
+    height: 50px;
+    border-radius: 100%;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.dmspace-username {
+    margin-top: -45px;
+    margin-left: 60px;
+}
+
+.dmspace-handle {
+    margin-top: -20px;
+    margin-left: 60px;
+    font-size: 15px;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.dm-input {
+    height: 46px;
+    margin-top: 5px;
+}
+
+.dm-content {
+    margin-top: -5px;
+    width: 100%;
+    height: calc(100% - 140px);
+    overflow-y: auto;
+}
+
+.dmspace {
+    overflow: hidden;
+}
+
+.dm-message {
+    width: fit-content;
+    max-width: 80%;
+    /* height: ; */
+    background-color: rgb(50, 50, 50);
+    padding: 10px;
+    border-radius: 15px;
+    padding-left: 15px;
+    padding-right: 15px;
+    margin-bottom: 5px;
+
+    box-sizing: border-box;
+    word-wrap: break-word;
+}
+
+.dm-message.by_me {
+    background-color: rgb(0, 153, 255);
+    margin-left: auto;
+    margin-right: 0;
+}
+
+.dm-message p {
+    padding: 0px;
+    margin: 0px;
+}
+
+.dm-message-options {
+    margin-top: -22px;
+    margin-left: -55px;
+}
+
+.dm-message-options-button {
+    cursor: pointer;
+    color: rgba(255, 255, 255, 0.5);
+    transition: color ease-in-out 150ms;
+}
+
+.dm-message-options-button.edit:hover {
+    color: rgba(255, 196, 35, 1);
+}
+
+.dm-message-options-button.delete:hover {
+    color: rgb(255, 35, 35);
+}
+
+.dm-message-edit-button {
+    font-size: 20px;
+    margin-top: 5px;
+    width: 100%;
+}

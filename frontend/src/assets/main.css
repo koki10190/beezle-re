@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;500&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;500&display=swap');
 
 @font-face {
     font-family: vga-font;
@@ -20,7 +20,7 @@ button {
     outline: none;
     border: none;
     display: block;
-    font-size: 25px;
+    font-size: 18px;
     margin-bottom: 10px;
 }
 
@@ -34,7 +34,7 @@ input,
 button,
 a,
 textarea {
-    font-family: "Open Sans", sans-serif;
+    font-family: 'Open Sans', sans-serif;
 }
 
 form > a {
@@ -176,15 +176,35 @@ form > a {
     border: 1px solid rgb(255, 139, 71);
 }
 
-.color-picker {
-    width: 100%;
-    outline: none;
-    border-radius: 5px;
-    border: 3px solid black;
-    background: none;
-    padding: 0;
+.input-checkbox[type='checkbox'] {
+    accent-color: #ff8800;
 }
 
+.color-picker {
+    width: 50%;
+    display: inline-block;
+    outline: none;
+    /* border-radius: 5px; */
+    /* border: 3px solid black; */
+    background: none;
+
+    -webkit-appearance: none;
+    padding-left: 5px;
+    padding-right: 5px;
+    border: none;
+    /* border-radius: 10px; */
+}
+
+.color-picker::-webkit-color-swatch {
+    border: none;
+    border-radius: 5px;
+    padding: 0;
+}
+.color-picker::-webkit-color-swatch-wrapper {
+    border: none;
+    border-radius: 5px;
+    padding: 0;
+}
 /* BUTTON FIELD */
 
 .button-field {

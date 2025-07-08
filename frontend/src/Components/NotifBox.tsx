@@ -30,7 +30,7 @@ function NotifBox({ notif }: { notif: NotificationData }) {
                     <div
                         style={{
                             backgroundImage: `url(${user.avatar})`,
-                            borderRadius: user.customization?.square_avatar ? "15px" : "100%",
+                            borderRadius: user.customization?.square_avatar ? "5px" : "100%",
                         }}
                         className="notif-pfp"
                     ></div>

@@ -1,15 +1,16 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from 'react';
 
-import { fetchUserPrivate } from "../../../functions/fetchUserPrivate";
-import { UserPrivate, UserPublic } from "../../../types/User";
-import { Post } from "../../../types/Post";
-import FetchPost from "../../../functions/FetchPost";
-import Divider from "../../../Components/Divider";
-import { api_uri } from "../../../links";
-import axios from "axios";
-import { ReportType } from "../../../types/Report";
-import { fetchUserPublic } from "../../../functions/fetchUserPublic";
-import "./Reports.css";
+import { fetchUserPrivate } from '../../../functions/fetchUserPrivate';
+import { UserPrivate, UserPublic } from '../../../types/User';
+import { Post } from '../../../types/Post';
+import FetchPost from '../../../functions/FetchPost';
+import Divider from '../../../Components/Divider';
+import { api_uri } from '../../../links';
+import axios from 'axios';
+import { ReportType } from '../../../types/Report';
+import { fetchUserPublic } from '../../../functions/fetchUserPublic';
+import './Reports.css';
+import { toast } from 'react-toastify';
 
 interface Props {
     user: UserPrivate;
@@ -26,16 +27,16 @@ function ReportBox({ report, setReports }: { report: ReportType; setReports: any
 
     const Resolve = async () => {
         const res = await axios.post(`${api_uri}/api/resolve_report`, {
-            token: localStorage.getItem("access_token"),
+            token: localStorage.getItem('access_token'),
             report_id: report.report_id,
         });
 
-        alert(res.data.message);
+        toast.success(res.data.message);
 
         setReports((old: Array<ReportType>) => {
             old.splice(
-                old.findIndex(x => x.report_id == report.report_id),
-                1
+                old.findIndex((x) => x.report_id == report.report_id),
+                1,
             );
             return [...old];
         });
@@ -46,11 +47,8 @@ function ReportBox({ report, setReports }: { report: ReportType; setReports: any
             <div className="report-box">
                 {reporter ? (
                     <div className="reporter">
-                        <h2 style={{ marginBottom: "10px" }}>Reporter:</h2>
-                        <div
-                            onClick={() => (window.location.href = `/profile/${reporter.handle}`)}
-                            className="reporter-content"
-                        >
+                        <h2 style={{ marginBottom: '10px' }}>Reporter:</h2>
+                        <div onClick={() => (window.location.href = `/profile/${reporter.handle}`)} className="reporter-content">
                             <div style={{ backgroundImage: `url(${reporter.avatar})` }} className="report-pfp"></div>
                             <p className="report-handle">
                                 @{reporter.handle} - {reporter.activity}
@@ -70,7 +68,7 @@ function ReportBox({ report, setReports }: { report: ReportType; setReports: any
                         </div>
                     </div>
                 ) : (
-                    ""
+                    ''
                 )}
             </div>
             <Divider />
@@ -96,10 +94,10 @@ function Reports({ user }: Props) {
                     <i className="fa-solid fa-flag" /> Reports
                 </h1>
                 <Divider />
-                {reports.map(report => (
+                {reports.map((report) => (
                     <ReportBox setReports={setReports} report={report} />
                 ))}
-                {reports.length <= 0 ? "No reports" : ""}
+                {reports.length <= 0 ? 'No reports' : ''}
             </div>
         </>
     );

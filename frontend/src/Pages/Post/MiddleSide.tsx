@@ -1,27 +1,28 @@
-import { useEffect, useState } from "react";
-import { checkToken } from "../../functions/checkToken";
+import { useEffect, useState } from 'react';
+import { checkToken } from '../../functions/checkToken';
 
-import Divider from "../../Components/Divider";
-import PostBox from "../../Components/PostBox";
-import { fetchUserPrivate } from "../../functions/fetchUserPrivate";
-import { UserPrivate, UserPublic } from "../../types/User";
-import { Post } from "../../types/Post";
-import FetchPost from "../../functions/FetchPost";
-import { api_uri } from "../../links";
-import axios from "axios";
-import { fetchUserPublic } from "../../functions/fetchUserPublic";
-import { useParams } from "react-router-dom";
-import "./Post.css";
-import "../../Components/PostBox.css";
-import moment from "moment";
-import { BadgesToJSX } from "../../functions/badgesToJSX";
-import FlipNumbers from "react-flip-numbers";
-import millify from "millify";
-import PostTyper from "../../Components/PostTyper";
-import parseURLs from "../../functions/parseURLs";
-import { Helmet } from "react-helmet";
-import Username from "../../Components/Username";
-import EmojiPicker, { EmojiClickData, EmojiStyle, Theme } from "emoji-picker-react";
+import Divider from '../../Components/Divider';
+import PostBox from '../../Components/PostBox';
+import { fetchUserPrivate } from '../../functions/fetchUserPrivate';
+import { UserPrivate, UserPublic } from '../../types/User';
+import { Post } from '../../types/Post';
+import FetchPost from '../../functions/FetchPost';
+import { api_uri } from '../../links';
+import axios from 'axios';
+import { fetchUserPublic } from '../../functions/fetchUserPublic';
+import { useParams } from 'react-router-dom';
+import './Post.css';
+import '../../Components/PostBox.css';
+import moment from 'moment';
+import { BadgesToJSX } from '../../functions/badgesToJSX';
+import FlipNumbers from 'react-flip-numbers';
+import millify from 'millify';
+import PostTyper from '../../Components/PostTyper';
+import parseURLs from '../../functions/parseURLs';
+import { Helmet } from 'react-helmet';
+import Username from '../../Components/Username';
+import EmojiPicker, { EmojiClickData, EmojiStyle, Theme } from 'emoji-picker-react';
+import { toast } from 'react-toastify';
 
 interface ReactionsInter {
     [key: string]: number;
@@ -49,8 +50,8 @@ function MiddleSide() {
     const [isRepostHovered, setRepostHovered] = useState(false);
 
     const [isEditing, setEditing] = useState(false);
-    const [editContent, setEditContent] = useState("");
-    const [finalContent, setFinalContent] = useState("");
+    const [editContent, setEditContent] = useState('');
+    const [finalContent, setFinalContent] = useState('');
     const [isPostEdited, setPostEdited] = useState(false);
     const [replyingToPost, setReplyingToPost] = useState<Post>();
     const [reactions, setReactions] = useState<ReactionStruct>({
@@ -67,7 +68,7 @@ function MiddleSide() {
             const user = (await fetchUserPrivate()) as UserPrivate;
             setSelfUser(user);
 
-            console.log("foreach");
+            console.log('foreach');
             const replies_res = await axios.get(`${api_uri}/api/post/get/replies?post_id=${post_id}`);
             let post_res = await axios.get(`${api_uri}/api/post/get/one?post_id=${post_id}`);
             const priv = (await fetchUserPrivate()) as UserPrivate;
@@ -80,15 +81,11 @@ function MiddleSide() {
             setReplies(replies_res.data.replies);
             setSelfUser(priv);
             setPost(post_res.data);
-            setPostUser(
-                (await fetchUserPublic(
-                    post_res.data.repost ? post_res.data.post_op_handle : post_res.data.handle
-                )) as UserPublic
-            );
+            setPostUser((await fetchUserPublic(post_res.data.repost ? post_res.data.post_op_handle : post_res.data.handle)) as UserPublic);
 
-            setLiked((post_res.data as Post).likes.find(s => s === priv.handle) ? true : false);
-            setReposted((post_res.data as Post).reposts.find(s => s === priv.handle) ? true : false);
-            setBookmarked(priv.bookmarks.find(s => s === (post_res.data as Post).post_id) ? true : false);
+            setLiked((post_res.data as Post).likes.find((s) => s === priv.handle) ? true : false);
+            setReposted((post_res.data as Post).reposts.find((s) => s === priv.handle) ? true : false);
+            setBookmarked(priv.bookmarks.find((s) => s === (post_res.data as Post).post_id) ? true : false);
             setPinned(priv.pinned_post === post_res.data.post_id);
             setLikeCount((post_res.data as Post).likes.length);
             setRepostCount((post_res.data as Post).reposts.length);
@@ -97,7 +94,7 @@ function MiddleSide() {
             setFinalContent(post_res.data.content);
             setPostEdited(post_res.data.edited);
 
-            setPost(old => {
+            setPost((old) => {
                 setReactions({
                     reactions: (old.reactions as ReactionsInter) ? (old.reactions as ReactionsInter) : {},
                 });
@@ -105,9 +102,7 @@ function MiddleSide() {
             });
 
             if (post_res.data.is_reply) {
-                setReplyingToPost(
-                    (await axios.get(`${api_uri}/api/post/get/one?post_id=${post_res.data.replying_to}`)).data
-                );
+                setReplyingToPost((await axios.get(`${api_uri}/api/post/get/one?post_id=${post_res.data.replying_to}`)).data);
             }
         })();
     }, []);
@@ -115,7 +110,7 @@ function MiddleSide() {
     const LikeInteraction = async () => {
         if (isLiked) {
             await axios.post(`${api_uri}/api/post/like`, {
-                token: localStorage.getItem("access_token"),
+                token: localStorage.getItem('access_token'),
                 post_id: post!.post_id,
                 remove_like: true,
             });
@@ -125,7 +120,7 @@ function MiddleSide() {
         }
 
         await axios.post(`${api_uri}/api/post/like`, {
-            token: localStorage.getItem("access_token"),
+            token: localStorage.getItem('access_token'),
             post_id: post!.post_id,
             remove_like: false,
         });
@@ -136,7 +131,7 @@ function MiddleSide() {
     const RepostInteraction = async () => {
         if (isReposted) {
             await axios.post(`${api_uri}/api/post/repost`, {
-                token: localStorage.getItem("access_token"),
+                token: localStorage.getItem('access_token'),
                 post_id: post!.post_id,
                 remove_repost: true,
             });
@@ -147,7 +142,7 @@ function MiddleSide() {
         }
 
         const res = await axios.post(`${api_uri}/api/post/repost`, {
-            token: localStorage.getItem("access_token"),
+            token: localStorage.getItem('access_token'),
             post_id: post!.post_id,
             remove_repost: false,
         });
@@ -159,7 +154,7 @@ function MiddleSide() {
     const PinInteraction = async () => {
         if (isPinned) {
             await axios.post(`${api_uri}/api/post/pin`, {
-                token: localStorage.getItem("access_token"),
+                token: localStorage.getItem('access_token'),
                 post_id: post!.post_id,
                 remove_pin: true,
             });
@@ -168,7 +163,7 @@ function MiddleSide() {
         }
 
         const res = await axios.post(`${api_uri}/api/post/pin`, {
-            token: localStorage.getItem("access_token"),
+            token: localStorage.getItem('access_token'),
             post_id: post!.post_id,
             remove_pin: false,
         });
@@ -179,7 +174,7 @@ function MiddleSide() {
     const BookmarkInteraction = async () => {
         if (isBookmarked) {
             await axios.post(`${api_uri}/api/post/bookmark`, {
-                token: localStorage.getItem("access_token"),
+                token: localStorage.getItem('access_token'),
                 post_id: post!.post_id,
                 remove_bookmark: true,
             });
@@ -188,7 +183,7 @@ function MiddleSide() {
         }
 
         const res = await axios.post(`${api_uri}/api/post/bookmark`, {
-            token: localStorage.getItem("access_token"),
+            token: localStorage.getItem('access_token'),
             post_id: post!.post_id,
             remove_bookmark: false,
         });
@@ -203,15 +198,15 @@ function MiddleSide() {
     const SaveEditChanges = async () => {
         setEditing(false);
         const res = await axios.post(`${api_uri}/api/post/edit`, {
-            token: localStorage.getItem("access_token"),
+            token: localStorage.getItem('access_token'),
             post_id: post!.post_id,
             content: editContent,
         });
 
         if (res.data.error) {
-            alert(res.data.error);
+            toast.error(res.data.error);
         } else {
-            alert("Edited post successfully.");
+            toast.success('Edited post successfully');
             setFinalContent(editContent);
         }
 
@@ -220,18 +215,18 @@ function MiddleSide() {
 
     const DeleteInteraction = async () => {
         const res = await axios.post(`${api_uri}/api/post/delete`, {
-            token: localStorage.getItem("access_token"),
+            token: localStorage.getItem('access_token'),
             post_id: post!.post_id,
         });
 
         if (res.data.error) {
-            alert(res.data.error);
+            toast.error(res.data.error);
         } else {
-            alert(res.data.message);
+            toast.success(res.data.message);
             setReplies((old: Array<Post>) => {
                 old.splice(
-                    old.findIndex(x => x.post_id == post!.post_id),
-                    1
+                    old.findIndex((x) => x.post_id == post!.post_id),
+                    1,
                 );
                 return [...old];
             });
@@ -239,23 +234,23 @@ function MiddleSide() {
     };
 
     const OnReplySend = (data: Post) => {
-        setReplies(old => [data, ...old]);
+        setReplies((old) => [data, ...old]);
     };
 
     const [canAddReaction, setCanAddReaction] = useState(true);
     const ReactToPost = async (emojiData: EmojiClickData, event: MouseEvent) => {
         if (!canAddReaction) return;
-        if (emojiData.isCustom) return alert("Custom emojis on reactions is not supported!");
+        if (emojiData.isCustom) return toast.error('Custom emojis on reactions is not supported!');
         const res = await axios.post(`${api_uri}/api/post/react`, {
-            token: localStorage.getItem("access_token"),
+            token: localStorage.getItem('access_token'),
             emoji: emojiData.emoji,
             post_id: post.post_id,
         });
 
         if (res.data.error) {
-            alert(res.data.error);
+            toast.error(res.data.error);
         } else {
-            setReactions(old => {
+            setReactions((old) => {
                 const _ = { ...old };
                 if (_.reactions[emojiData.emoji]) _.reactions[emojiData.emoji] += 1;
                 else _.reactions[emojiData.emoji] = 1;
@@ -271,18 +266,18 @@ function MiddleSide() {
 
     const ReactSpecific = async (emoji: string) => {
         if (!canAddReaction) return;
-        if (emoji.length > 1) return alert("Custom emojis on reactions is not supported!");
+        if (emoji.length > 1) return toast.error('Custom emojis on reactions is not supported!');
 
         const res = await axios.post(`${api_uri}/api/post/react`, {
-            token: localStorage.getItem("access_token"),
+            token: localStorage.getItem('access_token'),
             emoji: emoji,
             post_id: post.post_id,
         });
 
         if (res.data.error) {
-            alert(res.data.error);
+            toast.error(res.data.error);
         } else {
-            setReactions(old => {
+            setReactions((old) => {
                 const _ = { ...old };
                 if (_.reactions[emoji]) _.reactions[emoji] += 1;
                 else _.reactions[emoji] = 1;
@@ -304,36 +299,24 @@ function MiddleSide() {
                     <>
                         <Helmet>
                             <title>Beezle: RE - Post</title>
-                            <meta name="description" content={`${post.content.replace(/(.{64})..+/, "$1…")}`} />
+                            <meta name="description" content={`${post.content.replace(/(.{64})..+/, '$1…')}`} />
                             <meta name="keywords" content="react, meta tags, seo" />
                             <meta name="author" content={`@${post.repost ? post.post_op_handle : post.handle}`} />
-                            <meta
-                                property="og:title"
-                                content={`Post by @${post.repost ? post.post_op_handle : post.handle}`}
-                            />
-                            <meta property="og:description" content={`${post.content.replace(/(.{64})..+/, "$1…")}`} />
+                            <meta property="og:title" content={`Post by @${post.repost ? post.post_op_handle : post.handle}`} />
+                            <meta property="og:description" content={`${post.content.replace(/(.{64})..+/, '$1…')}`} />
                             <meta property="og:image" content={post_user.avatar} />
-                            <meta
-                                property="og:url"
-                                content={`https://beezle.lol/post/${post.repost ? post.post_op_id : post.post_id}`}
-                            />
-                            <meta
-                                name="twitter:title"
-                                content={`Post by @${post.repost ? post.post_op_handle : post.handle}`}
-                            />
-                            <meta name="twitter:description" content={`${post.content.replace(/(.{64})..+/, "$1…")}`} />
+                            <meta property="og:url" content={`https://beezle.lol/post/${post.repost ? post.post_op_id : post.post_id}`} />
+                            <meta name="twitter:title" content={`Post by @${post.repost ? post.post_op_handle : post.handle}`} />
+                            <meta name="twitter:description" content={`${post.content.replace(/(.{64})..+/, '$1…')}`} />
                             <meta name="twitter:image" content={`${post_user.avatar}`} />
                             <meta name="twitter:card" content="summary_large_image" />
                         </Helmet>
                         {post.repost ? (
-                            <h4
-                                onClick={() => (window.location.href = `/profile/${post.handle}`)}
-                                className="post-attr"
-                            >
+                            <h4 onClick={() => (window.location.href = `/profile/${post.handle}`)} className="post-attr">
                                 <i className="fa-solid fa-repeat"></i> Repost by @{post.handle}
                             </h4>
                         ) : (
-                            ""
+                            ''
                         )}
 
                         {isPostEdited ? (
@@ -341,57 +324,50 @@ function MiddleSide() {
                                 <i className="fa-solid fa-pencil"></i> Edited
                             </h4>
                         ) : (
-                            ""
+                            ''
                         )}
 
                         {post.is_reply && replyingToPost ? (
-                            <h4
-                                onClick={() => (window.location.href = `/post/${post.replying_to}`)}
-                                className="post-attr"
-                            >
-                                <i className="fa-solid fa-comment"></i> Replying to{" "}
-                                {replyingToPost?.content.replace(/(.{12})..+/, "$1…")}
+                            <h4 onClick={() => (window.location.href = `/post/${post.replying_to}`)} className="post-attr">
+                                <i className="fa-solid fa-comment"></i> Replying to {replyingToPost?.content.replace(/(.{12})..+/, '$1…')}
                             </h4>
                         ) : (
-                            ""
+                            ''
                         )}
                     </>
                 ) : (
-                    ""
+                    ''
                 )}
-                <div
-                    style={{ cursor: "pointer" }}
-                    onClick={() => (window.location.href = `/profile/${post_user?.handle}`)}
-                >
+                <div style={{ cursor: 'pointer' }} onClick={() => (window.location.href = `/profile/${post_user?.handle}`)}>
                     <div
                         style={{
                             backgroundImage: `url(${post_user?.avatar})`,
-                            borderRadius: post_user?.customization?.square_avatar ? "15px" : "100%",
+                            borderRadius: post_user?.customization?.square_avatar ? '5px' : '100%',
                         }}
                         className="post-page-pfp"
                     ></div>
                     <p className="post-page-username">
-                        {post_user ? <Username user={post_user} /> : ""}{" "}
+                        {post_user ? <Username user={post_user} /> : ''}{' '}
                         <BadgesToJSX badges={post_user ? post_user.badges : []} className="profile-badge" />
                     </p>
                     <p className="post-page-handle">
-                        @{post_user?.handle} -{" "}
-                        <span style={{ color: "white" }}>
-                            {" "}
-                            {moment(new Date(parseInt(post ? post.creation_date.$date.$numberLong : "0")))
+                        @{post_user?.handle} -{' '}
+                        <span style={{ color: 'white' }}>
+                            {' '}
+                            {moment(new Date(parseInt(post ? post.creation_date.$date.$numberLong : '0')))
                                 .fromNow(true)
-                                .replace("minutes", "m")
-                                .replace(" ", "")
-                                .replace("hours", "h")
-                                .replace("afew seconds", "1s")
-                                .replace("aminute", "1m")
-                                .replace("ahour", "1h")
-                                .replace("anhour", "1h")
-                                .replace("aday", "1d")
-                                .replace("days", "d")
-                                .replace("day", "1d")
-                                .replace("months", " months")
-                                .replace("amonth", "1 month")}
+                                .replace('minutes', 'm')
+                                .replace(' ', '')
+                                .replace('hours', 'h')
+                                .replace('afew seconds', '1s')
+                                .replace('aminute', '1m')
+                                .replace('ahour', '1h')
+                                .replace('anhour', '1h')
+                                .replace('aday', '1d')
+                                .replace('days', 'd')
+                                .replace('day', '1d')
+                                .replace('months', ' months')
+                                .replace('ayear', '1 year')}
                         </span>
                     </p>
                 </div>
@@ -402,21 +378,17 @@ function MiddleSide() {
                             minLength={1}
                             maxLength={300}
                             value={editContent}
-                            onChange={e => setEditContent(e.target.value)}
+                            onChange={(e) => setEditContent(e.target.value)}
                             className="input-field"
                         ></textarea>
-                        <button
-                            onClick={SaveEditChanges}
-                            style={{ marginTop: "10px" }}
-                            className="button-field shadow fixed-100"
-                        >
+                        <button onClick={SaveEditChanges} style={{ marginTop: '10px' }} className="button-field shadow fixed-100">
                             Save Changes
                         </button>
                     </>
                 ) : (
                     <p
                         style={{
-                            whiteSpace: "pre-line",
+                            whiteSpace: 'pre-line',
                         }}
                         dangerouslySetInnerHTML={{
                             __html: parseURLs(finalContent, post_user),
@@ -424,12 +396,8 @@ function MiddleSide() {
                     ></p>
                 )}
                 <div className="post-interaction-btn">
-                    <a
-                        style={isReposted ? { color: "rgb(60, 255, 86)" } : {}}
-                        onClick={RepostInteraction}
-                        className="post-inter-lime"
-                    >
-                        <i className=" fa-solid fa-repeat"></i>{" "}
+                    <a style={isReposted ? { color: 'rgb(60, 255, 86)' } : {}} onClick={RepostInteraction} className="post-inter-lime">
+                        <i className=" fa-solid fa-repeat"></i>{' '}
                         <FlipNumbers
                             height={15}
                             width={15}
@@ -445,10 +413,10 @@ function MiddleSide() {
                         onMouseEnter={() => setLikeHovered(true)}
                         onMouseLeave={() => setLikeHovered(false)}
                         onClick={LikeInteraction}
-                        style={isLiked ? { color: "rgb(255, 73, 73)" } : {}}
+                        style={isLiked ? { color: 'rgb(255, 73, 73)' } : {}}
                         className="post-inter-red"
                     >
-                        <i className=" fa-solid fa-heart"></i>{" "}
+                        <i className=" fa-solid fa-heart"></i>{' '}
                         <FlipNumbers
                             height={15}
                             width={15}
@@ -461,20 +429,12 @@ function MiddleSide() {
                         />
                     </a>
                     <a onClick={ReactionInteraction} className="post-inter-orange">
-                        <i className="fa-solid fa-face-awesome"></i>{" "}
+                        <i className="fa-solid fa-face-awesome"></i>{' '}
                     </a>
-                    <a
-                        onClick={BookmarkInteraction}
-                        style={isBookmarked ? { color: "rgb(60, 193, 255)" } : {}}
-                        className="post-inter-blue"
-                    >
+                    <a onClick={BookmarkInteraction} style={isBookmarked ? { color: 'rgb(60, 193, 255)' } : {}} className="post-inter-blue">
                         <i className=" fa-solid fa-bookmark"></i>
                     </a>
-                    <a
-                        onClick={PinInteraction}
-                        style={isPinned ? { color: "rgb(60, 193, 255)" } : {}}
-                        className="post-inter-blue"
-                    >
+                    <a onClick={PinInteraction} style={isPinned ? { color: 'rgb(60, 193, 255)' } : {}} className="post-inter-blue">
                         <i className=" fa-solid fa-thumbtack"></i>
                     </a>
 
@@ -488,7 +448,7 @@ function MiddleSide() {
                             </a>
                         </>
                     ) : (
-                        ""
+                        ''
                     )}
                 </div>
                 {reactionOpened ? (
@@ -498,12 +458,12 @@ function MiddleSide() {
                         emojiStyle={EmojiStyle.NATIVE}
                         reactionsDefaultOpen={true}
                         style={{
-                            backgroundColor: "rgba(0,0,0,0.7)",
-                            border: "none",
+                            backgroundColor: 'rgba(0,0,0,0.7)',
+                            border: 'none',
                         }}
                     />
                 ) : (
-                    ""
+                    ''
                 )}
                 <div className="reactions white-bg">
                     {Object.keys(reactions.reactions).map((key: string, index: number) => {
@@ -518,21 +478,16 @@ function MiddleSide() {
                 </div>
             </div>
             <Divider />
-            <PostTyper replying_to={post ? post.post_id : ""} onSend={OnReplySend} />
+            <PostTyper replying_to={post ? post.post_id : ''} onSend={OnReplySend} />
             <Divider />
             {self_user
                 ? replies.map((post: Post) => {
+                      if (post.repost) return;
                       return (
-                          <PostBox
-                              delete_post_on_bookmark_remove={true}
-                              setPosts={setReplies}
-                              self_user={self_user}
-                              key={post.post_id}
-                              post={post}
-                          />
+                          <PostBox delete_post_on_bookmark_remove={true} setPosts={setReplies} self_user={self_user} key={post.post_id} post={post} />
                       );
                   })
-                : ""}
+                : ''}
         </div>
     );
 }

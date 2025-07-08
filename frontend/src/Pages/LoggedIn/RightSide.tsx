@@ -8,6 +8,8 @@ import { BadgeType, UserPrivate } from "../../types/User";
 import { fetchUserPrivate } from "../../functions/fetchUserPrivate";
 import { socket } from "../../ws/socket";
 import { NotificationData } from "../../types/Notification";
+import dmSocket from "../../ws/dm-socket";
+import { DMData } from "../../types/DM";
 
 function SettingsButton({
     redirect,
@@ -77,6 +79,14 @@ function RightSide() {
 
             // localStorage.setItem("notifs", JSON.stringify([data, ...JSON.parse(localStorage.getItem("notifs")!)]));
         });
+
+        dmSocket.on("get message", (data: DMData) => {
+            console.log('Received a DM From user "', data.from.username, '" Content:', data.content);
+            console.log(notifCount);
+            setNotifCount(old => {
+                return old++;
+            });
+        });
     }, []);
 
     return (
@@ -129,7 +139,7 @@ function RightSide() {
                     <div
                         style={{
                             backgroundImage: `url(${self_user?.avatar})`,
-                            borderRadius: self_user?.customization?.square_avatar ? "15px" : "100%",
+                            borderRadius: self_user?.customization?.square_avatar ? "5px" : "100%",
                         }}
                         className="pfp"
                     ></div>{" "}

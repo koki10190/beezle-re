@@ -77,7 +77,7 @@ function FollowBox({ handle, self_user }: FollowBoxData) {
                 <div
                     style={{
                         backgroundImage: `url(${user ? user.avatar : ""})`,
-                        borderRadius: user?.customization?.square_avatar ? "15px" : "100%",
+                        borderRadius: user?.customization?.square_avatar ? "5px" : "100%",
                     }}
                     className="pfp-post"
                 ></div>
@@ -113,7 +113,7 @@ function FollowBox({ handle, self_user }: FollowBoxData) {
                 {user.handle !== self_user.handle ? (
                     <button
                         onClick={FollowInteraction}
-                        style={{ width: "100%", fontSize: "20px" }}
+                        style={{ width: "100%", fontSize: "15px" }}
                         className="button-field"
                     >
                         {isFollowing ? "Unfollow" : "Follow"}

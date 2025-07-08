@@ -1,34 +1,37 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from 'react';
 
-import { fetchUserPrivate } from "../../../functions/fetchUserPrivate";
-import { UserPrivate } from "../../../types/User";
-import { Post } from "../../../types/Post";
-import FetchPost from "../../../functions/FetchPost";
-import "./Details.css";
-import Divider from "../../../Components/Divider";
-import { api_uri } from "../../../links";
-import axios from "axios";
-import PopupToSteamAuth from "../../../functions/RedirectToSteamAuth";
+import { fetchUserPrivate } from '../../../functions/fetchUserPrivate';
+import { UserPrivate } from '../../../types/User';
+import { Post } from '../../../types/Post';
+import FetchPost from '../../../functions/FetchPost';
+import './Details.css';
+import Divider from '../../../Components/Divider';
+import { api_uri } from '../../../links';
+import axios from 'axios';
+import PopupToSteamAuth from '../../../functions/RedirectToSteamAuth';
+import { toast } from 'react-toastify';
 
 interface Props {
     user: UserPrivate;
 }
 
 function Connections({ user }: Props) {
-    const [password, setPassword] = useState("");
+    const [password, setPassword] = useState('');
     const [steam_connected, setSteamConnected] = useState(user.connections?.steam?.id ? true : false);
     const statePassRef = useRef<HTMLParagraphElement>(null);
 
     const ChangePassword = async () => {
         const res = await axios.post(`${api_uri}/api/user/change_password`, {
-            token: localStorage.getItem("access_token"),
+            token: localStorage.getItem('access_token'),
             password,
         });
 
         statePassRef.current!.innerText = res.data.error ? res.data.error : res.data.message;
 
-        alert(res.data.error ? res.data.error : res.data.message);
-        window.location.href = "/logout";
+        if (res.data.error) toast.error(res.data.error);
+        else toast.success(res.data.message);
+
+        window.location.href = '/logout';
     };
 
     return (
@@ -44,10 +47,10 @@ function Connections({ user }: Props) {
                         <button
                             onClick={async () => {
                                 const res = await axios.post(`${api_uri}/api/connections/steam_disconnect`, {
-                                    token: localStorage.getItem("access_token"),
+                                    token: localStorage.getItem('access_token'),
                                 });
 
-                                alert(res.data);
+                                toast.success(res.data);
                                 setSteamConnected(false);
                             }}
                             className="button-field button-field-red"
@@ -56,10 +59,7 @@ function Connections({ user }: Props) {
                         </button>
                     </>
                 ) : (
-                    <button
-                        onClick={() => PopupToSteamAuth(`${window.location.origin}/connect/steam`)}
-                        className="button-field button-field-blue"
-                    >
+                    <button onClick={() => PopupToSteamAuth(`${window.location.origin}/connect/steam`)} className="button-field button-field-blue">
                         <i className="fa-brands fa-steam"></i> Connect Steam
                     </button>
                 )}

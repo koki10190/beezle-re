@@ -55,7 +55,7 @@ function LeftSide() {
                 </button>
             </div>
             <div className="who-to-follow">
-                <h2>Who to follow</h2>
+                <h2>Who to follow:</h2>
                 {self_user ? (
                     <>
                         <FollowBox self_user={self_user} handle="koki" />

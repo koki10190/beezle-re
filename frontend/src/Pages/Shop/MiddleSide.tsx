@@ -1,19 +1,20 @@
-import { useEffect, useState } from "react";
-import { checkToken } from "../../functions/checkToken";
+import { useEffect, useState } from 'react';
+import { checkToken } from '../../functions/checkToken';
 
-import Divider from "../../Components/Divider";
-import PostBox from "../../Components/PostBox";
-import { fetchUserPrivate } from "../../functions/fetchUserPrivate";
-import { UserPrivate, UserPublic } from "../../types/User";
-import { Post } from "../../types/Post";
-import FetchPost from "../../functions/FetchPost";
-import FollowBox from "../../Components/FollowBox";
-import { useParams } from "react-router";
-import { fetchUserPublic } from "../../functions/fetchUserPublic";
-import "./Shop.css";
-import ShopBox from "./ShopBox";
-import axios from "axios";
-import { api_uri } from "../../links";
+import Divider from '../../Components/Divider';
+import PostBox from '../../Components/PostBox';
+import { fetchUserPrivate } from '../../functions/fetchUserPrivate';
+import { UserPrivate, UserPublic } from '../../types/User';
+import { Post } from '../../types/Post';
+import FetchPost from '../../functions/FetchPost';
+import FollowBox from '../../Components/FollowBox';
+import { useParams } from 'react-router';
+import { fetchUserPublic } from '../../functions/fetchUserPublic';
+import './Shop.css';
+import ShopBox from './ShopBox';
+import axios from 'axios';
+import { api_uri } from '../../links';
+import { toast } from 'react-toastify';
 
 enum BuyWhat {
     POST_BG_IMG,
@@ -27,34 +28,34 @@ async function Buy(buy_what: BuyWhat) {
     switch (buy_what) {
         case BuyWhat.PROFILE_GRADIENT: {
             res = await axios.post(`${api_uri}/api/user/buy/profile_gradient`, {
-                token: localStorage.getItem("access_token"),
+                token: localStorage.getItem('access_token'),
             });
             break;
         }
         case BuyWhat.NAME_COLOR: {
             res = await axios.post(`${api_uri}/api/user/buy/name_color`, {
-                token: localStorage.getItem("access_token"),
+                token: localStorage.getItem('access_token'),
             });
             break;
         }
         case BuyWhat.SQUARE_AVATAR: {
             res = await axios.post(`${api_uri}/api/user/buy/square_avatar`, {
-                token: localStorage.getItem("access_token"),
+                token: localStorage.getItem('access_token'),
             });
             break;
         }
         case BuyWhat.POST_BG_IMG: {
             res = await axios.post(`${api_uri}/api/user/buy/profile_postbox_img`, {
-                token: localStorage.getItem("access_token"),
+                token: localStorage.getItem('access_token'),
             });
             break;
         }
     }
 
     if (res.data.bought) {
-        alert("Successfully bought the item!");
+        toast.success('Successfully bought the item!');
     } else {
-        alert(res.data.error);
+        toast.warn(res.data.error);
     }
 }
 
@@ -72,8 +73,8 @@ function MiddleSide() {
             <h1>
                 <i className="fa-solid fa-shop"></i> Shop
             </h1>
-            <p style={{ marginTop: "-15px" }}>
-                <i className="fa-solid fa-coins"></i> {self_user?.coins.toLocaleString("en-US")}
+            <p style={{ marginTop: '-15px' }}>
+                <i className="fa-solid fa-coins"></i> {self_user?.coins.toLocaleString('en-US')}
             </p>
             <Divider />
             {self_user ? (
@@ -116,7 +117,7 @@ function MiddleSide() {
                     />
                 </>
             ) : (
-                ""
+                ''
             )}
         </div>
     );

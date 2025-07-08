@@ -1,14 +1,15 @@
-import { FormEvent, FormEventHandler, useEffect, useRef, useState } from "react";
-import { checkToken } from "../../functions/checkToken";
+import { FormEvent, FormEventHandler, useEffect, useRef, useState } from 'react';
+import { checkToken } from '../../functions/checkToken';
 
-import Divider from "../../Components/Divider";
-import PostBox from "../../Components/PostBox";
-import { fetchUserPrivate } from "../../functions/fetchUserPrivate";
-import { UserPrivate } from "../../types/User";
-import { Post } from "../../types/Post";
-import FetchPost from "../../functions/FetchPost";
-import { api_uri } from "../../links";
-import axios from "axios";
+import Divider from '../../Components/Divider';
+import PostBox from '../../Components/PostBox';
+import { fetchUserPrivate } from '../../functions/fetchUserPrivate';
+import { UserPrivate } from '../../types/User';
+import { Post } from '../../types/Post';
+import FetchPost from '../../functions/FetchPost';
+import { api_uri } from '../../links';
+import axios from 'axios';
+import { toast } from 'react-toastify';
 
 function MiddleSide() {
     const [posts, setPosts] = useState<Array<Post>>([]);
@@ -25,12 +26,10 @@ function MiddleSide() {
     const Search = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        const search_res = await axios.get(
-            `${api_uri}/api/post/search?search=${textareaRef.current.value.replace('"', "")}`
-        );
+        const search_res = await axios.get(`${api_uri}/api/post/search?search=${textareaRef.current.value.replace('"', '')}`);
 
         if (search_res.data.error) {
-            alert(search_res.data.error);
+            toast.error(search_res.data.error);
         } else {
             setPosts(search_res.data.posts);
         }
@@ -43,15 +42,10 @@ function MiddleSide() {
             </h1>
             <Divider />
             <form onSubmit={Search}>
-                <textarea
-                    placeholder="Handle, content or Post ID"
-                    className="input-field fixed-100"
-                    ref={textareaRef}
-                    required
-                ></textarea>
+                <textarea placeholder="Handle, content or Post ID" className="input-field fixed-100" ref={textareaRef} required></textarea>
                 <button
                     style={{
-                        marginTop: "10px",
+                        marginTop: '10px',
                     }}
                     className="button-field fixed-100"
                 >
@@ -63,7 +57,7 @@ function MiddleSide() {
             {self_user ? (
                 <>
                     {posts.length === 0
-                        ? "No posts found :("
+                        ? 'No posts found :('
                         : posts.map((post: Post) => {
                               return (
                                   <PostBox
@@ -77,7 +71,7 @@ function MiddleSide() {
                           })}
                 </>
             ) : (
-                ""
+                ''
             )}
         </div>
     );

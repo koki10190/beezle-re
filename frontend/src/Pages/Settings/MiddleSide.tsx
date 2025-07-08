@@ -1,25 +1,26 @@
-import { useEffect, useRef, useState } from "react";
-import { checkToken } from "../../functions/checkToken";
+import { useEffect, useRef, useState } from 'react';
+import { checkToken } from '../../functions/checkToken';
 
-import Divider from "../../Components/Divider";
-import PostBox from "../../Components/PostBox";
-import { fetchUserPrivate } from "../../functions/fetchUserPrivate";
-import { UserPrivate } from "../../types/User";
-import { Post } from "../../types/Post";
-import FetchPost from "../../functions/FetchPost";
-import { socket } from "../../ws/socket";
-import { NotificationData } from "../../types/Notification";
-import "./Settings.css";
-import axios from "axios";
-import { api_uri } from "../../links";
-import Details from "./Pages/Details";
-import API from "./Pages/API";
-import Report from "./Pages/Report";
-import Connections from "./Pages/Connections";
-import CustomEmojis from "./Pages/CustomEmojis";
+import Divider from '../../Components/Divider';
+import PostBox from '../../Components/PostBox';
+import { fetchUserPrivate } from '../../functions/fetchUserPrivate';
+import { UserPrivate } from '../../types/User';
+import { Post } from '../../types/Post';
+import FetchPost from '../../functions/FetchPost';
+import { socket } from '../../ws/socket';
+import { NotificationData } from '../../types/Notification';
+import './Settings.css';
+import axios from 'axios';
+import { api_uri } from '../../links';
+import Details from './Pages/Details';
+import API from './Pages/API';
+import Report from './Pages/Report';
+import Connections from './Pages/Connections';
+import CustomEmojis from './Pages/CustomEmojis';
+import { toast } from 'react-toastify';
 
 function SettingsButton({
-    redirect = "",
+    redirect = '',
     iconClass,
     text,
     style,
@@ -62,22 +63,22 @@ function RightSide({ setPage }: { setPage: any }) {
     const sureRef = useRef<HTMLDivElement>(null);
 
     const ExpandRightSide = () => {
-        const middle = document.querySelector(".side-middle") as HTMLDivElement;
-        const right = document.querySelector(".side-right") as HTMLDivElement;
+        const middle = document.querySelector('.side-middle') as HTMLDivElement;
+        const right = document.querySelector('.side-right') as HTMLDivElement;
 
-        middle.style.display = isExpanded ? "block" : "none";
-        right.style.display = isExpanded ? "none" : "flex";
-        right.style.width = isExpanded ? "25%" : "100%";
+        middle.style.display = isExpanded ? 'block' : 'none';
+        right.style.display = isExpanded ? 'none' : 'flex';
+        right.style.width = isExpanded ? '25%' : '100%';
 
         setExpanded(!isExpanded);
     };
     useEffect(() => {
         const onResize = () => {
             if (window.innerWidth > 1100) {
-                let middle = document.querySelector(".side-middle") as HTMLDivElement;
-                let right = document.querySelector(".side-right") as HTMLDivElement;
-                middle.removeAttribute("style");
-                right.removeAttribute("style");
+                let middle = document.querySelector('.side-middle') as HTMLDivElement;
+                let right = document.querySelector('.side-right') as HTMLDivElement;
+                middle.removeAttribute('style');
+                right.removeAttribute('style');
 
                 setExpanded(false);
             }
@@ -85,15 +86,15 @@ function RightSide({ setPage }: { setPage: any }) {
             setWindowWidth(window.innerWidth);
         };
 
-        window.addEventListener("resize", onResize);
+        window.addEventListener('resize', onResize);
     }, [self_user]);
 
     const DeleteAccount = async () => {
         await axios.post(`${api_uri}/api/user/delete`, {
-            token: localStorage.getItem("access_token"),
+            token: localStorage.getItem('access_token'),
         });
-        alert("Account has been deleted.");
-        window.location.href = "/logout";
+        toast.success('Account has been deleted, bye bye :(');
+        window.location.href = '/logout';
     };
 
     return (
@@ -104,57 +105,33 @@ function RightSide({ setPage }: { setPage: any }) {
                 <div>
                     <button
                         onClick={DeleteAccount}
-                        style={{ marginRight: "20px", display: "inline-block" }}
+                        style={{ marginRight: '20px', display: 'inline-block' }}
                         className="button-field-red button-field"
                     >
                         Delete My Account
                     </button>
-                    <button
-                        onClick={() => (sureRef.current!.style.display = "none")}
-                        style={{ display: "inline-block" }}
-                        className="button-field"
-                    >
+                    <button onClick={() => (sureRef.current!.style.display = 'none')} style={{ display: 'inline-block' }} className="button-field">
                         Cancel
                     </button>
                 </div>
             </div>
             <div className="page-sides side-right">
-                <SettingsButton
-                    onClick={() => setPage(Pages.DETAILS)}
-                    iconClass="fa-solid fa-id-badge"
-                    text="Details"
-                    style={undefined}
-                />
-                <SettingsButton
-                    onClick={() => setPage(Pages.API)}
-                    iconClass="fa-solid fa-square-code"
-                    text="API"
-                    style={undefined}
-                />
-                <SettingsButton
-                    onClick={() => setPage(Pages.REPORT)}
-                    iconClass="fa-solid fa-flag"
-                    text="Report"
-                    style={undefined}
-                />
+                <SettingsButton onClick={() => setPage(Pages.DETAILS)} iconClass="fa-solid fa-id-badge" text="Details" style={undefined} />
+                <SettingsButton onClick={() => setPage(Pages.API)} iconClass="fa-solid fa-square-code" text="API" style={undefined} />
+                <SettingsButton onClick={() => setPage(Pages.REPORT)} iconClass="fa-solid fa-flag" text="Report" style={undefined} />
                 <SettingsButton
                     onClick={() => setPage(Pages.CONNECTIONS)}
                     iconClass="fa-solid fa-address-card"
                     text="Connections"
                     style={undefined}
                 />
-                <SettingsButton
-                    onClick={() => setPage(Pages.CUSTOM_EMOJIS)}
-                    iconClass="fa-solid fa-icons"
-                    text="Custom Emojis"
-                    style={undefined}
-                />
+                <SettingsButton onClick={() => setPage(Pages.CUSTOM_EMOJIS)} iconClass="fa-solid fa-icons" text="Custom Emojis" style={undefined} />
                 <SettingsButton redirect="/home" iconClass="fa-solid fa-home" text="Go Back" style={undefined} />
                 <SettingsButton
                     iconClass="fa-solid fa-trash"
                     text="Delete Account"
-                    onClick={() => (sureRef.current!.style.display = "flex")}
-                    style={{ color: "red" }}
+                    onClick={() => (sureRef.current!.style.display = 'flex')}
+                    style={{ color: 'red' }}
                 />
             </div>
             {window_width < 1100 ? (
@@ -162,7 +139,7 @@ function RightSide({ setPage }: { setPage: any }) {
                     <i className="fa-solid fa-left-to-line"></i>
                 </a>
             ) : (
-                ""
+                ''
             )}
         </>
     );
@@ -195,7 +172,7 @@ function MiddleSide() {
                               return <CustomEmojis user={self_user} />;
                       }
                   })()
-                : ""}
+                : ''}
             {/* <div className="page-sides side-middle home-middle"></div> */}
             <RightSide setPage={setPage} />
         </>
