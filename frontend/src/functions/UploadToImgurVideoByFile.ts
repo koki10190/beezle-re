@@ -1,4 +1,5 @@
 import axios from "axios";
+import { toast } from "react-toastify";
 
 async function UploadToImgurVideoByFile(file: File) {
     console.log("afasdf");
@@ -16,7 +17,9 @@ async function UploadToImgurVideoByFile(file: File) {
 
         return res.data;
     } catch (e) {
+        toast.error("Couldn't Upload Image/Video to Imgur: " + e);
         console.log(e);
+        return null;
     }
 }
 

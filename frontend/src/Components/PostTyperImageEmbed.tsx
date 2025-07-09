@@ -1,6 +1,14 @@
 import { useState } from "react";
 
-function ImageEmbed({ url }: { url: string }) {
+function PostTyperImageEmbed({
+    url,
+    setFiles,
+    index,
+}: {
+    url: string;
+    setFiles: React.Dispatch<React.SetStateAction<{ file: File; isVideo: boolean }[]>>;
+    index: number;
+}) {
     const getMeta = (url: string, cb: any) => {
         const img = new Image();
         img.onload = () => cb(null, img);
@@ -13,21 +21,29 @@ function ImageEmbed({ url }: { url: string }) {
         height: "100px",
     });
 
+    const removeEmbed = () => {
+        setFiles((old) => {
+            const new_arr = [...old];
+            new_arr.splice(index, 1);
+            return new_arr;
+        });
+    };
+
     getMeta(url, (err: string | Event, img: HTMLImageElement) => {
         setSize({
-            width: `${img?.naturalWidth ?? 0}px`,
-            height: `${img?.naturalHeight ?? 0}px`,
+            width: `${img.naturalWidth}px`,
+            height: `${img.naturalHeight}px`,
         });
     });
     // useEffect(() => {
     // }, []);
     return (
         <div style={{ width: size.width, height: size.height, backgroundImage: `url(${url})` }} className="post-image-embed">
-            <a href={url} download={`image.${url.split(".")[url.split(".").length - 1]}`} target="_blank" className="post-image-embed-button">
-                <i className="fa-solid fa-download"></i>
+            <a onClick={removeEmbed} className="post-image-embed-button">
+                <i className="fa-solid fa-x"></i>
             </a>
         </div>
     );
 }
 
-export default ImageEmbed;
+export default PostTyperImageEmbed;

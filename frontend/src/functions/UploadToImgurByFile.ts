@@ -19,6 +19,7 @@ async function UploadToImgurFile(file: File) {
     } catch (e) {
         toast.error("Couldn't Upload Image/Video to Imgur: " + e);
         console.log(e);
+        return null;
     }
 }
 

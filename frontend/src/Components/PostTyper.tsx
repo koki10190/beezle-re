@@ -14,6 +14,8 @@ import UploadToImgurVideoByFile from "../functions/UploadToImgurVideoByFile";
 import VideoEmbed from "./VideoEmbed";
 import { UserPrivate } from "../types/User";
 import { fetchUserPrivate } from "../functions/fetchUserPrivate";
+import PostTyperVideoEmbed from "./PostTyperVideoEmbed";
+import PostTyperImageEmbed from "./PostTyperImageEmbed";
 
 interface FileType {
     file: File;
@@ -45,9 +47,15 @@ function PostTyper({ onSend, replying_to = "" }: { onSend: (data: Post) => void;
                 sendButtonRef.current!.disabled = true;
                 sendButtonRef.current!.innerText = "Posting...";
                 let vid = await UploadToImgurVideoByFile(file.file);
+                if (!vid) {
+                    sendButtonRef.current!.disabled = false;
+                    sendButtonRef.current!.innerText = "Send";
+                    return;
+                }
                 console.log(vid);
                 links += file.isVideo ? vid.data.link + " " : (await UploadToImgurFile(file.file)).data.link + " ";
             }
+
             if (!textarea.current || !canCreate || (textarea.current.value.replace(/ /g, "") == "" && links == "")) {
                 sendButtonRef.current!.disabled = false;
                 sendButtonRef.current!.innerText = "Send";
@@ -94,13 +102,31 @@ function PostTyper({ onSend, replying_to = "" }: { onSend: (data: Post) => void;
                 isVideo,
             },
         ]);
-        target.innerHTML += ReactDOMServer.renderToStaticMarkup(isVideo ? <VideoEmbed url={link} /> : <ImageEmbed url={link} />);
+        // target.innerHTML += ReactDOMServer.renderToStaticMarkup(isVideo ? <VideoEmbed url={link} /> : <ImageEmbed url={link} />);
     };
 
     return (
         <div>
             <textarea minLength={1} maxLength={300} ref={textarea} placeholder="Press here to type." className="post-typer"></textarea>
-            <div ref={filesToUploadRef} className="files-to-upload"></div>
+            <div ref={filesToUploadRef} className="files-to-upload">
+                {files.map((file, index) =>
+                    file.isVideo ? (
+                        <PostTyperVideoEmbed
+                            setFiles={setFiles}
+                            index={index}
+                            key={window.URL.createObjectURL(file.file)}
+                            url={window.URL.createObjectURL(file.file)}
+                        />
+                    ) : (
+                        <PostTyperImageEmbed
+                            setFiles={setFiles}
+                            index={index}
+                            key={window.URL.createObjectURL(file.file)}
+                            url={window.URL.createObjectURL(file.file)}
+                        />
+                    ),
+                )}
+            </div>
             <div className="post-typer-buttons">
                 <a onClick={() => fileRef.current!.click()} className="post-typer-button">
                     <i className="fa-solid fa-image" />

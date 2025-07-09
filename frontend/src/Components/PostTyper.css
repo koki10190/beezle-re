@@ -56,3 +56,18 @@
     min-width: 100%;
     margin-top: 15px;
 }
+
+.post-typer-video-embed {
+    position: relative;
+}
+
+.post-video-embed-button {
+    cursor: pointer;
+    font-size: 25px;
+    float: right;
+    color: rgba(255, 255, 255, 0.5);
+    transition: color ease-in-out 150ms;
+}
+.post-video-embed-button:hover {
+    color: rgba(255, 255, 255, 1);
+}
