@@ -1,23 +1,87 @@
-import axios from "axios";
-import { FormEvent, useRef, useState } from "react";
-import { BrowserRouter, Routes, Route, redirect } from "react-router-dom";
-import RegisterForm from "./RegisterForm";
-import LoginForm from "./LoginForm";
-import { discord, github, twitter, youtube } from "../links";
-import react from "react";
+import axios from 'axios';
+import { FormEvent, useRef, useState } from 'react';
+import { BrowserRouter, Routes, Route, redirect } from 'react-router-dom';
+import RegisterForm from './RegisterForm';
+import LoginForm from './LoginForm';
+import { discord, github, twitter, youtube } from '../links';
+import react from 'react';
 
-import "../Main.css";
+import '../Main.css';
+import './LoginPage.css';
+import { TypeAnimation } from 'react-type-animation';
 
 function Home() {
     const [isRegister, setRegister] = useState(false);
 
-    if (localStorage.getItem("access_token")) {
-        window.location.href = "/home";
+    if (localStorage.getItem('access_token')) {
+        window.location.href = '/home';
     }
 
     return (
         <>
-            <div className="home-boxes">
+            <header className="login-page-header">
+                <h1 className="login-page-title">
+                    Welcome to <span className="login-page-title-color">Beezle</span>
+                    <span className="login-page-title-re">:RE</span>
+                </h1>
+                <div className="homepage-links login-page-links">
+                    <button onClick={() => window.open(github, '_blank')?.focus()} className="button-field button-field-grayblack">
+                        <i className="fa-brands fa-github-alt"></i>
+                    </button>
+                    <button
+                        style={{ width: '65px' }}
+                        onClick={() => window.open(discord, '_blank')?.focus()}
+                        className="button-field button-field-blurple"
+                    >
+                        <i className="fa-brands fa-discord"></i>
+                    </button>
+                    <button
+                        style={{ width: '57px' }}
+                        onClick={() => window.open(twitter, '_blank')?.focus()}
+                        className="button-field button-field-blue"
+                    >
+                        <i className="fa-brands fa-twitter"></i>
+                    </button>
+                    <button
+                        style={{ width: '60px' }}
+                        onClick={() => window.open(youtube, '_blank')?.focus()}
+                        className="button-field button-field-red"
+                    >
+                        <i className="fa-brands fa-youtube"></i>
+                    </button>
+                </div>
+                <TypeAnimation
+                    sequence={[
+                        // Same substring at the start will only be typed out once, initially
+                        'An Open-Source social media platform without any bullshit.',
+                        1000, // wait 1s before replacing "Mice" with "Hamsters"
+                        'Free customisation, without payment.',
+                        1000,
+                        'We hate pedophiles, including lolis and cubs.',
+                        1000,
+                        'Gain XP, Levels, and coins by just using the website!',
+                        1000,
+                    ]}
+                    wrapper="span"
+                    speed={50}
+                    className="login-page-typing-animation"
+                    repeat={Infinity}
+                />
+                <div className="login-page-inputs">
+                    {isRegister ? (
+                        <RegisterForm setRegister={setRegister} isRegister={isRegister} />
+                    ) : (
+                        <LoginForm setRegister={setRegister} isRegister={isRegister} />
+                    )}
+                    <p>
+                        Once you login/register you're agreeing with our{' '}
+                        <a className="link" target="_blank" href="/privacy-and-terms">
+                            Privacy Policy & Terms of Service
+                        </a>
+                    </p>
+                </div>
+            </header>
+            {/* <div className="home-boxes">
                 <div className="home-box homebox2">
                     <div>
                         {isRegister ? (
@@ -26,49 +90,14 @@ function Home() {
                             <LoginForm setRegister={setRegister} isRegister={isRegister} />
                         )}
                         <p>
-                            Once you login/register you're agreeing with our{" "}
+                            Once you login/register you're agreeing with our{' '}
                             <a className="link" target="_blank" href="/privacy-and-terms">
                                 Privacy Policy & Terms of Service
                             </a>
                         </p>
                     </div>
                 </div>
-                <div className="home-box homebox1">
-                    <h1 className="home-box-title">
-                        Beezle<span className="home-box-title-re">:RE</span>
-                    </h1>
-                    <h1 style={{ marginTop: "-50px" }}>An Open Source social media platform.</h1>
-                    <div className="homepage-links">
-                        <button
-                            onClick={() => window.open(github, "_blank")?.focus()}
-                            className="button-field button-field-grayblack"
-                        >
-                            <i className="fa-brands fa-github-alt"></i>
-                        </button>
-                        <button
-                            style={{ width: "65px" }}
-                            onClick={() => window.open(discord, "_blank")?.focus()}
-                            className="button-field button-field-blurple"
-                        >
-                            <i className="fa-brands fa-discord"></i>
-                        </button>
-                        <button
-                            style={{ width: "57px" }}
-                            onClick={() => window.open(twitter, "_blank")?.focus()}
-                            className="button-field button-field-blue"
-                        >
-                            <i className="fa-brands fa-twitter"></i>
-                        </button>
-                        <button
-                            style={{ width: "60px" }}
-                            onClick={() => window.open(youtube, "_blank")?.focus()}
-                            className="button-field button-field-red"
-                        >
-                            <i className="fa-brands fa-youtube"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
+            </div> */}
         </>
     );
 }

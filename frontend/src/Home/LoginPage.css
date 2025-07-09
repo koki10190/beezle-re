@@ -1,0 +1,59 @@
+.login-page-header {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.login-page-links {
+    margin-top: -20px;
+    margin-bottom: 20px;
+}
+
+.login-page-title {
+    font-size: 50px;
+    text-align: center;
+}
+
+.login-page-title-underling {
+    margin-top: -35px;
+    margin-bottom: 45px;
+}
+
+.login-page-typing-animation {
+    font-size: 2em;
+    font-family: vga-font;
+    color: #ff8800;
+    text-align: center;
+    height: 150px;
+    margin-bottom: -150px;
+}
+
+.login-page-title-re {
+    font-family: vga-font;
+    background: -webkit-linear-gradient(45deg, #ff8800, #ffc56d);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.login-page-title-color {
+    background: -webkit-linear-gradient(45deg, #ff8800, #ffc56d);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.login-page-inputs .input-field {
+    width: 100%;
+}
+
+.login-page-inputs .button-field {
+    width: 100%;
+}
+
+@media only screen and (max-width: 660px) {
+    .login-page-inputs {
+        width: 90%;
+    }
+}
