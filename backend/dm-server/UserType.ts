@@ -3,6 +3,7 @@ enum BadgeType {
     DONATOR,
     MODERATOR,
     OWNER,
+    OLD_TESTER,
 }
 
 interface UserCustomization {

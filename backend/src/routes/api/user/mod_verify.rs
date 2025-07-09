@@ -19,10 +19,10 @@ use crate::{
 struct GetUserQuery {
     token: String,
     handle: String,
-    reason: String,
+    badge_type: i64
 }
 
-#[post("/api/user/ban")]
+#[post("/api/user/mod_verify")]
 pub async fn route(
     body: web::Json<GetUserQuery>,
     client: web::Data<mongodb::Client>,
@@ -45,11 +45,11 @@ pub async fn route(
         None => HttpResponse::Ok().json(doc! {"error": "Not Found!"}),
         _document => {
             if is_mod(&client, body.handle.to_string()).await {
-                return HttpResponse::Ok().json(doc! {"error": "Cannot ban a moderator!"});
+                return HttpResponse::Ok().json(doc! {"error": "Cannot verify a moderator!"});
             }
 
             if is_owner(&client, body.handle.to_string()).await {
-                return HttpResponse::Ok().json(doc! {"error": "Cannot ban an owner!"});
+                return HttpResponse::Ok().json(doc! {"error": "Cannot verify an owner!"});
             }
             let m_doc = _document.unwrap();
 
@@ -57,34 +57,31 @@ pub async fn route(
 
             beezle::mail::send(
                 mail,
-                "Your account has been banned.",
+                "Your account has been given a badge!",
                 format!(
-                    "Your account @{} has been banned by @{}\n\nBan Reason:\n{}\n\nIf you believe this ban was not justified, please email the owner at koki@beezle.lol\n\nThe bestest of best,\nThe Beezle Hive",
-                    &body.handle, &token_data.handle, &body.reason
+                    "Your account @{} has been given a badge by @{}\n\nThe bestest of best,\nThe Beezle Hive",
+                    &body.handle, &token_data.handle
                 )
                 .as_str(),
             )
             .await;
 
-            mongoose::delete_document(
+            mongoose::update_document(
                 &client,
                 "beezle",
                 "Users",
                 doc! {
                     "handle": &body.handle
                 },
-            )
-            .await;
-            mongoose::delete_many_document(
-                &client,
-                "beezle",
-                "Posts",
                 doc! {
-                    "handle": &body.handle
+                    "$push": {
+                        "badges": &body.badge_type
+                    }
                 },
             )
             .await;
-            HttpResponse::Ok().json(doc! {"message": format!("@{} has been banned.", &body.handle)})
+
+            HttpResponse::Ok().json(doc! {"message": format!("@{} has been verified.", &body.handle)})
         }
     }
 }

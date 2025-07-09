@@ -44,7 +44,7 @@ function ShopBox({
                 <div className="shop-box">
                     <p className="shop-box-header">{title}</p>
                     <p className="shop-box-price">
-                        <i className="fa-solid fa-coins" /> {price.toLocaleString("en-US")}
+                        <i className="fa-solid fa-coins" /> Costs {price.toLocaleString("en-US")}
                     </p>
                     {level_required ? (
                         <p>

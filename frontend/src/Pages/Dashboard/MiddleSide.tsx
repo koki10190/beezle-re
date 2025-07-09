@@ -15,6 +15,7 @@ import { api_uri } from "../../links";
 import Report from "./Pages/Reports";
 import BanUser from "./Pages/BanUser";
 import DeletePost from "./Pages/DeletePost";
+import VerifyUser from "./Pages/VerifyUser";
 
 function DashboardButton({
     redirect = "",
@@ -48,6 +49,7 @@ enum Pages {
     REPORTS,
     BAN_USER,
     DELETE_POST,
+    VERIFY_USER,
 }
 
 function RightSide({ setPage }: { setPage: any }) {
@@ -88,22 +90,13 @@ function RightSide({ setPage }: { setPage: any }) {
     return (
         <>
             <div className="page-sides side-right">
+                <DashboardButton onClick={() => setPage(Pages.REPORTS)} iconClass="fa-solid fa-flag" text="Reports" style={undefined} />
+                <DashboardButton onClick={() => setPage(Pages.BAN_USER)} iconClass="fa-solid fa-hammer-crash" text="Ban User" style={undefined} />
+                <DashboardButton onClick={() => setPage(Pages.DELETE_POST)} iconClass="fa-solid fa-trash" text="Delete Post" style={undefined} />
                 <DashboardButton
-                    onClick={() => setPage(Pages.REPORTS)}
-                    iconClass="fa-solid fa-flag"
-                    text="Reports"
-                    style={undefined}
-                />
-                <DashboardButton
-                    onClick={() => setPage(Pages.BAN_USER)}
-                    iconClass="fa-solid fa-hammer-crash"
-                    text="Ban User"
-                    style={undefined}
-                />
-                <DashboardButton
-                    onClick={() => setPage(Pages.DELETE_POST)}
-                    iconClass="fa-solid fa-trash"
-                    text="Delete Post"
+                    onClick={() => setPage(Pages.VERIFY_USER)}
+                    iconClass="fa-solid fa-badge-check"
+                    text="Verify User"
                     style={undefined}
                 />
                 <DashboardButton redirect="/home" iconClass="fa-solid fa-home" text="Go Back" style={undefined} />
@@ -129,7 +122,7 @@ function MiddleSide() {
             setSelfUser(user);
 
             let hasBadge = false;
-            user.badges.forEach(badge => {
+            user.badges.forEach((badge) => {
                 if (badge == BadgeType.MODERATOR || badge == BadgeType.OWNER) {
                     hasBadge = true;
                 }
@@ -151,6 +144,8 @@ function MiddleSide() {
                               return <BanUser user={self_user} />;
                           case Pages.DELETE_POST:
                               return <DeletePost user={self_user} />;
+                          case Pages.VERIFY_USER:
+                              return <VerifyUser user={self_user} />;
                       }
                   })()
                 : ""}

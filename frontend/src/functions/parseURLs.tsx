@@ -15,14 +15,12 @@ function parseURLs(content: string, self_user: UserPublic): string {
         const matched = content.match(/\bhttps?:\/\/media\.tenor\.com\S+/gi);
 
         let i = 0;
-        matched?.forEach(match => {
+        matched?.forEach((match) => {
             content = content.replace(match, "");
             if (i > 2) return;
 
             const isVideo = match.match(/.mp4|.wmv/gi) ? true : false;
-            const embed = ReactDOMServer.renderToStaticMarkup(
-                isVideo ? <VideoEmbed url={match} /> : <ImageEmbed url={match} />
-            );
+            const embed = ReactDOMServer.renderToStaticMarkup(isVideo ? <VideoEmbed url={match} /> : <ImageEmbed url={match} />);
             htmlToEmbed += embed;
             i++;
         });
@@ -32,14 +30,12 @@ function parseURLs(content: string, self_user: UserPublic): string {
         const matched = content.match(/\bhttps?:\/\/i\.tenor\.com\S+/gi);
 
         let i = 0;
-        matched?.forEach(match => {
+        matched?.forEach((match) => {
             content = content.replace(match, "");
             if (i > 2) return;
 
             const isVideo = match.match(/.mp4|.wmv/gi) ? true : false;
-            const embed = ReactDOMServer.renderToStaticMarkup(
-                isVideo ? <VideoEmbed url={match} /> : <ImageEmbed url={match} />
-            );
+            const embed = ReactDOMServer.renderToStaticMarkup(isVideo ? <VideoEmbed url={match} /> : <ImageEmbed url={match} />);
             htmlToEmbed += embed;
             i++;
         });
@@ -49,14 +45,12 @@ function parseURLs(content: string, self_user: UserPublic): string {
         const matched = content.match(/\bhttps?:\/\/i\.imgur\.com\S+/gi);
 
         let i = 0;
-        matched?.forEach(match => {
+        matched?.forEach((match) => {
             content = content.replace(match, "");
             if (i > 2) return;
 
             const isVideo = match.match(/.mp4|.wmv/gi) ? true : false;
-            const embed = ReactDOMServer.renderToStaticMarkup(
-                isVideo ? <VideoEmbed url={match} /> : <ImageEmbed url={match} />
-            );
+            const embed = ReactDOMServer.renderToStaticMarkup(isVideo ? <VideoEmbed url={match} /> : <ImageEmbed url={match} />);
             htmlToEmbed += embed;
             i++;
         });
@@ -64,14 +58,12 @@ function parseURLs(content: string, self_user: UserPublic): string {
 
     {
         if (content.match(/youtube\.com|youtu\.be/g)) {
-            const matches = content.match(
-                /(?:https?:\/\/)?(?:www\.)?youtu\.?be(?:\.com)?\/?.*(?:watch|embed)?(?:.*v=|v\/|\/)([\w\-_]+)\&?/g
-            );
+            const matches = content.match(/(?:https?:\/\/)?(?:www\.)?youtu\.?be(?:\.com)?\/?.*(?:watch|embed)?(?:.*v=|v\/|\/)([\w\-_]+)\&?/g);
 
-            matches.forEach(match => {
+            matches.forEach((match) => {
                 htmlToEmbed += match.replace(
                     /(?:https?:\/\/)?(?:www\.)?youtu\.?be(?:\.com)?\/?.*(?:watch|embed)?(?:.*v=|v\/|\/)([\w\-_]+)\&?/g,
-                    `<iframe style="width: 100%; min-height: 350px; border: none;" src="https://youtube.com/embed/$1"></iframe>`
+                    `<iframe style="width: 100%; min-height: 350px; border: none;" src="https://youtube.com/embed/$1"></iframe>`,
                 );
             });
         }
@@ -96,10 +88,7 @@ function parseURLs(content: string, self_user: UserPublic): string {
 
     let final = sanitize(content)
         .replace(/@([a-z\d_\.-]+)/gi, `<a class="mention" href="/profile/$1">@$1</a>`)
-        .replace(
-            /(?:https?:\/\/)?(?:www\.)?youtu\.?be(?:\.com)?\/?.*(?:watch|embed)?(?:.*v=|v\/|\/)([\w\-_]+)\&?/g,
-            ``
-        );
+        .replace(/(?:https?:\/\/)?(?:www\.)?youtu\.?be(?:\.com)?\/?.*(?:watch|embed)?(?:.*v=|v\/|\/)([\w\-_]+)\&?/g, ``);
 
     final = final.replace(/&lt;/g, "<");
     final = final.replace(/&gt;/g, ">");
@@ -107,26 +96,24 @@ function parseURLs(content: string, self_user: UserPublic): string {
     // EMOJI
     if (self_user) {
         const matches = final.match(/\<\:([^\:\>]+)\:\>/g);
-        console.log("Emoji matches", matches);
-        matches?.forEach(match => {
+        // console.log("Emoji matches", matches);
+        matches?.forEach((match) => {
             console.log("Matched something", match);
             const emoji_name = match.replace("<:", "").replace(":>", "");
 
             if (self_user.customization?.emojis) {
-                self_user.customization.emojis.forEach(emoji => {
+                self_user.customization.emojis.forEach((emoji) => {
                     if (emoji.id == emoji_name) {
                         final = final.replace(
                             new RegExp(`\\<\\:${emoji_name}\\:\\>`, "g"),
-                            ReactDOMServer.renderToStaticMarkup(
-                                <BeezleEmoji user={self_user} src={emoji.imgUrl} emoji_name={emoji.id} />
-                            )
+                            ReactDOMServer.renderToStaticMarkup(<BeezleEmoji user={self_user} src={emoji.imgUrl} emoji_name={emoji.id} />),
                         );
                     }
                 });
             }
         });
     }
-    console.log("FINAL", final + (final.replace(/ /g, "") !== "" ? "<br/>" : "") + htmlToEmbed);
+    // console.log("FINAL", final + (final.replace(/ /g, "") !== "" ? "<br/>" : "") + htmlToEmbed);
     return final + (final.replace(/ /g, "") !== "" ? "<br/>" : "") + htmlToEmbed;
 }
 

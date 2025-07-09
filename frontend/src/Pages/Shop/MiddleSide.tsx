@@ -1,20 +1,21 @@
-import { useEffect, useState } from 'react';
-import { checkToken } from '../../functions/checkToken';
+import { useEffect, useState } from "react";
+import { checkToken } from "../../functions/checkToken";
 
-import Divider from '../../Components/Divider';
-import PostBox from '../../Components/PostBox';
-import { fetchUserPrivate } from '../../functions/fetchUserPrivate';
-import { UserPrivate, UserPublic } from '../../types/User';
-import { Post } from '../../types/Post';
-import FetchPost from '../../functions/FetchPost';
-import FollowBox from '../../Components/FollowBox';
-import { useParams } from 'react-router';
-import { fetchUserPublic } from '../../functions/fetchUserPublic';
-import './Shop.css';
-import ShopBox from './ShopBox';
-import axios from 'axios';
-import { api_uri } from '../../links';
-import { toast } from 'react-toastify';
+import Divider from "../../Components/Divider";
+import PostBox from "../../Components/PostBox";
+import { fetchUserPrivate } from "../../functions/fetchUserPrivate";
+import { UserPrivate, UserPublic } from "../../types/User";
+import { Post } from "../../types/Post";
+import FetchPost from "../../functions/FetchPost";
+import FollowBox from "../../Components/FollowBox";
+import { useParams } from "react-router";
+import { fetchUserPublic } from "../../functions/fetchUserPublic";
+import "./Shop.css";
+import ShopBox from "./ShopBox";
+import axios from "axios";
+import { api_uri } from "../../links";
+import { toast } from "react-toastify";
+import shop_music from "./sans.mp3";
 
 enum BuyWhat {
     POST_BG_IMG,
@@ -28,32 +29,32 @@ async function Buy(buy_what: BuyWhat) {
     switch (buy_what) {
         case BuyWhat.PROFILE_GRADIENT: {
             res = await axios.post(`${api_uri}/api/user/buy/profile_gradient`, {
-                token: localStorage.getItem('access_token'),
+                token: localStorage.getItem("access_token"),
             });
             break;
         }
         case BuyWhat.NAME_COLOR: {
             res = await axios.post(`${api_uri}/api/user/buy/name_color`, {
-                token: localStorage.getItem('access_token'),
+                token: localStorage.getItem("access_token"),
             });
             break;
         }
         case BuyWhat.SQUARE_AVATAR: {
             res = await axios.post(`${api_uri}/api/user/buy/square_avatar`, {
-                token: localStorage.getItem('access_token'),
+                token: localStorage.getItem("access_token"),
             });
             break;
         }
         case BuyWhat.POST_BG_IMG: {
             res = await axios.post(`${api_uri}/api/user/buy/profile_postbox_img`, {
-                token: localStorage.getItem('access_token'),
+                token: localStorage.getItem("access_token"),
             });
             break;
         }
     }
 
     if (res.data.bought) {
-        toast.success('Successfully bought the item!');
+        toast.success("Successfully bought the item!");
     } else {
         toast.warn(res.data.error);
     }
@@ -61,21 +62,36 @@ async function Buy(buy_what: BuyWhat) {
 
 function MiddleSide() {
     const [self_user, setSelfUser] = useState<UserPrivate>();
+    const [muted, setMuted] = useState<boolean>(false);
+    const [music, setMusic] = useState<HTMLAudioElement>();
 
     useEffect(() => {
         (async () => {
             const user = (await fetchUserPrivate()) as UserPrivate;
             setSelfUser(user);
         })();
+
+        const music = new Audio(shop_music);
+        music.loop = true;
+        music.play();
+        setMusic(music);
     }, []);
+
+    useEffect(() => {
+        if (!music) return;
+        music.muted = muted;
+    }, [muted]);
     return (
         <div className="page-sides side-middle home-middle">
             <h1>
-                <i className="fa-solid fa-shop"></i> Shop
+                <i className="fa-solid fa-shop"></i> The Customization Shop
             </h1>
-            <p style={{ marginTop: '-15px' }}>
-                <i className="fa-solid fa-coins"></i> {self_user?.coins.toLocaleString('en-US')}
+            <p style={{ marginTop: "-15px" }}>
+                <i className="fa-solid fa-coins"></i> {self_user?.coins.toLocaleString("en-US")}
             </p>
+            <a onClick={() => setMuted(!muted)} className="mute-music">
+                {muted ? "Unmute Music" : "Mute Music"}
+            </a>
             <Divider />
             {self_user ? (
                 <>
@@ -117,7 +133,7 @@ function MiddleSide() {
                     />
                 </>
             ) : (
-                ''
+                ""
             )}
         </div>
     );

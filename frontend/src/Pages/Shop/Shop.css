@@ -1,5 +1,5 @@
 .shop-box {
-    background-color: rgba(231, 129, 98, 0.7);
+    background-color: rgba(255, 255, 255, 0.062);
     box-sizing: border-box;
     padding: 10px;
     padding-left: 15px;
@@ -15,4 +15,14 @@
 
 .shop-box-price {
     margin-top: -20px;
+}
+
+.mute-music {
+    cursor: pointer;
+    color: #ffffff7c;
+    transition: color ease-in-out 150ms;
+}
+
+.mute-music:hover {
+    color: #ffffff;
 }

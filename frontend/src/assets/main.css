@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;500&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;500&display=swap");
 
 @font-face {
     font-family: vga-font;
@@ -34,7 +34,7 @@ input,
 button,
 a,
 textarea {
-    font-family: 'Open Sans', sans-serif;
+    font-family: "Open Sans", sans-serif;
 }
 
 form > a {
@@ -176,7 +176,7 @@ form > a {
     border: 1px solid rgb(255, 139, 71);
 }
 
-.input-checkbox[type='checkbox'] {
+.input-checkbox[type="checkbox"] {
     accent-color: #ff8800;
 }
 
@@ -292,4 +292,12 @@ textarea.input-field {
 
 .display-none {
     display: none;
+}
+
+.inline-block {
+    display: inline-block;
+}
+
+.margin-right-10px {
+    margin-right: 10px;
 }
