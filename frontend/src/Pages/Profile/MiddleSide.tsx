@@ -94,9 +94,11 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
             }
 
             try {
-                const steam_res = await axios.get(`${api_uri}/api/connections/steam_get_game?steam_id=${user.connections.steam.id}`);
-                const steam_data = steam_res.data;
-                if (steam_data) setSteamData(steam_data[Object.keys(steam_data)[0]].data);
+                if (user.connections?.steam?.id) {
+                    const steam_res = await axios.get(`${api_uri}/api/connections/steam_get_game?steam_id=${user.connections.steam.id}`);
+                    const steam_data = steam_res.data;
+                    if (steam_data) setSteamData(steam_data[Object.keys(steam_data)[0]].data);
+                }
             } catch (e) {
                 console.error('STEAM ERROR CAUGHT:', e);
             }

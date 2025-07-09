@@ -63,6 +63,8 @@ async fn main() -> std::io::Result<()> {
     let session_map: HashMap<String, actix_ws::Session> = HashMap::new();
     let mutex_app_data = web::Data::new(Mutex::new(app_data));
 
+    beezle::print(beezle::crypt::hash_password("password123").as_str());
+
     let http_server = HttpServer::new(move || {
         App::new()
             .app_data(web::Data::clone(&mutex_app_data))

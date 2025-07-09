@@ -23,9 +23,10 @@ import { Helmet } from 'react-helmet';
 import Username from '../../Components/Username';
 import EmojiPicker, { EmojiClickData, EmojiStyle, Theme } from 'emoji-picker-react';
 import { toast } from 'react-toastify';
+import { PostReaction, ReactionsData } from '../../types/ReactionsData';
 
 interface ReactionsInter {
-    [key: string]: number;
+    [key: string]: PostReaction[];
 }
 
 interface ReactionStruct {
@@ -55,7 +56,7 @@ function MiddleSide() {
     const [isPostEdited, setPostEdited] = useState(false);
     const [replyingToPost, setReplyingToPost] = useState<Post>();
     const [reactions, setReactions] = useState<ReactionStruct>({
-        reactions: (post?.reactions as ReactionsInter) ? (post.reactions as ReactionsInter) : {},
+        reactions: {},
     });
     const [reactionOpened, setReactionOpened] = useState(false);
 
@@ -104,6 +105,19 @@ function MiddleSide() {
             if (post_res.data.is_reply) {
                 setReplyingToPost((await axios.get(`${api_uri}/api/post/get/one?post_id=${post_res.data.replying_to}`)).data);
             }
+
+            const react_data = (await axios.get(`${api_uri}/api/post/get/reacts?post_id=${post_res.data.post_id}`)).data as ReactionsData;
+            console.log('React Data:', react_data);
+
+            const local_reactions: ReactionStruct = { reactions: {} };
+            react_data.reacts.forEach((reaction) => {
+                if (!local_reactions.reactions[reaction.emoji]) local_reactions.reactions[reaction.emoji] = [];
+
+                local_reactions.reactions[reaction.emoji].push(reaction);
+            });
+            setReactions((old) => {
+                return local_reactions;
+            });
         })();
     }, []);
 
@@ -239,7 +253,10 @@ function MiddleSide() {
 
     const [canAddReaction, setCanAddReaction] = useState(true);
     const ReactToPost = async (emojiData: EmojiClickData, event: MouseEvent) => {
-        if (!canAddReaction) return;
+        if (!canAddReaction) {
+            toast.error("Cannot React, You're on cooldown!");
+            return;
+        }
         if (emojiData.isCustom) return toast.error('Custom emojis on reactions is not supported!');
         const res = await axios.post(`${api_uri}/api/post/react`, {
             token: localStorage.getItem('access_token'),
@@ -251,10 +268,21 @@ function MiddleSide() {
             toast.error(res.data.error);
         } else {
             setReactions((old) => {
-                const _ = { ...old };
-                if (_.reactions[emojiData.emoji]) _.reactions[emojiData.emoji] += 1;
-                else _.reactions[emojiData.emoji] = 1;
-                return _;
+                const new_arr = { ...old };
+                const user_already_reacted = new_arr.reactions[emojiData.emoji]?.findIndex((x) => x.handle == self_user.handle) ?? -1;
+                if (user_already_reacted > -1) new_arr.reactions[emojiData.emoji]?.splice(user_already_reacted, 1);
+                else {
+                    if (!new_arr.reactions[emojiData.emoji]) new_arr.reactions[emojiData.emoji] = [];
+                    new_arr.reactions[emojiData.emoji].push({
+                        _id: '',
+                        post_id: post.post_id,
+                        emoji: emojiData.emoji,
+                        handle: self_user.handle,
+                    });
+                }
+                // if (_.reactions[emojiData.emoji]) _.reactions[emojiData.emoji] += 1;
+                // else _.reactions[emojiData.emoji] = 1;
+                return new_arr;
             });
         }
         setCanAddReaction(false);
@@ -265,8 +293,10 @@ function MiddleSide() {
     };
 
     const ReactSpecific = async (emoji: string) => {
-        if (!canAddReaction) return;
-        if (emoji.length > 1) return toast.error('Custom emojis on reactions is not supported!');
+        if (!canAddReaction) {
+            toast.error("Cannot React, You're on cooldown!");
+            return;
+        }
 
         const res = await axios.post(`${api_uri}/api/post/react`, {
             token: localStorage.getItem('access_token'),
@@ -278,10 +308,21 @@ function MiddleSide() {
             toast.error(res.data.error);
         } else {
             setReactions((old) => {
-                const _ = { ...old };
-                if (_.reactions[emoji]) _.reactions[emoji] += 1;
-                else _.reactions[emoji] = 1;
-                return _;
+                const new_arr = { ...old };
+                const user_already_reacted = new_arr.reactions[emoji].findIndex((x) => x.handle == self_user.handle);
+                if (user_already_reacted < 0) new_arr.reactions[emoji].splice(user_already_reacted, 1);
+                else {
+                    if (!new_arr.reactions[emoji]) new_arr.reactions[emoji] = [];
+                    new_arr.reactions[emoji].push({
+                        _id: '',
+                        post_id: post.post_id,
+                        emoji: emoji,
+                        handle: self_user.handle,
+                    });
+                }
+                // if (_.reactions[emojiData.emoji]) _.reactions[emojiData.emoji] += 1;
+                // else _.reactions[emojiData.emoji] = 1;
+                return new_arr;
             });
         }
 
@@ -328,8 +369,12 @@ function MiddleSide() {
                         )}
 
                         {post.is_reply && replyingToPost ? (
-                            <h4 onClick={() => (window.location.href = `/post/${post.replying_to}`)} className="post-attr">
-                                <i className="fa-solid fa-comment"></i> Replying to {replyingToPost?.content.replace(/(.{12})..+/, '$1…')}
+                            <h4
+                                onClick={() => (window.location.href = replyingToPost?.content ? `/post/${post.replying_to}` : `/`)}
+                                className="post-attr"
+                            >
+                                <i className="fa-solid fa-comment"></i> Replying to{' '}
+                                {replyingToPost?.content ? replyingToPost.content.replace(/(.{12})..+/, '$1…') : '[REDACTED]'}
                             </h4>
                         ) : (
                             ''
@@ -468,10 +513,11 @@ function MiddleSide() {
                 <div className="reactions white-bg">
                     {Object.keys(reactions.reactions).map((key: string, index: number) => {
                         if (index > 12) return <></>;
+                        if (reactions.reactions[key].length <= 0) return <></>;
                         return (
                             <p onClick={() => ReactSpecific(key)}>
                                 <span className="reaction-emoji">{key}</span>
-                                <span className="reaction-count">{reactions.reactions[key]}</span>
+                                <span className="reaction-count">{reactions.reactions[key].length}</span>
                             </p>
                         );
                     })}

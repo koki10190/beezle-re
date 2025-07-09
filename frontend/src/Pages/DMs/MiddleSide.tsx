@@ -30,9 +30,11 @@ function DMSpace({ dm_user, setDMUser, self_user }: { dm_user: UserPublic; setDM
         if (dm_user && self_user) dmSocket.emit('get messages', dm_user.handle, self_user.handle);
 
         (async () => {
-            const steam_res = await axios.get(`${api_uri}/api/connections/steam_get_game?steam_id=${dm_user.connections?.steam?.id}`);
-            const steam_data = steam_res.data;
-            if (steam_data) setSteamData(steam_data[Object.keys(steam_data)[0]].data);
+            if (dm_user.connections?.steam?.id) {
+                const steam_res = await axios.get(`${api_uri}/api/connections/steam_get_game?steam_id=${dm_user.connections?.steam?.id}`);
+                const steam_data = steam_res.data;
+                if (steam_data) setSteamData(steam_data[Object.keys(steam_data)[0]].data);
+            }
         })();
 
         dmSocket.on('get message', (data: DMData) => {
