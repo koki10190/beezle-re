@@ -2,7 +2,7 @@ use bson::{bson, doc, Document};
 use futures::TryStreamExt;
 use jsonwebtoken::{decode, DecodingKey, EncodingKey, Header, Validation};
 use mail_send::mail_auth::flate2::Status;
-use mongodb::options::FindOptions;
+use mongodb::options::{AggregateOptions, Collation, FindOptions};
 use serde::Deserialize;
 use std::env;
 
@@ -32,15 +32,63 @@ pub async fn route(client: web::Data<mongodb::Client>, body: web::Query<_Query>)
     // next skip 5, so its 6 since 5 elements got skipped
     // limit five meaning we fetch 6,7,8,9,10
 
-    let options = FindOptions::builder()
-        .skip(body.offset as u64)
-        .limit(5)
-        .sort(doc! {
-            "$natural": -1
-        })
-        .build();
+    // let options = AggregateOptions::builder()
+    //     .skip(body.offset as u64)
+    //     .limit(5)
+    //     .sort(doc! {
+    //         "$natural": -1
+    //     })
+    //     .build();
 
-    let cursor = coll.find(doc! {}, options).await.unwrap();
+    let collation = Collation::builder().locale("en_US").numeric_ordering(true).build();
+    let options = AggregateOptions::builder().collation(collation).build();
+    
+    // coll.aggregate(, options)
+    let cursor = coll.aggregate([
+        doc! {
+            "$lookup": doc! {
+                "from": "Users",
+                "localField": "handle",
+                "foreignField": "handle",
+                "as": "user_info"
+            }
+        },
+        doc! {
+            "$match": doc! {
+                "user_info.reputation": doc! {
+                    "$gte": 25
+                }
+            }
+        },
+        doc! {
+            "$sort": doc! {
+                "creation_date": -1
+            }
+        },
+        doc! {
+            "$skip": &body.offset
+        },
+        doc! {
+            "$limit": 5
+        },
+        doc! {
+            "$project": doc! {
+                "edited": 1,
+                "handle": 1,
+                "creation_date": 1,
+                "content": 1,
+                "post_op_handle": 1,
+                "post_op_id": 1,
+                "is_reply": 1,
+                "post_id": 1,
+                "reactions": 1,
+                "reposts": 1,
+                "repost": 1,
+                "likes": 1,
+                "replying_to": 1
+            }
+        }
+    ], options).await.unwrap();
 
     let vec: Vec<Document> = cursor.try_collect().await.unwrap();
 

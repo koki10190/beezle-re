@@ -220,6 +220,10 @@ form > a {
     transition: ease-in-out 150ms;
 }
 
+.button-field-small {
+    font-size: 15px;
+}
+
 .button-field:disabled {
     background-color: rgb(255, 144, 70);
 }

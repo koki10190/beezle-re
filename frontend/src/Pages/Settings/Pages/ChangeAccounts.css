@@ -1,0 +1,51 @@
+.change-acc-display {
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.096);
+    /* background-color: black;
+    border: solid 2px rgb(231, 129, 98); */
+
+    border-radius: 5px;
+    box-sizing: border-box;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    padding-left: 20px;
+    padding-right: 20px;
+    position: relative;
+    word-wrap: break-word;
+    height: fit-content;
+    overflow-y: visible;
+}
+
+.change-acc-display .pfp {
+    background-image: url(https://i.imgur.com/FfYwZan.jpg);
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    width: 55px;
+    height: 55px;
+    border: none;
+    border-radius: 100%;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.change-acc-display .username {
+    margin-left: 10px;
+    display: inline-block;
+}
+
+.change-acc-buttons {
+    margin-top: 10px;
+}
+.change-acc-buttons button {
+    display: inline-block;
+    margin-right: 10px;
+}
+
+.change-acc-add-acc .input-field {
+    width: 100%;
+}
+
+.change-acc-display-container .change-acc-display {
+    margin-bottom: 10px;
+}

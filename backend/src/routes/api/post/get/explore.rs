@@ -41,9 +41,46 @@ pub async fn route(client: web::Data<mongodb::Client>, body: web::Query<_Query>)
         .aggregate(
             vec![
                 doc! {
+                    "$lookup": doc! {
+                        "from": "Users",
+                        "localField": "handle",
+                        "foreignField": "handle",
+                        "as": "user_info"
+                    }
+                },
+                doc! {
+                    "$match": doc! {
+                        "user_info.reputation": doc! {
+                            "$gte": 25
+                        }
+                    }
+                },
+                doc! {
+                    "$sort": doc! {
+                        "creation_date": -1
+                    }
+                },
+                doc! {
                     "$sample": {"size": collection_size as u32}
                 },
                 doc! { "$limit": 5 },
+                doc! {
+                    "$project": doc! {
+                        "edited": 1,
+                        "handle": 1,
+                        "creation_date": 1,
+                        "content": 1,
+                        "post_op_handle": 1,
+                        "post_op_id": 1,
+                        "is_reply": 1,
+                        "post_id": 1,
+                        "reactions": 1,
+                        "reposts": 1,
+                        "repost": 1,
+                        "likes": 1,
+                        "replying_to": 1
+                    }
+                },
             ],
             None,
         )
