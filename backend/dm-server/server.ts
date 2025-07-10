@@ -19,7 +19,7 @@ mongoose
     .then(() => console.log("Connected to MongoDB"))
     .catch(() => console.log("Failed to connect to MongoDB"));
 
-const production_mode = false;
+const production_mode = true;
 const api_uri = production_mode ? "https://server.beezle.lol:3000" : "http://127.0.0.1:3000";
 
 const app = express();
@@ -42,7 +42,7 @@ app.get("/", (req: Request, res: Response) => {
     res.send("Test!");
 });
 
-io.on("connection", socket => {
+io.on("connection", (socket) => {
     console.log("User connected! ID:", socket.id);
 
     socket.on("get handle", (handle: string) => {

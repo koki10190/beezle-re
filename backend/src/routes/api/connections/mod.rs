@@ -3,3 +3,6 @@ pub mod steam_disconnect;
 pub mod steam_get;
 pub mod steam_get_game;
 pub mod spotfiy_auth;
+pub mod spotfiy_disconnect;
+pub mod spotify_refresh_token;
+pub mod spotify_status;

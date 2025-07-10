@@ -1,17 +1,35 @@
 import axios from "axios";
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { BrowserRouter, Routes, Route, redirect, useParams } from "react-router-dom";
-import { api_uri, discord, github, twitter, youtube } from "../links";
 import react from "react";
-
-import "./Verify.css";
+import { api_uri } from "../../links";
 
 function SpotifyAuth() {
-    const { code } = useParams();
+    const authMessage = useRef<HTMLSpanElement>();
+    const getSpotifyCodeFromURL = () => window.location.search.split("=");
 
-    https: useEffect(() => {
+    useEffect(() => {
         (async () => {
-            alert(code);
+            const codes_data = getSpotifyCodeFromURL();
+            const code = codes_data[1];
+            console.log(codes_data, code);
+            if (codes_data[0] != "?code" || code === "") {
+                window.location.href = "/";
+                return;
+            }
+            console.log("success!");
+
+            const save_token = await axios.post(`${api_uri}/api/connections/spotify_auth`, {
+                code,
+                token: localStorage.getItem("access_token"),
+            });
+
+            authMessage.current.innerText = "Authenticated!";
+            authMessage.current.setAttribute("style", "color: lime;");
+
+            setTimeout(() => {
+                window.location.href = "/settings";
+            }, 1000);
         })();
     }, []);
 
@@ -19,8 +37,7 @@ function SpotifyAuth() {
         <>
             <div className="centered">
                 <h1>
-                    <i className="fa-brands fa-spotify" />
-                    Spotify Authentication
+                    <i className="fa-brands fa-spotify" /> <span ref={authMessage}>Authenticating...</span>
                 </h1>
             </div>
         </>

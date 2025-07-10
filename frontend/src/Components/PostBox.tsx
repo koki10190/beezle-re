@@ -190,7 +190,6 @@ function PostBox({
             setBookmarked(self_user.bookmarks.find((s) => s === post.post_id) ? true : false);
             setReplyCount((await axios.get(`${api_uri}/api/post/get/reply_count?post_id=${post.post_id}`)).data.count as number);
             if (post.is_reply) {
-                console.log("It is indeed a reply post");
                 setReplyingToPost((await axios.get(`${api_uri}/api/post/get/one?post_id=${post.replying_to}`)).data);
             }
 

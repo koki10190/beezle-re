@@ -3,17 +3,7 @@ import { FormEvent, useEffect, useRef, useState } from "react";
 import { BrowserRouter, Routes, Route, redirect, useParams } from "react-router-dom";
 import react from "react";
 
-import "./Verify.css";
-
-function SpotifyAuth() {
-    const { code } = useParams();
-
-    https: useEffect(() => {
-        (async () => {
-            alert(code);
-        })();
-    }, []);
-
+function NotFound() {
     return (
         <>
             <div className="centered">
@@ -23,4 +13,4 @@ function SpotifyAuth() {
     );
 }
 
-export default SpotifyAuth;
+export default NotFound;

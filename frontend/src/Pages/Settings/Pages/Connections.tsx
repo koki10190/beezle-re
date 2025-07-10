@@ -23,7 +23,7 @@ function Connections({ user }: Props) {
 
     const SpotifyAuth = () => {
         const endpoint = "https://accounts.spotify.com/authorize";
-        const redirectURI = `${api_uri}/`;
+        const redirectURI = window.location.origin + "/spotify-auth";
         const clientID = "29d3f659c14a45d684a030365c9e4afb";
 
         const scopes = ["user-read-currently-playing"];
@@ -43,7 +43,7 @@ function Connections({ user }: Props) {
                 {steam_connected ? (
                     <>
                         <p>
-                            <i className="fa-brands fa-steam"></i> {user.connections.steam.id}
+                            <i className="fa-brands fa-steam"></i> Steam ID: {user.connections.steam.id}
                         </p>
                         <button
                             onClick={async () => {
@@ -68,7 +68,24 @@ function Connections({ user }: Props) {
                 <Divider />
 
                 {spotify_connected ? (
-                    <></>
+                    <>
+                        <p>
+                            <i className="fa-brands fa-spotify"></i> Spotify Connected
+                        </p>
+                        <button
+                            onClick={async () => {
+                                const res = await axios.post(`${api_uri}/api/connections/spotify_disconnect`, {
+                                    token: localStorage.getItem("access_token"),
+                                });
+
+                                toast.success(res.data);
+                                setSpotifyConnected(false);
+                            }}
+                            className="button-field button-field-red"
+                        >
+                            <i className="fa-brands fa-spotify"></i> Disconnect Spotify
+                        </button>
+                    </>
                 ) : (
                     <button onClick={SpotifyAuth} className="button-field button-field-green">
                         <i className="fa-brands fa-spotify"></i> Connect Spotify

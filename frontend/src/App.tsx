@@ -1,32 +1,34 @@
-import { BrowserRouter, Routes, Route, redirect } from 'react-router-dom';
-import Home from './Home/Home';
-import LoggedIn_Home from './Pages/LoggedIn/Home';
-import Bookmarks_Home from './Pages/Bookmarks/Home';
-import Profile_Home from './Pages/Profile/Home';
-import EditProfile_Home from './Pages/EditProfile/Home';
-import Logout_Home from './Pages/Logout/Home';
-import Post_Home from './Pages/Post/Home';
-import Now_Home from './Pages/Now/Home';
-import Notifications_Home from './Pages/Notifications/Home';
-import Settings_Home from './Pages/Settings/Home';
-import PrivacyPolicy_Home from './PrivacyPolicy/Home';
-import Dashboard_Home from './Pages/Dashboard/Home';
-import Followers_Home from './Pages/Followers/Home';
-import Following_Home from './Pages/Following/Home';
-import Search_Home from './Pages/Search/Home';
-import FollowingHome_Home from './Pages/Home/Home';
-import Shop_Home from './Pages/Shop/Home';
-import DMs_Home from './Pages/DMs/Home';
-import { api_uri } from './links';
-import { useEffect, useState } from 'react';
-import { socket } from './ws/socket';
-import { fetchUserPrivate } from './functions/fetchUserPrivate';
-import Verify from './Verify/Verify';
-import VerifyPass from './Verify/VerifyPass';
-import Steam from './Redirects/Steam';
-import dmSocket from './ws/dm-socket';
-import { Slide, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { BrowserRouter, Routes, Route, redirect } from "react-router-dom";
+import Home from "./Home/Home";
+import LoggedIn_Home from "./Pages/LoggedIn/Home";
+import Bookmarks_Home from "./Pages/Bookmarks/Home";
+import Profile_Home from "./Pages/Profile/Home";
+import EditProfile_Home from "./Pages/EditProfile/Home";
+import Logout_Home from "./Pages/Logout/Home";
+import Post_Home from "./Pages/Post/Home";
+import Now_Home from "./Pages/Now/Home";
+import Notifications_Home from "./Pages/Notifications/Home";
+import Settings_Home from "./Pages/Settings/Home";
+import PrivacyPolicy_Home from "./PrivacyPolicy/Home";
+import Dashboard_Home from "./Pages/Dashboard/Home";
+import Followers_Home from "./Pages/Followers/Home";
+import Following_Home from "./Pages/Following/Home";
+import Search_Home from "./Pages/Search/Home";
+import FollowingHome_Home from "./Pages/Home/Home";
+import Shop_Home from "./Pages/Shop/Home";
+import DMs_Home from "./Pages/DMs/Home";
+import { api_uri } from "./links";
+import { useEffect, useState } from "react";
+import { socket } from "./ws/socket";
+import { fetchUserPrivate } from "./functions/fetchUserPrivate";
+import Verify from "./Verify/Verify";
+import VerifyPass from "./Verify/VerifyPass";
+import Steam from "./Redirects/Steam";
+import dmSocket from "./ws/dm-socket";
+import { Slide, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import NotFound from "./Pages/404/NotFound";
+import SpotifyAuth from "./Pages/Auth/SpotifyAuth";
 
 enum UserStatus {
     ONLINE,
@@ -36,17 +38,17 @@ enum UserStatus {
 }
 
 interface WsUserData {
-    handle: 'hi socket!';
+    handle: "hi socket!";
     status: UserStatus;
 }
 function App() {
-    dmSocket.on('connect', () => {
+    dmSocket.on("connect", () => {
         let _ = setInterval(async () => {
-            console.log('Intervalling DM..');
+            console.log("Intervalling DM..");
             const user = await fetchUserPrivate();
             if (!user) return;
 
-            dmSocket.emit('get handle', user.handle);
+            dmSocket.emit("get handle", user.handle);
 
             clearInterval(_);
         }, 100);
@@ -57,14 +59,14 @@ function App() {
     // });
 
     socket.webSocket.onopen = async () => {
-        console.log('opened socket');
+        console.log("opened socket");
 
         let _ = setInterval(async () => {
-            console.log('Intervalling..');
+            console.log("Intervalling..");
             const user = await fetchUserPrivate();
             if (!user) return;
 
-            socket.send('connection', {
+            socket.send("connection", {
                 handle: user.handle,
                 status: UserStatus.ONLINE,
             });
@@ -73,12 +75,12 @@ function App() {
         }, 1000);
     };
 
-    socket.listen('connected', (data: object) => {
+    socket.listen("connected", (data: object) => {
         console.log(data);
     });
 
-    socket.listen('test_session', (data: object) => {
-        console.log('test_session', data);
+    socket.listen("test_session", (data: object) => {
+        console.log("test_session", data);
     });
 
     // useEffect(() => {
@@ -124,7 +126,9 @@ function App() {
                     <Route path="/search" element={<Search_Home />} />
                     <Route path="/dms" element={<DMs_Home />} />
                     <Route path="/dms/:user_handle" element={<DMs_Home />} />
-                    <Route path="*" element
+                    <Route path="*" element={<NotFound />} />
+
+                    <Route path="/spotify-auth" element={<SpotifyAuth />} />
                 </Routes>
             </BrowserRouter>
         </>

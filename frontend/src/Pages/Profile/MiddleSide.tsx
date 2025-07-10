@@ -17,6 +17,7 @@ import SetLevelColor from "../../functions/SetLevelColor";
 import Username from "../../Components/Username";
 import pSBC from "../../functions/ShadeColor";
 import ShadeColor from "../../functions/ShadeColor";
+import ProgressBar from "@ramonak/react-progress-bar";
 
 function Loading() {
     return (
@@ -30,12 +31,20 @@ function Loading() {
     );
 }
 
+function msToMinutesAndSeconds(millis: number) {
+    var minutes = Math.floor(millis / 60000);
+    var seconds = ((millis % 60000) / 1000).toFixed(0);
+    return minutes + ":" + ((seconds as any) < 10 ? "0" : "") + seconds;
+}
+
 function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPrivate | null }) {
     const [isFollowing, setFollowing] = useState(user.followers.find((x) => x === self?.handle) ? true : false);
     const [followingCount, setFollowingCount] = useState(user.following.length);
     const [followersCount, setFollowersCount] = useState(user.followers.length);
     const [followsYou, setFollowsYou] = useState(self.followers.find((x) => x === user.handle) ? true : false);
     const [pinnedPost, setPinnedPost] = useState<Post | null>(null);
+    const [spotifyData, setSpotifyData] = useState<Spotify.CurrentlyPlayingResponse>();
+
     const [bgGradient, setBgGradient] = useState(
         `linear-gradient(-45deg, ${ShadeColor(
             user.customization?.profile_gradient ? user.customization.profile_gradient.color1 : "rgb(231, 129, 98)",
@@ -72,13 +81,27 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
 
         // detected bottom
 
-        console.log("at bottom!");
-
         const posts = (await axios.get(`${api_uri}/api/post/get/profile?handle=${user.handle}&offset=${postOffset}`)).data;
         setPosts((old) => [...old, ...posts.posts]);
         setPostOffset(posts.offset);
 
         // setPosts(old => [...old, ...allPosts.splice(postOffset, postOffset + 5)]);
+    };
+
+    const FetchSpotifyData = async () => {
+        try {
+            if (!user.connections?.spotify?.access_token) return;
+
+            const res = await axios.get(`${api_uri}/api/connections/spotify/status?handle=${user.handle}`);
+            const data = res.data;
+
+            if (data.error) {
+                await axios.get(`${api_uri}/api/connections/spotify/refresh_token?handle=${user.handle}`);
+                return;
+            }
+
+            setSpotifyData(data);
+        } catch (e) {}
     };
 
     useEffect(() => {
@@ -89,7 +112,6 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
 
             if (user.pinned_post !== "") {
                 let post = (await axios.get(`${api_uri}/api/post/get/one?post_id=${user.pinned_post}`)).data;
-                console.log("Pinned", post);
                 setPinnedPost(post.error ? null : post);
             }
 
@@ -102,6 +124,9 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
             } catch (e) {
                 console.error("STEAM ERROR CAUGHT:", e);
             }
+
+            FetchSpotifyData();
+            setInterval(FetchSpotifyData, 4000);
         })();
     }, []);
 
@@ -244,6 +269,60 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                 ) : (
                     ""
                 )}
+                {spotifyData && spotifyData?.is_playing ? (
+                    <div
+                        style={{
+                            background: gradient,
+                            cursor: "pointer",
+                        }}
+                        className="profile-container steam-container"
+                        onClick={() => window.open(`${spotifyData.item.external_urls.spotify}`)}
+                    >
+                        <p style={{ marginBottom: "5px" }} className="profile-container-header">
+                            <i className="fa-brands fa-spotify" /> Listening To Music
+                        </p>
+                        <div className="about_me">
+                            <div className="steam-game-container">
+                                <div
+                                    className="spotify-game-header"
+                                    style={{
+                                        backgroundImage: `url(\"${
+                                            (spotifyData.item as Spotify.TrackObjectFull).album.images[0]?.url ?? "https://i.imgur.com/xSPEBeI.png"
+                                        }\")`,
+                                    }}
+                                ></div>
+                                <div className="spotify-game-name">
+                                    <p>{spotifyData.item.name}</p>
+                                    <p className="steam-game-author">
+                                        By{" "}
+                                        {(spotifyData.item as Spotify.TrackObjectFull).artists.map((artist, i) => {
+                                            if (i === (spotifyData.item as Spotify.TrackObjectFull).artists.length - 1) {
+                                                return artist.name.replace(/(.{16})..+/, "$1…");
+                                            } else {
+                                                return artist.name.replace(/(.{16})..+/, "$1…") + ", ";
+                                            }
+                                        })}
+                                    </p>
+                                </div>
+                            </div>
+                            <ProgressBar
+                                completed={spotifyData.progress_ms}
+                                maxCompleted={spotifyData.item.duration_ms}
+                                customLabel={msToMinutesAndSeconds(spotifyData.progress_ms)}
+                                className="spotify-progress-bar"
+                                barContainerClassName="spotify-pb-bar"
+                                bgColor={bgGradient}
+                                height="15px"
+                                customLabelStyles={{
+                                    color: "white",
+                                    marginBottom: "2px",
+                                }}
+                            />
+                        </div>
+                    </div>
+                ) : (
+                    ""
+                )}
                 <div className="followers-and-following">
                     <a href={`/following/${user.handle}`}>
                         Following <span>{followingCount}</span>
@@ -301,7 +380,6 @@ function MiddleSide({ handle }: { handle: string }) {
                 setSelfUser(await fetchUserPrivate());
             }
             setUser(await fetchUserPublic(handle));
-            console.log("use effect in middelside");
         })();
     }, []);
 

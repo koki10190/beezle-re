@@ -6,8 +6,7 @@ function Username({ user }: { user: UserPublic }) {
 
     useEffect(() => {
         if (user.customization?.name_color) {
-            console.log(user.customization);
-            setStyle(old => {
+            setStyle((old) => {
                 let New = { ...old };
                 New.background = `linear-gradient(45deg, ${user.customization.name_color.color1}, ${user.customization.name_color.color2})`;
                 New.backgroundClip = "text";

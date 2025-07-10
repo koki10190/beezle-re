@@ -432,6 +432,11 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
+"@ramonak/react-progress-bar@^5.4.0":
+  version "5.4.0"
+  resolved "https://registry.yarnpkg.com/@ramonak/react-progress-bar/-/react-progress-bar-5.4.0.tgz#b366c75af79eaff9d143841d796717d21d9af23b"
+  integrity sha512-3MJ0TKPw7xhearDuO6egIRQrvuERoLn6CVc2hKnw89iEegUL6DzMY7Rptmz2KaHjK0zbev+PGyyvDW+IK4FJBg==
+
 "@remix-run/router@1.14.2":
   version "1.14.2"
   resolved "https://registry.npmjs.org/@remix-run/router/-/router-1.14.2.tgz"

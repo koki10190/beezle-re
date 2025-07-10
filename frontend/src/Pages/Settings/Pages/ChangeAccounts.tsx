@@ -108,10 +108,6 @@ function ChangeAccounts({ user }: Props) {
 
             setAccounts((old) => {
                 const new_arr = [...old];
-                if (new_arr.findIndex((x) => x === main_token) > -1) {
-                    toast.error("You already have this account added!");
-                    return old;
-                }
                 new_arr.push(data.token as string);
                 return new_arr;
             });

@@ -1,18 +1,25 @@
 extern crate dotenv;
 use actix_cors::Cors;
+use actix_web::body::MessageBody;
 use actix_web::{get, middleware, post, web, App, HttpResponse, HttpServer, Responder};
 use actix_web_middleware_redirect_https::RedirectHTTPS;
+use aes_gcm::aead::Aead;
+use aes_gcm::{AeadCore, Aes256Gcm, Key, KeyInit};
+use base64::engine::general_purpose;
+use base64::Engine;
 use dotenv::dotenv;
 use futures::StreamExt;
 use mail_send::mail_builder::MessageBuilder;
 use mail_send::{Credentials, SmtpClientBuilder};
 use mongodb::options::Credential;
+use openssl::{encrypt};
 use openssl::ssl::{SslAcceptor, SslFiletype, SslMethod};
+use rand::rngs::OsRng;
 use serde::Deserialize;
 use serde_json::ser;
 use socketioxide::extract::Data;
 use std::collections::HashMap;
-use std::env;
+use std::{env, str};
 use std::sync::Mutex;
 
 use mongodb::bson::doc;
@@ -64,6 +71,32 @@ async fn main() -> std::io::Result<()> {
     let mutex_app_data = web::Data::new(Mutex::new(app_data));
 
     beezle::print(beezle::crypt::hash_password("password123").as_str());
+
+    let pass = "PASSWORD4343434".to_string();
+    let data = "Hello, my cryptobros.";
+    
+    let encrypted_data = beezle::crypt::encrypt(data, pass.as_str()).unwrap();
+    let encoded_data = general_purpose::STANDARD.encode(&encrypted_data);
+    // beezle::print(format!("Encrypted Data: {:?}", encoded_data).as_str());
+    let decrypted_data = beezle::crypt::decrypt("JQAAAAAAAACbgLPFY+veB5os8jfU0KV2op56oIBhzfQrC39olpB88L+g2TGjsR6/onG8afOsoTlAWG46MtAP44Pwtt/sC8avG4feALjb8VowXfzxlUlTXqc=", pass.as_str()).unwrap();
+    beezle::print(format!("Decrypted Data: {}", String::from_utf8(decrypted_data).unwrap()).as_str());
+
+
+    // let pass = env::var("ENCRYPT_PASSWORD").unwrap();
+    // let password = pass.as_bytes();
+    // let key: &Key<Aes256Gcm> = password.into();
+    // let cipher = Aes256Gcm::new(&key);
+    // let nonce = Aes256Gcm::generate_nonce(&mut OsRng);
+    // let data = "This is a message".as_bytes();
+    // let encrypted_data = match cipher.encrypt(&nonce, data) {
+    //     Ok(encrpted) => {
+    //         beezle::print(format!("{:?}", encrpted).as_str());
+    //         beezle::print(format!("{:?}", base64::encode_block(&encrpted)).as_str());
+    //     }
+    //     Err(err) => {
+    //         beezle::print("retarded error detected");
+    //     }
+    // };
 
     let http_server = HttpServer::new(move || {
         App::new()
@@ -118,6 +151,10 @@ async fn main() -> std::io::Result<()> {
             .service(routes::api::connections::steam_get::route)
             .service(routes::api::connections::steam_get_game::route)
             .service(routes::api::connections::steam_disconnect::route)
+            .service(routes::api::connections::spotfiy_auth::route)
+            .service(routes::api::connections::spotfiy_disconnect::route)
+            .service(routes::api::connections::spotify_refresh_token::route)
+            .service(routes::api::connections::spotify_status::route)
             .service(routes::api::post::react::route)
             .route("/ws", web::get().to(ws::spawn::spawn))
             .wrap(middleware::Logger::default())

@@ -18,53 +18,54 @@ use actix_web::{
 };
 
 use crate::{
-    beezle::{self, crypt::{base64_encode, encrypt}},
+    beezle::{self, crypt::{base64_encode, decrypt, encrypt}},
     mongoose::{self, structures::user},
     poison::LockResultExt,
 };
 
 #[derive(Deserialize)]
-struct SpotifyTokenResponse {
+struct SpotifyRefreshTokenResponse {
     access_token: String,
-    token_type: String,
-    expires_in: i64,
-    refresh_token: String,
-    scope: String
 }
 
 #[derive(Deserialize)]
-struct SteamBody {
-    code: String,
-    token: String,
+struct QueryData {
+    handle: String
 }
 
-#[post("/api/connections/spotify_auth")]
+#[get("/api/connections/spotify/refresh_token")]
 pub async fn route(
-    body: web::Json<SteamBody>,
+    body: web::Query<QueryData>,
     client: web::Data<Client>,
 ) -> actix_web::Result<HttpResponse> {
-    let token_data = decode::<mongoose::structures::user::JwtUser>(
-        &body.token,
-        &DecodingKey::from_secret(env::var("TOKEN_SECRET").unwrap().as_ref()),
-        &Validation::default(),
-    )
-    .unwrap()
-    .claims;
-
-    beezle::print("Got beezle token information");
-
     let reqwest_client = reqwest::Client::new();
 
     let client_id = env::var("SPOTIFY_CLIENT_ID").unwrap();
     let client_secret = env::var("SPOTIFY_CLIENT_SECRET").unwrap();
+    let pass = env::var("ENCRYPT_PASSWORD").unwrap();
+
+    let user = mongoose::get_document(&client, "beezle", "Users", doc!{
+        "handle": &body.handle
+    }).await.unwrap();
+
+    let users_refresh_token = user.get("connections")
+        .expect("Connections doesn't exist")
+        .as_document().unwrap().get("spotify")
+        .expect("Spotify is not connected")
+        .as_document().unwrap().get("refresh_token").unwrap();
+
+    let decrypted_refresh_token = decrypt(
+        &users_refresh_token.as_str().unwrap(),
+        &pass
+    ).unwrap();
+
+    let decoded_refresh_token = String::from_utf8(decrypted_refresh_token).unwrap();
+
 
     let body_str = format!(
-        "grant_type={}&code={}&redirect_uri={}&client_id={}&client_secret={}",
-        "authorization_code",
-        &body.code,
-        "https://beezle.lol/spotify-auth",
-        client_id,
-        client_secret
+        "grant_type={}&refresh_token={}",
+        "refresh_token",
+        decoded_refresh_token
     );
 
     let encoded_secret = base64_encode(format!("{}:{}", client_id, client_secret).as_bytes().to_vec());
@@ -85,26 +86,18 @@ pub async fn route(
     beezle::print("Request sent, encrypting data...");
     beezle::print(format!("{:?}", response).as_str());
 
-    let pass = env::var("ENCRYPT_PASSWORD").unwrap();
     let encrypted_access_token = encrypt(response.get("access_token").unwrap().as_str().unwrap(), &pass).unwrap();
-    let encrypted_refresh_token = encrypt(response.get("refresh_token").unwrap().as_str().unwrap(), &pass).unwrap();
-
-    beezle::print("Data encrypted!");
-
 
     mongoose::update_document(
         &client,
         "beezle",
         "Users",
         doc! {
-            "handle": &token_data.handle
+            "handle": &body.handle
         },
         doc! {
             "$set": {
-                "connections.spotify": {
-                    "access_token": base64_encode(encrypted_access_token),
-                    "refresh_token": base64_encode(encrypted_refresh_token),
-                }
+                "connections.spotify.access_token": base64_encode(encrypted_access_token),
             }
         },
     )
@@ -112,5 +105,5 @@ pub async fn route(
 
     beezle::print("Saved tokens!");
 
-    Ok(HttpResponse::Ok().body("Spotify account connected!"))
+    Ok(HttpResponse::Ok().body("Access Token has been refreshed"))
 }
