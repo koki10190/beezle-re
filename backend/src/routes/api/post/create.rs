@@ -1,12 +1,13 @@
 use bson::{doc, uuid, Document};
 use jsonwebtoken::{decode, DecodingKey, EncodingKey, Header, Validation};
+use regex::Regex;
 use serde::Deserialize;
 use std::env;
 
 use actix_web::{get, post, web, App, HttpRequest, HttpResponse, HttpServer, Responder};
 
 use crate::{
-    beezle,
+    beezle::{self, user_exists},
     mongoose::{self, add_coins, add_xp},
     poison::LockResultExt,
     ws::{lib::send::send_back, structures::ws_data::WsData},
@@ -84,6 +85,35 @@ pub async fn route(
                                 "caller": &data.claims.handle,
                                 "post_id": &__post_id,
                                 "message": "replied to your post!"
+                            }
+                        }
+                    },
+                )
+                .await;
+            }
+
+            // /@([a-z\d_\.-]+)/gi
+
+            let mention_regex = Regex::new(r"@([a-z\d_\.-]+)").unwrap();
+            for (_, [handle]) in mention_regex.captures_iter(body.content.as_str()).map(|c| c.extract()) {
+                beezle::print(format!("Found a mention: \"{}\"", handle).as_str());
+                if !user_exists(&client, handle.to_string()).await {
+                    continue;
+                } 
+
+                mongoose::update_document(
+                    &client,
+                    "beezle",
+                    "Users",
+                    doc! {
+                        "handle": handle
+                    },
+                    doc! {
+                        "$addToSet": {
+                            "notifications": {
+                                "caller": &data.claims.handle,
+                                "post_id": &__post_id,
+                                "message": "mentioned you!"
                             }
                         }
                     },

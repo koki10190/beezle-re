@@ -15,11 +15,11 @@ function Home() {
     const [isRegister, setRegister] = useState(false);
 
     useEffect(() => {
-        async () => {
+        (async () => {
             if (localStorage.getItem("access_token") && (await CheckServerStatus())) {
                 window.location.href = "/home";
             }
-        };
+        })();
     }, []);
 
     return (

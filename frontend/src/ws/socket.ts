@@ -20,6 +20,8 @@ class BeezleSocket {
         this.webSocket = new WebSocket(ws_uri);
         this.channels = new Map();
 
+        console.log("Web Socket connected!");
+
         this.webSocket.onmessage = (msg: MessageEvent<any>) => {
             const [channel, json_data] = (msg.data as string).split(";:;;:;");
 
@@ -32,6 +34,7 @@ class BeezleSocket {
     }
 
     send<DataType = object>(channel: string, data: DataType) {
+        console.log(`Sending to channel "${channel}" Data:`, data);
         this.webSocket.send(`${channel};:;;:;${JSON.stringify(data)}`);
     }
 

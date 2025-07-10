@@ -44,10 +44,6 @@ pub async fn route(
     match auth_doc {
         None => HttpResponse::Ok().json(doc! {"error": "Not Found!"}),
         _document => {
-            if is_mod(&client, body.handle.to_string()).await {
-                return HttpResponse::Ok().json(doc! {"error": "Cannot verify a moderator!"});
-            }
-
             if is_owner(&client, body.handle.to_string()).await {
                 return HttpResponse::Ok().json(doc! {"error": "Cannot verify an owner!"});
             }

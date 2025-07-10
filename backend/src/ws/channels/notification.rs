@@ -26,6 +26,7 @@ pub async fn socket(
         return "".to_string();
     }
 
+    beezle::print("WEB SOCKET HANDLING:");
     beezle::print(&data.json_data);
 
     let m_data: WsNotificationData = serde_json::from_str(&data.json_data).unwrap();
@@ -47,24 +48,24 @@ pub async fn socket(
         send_back(receiver_session, data).await;
     }
 
-    mongoose::update_document(
-        &client,
-        "beezle",
-        "Users",
-        doc! {
-            "handle": &m_data.post.handle
-        },
-        doc! {
-            "$addToSet": {
-                "notifications": {
-                    "caller": &m_data.handle,
-                    "post_id": &m_data.post.post_id,
-                    "message": &m_data.message
-                }
-            }
-        },
-    )
-    .await;
+    // mongoose::update_document(
+    //     &client,
+    //     "beezle",
+    //     "Users",
+    //     doc! {
+    //         "handle": &m_data.post.handle
+    //     },
+    //     doc! {
+    //         "$addToSet": {
+    //             "notifications": {
+    //                 "caller": &m_data.handle,
+    //                 "post_id": &m_data.post.post_id,
+    //                 "message": &m_data.message
+    //             }
+    //         }
+    //     },
+    // )
+    // .await;
 
     m_data.handle
 }

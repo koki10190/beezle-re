@@ -113,6 +113,14 @@ function parseURLs(content: string, self_user: UserPublic): string {
             }
         });
     }
+
+    // LINKS
+    {
+        final = final.replace(
+            /\b(?:https?|ftp):\/\/[a-z0-9-+&@#\/%?=~_|!:,.;]*[a-z0-9-+&@#\/%=~_|]/gi,
+            `<a class="mention" target="_blank" href="$&">$&</a>`,
+        );
+    }
     // console.log("FINAL", final + (final.replace(/ /g, "") !== "" ? "<br/>" : "") + htmlToEmbed);
     return final + (final.replace(/ /g, "") !== "" ? "<br/>" : "") + htmlToEmbed;
 }

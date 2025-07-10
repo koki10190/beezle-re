@@ -5,7 +5,7 @@ use std::env;
 
 use actix_web::{get, post, web, App, HttpRequest, HttpResponse, HttpServer, Responder};
 
-use crate::{beezle, mongoose, poison::LockResultExt};
+use crate::{beezle::{self, mongo::add_post_notif}, mongoose, poison::LockResultExt};
 
 #[derive(Deserialize)]
 struct TokenInfo {
@@ -69,6 +69,25 @@ pub async fn route(
                 .await;
                 mongoose::add_coins(&client, data.claims.handle.as_str(), 20).await;
                 mongoose::add_xp(&client, &data.claims.handle.as_str(), 15).await;
+
+                mongoose::update_document(
+                    &client,
+                    "beezle",
+                    "Users",
+                    doc! {
+                        "handle": &post_doc.unwrap().get("handle")
+                    },
+                    doc! {
+                        "$addToSet": {
+                            "notifications": {
+                                "caller": &data.claims.handle,
+                                "post_id": &body.post_id,
+                                "message": "liked your message!"
+                            }
+                        }
+                    },
+                )
+                .await;
             }
 
             return HttpResponse::Ok().json(

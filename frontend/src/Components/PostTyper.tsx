@@ -78,7 +78,6 @@ function PostTyper({ onSend, replying_to = "" }: { onSend: (data: Post) => void;
             textarea.current.value = "";
 
             setFiles([]);
-            filesToUploadRef.current!.innerHTML = "";
 
             sendButtonRef.current!.disabled = false;
             sendButtonRef.current!.innerText = "Send";

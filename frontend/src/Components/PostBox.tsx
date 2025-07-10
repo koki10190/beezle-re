@@ -236,6 +236,7 @@ function PostBox({
         }
 
         console.log("CHANNEL: notification");
+        post.reactions = [];
         socket.send("notification", {
             handle: self_user.handle,
             post,

@@ -49,7 +49,7 @@ pub async fn route(body: web::Json<GetUserQuery>, client: web::Data<Client>) -> 
                     doc! {"bought": false, "error": "You need to be level 10 to buy this item!"},
                 );
             }
-            if coins < 15000 {
+            if coins < 7500 {
                 return HttpResponse::Ok()
                     .json(doc! {"bought": false, "error": "Cannot afford this item!"});
             }

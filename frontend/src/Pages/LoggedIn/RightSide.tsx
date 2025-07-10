@@ -11,17 +11,7 @@ import { NotificationData } from "../../types/Notification";
 import dmSocket from "../../ws/dm-socket";
 import { DMData } from "../../types/DM";
 
-function SettingsButton({
-    redirect,
-    iconClass,
-    text,
-    style,
-}: {
-    redirect: string;
-    iconClass: string;
-    text: string;
-    style: any | undefined;
-}) {
+function SettingsButton({ redirect, iconClass, text, style }: { redirect: string; iconClass: string; text: string; style: any | undefined }) {
     return (
         <a style={style ? style : {}} href={redirect} className="settings-button">
             <i className={iconClass}></i> {text}
@@ -83,7 +73,7 @@ function RightSide() {
         dmSocket.on("get message", (data: DMData) => {
             console.log('Received a DM From user "', data.from.username, '" Content:', data.content);
             console.log(notifCount);
-            setNotifCount(old => {
+            setNotifCount((old) => {
                 return old++;
             });
         });
@@ -93,41 +83,16 @@ function RightSide() {
         <>
             <div className="page-sides side-right">
                 <SettingsButton redirect="/home" iconClass="fa-solid fa-house" text="Home" style={undefined} />
-                <SettingsButton
-                    redirect="/notifications"
-                    iconClass="fa-solid fa-bell"
-                    text={`Notifs (${notifCount})`}
-                    style={undefined}
-                />
+                <SettingsButton redirect="/notifications" iconClass="fa-solid fa-bell" text={`Notifs (${notifCount})`} style={undefined} />
                 <SettingsButton redirect="/explore" iconClass="fa-solid fa-globe" text="Explore" style={undefined} />
-                <SettingsButton
-                    redirect="/right-now"
-                    iconClass="fa-solid fa-sparkles"
-                    text="Right Now"
-                    style={undefined}
-                />
-                <SettingsButton
-                    redirect="/bookmarks"
-                    iconClass="fa-solid fa-bookmark"
-                    text="Bookmarks"
-                    style={undefined}
-                />
+                <SettingsButton redirect="/right-now" iconClass="fa-solid fa-sparkles" text="Right Now" style={undefined} />
+                <SettingsButton redirect="/bookmarks" iconClass="fa-solid fa-bookmark" text="Bookmarks" style={undefined} />
                 <SettingsButton redirect="/shop" iconClass="fa-solid fa-shop" text="Shop" style={undefined} />
-                <SettingsButton
-                    redirect="/search"
-                    iconClass="fa-solid fa-magnifying-glass"
-                    text="Search"
-                    style={undefined}
-                />
+                <SettingsButton redirect="/search" iconClass="fa-solid fa-magnifying-glass" text="Search" style={undefined} />
                 <SettingsButton redirect="/settings" iconClass="fa-solid fa-cog" text="Settings" style={undefined} />
                 {self_user ? (
-                    self_user.badges.findIndex(x => x == BadgeType.OWNER || x == BadgeType.MODERATOR) > -1 ? (
-                        <SettingsButton
-                            redirect="/dashboard"
-                            iconClass="fa-solid fa-shield"
-                            text="Dashboard"
-                            style={undefined}
-                        />
+                    self_user.badges.findIndex((x) => x == BadgeType.OWNER || x == BadgeType.MODERATOR) > -1 ? (
+                        <SettingsButton redirect="/dashboard" iconClass="fa-solid fa-shield" text="Dashboard" style={undefined} />
                     ) : (
                         ""
                     )
@@ -140,18 +105,14 @@ function RightSide() {
                         style={{
                             backgroundImage: `url(${self_user?.avatar})`,
                             borderRadius: self_user?.customization?.square_avatar ? "5px" : "100%",
+                            verticalAlign: "middle",
                         }}
                         className="pfp"
                     ></div>{" "}
                     Profile
                 </a>
 
-                <SettingsButton
-                    redirect="/logout"
-                    style={{ color: "red" }}
-                    iconClass="fa-solid fa-right-from-bracket"
-                    text="Log out"
-                />
+                <SettingsButton redirect="/logout" style={{ color: "red" }} iconClass="fa-solid fa-right-from-bracket" text="Log out" />
             </div>
             {window_width < 1100 ? (
                 <a onClick={ExpandRightSide} className="open-panel-button">

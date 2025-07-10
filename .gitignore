@@ -145,3 +145,4 @@ Cargo.lock
 *.pdb
 .vscode
 .vscode/settings.json 
+host.sh

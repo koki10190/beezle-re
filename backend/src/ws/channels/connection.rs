@@ -19,7 +19,7 @@ pub async fn socket(data: WsData, session: &mut Session) -> String {
 
     let m_data: WsUserData = serde_json::from_str(&data.json_data).unwrap();
 
-    beezle::print(&m_data.handle);
+    beezle::print(format!("CONNECTION SECURED: {}", &m_data.handle).as_str());
 
     send_back(
         session,

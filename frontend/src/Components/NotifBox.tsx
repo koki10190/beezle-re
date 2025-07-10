@@ -6,6 +6,7 @@ import { fetchUserPublic } from "../functions/fetchUserPublic";
 
 function NotifBox({ notif }: { notif: NotificationData }) {
     const [user, setUser] = useState<UserPublic | null>();
+    const [isPost, setIsPost] = useState(false);
 
     useEffect(() => {
         (async () => {
@@ -18,6 +19,7 @@ function NotifBox({ notif }: { notif: NotificationData }) {
             onClick={() => {
                 if ((notif as any).post_id) {
                     window.location.href = `/post/${notif.post_id}`;
+                    setIsPost(true);
                 }
                 if ((notif as any).handle) {
                     window.location.href = `/profile/${(notif as any).handle}`;
