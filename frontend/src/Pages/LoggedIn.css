@@ -57,6 +57,7 @@ body {
     padding-right: 25px;
     border-radius: 50px;
     text-decoration: none;
+    text-align: right;
 
     transition: ease-in-out 150ms;
 }

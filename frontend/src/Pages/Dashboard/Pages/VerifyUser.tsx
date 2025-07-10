@@ -51,6 +51,12 @@ function VerifyUser({ user }: Props) {
                 >
                     <i className="fa-solid fa-vial-circle-check" /> Give Tester Badge
                 </button>
+                <button
+                    onClick={() => _verify_user_api(BadgeType.CONTRIBUTOR)}
+                    className="button-field button-field-pink inline-block margin-right-10px"
+                >
+                    <i className="fa-solid fa-handshake-angle" /> Give Contrib Badge
+                </button>
                 <button onClick={() => _verify_user_api(BadgeType.DONATOR)} className="button-field inline-block margin-right-10px">
                     <i className="fa-solid fa-honey-pot" /> Give Donator Badge
                 </button>

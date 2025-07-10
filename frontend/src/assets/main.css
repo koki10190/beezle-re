@@ -268,6 +268,22 @@ form > a {
     background-color: rgb(194, 62, 62);
 }
 
+.button-field-pink {
+    background-color: rgb(249, 81, 255);
+}
+
+.button-field-pink:hover {
+    background-color: rgb(179, 62, 194);
+}
+
+.button-field-green {
+    background-color: rgb(65, 255, 27);
+}
+
+.button-field-green:hover {
+    background-color: rgb(66, 194, 62);
+}
+
 .instead-anchor {
     color: rgba(255, 255, 255, 0.3);
     cursor: pointer;

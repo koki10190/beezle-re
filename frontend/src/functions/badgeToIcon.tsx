@@ -18,6 +18,9 @@ function BadgeToIcon({ badge, className = "" }: { badge: BadgeType; className: s
         case BadgeType.OLD_TESTER: {
             return <i title="Old Tester" style={{ color: "rgb(154, 46, 255)" }} className={`${className} fa-solid fa-vial-circle-check`}></i>;
         }
+        case BadgeType.CONTRIBUTOR: {
+            return <i title="Contributor" style={{ color: "rgb(231, 48, 255)" }} className={`${className} fa-solid fa-handshake-angle`}></i>;
+        }
     }
 }
 

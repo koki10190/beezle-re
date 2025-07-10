@@ -124,6 +124,7 @@ function App() {
                     <Route path="/search" element={<Search_Home />} />
                     <Route path="/dms" element={<DMs_Home />} />
                     <Route path="/dms/:user_handle" element={<DMs_Home />} />
+                    <Route path="*" element
                 </Routes>
             </BrowserRouter>
         </>

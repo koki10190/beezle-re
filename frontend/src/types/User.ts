@@ -7,6 +7,7 @@ enum BadgeType {
     MODERATOR,
     OWNER,
     OLD_TESTER,
+    CONTRIBUTOR,
 }
 
 interface UserCustomization {
@@ -32,6 +33,10 @@ interface UserCustomization {
 interface UserConnections {
     steam: {
         id: string;
+    };
+    spotify: {
+        access_token: string;
+        refresh_token: string;
     };
 }
 

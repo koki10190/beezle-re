@@ -4,6 +4,7 @@ enum BadgeType {
     MODERATOR,
     OWNER,
     OLD_TESTER,
+    CONTRIBUTOR,
 }
 
 interface UserCustomization {
