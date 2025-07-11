@@ -38,6 +38,9 @@ interface UserConnections {
         access_token: string;
         refresh_token: string;
     };
+    lastfm: {
+        username: string;
+    };
 }
 
 interface UserPublic {

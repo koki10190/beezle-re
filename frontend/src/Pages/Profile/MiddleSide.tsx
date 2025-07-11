@@ -44,6 +44,7 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
     const [followsYou, setFollowsYou] = useState(self.followers.find((x) => x === user.handle) ? true : false);
     const [pinnedPost, setPinnedPost] = useState<Post | null>(null);
     const [spotifyData, setSpotifyData] = useState<Spotify.CurrentlyPlayingResponse>();
+    const [lastfmData, setLastfmData] = useState<lastfm.NowPlaying | null>(null);
 
     const [bgGradient, setBgGradient] = useState(
         `linear-gradient(-45deg, ${ShadeColor(
@@ -104,6 +105,22 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
         } catch (e) {}
     };
 
+    const FetchLastfmData = async () => {
+        try {
+            if (!user.connections?.lastfm?.username) return;
+
+            const res = await axios.get(`${api_uri}/api/lastfm/now_playing?username=${user.connections.lastfm.username}`);
+            const data = res.data;
+
+            if (data.error) {
+                setLastfmData(null);
+                return;
+            }
+
+            setLastfmData(data);
+        } catch (e) {}
+    };
+
     useEffect(() => {
         (async () => {
             const posts = (await axios.get(`${api_uri}/api/post/get/profile?handle=${user.handle}&offset=${postOffset}`)).data;
@@ -126,7 +143,11 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
             }
 
             FetchSpotifyData();
-            setInterval(FetchSpotifyData, 4000);
+            FetchLastfmData();
+            setInterval(() => {
+                FetchSpotifyData();
+                FetchLastfmData();
+            }, 4000);
         })();
     }, []);
 
@@ -318,6 +339,36 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                                     marginBottom: "2px",
                                 }}
                             />
+                        </div>
+                    </div>
+                ) : (
+                    ""
+                )}
+                {lastfmData && user.connections?.lastfm?.username ? (
+                    <div
+                        style={{
+                            background: gradient,
+                            cursor: "pointer",
+                        }}
+                        className="profile-container steam-container"
+                        onClick={() => window.open(`${lastfmData.url}`)}
+                    >
+                        <p style={{ marginBottom: "5px" }} className="profile-container-header">
+                            <i className="fa-brands fa-lastfm" /> Scrobbling Now
+                        </p>
+                        <div className="about_me">
+                            <div className="steam-game-container">
+                                <div
+                                    className="spotify-game-header"
+                                    style={{
+                                        backgroundImage: `url(\"${lastfmData.image.large}\")`,
+                                    }}
+                                ></div>
+                                <div className="spotify-game-name">
+                                    <p>{lastfmData.name}</p>
+                                    <p className="steam-game-author">By {lastfmData.artist.name}</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 ) : (

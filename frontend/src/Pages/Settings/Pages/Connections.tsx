@@ -19,6 +19,8 @@ function Connections({ user }: Props) {
     const [password, setPassword] = useState("");
     const [steam_connected, setSteamConnected] = useState(user.connections?.steam?.id ? true : false);
     const [spotify_connected, setSpotifyConnected] = useState(user.connections?.spotify?.access_token ? true : false);
+    const [lastfm_connected, setLastfmConnected] = useState(user.connections?.lastfm?.username ? true : false);
+    const lastfm_username = useRef<HTMLInputElement>();
     const statePassRef = useRef<HTMLParagraphElement>(null);
 
     const SpotifyAuth = () => {
@@ -33,6 +35,23 @@ function Connections({ user }: Props) {
         )}&response_type=code&show_dialog=true`;
 
         window.location.href = loginURL;
+    };
+
+    const ConnectLastFM = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        const username = lastfm_username.current.value;
+        if (username === "") return;
+
+        const res = await axios.post(`${api_uri}/api/lastfm/set_username`, {
+            token: localStorage.getItem("access_token"),
+            username,
+        });
+
+        toast.success(res.data);
+        setTimeout(() => {
+            window.location.reload();
+        }, 750);
     };
 
     return (
@@ -79,7 +98,7 @@ function Connections({ user }: Props) {
                                 });
 
                                 toast.success(res.data);
-                                setSpotifyConnected(false);
+                                setLastfmConnected(false);
                             }}
                             className="button-field button-field-red"
                         >
@@ -90,6 +109,36 @@ function Connections({ user }: Props) {
                     <button onClick={SpotifyAuth} className="button-field button-field-green">
                         <i className="fa-brands fa-spotify"></i> Connect Spotify
                     </button>
+                )}
+                <Divider />
+                {lastfm_connected ? (
+                    <>
+                        <p>
+                            <i className="fa-brands fa-lastfm"></i> last.fm: {user.connections.lastfm.username}
+                        </p>
+                        <button
+                            onClick={async () => {
+                                const res = await axios.post(`${api_uri}/api/lastfm/remove_username`, {
+                                    token: localStorage.getItem("access_token"),
+                                });
+
+                                toast.success(res.data);
+                                setSpotifyConnected(false);
+                            }}
+                            className="button-field button-field-red"
+                        >
+                            <i className="fa-brands fa-lastfm"></i> Disconnect last.fm
+                        </button>
+                    </>
+                ) : (
+                    <>
+                        <form className="lastfm-connection-form" onSubmit={ConnectLastFM}>
+                            <input style={{ width: "100%" }} className="input-field" ref={lastfm_username} placeholder="last.fm username" />
+                            <button className="button-field button-field-blurple">
+                                <i className="fa-brands fa-lastfm"></i> Connect last.fm
+                            </button>
+                        </form>
+                    </>
                 )}
 
                 <p ref={statePassRef}></p>
