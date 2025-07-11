@@ -59,8 +59,7 @@ function parseURLs(content: string, self_user: UserPublic): string {
     {
         if (content.match(/youtube\.com|youtu\.be/g)) {
             const matches = content.match(/(?:https?:\/\/)?(?:www\.)?youtu\.?be(?:\.com)?\/?.*(?:watch|embed)?(?:.*v=|v\/|\/)([\w\-_]+)\&?/g);
-
-            matches.forEach((match) => {
+            matches?.forEach((match) => {
                 htmlToEmbed += match.replace(
                     /(?:https?:\/\/)?(?:www\.)?youtu\.?be(?:\.com)?\/?.*(?:watch|embed)?(?:.*v=|v\/|\/)([\w\-_]+)\&?/g,
                     `<iframe style="width: 100%; min-height: 350px; border: none;" src="https://youtube.com/embed/$1"></iframe>`,
@@ -86,12 +85,18 @@ function parseURLs(content: string, self_user: UserPublic): string {
     //     }
     // }
 
-    let final = sanitize(content)
-        .replace(/@([a-z\d_\.-]+)/gi, `<a class="mention" href="/profile/$1">@$1</a>`)
-        .replace(/(?:https?:\/\/)?(?:www\.)?youtu\.?be(?:\.com)?\/?.*(?:watch|embed)?(?:.*v=|v\/|\/)([\w\-_]+)\&?/g, ``);
+    let final = sanitize(content).replace(/@([a-z\d_\.-]+)/gi, `<a class="mention" href="/profile/$1">@$1</a>`);
 
     final = final.replace(/&lt;/g, "<");
     final = final.replace(/&gt;/g, ">");
+
+    // LINKS
+    {
+        final = final.replace(
+            /\b(?:https?|ftp):\/\/[a-z0-9-+&@#\/%?=~_|!:,.;]*[a-z0-9-+&@#\/%=~_|]/gi,
+            `<a class="mention" target="_blank" href="$&">$&</a>`,
+        );
+    }
 
     // EMOJI
     if (self_user) {
@@ -114,13 +119,6 @@ function parseURLs(content: string, self_user: UserPublic): string {
         });
     }
 
-    // LINKS
-    {
-        final = final.replace(
-            /\b(?:https?|ftp):\/\/[a-z0-9-+&@#\/%?=~_|!:,.;]*[a-z0-9-+&@#\/%=~_|]/gi,
-            `<a class="mention" target="_blank" href="$&">$&</a>`,
-        );
-    }
     // console.log("FINAL", final + (final.replace(/ /g, "") !== "" ? "<br/>" : "") + htmlToEmbed);
     return final + (final.replace(/ /g, "") !== "" ? "<br/>" : "") + htmlToEmbed;
 }

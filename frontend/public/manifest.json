@@ -1,0 +1,17 @@
+{
+    "name": "Beezle: RE",
+    "short_name": "Beezle",
+    "theme_color": "#ff8e3d",
+    "background_color": "#000000",
+    "display": "standalone",
+    "scope": "/",
+    "start_url": "https://beezle.lol/",
+    "description": "Blog and Resume for Christine Dodrill",
+    "orientation": "any",
+    "icons": [
+        {
+            "src": "https://beezle.lol/icon_new.png",
+            "sizes": "512x512"
+        }
+    ]
+}

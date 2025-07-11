@@ -98,7 +98,7 @@ function Connections({ user }: Props) {
                                 });
 
                                 toast.success(res.data);
-                                setLastfmConnected(false);
+                                setSpotifyConnected(false);
                             }}
                             className="button-field button-field-red"
                         >
@@ -123,7 +123,7 @@ function Connections({ user }: Props) {
                                 });
 
                                 toast.success(res.data);
-                                setSpotifyConnected(false);
+                                setLastfmConnected(false);
                             }}
                             className="button-field button-field-red"
                         >
