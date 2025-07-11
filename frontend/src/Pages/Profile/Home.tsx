@@ -13,13 +13,13 @@ function Home() {
     useEffect(() => {
         checkToken();
     }, []);
-    const { handle } = useParams();
+    let { handle } = useParams();
 
     return (
         <>
             <div className="sides-container">
                 <LeftSide />
-                <MiddleSide handle={handle as string} />
+                <MiddleSide handle={handle.replace(/@/g, "") as string} />
                 <RightSide />
             </div>
         </>

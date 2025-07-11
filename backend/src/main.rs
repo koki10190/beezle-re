@@ -25,12 +25,13 @@ use std::sync::Mutex;
 use mongodb::bson::doc;
 use mongodb::{options::ClientOptions, Client};
 
+use crate::routes::ws::socket;
+
 mod beezle;
 mod data_struct;
 mod mongoose;
 mod poison;
 mod routes;
-mod ws;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -66,8 +67,7 @@ async fn main() -> std::io::Result<()> {
     let app_data = data_struct::AppData {
         client: client.clone(),
         connections: HashMap::new(),
-    };
-    let session_map: HashMap<String, actix_ws::Session> = HashMap::new();
+    };    
     let mutex_app_data = web::Data::new(Mutex::new(app_data));
 
     beezle::print(beezle::crypt::hash_password("password123").as_str());
@@ -98,10 +98,13 @@ async fn main() -> std::io::Result<()> {
     //     }
     // };
 
+    let ws_session_map: web::Data<Mutex<HashMap<String, actix_ws::Session>>> = web::Data::new(Mutex::new(HashMap::new()));
+
     let http_server = HttpServer::new(move || {
         App::new()
             .app_data(web::Data::clone(&mutex_app_data))
             .app_data(web::Data::new(client.clone()))
+            .app_data(web::Data::clone(&ws_session_map))
             .wrap(Cors::permissive())
             .service(routes::main_route::route)
             .service(routes::api::register_user::route)
@@ -159,8 +162,8 @@ async fn main() -> std::io::Result<()> {
             .service(routes::api::lastfm::set_username::route)
             .service(routes::api::lastfm::remove_username::route)
             .service(routes::api::post::react::route)
-            .route("/ws", web::get().to(ws::spawn::spawn))
-            .wrap(middleware::Logger::default())
+            .route("/ws", web::get().to(socket::ws))
+            // .wrap(middleware::Logger::default())
     });
 
     beezle::print("Started HTTP Server");

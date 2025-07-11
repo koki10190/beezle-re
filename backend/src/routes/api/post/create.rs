@@ -10,7 +10,6 @@ use crate::{
     beezle::{self, user_exists},
     mongoose::{self, add_coins, add_xp},
     poison::LockResultExt,
-    ws::{lib::send::send_back, structures::ws_data::WsData},
 };
 
 #[derive(Deserialize)]

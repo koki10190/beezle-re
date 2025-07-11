@@ -19,7 +19,6 @@ import Shop_Home from "./Pages/Shop/Home";
 import DMs_Home from "./Pages/DMs/Home";
 import { api_uri } from "./links";
 import { useEffect, useState } from "react";
-import { socket } from "./ws/socket";
 import { fetchUserPrivate } from "./functions/fetchUserPrivate";
 import Verify from "./Verify/Verify";
 import VerifyPass from "./Verify/VerifyPass";
@@ -29,6 +28,7 @@ import { Slide, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import NotFound from "./Pages/404/NotFound";
 import SpotifyAuth from "./Pages/Auth/SpotifyAuth";
+import { socket } from "./ws/socket";
 
 enum UserStatus {
     ONLINE,
@@ -59,28 +59,21 @@ function App() {
     // });
 
     socket.webSocket.onopen = async () => {
-        console.log("opened socket");
-
         let _ = setInterval(async () => {
-            console.log("Intervalling..");
+            console.log("Intervalling Socket Connection..");
             const user = await fetchUserPrivate();
             if (!user) return;
 
-            socket.send("connection", {
+            socket.send("connect", {
                 handle: user.handle,
-                status: UserStatus.ONLINE,
             });
 
             clearInterval(_);
-        }, 1000);
+        }, 100);
     };
 
-    socket.listen("connected", (data: object) => {
-        console.log(data);
-    });
-
-    socket.listen("test_session", (data: object) => {
-        console.log("test_session", data);
+    socket.listen("from_other", (data: { message: string }) => {
+        console.log("ALERT! DATA GOT", data);
     });
 
     // useEffect(() => {
@@ -109,7 +102,9 @@ function App() {
                     <Route path="/explore" element={<LoggedIn_Home />} />
                     <Route path="/right-now" element={<Now_Home />} />
                     <Route path="/profile/:handle" element={<Profile_Home />} />
-                    <Route path="/edit/profile" element={<EditProfile_Home />} />
+                    <Route path="/p/:handle" element={<Profile_Home />} />
+                    <Route path="/user/:handle" element={<Profile_Home />} />
+                    <Route path="/user/:handle" element={<Profile_Home />} />
                     <Route path="/logout" element={<Logout_Home />} />
                     <Route path="/bookmarks" element={<Bookmarks_Home />} />
                     <Route path="/post/:post_id" element={<Post_Home />} />
@@ -126,9 +121,9 @@ function App() {
                     <Route path="/search" element={<Search_Home />} />
                     <Route path="/dms" element={<DMs_Home />} />
                     <Route path="/dms/:user_handle" element={<DMs_Home />} />
-                    <Route path="*" element={<NotFound />} />
-
                     <Route path="/spotify-auth" element={<SpotifyAuth />} />
+                    <Route path="/:handle" element={<Profile_Home />} />
+                    <Route path="*" element={<NotFound />} />
                 </Routes>
             </BrowserRouter>
         </>

@@ -146,3 +146,4 @@ Cargo.lock
 .vscode
 .vscode/settings.json 
 host.sh
+server.txt

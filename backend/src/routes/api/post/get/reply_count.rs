@@ -27,7 +27,8 @@ pub async fn route(
         "beezle",
         "Posts",
         doc! {
-            "replying_to": &body.post_id
+            "replying_to": &body.post_id,
+            "repost": false
         },
     )
     .await as i64;

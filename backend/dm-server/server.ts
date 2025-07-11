@@ -19,8 +19,8 @@ mongoose
     .then(() => console.log("Connected to MongoDB"))
     .catch(() => console.log("Failed to connect to MongoDB"));
 
-const production_mode = true;
-const api_uri = production_mode ? "https://server.beezle.lol:3000" : "http://127.0.0.1:3000";
+const production_mode = false;
+const api_uri = production_mode ? "https://server.beezle.lol:3000" : "http://localhost:3000";
 
 const app = express();
 const server = http.createServer(app);
@@ -35,7 +35,7 @@ const connectedSockets = new Map<string, { handle: string; socket: Socket }>();
 const socketIDs = new Map<string, string>();
 
 server.listen(3001, () => {
-    console.log("[BEEZLE-DM] Server Started!");
+    console.log("[BEEZLE] Server Started!");
 });
 
 app.get("/", (req: Request, res: Response) => {

@@ -102,7 +102,7 @@ pub async fn route(
                         &original_post_doc.get("content").unwrap().to_string(),
                     )
                     .to_string(),
-                    creation_date: chrono::Utc::now(),
+                    creation_date: original_post_doc.get("creation_date").unwrap().as_datetime().unwrap().to_chrono(),
                     repost: true,
                     likes: vec![],
                     reposts: vec![],

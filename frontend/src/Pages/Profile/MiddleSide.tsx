@@ -189,11 +189,13 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                     >
                         Level{" "}
                         <span ref={levelBox} className="level-box">
-                            {user.levels
-                                ? user.levels.level
-                                    ? user.levels.level.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-                                    : 0
-                                : (0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                            <span>
+                                {user.levels
+                                    ? user.levels.level
+                                        ? user.levels.level.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                                        : 0
+                                    : (0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                            </span>
                         </span>
                         <span style={{ color: "rgba(255,255,255,0.6)" }}>
                             {" - XP "}{" "}

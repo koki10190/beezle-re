@@ -10,7 +10,6 @@ import { api_uri } from "../links";
 import FlipNumbers from "react-flip-numbers";
 import millify from "millify";
 import { BadgesToJSX } from "../functions/badgesToJSX";
-import { socket } from "../ws/socket";
 import ReactDOMServer from "react-dom/server";
 import ImageEmbed from "./ImageEmbed";
 import VideoEmbed from "./VideoEmbed";
@@ -36,18 +35,11 @@ function FollowBox({ handle, self_user }: FollowBoxData) {
             setUser(_user);
             setBgGradient(
                 `linear-gradient(-45deg, ${ShadeColor(
-                    _user?.customization?.profile_gradient
-                        ? _user?.customization.profile_gradient.color1
-                        : "rgb(231, 129, 98)",
-                    -25
-                )}, ${ShadeColor(
-                    _user?.customization?.profile_gradient
-                        ? _user?.customization.profile_gradient.color2
-                        : "rgb(231, 129, 98)",
-                    -25
-                )})`
+                    _user?.customization?.profile_gradient ? _user?.customization.profile_gradient.color1 : "rgb(231, 129, 98)",
+                    -25,
+                )}, ${ShadeColor(_user?.customization?.profile_gradient ? _user?.customization.profile_gradient.color2 : "rgb(231, 129, 98)", -25)})`,
             );
-            setFollowing(_user?.followers.find(x => x === self_user.handle) ? true : false);
+            setFollowing(_user?.followers.find((x) => x === self_user.handle) ? true : false);
         })();
     }, []);
 
@@ -96,9 +88,7 @@ function FollowBox({ handle, self_user }: FollowBoxData) {
                         ""
                     )}{" "}
                     {user?.activity.replace(/ /g, "") !== "" && user ? (
-                        <span style={{ color: "white" }}>
-                            - {sanitize(user.activity.replace(/(.{35})..+/, "$1…"), { allowedTags: [] })}
-                        </span>
+                        <span style={{ color: "white" }}>- {sanitize(user.activity.replace(/(.{35})..+/, "$1…"), { allowedTags: [] })}</span>
                     ) : (
                         ""
                     )}
@@ -111,11 +101,7 @@ function FollowBox({ handle, self_user }: FollowBoxData) {
                     {user.about_me}
                 </p>
                 {user.handle !== self_user.handle ? (
-                    <button
-                        onClick={FollowInteraction}
-                        style={{ width: "100%", fontSize: "15px" }}
-                        className="button-field"
-                    >
+                    <button onClick={FollowInteraction} style={{ width: "100%", fontSize: "15px" }} className="button-field">
                         {isFollowing ? "Unfollow" : "Follow"}
                     </button>
                 ) : (

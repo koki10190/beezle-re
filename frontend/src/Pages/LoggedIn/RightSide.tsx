@@ -6,7 +6,6 @@ import React from "react";
 import { checkToken } from "../../functions/checkToken";
 import { BadgeType, UserPrivate } from "../../types/User";
 import { fetchUserPrivate } from "../../functions/fetchUserPrivate";
-import { socket } from "../../ws/socket";
 import { NotificationData } from "../../types/Notification";
 import dmSocket from "../../ws/dm-socket";
 import { DMData } from "../../types/DM";
@@ -14,7 +13,7 @@ import { DMData } from "../../types/DM";
 function SettingsButton({ redirect, iconClass, text, style }: { redirect: string; iconClass: string; text: string; style: any | undefined }) {
     return (
         <a style={style ? style : {}} href={redirect} className="settings-button">
-            <i className={iconClass}></i> {text}
+            <i className={iconClass}></i> <span>{text}</span>
         </a>
     );
 }
@@ -61,14 +60,14 @@ function RightSide() {
             }
         })();
 
-        socket.listen("get-notif", (_: object) => {
-            const data = _ as NotificationData;
-            console.log("get-notif", data);
-            setNotifCount(notifCount + 1);
-            // if (!localStorage.getItem("notifs")) localStorage.setItem("notifs", "[]");
+        // socket.listen("get-notif", (_: object) => {
+        //     const data = _ as NotificationData;
+        //     console.log("get-notif", data);
+        //     setNotifCount(notifCount + 1);
+        //     // if (!localStorage.getItem("notifs")) localStorage.setItem("notifs", "[]");
 
-            // localStorage.setItem("notifs", JSON.stringify([data, ...JSON.parse(localStorage.getItem("notifs")!)]));
-        });
+        //     // localStorage.setItem("notifs", JSON.stringify([data, ...JSON.parse(localStorage.getItem("notifs")!)]));
+        // });
 
         dmSocket.on("get message", (data: DMData) => {
             console.log('Received a DM From user "', data.from.username, '" Content:', data.content);

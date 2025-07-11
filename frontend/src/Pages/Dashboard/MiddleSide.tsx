@@ -7,7 +7,6 @@ import { fetchUserPrivate } from "../../functions/fetchUserPrivate";
 import { BadgeType, UserPrivate } from "../../types/User";
 import { Post } from "../../types/Post";
 import FetchPost from "../../functions/FetchPost";
-import { socket } from "../../ws/socket";
 import { NotificationData } from "../../types/Notification";
 import "./Settings.css";
 import axios from "axios";

@@ -17,29 +17,29 @@ class BeezleSocket {
     channels: Map<string, Channel>;
 
     constructor() {
-        this.webSocket = new WebSocket(ws_uri);
         this.channels = new Map();
+        this.webSocket = new WebSocket(ws_uri);
 
         console.log("Web Socket connected!");
 
         this.webSocket.onmessage = (msg: MessageEvent<any>) => {
-            const [channel, json_data] = (msg.data as string).split(";:;;:;");
-
-            this.channels.forEach((ch: Channel) => {
-                if (ch.channel == channel) {
-                    ch.callback(JSON.parse(json_data));
-                }
-            });
+            const { channel, data } = JSON.parse(msg.data as string);
+            console.log(`Got a message for "${channel}", data:`, data);
+            if (this.channels[channel]) {
+                this.channels.get(channel).callback(data);
+            }
         };
     }
 
-    send<DataType = object>(channel: string, data: DataType) {
-        console.log(`Sending to channel "${channel}" Data:`, data);
-        this.webSocket.send(`${channel};:;;:;${JSON.stringify(data)}`);
+    public send(channel: string, data: object) {
+        this.webSocket.send(JSON.stringify({ channel, data }));
     }
 
-    listen<DataType = object>(channel: string, callback: ChannelCallback) {
-        this.channels.set(channel, new Channel(channel, callback));
+    public listen(channel: string, callback: ChannelCallback) {
+        this.channels.set(channel, {
+            channel,
+            callback,
+        });
     }
 }
 
