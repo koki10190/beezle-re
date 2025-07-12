@@ -61,6 +61,7 @@ function App() {
     // });
 
     socket.webSocket.onopen = async () => {
+        console.log("Open");
         let _ = setInterval(async () => {
             console.log("Intervalling Socket Connection..");
             const user = await fetchUserPrivate();
@@ -71,6 +72,7 @@ function App() {
             });
 
             socket.send("ping", {});
+            console.log("Connected, sent a ping");
 
             clearInterval(_);
         }, 100);
@@ -79,6 +81,11 @@ function App() {
     socket.listen("pong", () => {
         console.log("Got a pong, sending a ping");
         setTimeout(() => socket.send("ping", {}), 5000);
+    });
+
+    socket.listen("ping", () => {
+        console.log("Got a ping, sending a pong");
+        setTimeout(() => socket.send("pong", {}), 5000);
     });
 
     socket.listen("from_other", (data: { message: string }) => {

@@ -49,6 +49,7 @@ async fn ws(mut session: Session, mut msg_stream: MessageStream, ws_sessions: we
                     }
                     Message::Text(msg) => {
                         let json_data: Result<MessageData,  serde_json::Error> = serde_json::from_str(&msg.to_string());
+                        println!("[WS] Got Message: {}", msg);
 
                         if let Err(data) = json_data {
                             beezle::print(format!("WS Error: {:?}", data).as_str());
@@ -88,39 +89,6 @@ async fn ws(mut session: Session, mut msg_stream: MessageStream, ws_sessions: we
                                 }
                             }
 
-                            /*
-                            DATA REQUIRED:
-                            caller: string
-                            to: string
-                            post_id: string
-                            message: string
-                            */
-                            // "send_notification_post" => {
-                            //     if let Some(data) = data {
-                            //         let caller = data.get("caller").expect("Caller not found").as_str().unwrap().to_string();
-                            //         let to = data.get("to").expect("to not found").as_str().unwrap().to_string();
-                            //         let post_id = data.get("post_id").expect("post_id not found").as_str().unwrap().to_string();
-                            //         let message = data.get("message").expect("message not found").as_str().unwrap().to_string();
-                                    
-                            //         let locked = ws_sessions.lock();
-                                    
-                            //         match locked {
-                            //             Ok(mut sessions) => {
-                            //                 // sessions.
-                            //                 let option_to = sessions.get_mut(to);
-
-                            //                 if let Some(to_session) = option_to {
-                            //                     to_session.text(msg)
-                            //                 }
-
-                            //                 beezle::print("Inserted user to sessions.");
-                            //             }
-                            //             Err(err) => {
-                            //                 beezle::print(format!("Error in mutex: {:?}", err).as_str());
-                            //             }
-                            //         }
-                            //     }
-                            // }
 
                             /*
                             DATA REQUIRED:
@@ -203,6 +171,7 @@ async fn ws(mut session: Session, mut msg_stream: MessageStream, ws_sessions: we
         }
     }
     let _ = session.close(None).await;
+    beezle::print("Session closed");
 
     // actix_web::rt::spawn(async move {
     //     while let Some(Ok(msg)) = msg_stream.next().await {
