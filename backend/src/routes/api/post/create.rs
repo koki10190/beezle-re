@@ -71,24 +71,26 @@ pub async fn route(
                 let unwrapped = replying_to_post.unwrap();
                 let handle = unwrapped.get("handle").unwrap().as_str().unwrap();
 
-                mongoose::update_document(
-                    &client,
-                    "beezle",
-                    "Users",
-                    doc! {
-                        "handle": handle
-                    },
-                    doc! {
-                        "$addToSet": {
-                            "notifications": {
-                                "caller": &data.claims.handle,
-                                "post_id": &__post_id,
-                                "message": "replied to your post!"
+                if handle != data.claims.handle {
+                    mongoose::update_document(
+                        &client,
+                        "beezle",
+                        "Users",
+                        doc! {
+                            "handle": handle
+                        },
+                        doc! {
+                            "$addToSet": {
+                                "notifications": {
+                                    "caller": &data.claims.handle,
+                                    "post_id": &__post_id,
+                                    "message": "replied to your post!"
+                                }
                             }
-                        }
-                    },
-                )
-                .await;
+                        },
+                    )
+                    .await;
+                }
             }
 
             // /@([a-z\d_\.-]+)/gi
@@ -101,24 +103,26 @@ pub async fn route(
                     continue;
                 } 
 
-                mongoose::update_document(
-                    &client,
-                    "beezle",
-                    "Users",
-                    doc! {
-                        "handle": handle
-                    },
-                    doc! {
-                        "$addToSet": {
-                            "notifications": {
-                                "caller": &data.claims.handle,
-                                "post_id": &__post_id,
-                                "message": "mentioned you!"
+                if handle != data.claims.handle {
+                    mongoose::update_document(
+                        &client,
+                        "beezle",
+                        "Users",
+                        doc! {
+                            "handle": handle
+                        },
+                        doc! {
+                            "$addToSet": {
+                                "notifications": {
+                                    "caller": &data.claims.handle,
+                                    "post_id": &__post_id,
+                                    "message": "mentioned you!"
+                                }
                             }
-                        }
-                    },
-                )
-                .await;
+                        },
+                    )
+                    .await;
+                }
             }
 
             for (_, [hashtag]) in hashtag_regex.captures_iter(body.content.clone().as_str()).map(|c| c.extract()) {

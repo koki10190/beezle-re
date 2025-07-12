@@ -54,6 +54,21 @@ function parseURLs(content: string, self_user: UserPublic): string {
             htmlToEmbed += embed;
             i++;
         });
+
+        const matched_catbox = content.match(/\bhttps?:\/\/files\.catbox\.moe\S+/gi);
+
+        i = 0;
+        matched_catbox?.forEach((match) => {
+            content = content.replace(match, "");
+            if (i > 2) return;
+
+            const isVideo = match.match(/.mp4|.wmv/gi) ? true : false;
+            const embed = ReactDOMServer.renderToStaticMarkup(isVideo ? <VideoEmbed url={match} /> : <ImageEmbed url={match} />);
+            htmlToEmbed += embed;
+            i++;
+        });
+
+        // /\bhttps?:\/\/files\.catbox\.moe\S+/gi;
     }
 
     {

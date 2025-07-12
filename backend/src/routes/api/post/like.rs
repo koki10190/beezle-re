@@ -70,24 +70,29 @@ pub async fn route(
                 mongoose::add_coins(&client, data.claims.handle.as_str(), 20).await;
                 mongoose::add_xp(&client, &data.claims.handle.as_str(), 15).await;
 
-                mongoose::update_document(
-                    &client,
-                    "beezle",
-                    "Users",
-                    doc! {
-                        "handle": &post_doc.unwrap().get("handle")
-                    },
-                    doc! {
-                        "$addToSet": {
-                            "notifications": {
-                                "caller": &data.claims.handle,
-                                "post_id": &body.post_id,
-                                "message": "liked your message!"
+                let post_doc_unw = post_doc.unwrap();
+                let postdoc_handle = post_doc_unw.get("handle").unwrap().as_str().unwrap();
+
+                if postdoc_handle != data.claims.handle {
+                    mongoose::update_document(
+                        &client,
+                        "beezle",
+                        "Users",
+                        doc! {
+                            "handle": &postdoc_handle
+                        },
+                        doc! {
+                            "$addToSet": {
+                                "notifications": {
+                                    "caller": &data.claims.handle,
+                                    "post_id": &body.post_id,
+                                    "message": "liked your message!"
+                                }
                             }
-                        }
-                    },
-                )
-                .await;
+                        },
+                    )
+                    .await;
+                }
             }
 
             return HttpResponse::Ok().json(
