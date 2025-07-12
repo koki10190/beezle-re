@@ -42,6 +42,31 @@ function IndexSuffix(index: number) {
             return "th";
     }
 }
+function GetTrophyClassName(index: number) {
+    switch (index) {
+        case 0:
+            return "animated-border-box animated-border-box-gold";
+        case 1:
+            return "animated-border-box animated-border-box-silver";
+        case 2:
+            return "animated-border-box animated-border-box-bronze";
+        default:
+            return "";
+    }
+}
+
+function GetTrophyGlows({ index }: { index: number }) {
+    switch (index) {
+        case 0:
+            return <div className="animated-border-box-glow animated-border-box-gold-glow"></div>;
+        case 1:
+            return <div className="animated-border-box-glow animated-border-box-silver-glow"></div>;
+        case 2:
+            return <div className="animated-border-box-glow animated-border-box-bronze-glow"></div>;
+        default:
+            <></>;
+    }
+}
 
 function MiddleSide() {
     const { hashtag } = useParams();
@@ -65,14 +90,20 @@ function MiddleSide() {
             {hashtags.length < 1
                 ? "I hear crickets... 🦗"
                 : hashtags.map((tag, index) => (
-                      <div onClick={() => (window.location.href = "/hashtag/" + tag._id)} className="most-used-hashtag-box">
-                          <h1>
-                              <GetTrophy index={index} /> {(index + 1).toString() + IndexSuffix(index)} Place
-                          </h1>
-                          <a className="mention" href={`/hashtag/${tag._id}`}>
-                              #{tag._id}
-                          </a>{" "}
-                          - Used <b>{tag.count.toLocaleString("en-US")}</b> {tag.count === 1 ? "time" : "times"}
+                      <div>
+                          <GetTrophyGlows index={index} />
+                          <div
+                              onClick={() => (window.location.href = "/hashtag/" + tag._id)}
+                              className={`${GetTrophyClassName(index)} most-used-hashtag-box`}
+                          >
+                              <h1>
+                                  <GetTrophy index={index} /> {(index + 1).toString() + IndexSuffix(index)} Place
+                              </h1>
+                              <a className="mention" href={`/hashtag/${tag._id}`}>
+                                  #{tag._id}
+                              </a>{" "}
+                              - Used <b>{tag.count.toLocaleString("en-US")}</b> {tag.count === 1 ? "time" : "times"}
+                          </div>
                       </div>
                   ))}
         </div>
