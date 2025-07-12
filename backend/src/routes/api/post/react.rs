@@ -44,13 +44,13 @@ pub async fn route(
                     let struct_reaction_doc = mongoose::structures::reactions::React {
                         id: None,
                         post_id: body.post_id.clone(),
-                        handle: doc_data.get("handle").unwrap().to_string(),
+                        handle: doc_data.get("handle").unwrap().as_str().unwrap().to_string(),
                         emoji: body.emoji.clone()
                     };
                     
                     let react_doc = mongoose::get_document(&client, "beezle", "Reactions", doc! {
                         "post_id": body.post_id.clone(),
-                        "handle": doc_data.get("handle").unwrap().to_string(),
+                        "handle": doc_data.get("handle").unwrap().as_str().unwrap().to_string(),
                         "emoji": body.emoji.clone()
                     }).await;
 
@@ -62,7 +62,7 @@ pub async fn route(
                     } else {
                         mongoose::delete_document(&client, "beezle", "Reactions", doc! {
                             "post_id": body.post_id.clone(),
-                            "handle": doc_data.get("handle").unwrap().to_string(),
+                            "handle": doc_data.get("handle").unwrap().as_str().unwrap().to_string(),
                             "emoji": body.emoji.clone()
                         }).await;
                     }

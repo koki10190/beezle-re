@@ -256,10 +256,12 @@ function MiddleSide() {
             toast.error("Cannot React, You're on cooldown!");
             return;
         }
-        if (emojiData.isCustom) return toast.error("Custom emojis on reactions is not supported!");
+        // if (emojiData.isCustom) return toast.error("Custom emojis on reactions is not supported!");
+        const emoji = emojiData.isCustom ? emojiData.imageUrl : emojiData.emoji;
+
         const res = await axios.post(`${api_uri}/api/post/react`, {
             token: localStorage.getItem("access_token"),
-            emoji: emojiData.emoji,
+            emoji: emoji,
             post_id: post.post_id,
         });
 
@@ -268,18 +270,18 @@ function MiddleSide() {
         } else {
             setReactions((old) => {
                 const new_arr = { ...old };
-                const user_already_reacted = new_arr.reactions[emojiData.emoji]?.findIndex((x) => x.handle == self_user.handle) ?? -1;
-                if (user_already_reacted > -1) new_arr.reactions[emojiData.emoji]?.splice(user_already_reacted, 1);
+                const user_already_reacted = new_arr.reactions[emoji]?.findIndex((x) => x.handle == self_user.handle) ?? -1;
+                if (user_already_reacted > -1) new_arr.reactions[emoji]?.splice(user_already_reacted, 1);
                 else {
-                    if (!new_arr.reactions[emojiData.emoji]) new_arr.reactions[emojiData.emoji] = [];
-                    new_arr.reactions[emojiData.emoji].push({
+                    if (!new_arr.reactions[emoji]) new_arr.reactions[emoji] = [];
+                    new_arr.reactions[emoji].push({
                         _id: "",
                         post_id: post.post_id,
-                        emoji: emojiData.emoji,
+                        emoji: emoji,
                         handle: self_user.handle,
                     });
                 }
-                // if (_.reactions[emojiData.emoji]) _.reactions[emojiData.emoji] += 1;
+                // if (_.reactions[emoji]) _.reactions[emojiData.emoji] += 1;
                 // else _.reactions[emojiData.emoji] = 1;
                 return new_arr;
             });
@@ -337,20 +339,6 @@ function MiddleSide() {
             <div className="post-page-container">
                 {post && post_user ? (
                     <>
-                        <Helmet>
-                            <title>Beezle: RE - Post</title>
-                            <meta name="description" content={`${post.content.replace(/(.{64})..+/, "$1…")}`} />
-                            <meta name="keywords" content="react, meta tags, seo" />
-                            <meta name="author" content={`@${post.repost ? post.post_op_handle : post.handle}`} />
-                            <meta property="og:title" content={`Post by @${post.repost ? post.post_op_handle : post.handle}`} />
-                            <meta property="og:description" content={`${post.content.replace(/(.{64})..+/, "$1…")}`} />
-                            <meta property="og:image" content={post_user.avatar} />
-                            <meta property="og:url" content={`https://beezle.lol/post/${post.repost ? post.post_op_id : post.post_id}`} />
-                            <meta name="twitter:title" content={`Post by @${post.repost ? post.post_op_handle : post.handle}`} />
-                            <meta name="twitter:description" content={`${post.content.replace(/(.{64})..+/, "$1…")}`} />
-                            <meta name="twitter:image" content={`${post_user.avatar}`} />
-                            <meta name="twitter:card" content="summary_large_image" />
-                        </Helmet>
                         {post.repost ? (
                             <h4 onClick={() => (window.location.href = `/profile/${post.handle}`)} className="post-attr">
                                 <i className="fa-solid fa-repeat"></i> Repost by @{post.handle}
@@ -500,6 +488,7 @@ function MiddleSide() {
                         onEmojiClick={ReactToPost}
                         theme={Theme.DARK}
                         emojiStyle={EmojiStyle.NATIVE}
+                        customEmojis={self_user?.customization?.emojis ?? []}
                         reactionsDefaultOpen={true}
                         style={{
                             backgroundColor: "rgba(0,0,0,0.7)",
@@ -515,7 +504,17 @@ function MiddleSide() {
                         if (reactions.reactions[key].length <= 0) return <></>;
                         return (
                             <p onClick={() => ReactSpecific(key)}>
-                                <span className="reaction-emoji">{key}</span>
+                                {key.startsWith("http") ? (
+                                    <div
+                                        style={{
+                                            backgroundImage: `url(${key})`,
+                                        }}
+                                        title={"custom_emoji"}
+                                        className="emoji"
+                                    ></div>
+                                ) : (
+                                    <span className="reaction-emoji">{key}</span>
+                                )}
                                 <span className="reaction-count">{reactions.reactions[key].length}</span>
                             </p>
                         );

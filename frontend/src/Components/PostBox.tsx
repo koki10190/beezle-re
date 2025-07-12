@@ -76,10 +76,13 @@ function PostBox({
             toast.error("Cannot React, You're on cooldown!");
             return;
         }
-        if (emojiData.isCustom) return toast.error("Custom emojis on reactions is not supported!");
+        // if (emojiData.isCustom) return toast.error("Custom emojis on reactions is not supported!");
+
+        const emoji = emojiData.isCustom ? emojiData.imageUrl : emojiData.emoji;
+
         const res = await axios.post(`${api_uri}/api/post/react`, {
             token: localStorage.getItem("access_token"),
-            emoji: emojiData.emoji,
+            emoji: emoji,
             post_id: post.post_id,
         });
 
@@ -88,18 +91,18 @@ function PostBox({
         } else {
             setReactions((old) => {
                 const new_arr = { ...old };
-                const user_already_reacted = new_arr.reactions[emojiData.emoji]?.findIndex((x) => x.handle == self_user.handle) ?? -1;
-                if (user_already_reacted > -1) new_arr.reactions[emojiData.emoji]?.splice(user_already_reacted, 1);
+                const user_already_reacted = new_arr.reactions[emoji]?.findIndex((x) => x.handle == self_user.handle) ?? -1;
+                if (user_already_reacted > -1) new_arr.reactions[emoji]?.splice(user_already_reacted, 1);
                 else {
-                    if (!new_arr.reactions[emojiData.emoji]) new_arr.reactions[emojiData.emoji] = [];
-                    new_arr.reactions[emojiData.emoji].push({
+                    if (!new_arr.reactions[emoji]) new_arr.reactions[emoji] = [];
+                    new_arr.reactions[emoji].push({
                         _id: "",
                         post_id: post.post_id,
-                        emoji: emojiData.emoji,
+                        emoji: emoji,
                         handle: self_user.handle,
                     });
                 }
-                // if (_.reactions[emojiData.emoji]) _.reactions[emojiData.emoji] += 1;
+                // if (_.reactions[]) _.reactions[emojiData.emoji] += 1;
                 // else _.reactions[emojiData.emoji] = 1;
                 return new_arr;
             });
@@ -539,6 +542,7 @@ function PostBox({
                     theme={Theme.DARK}
                     emojiStyle={EmojiStyle.NATIVE}
                     reactionsDefaultOpen={true}
+                    customEmojis={self_user?.customization?.emojis ?? []}
                     style={{
                         backgroundColor: "rgba(0,0,0,0.7)",
                         border: "none",
@@ -552,7 +556,17 @@ function PostBox({
                     if (index > 12) return <></>;
                     return (
                         <p onClick={() => ReactSpecific(key)}>
-                            <span className="reaction-emoji">{key}</span>
+                            {key.startsWith("http") ? (
+                                <div
+                                    style={{
+                                        backgroundImage: `url(${key})`,
+                                    }}
+                                    title={"custom_emoji"}
+                                    className="emoji"
+                                ></div>
+                            ) : (
+                                <span className="reaction-emoji">{key}</span>
+                            )}
                             <span className="reaction-count">{reactions.reactions[key].length}</span>
                         </p>
                     );

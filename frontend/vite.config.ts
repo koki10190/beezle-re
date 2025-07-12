@@ -24,7 +24,13 @@ const manifest: Partial<VitePWAOptions> = {
 
 // https://vitejs.dev/config/
 export default defineConfig({
-    plugins: [react(), VitePWA(manifest)],
+    plugins: [
+        react(),
+        VitePWA({
+            manifest,
+            registerType: "autoUpdate",
+        }),
+    ],
     server: {
         headers: {
             "X-Content-Type-Options": "nosniff", // Protects from improper scripts runnings
