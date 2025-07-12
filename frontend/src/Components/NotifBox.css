@@ -7,7 +7,7 @@
     border-radius: 100%;
     display: inline-block;
     /* box-sizing: border-box; */
-    border: 1px solid transparent;
+    border: 1px solid rgb(0, 0, 0);
     transition: border ease-in-out 150ms;
 }
 
@@ -57,6 +57,8 @@
 }
 
 .notif-post-box .pfp {
+    border: 1px solid black;
+    border-radius: 100%;
     width: 40px;
     height: 40px;
 }

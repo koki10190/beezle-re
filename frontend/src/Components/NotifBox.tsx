@@ -27,7 +27,10 @@ function NotifPost({ post_data }: { post_data: Post }) {
             <div style={{ width: "100%", height: "1px", marginTop: "-5px" }}></div>
             <Divider />
             <div className="notif-post-box">
-                <div style={{ backgroundImage: `url(${user.avatar})` }} className="pfp"></div>
+                <div
+                    style={{ backgroundImage: `url(${user.avatar})`, borderRadius: user.customization?.square_avatar ? "5px" : "100%" }}
+                    className="pfp"
+                ></div>
                 <div className="user-detail">
                     <p className="username">{user.username}</p>
                     <p className="handle">

@@ -50,12 +50,12 @@ pub async fn route(body: web::Json<GetUserQuery>, client: web::Data<Client>) -> 
                 );
             }
 
-            if coins < 15000 {
+            if coins < 5000 {
                 return HttpResponse::Ok()
                     .json(doc! {"bought": false, "error": "Cannot afford this item!"});
             }
 
-            mongoose::add_coins(&client, &token_data.handle, -15000).await;
+            mongoose::add_coins(&client, &token_data.handle, -5000).await;
 
             mongoose::update_document(
                 &client,
