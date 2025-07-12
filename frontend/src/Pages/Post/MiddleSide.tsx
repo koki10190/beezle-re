@@ -506,7 +506,7 @@ function MiddleSide() {
                             <p
                                 style={
                                     reactions.reactions[key].findIndex((x) => x.handle === self_user?.handle) > -1
-                                        ? { border: "solid 2px orange" }
+                                        ? { border: `solid 2px rgba(255, 255, 255, 0.6)` }
                                         : {}
                                 }
                                 onClick={() => ReactSpecific(key)}
