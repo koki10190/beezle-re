@@ -9,3 +9,4 @@ pub mod pin;
 pub mod react;
 pub mod repost;
 pub mod search;
+pub mod hashtag;

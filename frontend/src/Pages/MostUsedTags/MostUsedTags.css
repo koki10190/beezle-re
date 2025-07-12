@@ -1,0 +1,16 @@
+.tag {
+    color: #cd7f32;
+}
+
+.most-used-hashtag-box {
+    width: 100%;
+    box-sizing: border-box;
+    background-color: #ffffff15;
+    padding-top: 5px;
+    padding-bottom: 15px;
+    padding-left: 15px;
+    padding-right: 15px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}

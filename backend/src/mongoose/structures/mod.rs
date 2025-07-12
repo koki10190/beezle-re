@@ -4,3 +4,4 @@ pub mod auth;
 pub mod post;
 pub mod report;
 pub mod reactions;
+pub mod hashtag;

@@ -8,7 +8,7 @@ use actix_web::{get, post, web, App, HttpRequest, HttpResponse, HttpServer, Resp
 
 use crate::{
     beezle::{self, user_exists},
-    mongoose::{self, add_coins, add_xp},
+    mongoose::{self, add_coins, add_xp, structures::hashtag::Hashtag},
     poison::LockResultExt,
 };
 
@@ -94,6 +94,7 @@ pub async fn route(
             // /@([a-z\d_\.-]+)/gi
 
             let mention_regex = Regex::new(r"@([a-z\d_\.-]+)").unwrap();
+            let hashtag_regex = Regex::new(r"#([A-Za-z0-9]+)").unwrap();
             for (_, [handle]) in mention_regex.captures_iter(body.content.as_str()).map(|c| c.extract()) {
                 beezle::print(format!("Found a mention: \"{}\"", handle).as_str());
                 if !user_exists(&client, handle.to_string()).await {
@@ -118,6 +119,21 @@ pub async fn route(
                     },
                 )
                 .await;
+            }
+
+            for (_, [hashtag]) in hashtag_regex.captures_iter(body.content.as_str()).map(|c| c.extract()) {
+                beezle::print(format!("Found a hashtag: \"{}\"", hashtag).as_str());
+
+                let hashtag_struct = Hashtag {
+                    id: None,
+                    hashtag: hashtag.to_string(),
+                    from_user: data.claims.handle.clone(),
+                    post_id: __post_id.clone()
+                };
+
+                let serialized_doc = mongodb::bson::to_bson(&hashtag_struct).unwrap();
+                let document = serialized_doc.as_document().unwrap();
+                mongoose::insert_document(&client, "beezle", "Hashtags", document.clone()).await;
             }
 
             let serialized_post_doc = mongodb::bson::to_bson(&struct_post_doc).unwrap();

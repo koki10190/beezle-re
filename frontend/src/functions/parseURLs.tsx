@@ -85,7 +85,9 @@ function parseURLs(content: string, self_user: UserPublic): string {
     //     }
     // }
 
-    let final = sanitize(content).replace(/@([a-z\d_\.-]+)/gi, `<a class="mention" href="/profile/$1">@$1</a>`);
+    let final = sanitize(content)
+        .replace(/@([a-z\d_\.-]+)/gi, `<a class="mention" href="/profile/$1">@$1</a>`)
+        .replace(/#([A-Za-z0-9]+)/gi, `<a class="mention" href="/hashtag/$1">#$1</a>`);
 
     final = final.replace(/&lt;/g, "<");
     final = final.replace(/&gt;/g, ">");
@@ -120,7 +122,7 @@ function parseURLs(content: string, self_user: UserPublic): string {
     }
 
     // console.log("FINAL", final + (final.replace(/ /g, "") !== "" ? "<br/>" : "") + htmlToEmbed);
-    return final + (final.replace(/ /g, "") !== "" ? "<br/>" : "") + htmlToEmbed;
+    return final.trimStart().trimEnd() + (final.replace(/ /g, "") !== "" ? "<br/>" : "") + htmlToEmbed;
 }
 
 export default parseURLs;

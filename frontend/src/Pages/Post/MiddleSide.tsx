@@ -24,6 +24,7 @@ import Username from "../../Components/Username";
 import EmojiPicker, { EmojiClickData, EmojiStyle, Theme } from "emoji-picker-react";
 import { toast } from "react-toastify";
 import { PostReaction, ReactionsData } from "../../types/ReactionsData";
+import TrimToDots from "../../functions/TrimToDots";
 
 interface ReactionsInter {
     [key: string]: PostReaction[];
@@ -73,6 +74,10 @@ function MiddleSide() {
             const replies_res = await axios.get(`${api_uri}/api/post/get/replies?post_id=${post_id}`);
             let post_res = await axios.get(`${api_uri}/api/post/get/one?post_id=${post_id}`);
             const priv = (await fetchUserPrivate()) as UserPrivate;
+
+            if (post_res.data.error) {
+                window.location.href = "/not-found";
+            }
 
             if (post_res.data.repost) {
                 setIsRepost(post_res.data.repost);
@@ -361,7 +366,7 @@ function MiddleSide() {
                                 className="post-attr"
                             >
                                 <i className="fa-solid fa-comment"></i> Replying to{" "}
-                                {replyingToPost?.content ? replyingToPost.content.replace(/(.{12})..+/, "$1…") : "[REDACTED]"}
+                                {replyingToPost?.content ? TrimToDots(replyingToPost.content, 100) : "[REDACTED]"}
                             </h4>
                         ) : (
                             ""

@@ -29,6 +29,8 @@ import "react-toastify/dist/ReactToastify.css";
 import NotFound from "./Pages/404/NotFound";
 import SpotifyAuth from "./Pages/Auth/SpotifyAuth";
 import { socket } from "./ws/socket";
+import Hashtag_Home from "./Pages/Hashtag/Hashtag_Home";
+import MostUsedTags_Home from "./Pages/MostUsedTags/MostUsedTags_Home";
 
 enum UserStatus {
     ONLINE,
@@ -99,6 +101,8 @@ function App() {
                 <Routes>
                     <Route path="/" element={<Home />} />
                     <Route path="/home" element={<FollowingHome_Home />} />
+                    <Route path="/most-used-hashtags" element={<MostUsedTags_Home />} />
+                    <Route path="/hashtag/:hashtag" element={<Hashtag_Home />} />
                     <Route path="/explore" element={<LoggedIn_Home />} />
                     <Route path="/right-now" element={<Now_Home />} />
                     <Route path="/edit/profile" element={<EditProfile_Home />} />
@@ -123,6 +127,7 @@ function App() {
                     <Route path="/dms" element={<DMs_Home />} />
                     <Route path="/dms/:user_handle" element={<DMs_Home />} />
                     <Route path="/spotify-auth" element={<SpotifyAuth />} />
+                    <Route path="/not-found" element={<NotFound />} />
                     <Route path="/:handle" element={<Profile_Home />} />
                     <Route path="*" element={<NotFound />} />
                 </Routes>

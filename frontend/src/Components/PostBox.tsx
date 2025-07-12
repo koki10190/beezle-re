@@ -22,6 +22,7 @@ import EmojiPicker, { EmojiClickData, EmojiStyle, Theme } from "emoji-picker-rea
 import BeezleEmoji from "./Emoji";
 import { PostReaction, ReactionsData } from "../types/ReactionsData";
 import { toast } from "react-toastify";
+import TrimToDots from "../functions/TrimToDots";
 
 interface PostBoxData {
     post: Post;
@@ -387,7 +388,7 @@ function PostBox({
             {allow_reply_attribute && post.is_reply ? (
                 <h4 onClick={() => (window.location.href = replyingToPost?.content ? `/post/${post.replying_to}` : `/`)} className="post-attr">
                     <i className="fa-solid fa-comment"></i> Replying to{" "}
-                    {replyingToPost?.content ? replyingToPost.content.replace(/(.{12})..+/, "$1…") : "[REDACTED]"}
+                    {replyingToPost?.content ? TrimToDots(replyingToPost?.content, 12) : "[REDACTED]"}
                 </h4>
             ) : (
                 ""

@@ -55,6 +55,16 @@ pub async fn route(
             )
             .await;
 
+            mongoose::delete_many_document(
+                &client,
+                "beezle",
+                "Hashtags",
+                doc! {
+                    "post_id": &body.post_id
+                },
+            )
+            .await;            
+
             mongoose::add_coins(&client, &data.claims.handle, -40).await;
 
             return HttpResponse::Ok().json(doc! {"message": "Deleted post successfully."});

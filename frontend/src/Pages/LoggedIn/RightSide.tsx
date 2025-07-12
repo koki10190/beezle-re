@@ -85,6 +85,7 @@ function RightSide() {
                 <SettingsButton redirect="/notifications" iconClass="fa-solid fa-bell" text={`Notifs (${notifCount})`} style={undefined} />
                 <SettingsButton redirect="/explore" iconClass="fa-solid fa-globe" text="Explore" style={undefined} />
                 <SettingsButton redirect="/right-now" iconClass="fa-solid fa-sparkles" text="Right Now" style={undefined} />
+                <SettingsButton redirect="/most-used-hashtags" iconClass="fa-solid fa-hashtag" text="Hashtags" style={undefined} />
                 <SettingsButton redirect="/bookmarks" iconClass="fa-solid fa-bookmark" text="Bookmarks" style={undefined} />
                 <SettingsButton redirect="/shop" iconClass="fa-solid fa-shop" text="Shop" style={undefined} />
                 <SettingsButton redirect="/search" iconClass="fa-solid fa-magnifying-glass" text="Search" style={undefined} />

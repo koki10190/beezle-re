@@ -134,6 +134,8 @@ async fn main() -> std::io::Result<()> {
             .service(routes::api::post::get::replies::route)
             .service(routes::api::post::get::reply_count::route)
             .service(routes::api::post::get::now::route)
+            .service(routes::api::post::hashtag::get::route)
+            .service(routes::api::post::hashtag::topten::route)
             .service(routes::api::user::clear_notifs::route)
             .service(routes::api::user::delete::route)
             .service(routes::api::user::change_password::route)
