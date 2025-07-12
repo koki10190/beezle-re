@@ -1,5 +1,8 @@
 pub mod print;
-use bson::doc;
+use std::{collections::HashMap, sync::Mutex};
+
+use actix_web::web;
+use bson::{doc, Document};
 use mongodb::Client;
 pub use print::print;
 
@@ -62,4 +65,34 @@ pub async fn user_exists(client: &Client, handle: String) -> bool {
         None => false,
         _document => true
     }
+}
+
+pub async fn send_socket_to_user(ws_sessions: web::Data<Mutex<HashMap<String, actix_ws::Session>>>, handle: &str, channel: &str, data: Document) {
+    let locked = ws_sessions.lock();
+                    
+    match locked {
+        Ok(mut sessions) => {
+            let option_to = sessions.get_mut(handle);
+
+            let final_data = doc! {
+                "channel": channel,
+                "data": data
+            };
+
+            if let Some(to_session) = option_to {
+                let _ = to_session.text(serde_json::to_string(&final_data).unwrap()).await;
+            }
+        }
+        Err(err) => {
+            println!("Poisont error: {:?}", err);
+        }
+    }
+}
+
+
+pub async fn ws_send_notification(ws_sessions: web::Data<Mutex<HashMap<String, actix_ws::Session>>>, handle: &str) {
+    let data = doc! {
+    };
+
+    send_socket_to_user(ws_sessions, handle, "update_notification_counter", data).await;
 }

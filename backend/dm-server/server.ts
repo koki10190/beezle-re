@@ -19,7 +19,7 @@ mongoose
     .then(() => console.log("Connected to MongoDB"))
     .catch(() => console.log("Failed to connect to MongoDB"));
 
-const production_mode = process.env["PRODUCTION_MODE"] != undefined;
+const production_mode = process.env["PRODUCTION_MODE"] == "1";
 const api_uri = production_mode ? "https://server.beezle.lol:3000" : "http://localhost:3000";
 
 const app = express();

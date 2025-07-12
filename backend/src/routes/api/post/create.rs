@@ -2,12 +2,12 @@ use bson::{doc, uuid, Document};
 use jsonwebtoken::{decode, DecodingKey, EncodingKey, Header, Validation};
 use regex::Regex;
 use serde::Deserialize;
-use std::env;
+use std::{collections::HashMap, env, sync::Mutex};
 
 use actix_web::{get, post, web, App, HttpRequest, HttpResponse, HttpServer, Responder};
 
 use crate::{
-    beezle::{self, user_exists},
+    beezle::{self, user_exists, ws_send_notification},
     mongoose::{self, add_coins, add_xp, structures::hashtag::Hashtag},
     poison::LockResultExt,
 };
@@ -24,7 +24,7 @@ struct TokenInfo {
 pub async fn route(
     body: web::Json<TokenInfo>,
     client: web::Data<mongodb::Client>,
-    fapp: web::Data<std::sync::Mutex<crate::data_struct::AppData>>,
+    ws_sessions: web::Data<Mutex<HashMap<String, actix_ws::Session>>>
 ) -> impl Responder {
     let token = decode::<mongoose::structures::user::JwtUser>(
         &body.token,
@@ -90,6 +90,8 @@ pub async fn route(
                         },
                     )
                     .await;
+
+                    ws_send_notification(ws_sessions.clone(), &handle).await;
                 }
             }
 
@@ -122,6 +124,8 @@ pub async fn route(
                         },
                     )
                     .await;
+
+                    ws_send_notification(ws_sessions.clone(), &data.claims.handle).await;
                 }
             }
 

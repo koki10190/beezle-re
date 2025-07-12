@@ -236,7 +236,7 @@ form > a {
 }
 
 .button-field:disabled {
-    background-color: rgb(255, 144, 70);
+    background-color: rgb(182, 105, 53);
 }
 
 .button-field:hover {

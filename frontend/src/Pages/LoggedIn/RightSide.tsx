@@ -9,6 +9,7 @@ import { fetchUserPrivate } from "../../functions/fetchUserPrivate";
 import { NotificationData } from "../../types/Notification";
 import dmSocket from "../../ws/dm-socket";
 import { DMData } from "../../types/DM";
+import { socket } from "../../ws/socket";
 
 function SettingsButton({ redirect, iconClass, text, style }: { redirect: string; iconClass: string; text: string; style: any | undefined }) {
     return (
@@ -23,6 +24,7 @@ function RightSide() {
     const [isExpanded, setExpanded] = useState(false);
     const [window_width, setWindowWidth] = useState(window.innerWidth);
     const [notifCount, setNotifCount] = useState(0);
+    const [notifColor, setNotifColor] = useState("#ffffff");
 
     const ExpandRightSide = () => {
         const middle = document.querySelector(".side-middle") as HTMLDivElement;
@@ -76,13 +78,24 @@ function RightSide() {
                 return old++;
             });
         });
+
+        socket.listen("update_notification_counter", (data) => {
+            console.log("Notification Received!");
+            setNotifCount((old) => ++old);
+            setNotifColor("rgb(255, 144, 70)");
+        });
     }, []);
 
     return (
         <>
             <div className="page-sides side-right">
                 <SettingsButton redirect="/home" iconClass="fa-solid fa-house" text="Home" style={undefined} />
-                <SettingsButton redirect="/notifications" iconClass="fa-solid fa-bell" text={`Notifs (${notifCount})`} style={undefined} />
+                <SettingsButton
+                    redirect="/notifications"
+                    iconClass="fa-solid fa-bell"
+                    text={`Notifs (${notifCount})`}
+                    style={{ color: notifColor }}
+                />
                 <SettingsButton redirect="/explore" iconClass="fa-solid fa-globe" text="Explore" style={undefined} />
                 <SettingsButton redirect="/right-now" iconClass="fa-solid fa-sparkles" text="Right Now" style={undefined} />
                 <SettingsButton redirect="/most-used-hashtags" iconClass="fa-solid fa-hashtag" text="Hashtags" style={undefined} />

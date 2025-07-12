@@ -2,12 +2,12 @@ use bson::{doc, Document};
 use jsonwebtoken::{decode, DecodingKey, EncodingKey, Header, Validation};
 use mail_send::mail_auth::flate2::Status;
 use serde::Deserialize;
-use std::env;
+use std::{collections::HashMap, env, sync::Mutex};
 
 use actix_web::{get, http::StatusCode, post, web, App, HttpResponse, HttpServer, Responder};
 
 use crate::{
-    beezle,
+    beezle::{self, ws_send_notification},
     mongoose::{self, structures::user},
     poison::LockResultExt,
 };
@@ -23,7 +23,7 @@ struct FollowData {
 pub async fn route(
     body: web::Json<FollowData>,
     client: web::Data<mongodb::Client>,
-    fapp: web::Data<std::sync::Mutex<crate::data_struct::AppData>>,
+    ws_sessions: web::Data<Mutex<HashMap<String, actix_ws::Session>>>
 ) -> impl Responder {
     let token_data = decode::<mongoose::structures::user::JwtUser>(
         &body.token,
@@ -44,6 +44,9 @@ pub async fn route(
 
             if body.follow {
                 // MODIFY THE REQUESTER
+                if token_data.handle == handle {
+                    return HttpResponse::Ok().json(doc!{"error": "You cannot follow yourself."})
+                }
                 mongoose::update_document(
                     &client,
                     "beezle",
@@ -79,6 +82,8 @@ pub async fn route(
                     },
                 )
                 .await;
+
+                ws_send_notification(ws_sessions.clone(), &handle).await;
 
                 mongoose::add_coins(&client, token_data.handle.as_str(), 20).await;
                 mongoose::add_xp(&client, token_data.handle.as_str(), 20).await;

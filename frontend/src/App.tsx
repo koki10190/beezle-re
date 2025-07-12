@@ -70,17 +70,20 @@ function App() {
                 handle: user.handle,
             });
 
+            socket.send("ping", {});
+
             clearInterval(_);
         }, 100);
     };
 
+    socket.listen("pong", () => {
+        console.log("Got a pong, sending a ping");
+        setTimeout(() => socket.send("ping", {}), 5000);
+    });
+
     socket.listen("from_other", (data: { message: string }) => {
         console.log("ALERT! DATA GOT", data);
     });
-
-    // useEffect(() => {
-    //     // Socket setup
-    // }, []);
 
     return (
         <>

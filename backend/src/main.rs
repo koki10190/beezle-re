@@ -33,7 +33,7 @@ mod mongoose;
 mod poison;
 mod routes;
 
-#[actix_web::main]
+#[tokio::main(flavor = "current_thread")]
 async fn main() -> std::io::Result<()> {
     dotenv().ok();
     env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
@@ -164,7 +164,7 @@ async fn main() -> std::io::Result<()> {
             .service(routes::api::lastfm::set_username::route)
             .service(routes::api::lastfm::remove_username::route)
             .service(routes::api::post::react::route)
-            .route("/ws", web::get().to(socket::ws))
+            .route("/ws", web::get().to(socket::main_ws))
             // .wrap(middleware::Logger::default())
     });
 
