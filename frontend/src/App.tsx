@@ -101,6 +101,7 @@ function App() {
                     <Route path="/home" element={<FollowingHome_Home />} />
                     <Route path="/explore" element={<LoggedIn_Home />} />
                     <Route path="/right-now" element={<Now_Home />} />
+                    <Route path="/edit/profile" element={<EditProfile_Home />} />
                     <Route path="/profile/:handle" element={<Profile_Home />} />
                     <Route path="/p/:handle" element={<Profile_Home />} />
                     <Route path="/user/:handle" element={<Profile_Home />} />

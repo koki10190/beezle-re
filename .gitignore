@@ -147,3 +147,4 @@ Cargo.lock
 .vscode/settings.json 
 host.sh
 server.txt
+certificate_tutorial.txt

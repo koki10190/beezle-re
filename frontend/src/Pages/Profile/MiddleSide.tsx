@@ -338,7 +338,7 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                                 height="15px"
                                 customLabelStyles={{
                                     color: "white",
-                                    marginBottom: "2px",
+                                    marginBottom: "-4px",
                                 }}
                             />
                         </div>
