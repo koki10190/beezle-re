@@ -310,8 +310,8 @@ function MiddleSide() {
         } else {
             setReactions((old) => {
                 const new_arr = { ...old };
-                const user_already_reacted = new_arr.reactions[emoji].findIndex((x) => x.handle == self_user.handle);
-                if (user_already_reacted < 0) new_arr.reactions[emoji].splice(user_already_reacted, 1);
+                const user_already_reacted = new_arr.reactions[emoji].findIndex((x) => x.handle == self_user.handle) ?? -1;
+                if (user_already_reacted > -1) new_arr.reactions[emoji].splice(user_already_reacted, 1);
                 else {
                     if (!new_arr.reactions[emoji]) new_arr.reactions[emoji] = [];
                     new_arr.reactions[emoji].push({
@@ -503,7 +503,14 @@ function MiddleSide() {
                         if (index > 12) return <></>;
                         if (reactions.reactions[key].length <= 0) return <></>;
                         return (
-                            <p onClick={() => ReactSpecific(key)}>
+                            <p
+                                style={
+                                    reactions.reactions[key].findIndex((x) => x.handle === self_user?.handle) > -1
+                                        ? { border: "solid 2px orange" }
+                                        : {}
+                                }
+                                onClick={() => ReactSpecific(key)}
+                            >
                                 {key.startsWith("http") ? (
                                     <div
                                         style={{
