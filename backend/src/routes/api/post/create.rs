@@ -95,7 +95,7 @@ pub async fn route(
 
             let mention_regex = Regex::new(r"@([a-z\d_\.-]+)").unwrap();
             let hashtag_regex = Regex::new(r"#([A-Za-z0-9]+)").unwrap();
-            for (_, [handle]) in mention_regex.captures_iter(body.content.as_str()).map(|c| c.extract()) {
+            for (_, [handle]) in mention_regex.captures_iter(body.content.clone().as_str()).map(|c| c.extract()) {
                 beezle::print(format!("Found a mention: \"{}\"", handle).as_str());
                 if !user_exists(&client, handle.to_string()).await {
                     continue;
@@ -121,7 +121,7 @@ pub async fn route(
                 .await;
             }
 
-            for (_, [hashtag]) in hashtag_regex.captures_iter(body.content.as_str()).map(|c| c.extract()) {
+            for (_, [hashtag]) in hashtag_regex.captures_iter(body.content.clone().as_str()).map(|c| c.extract()) {
                 beezle::print(format!("Found a hashtag: \"{}\"", hashtag).as_str());
 
                 let hashtag_struct = Hashtag {
