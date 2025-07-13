@@ -1,0 +1,11 @@
+.connections-pfp {
+    display: inline-block;
+    background-color: #ffffff30;
+    width: 25px;
+    height: 25px;
+    border-radius: 100%;
+    vertical-align: bottom;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}

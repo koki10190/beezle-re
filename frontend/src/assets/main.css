@@ -219,6 +219,7 @@ form > a {
 /* BUTTON FIELD */
 
 .button-field {
+    cursor: pointer;
     background-color: rgb(255, 144, 70);
     color: white;
     box-sizing: border-box;
@@ -288,11 +289,11 @@ form > a {
 }
 
 .button-field-green {
-    background-color: rgb(65, 255, 27);
+    background-color: rgb(41, 243, 0);
 }
 
 .button-field-green:hover {
-    background-color: rgb(66, 194, 62);
+    background-color: rgb(7, 206, 0);
 }
 
 .instead-anchor {

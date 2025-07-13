@@ -37,9 +37,26 @@ interface UserConnections {
     spotify: {
         access_token: string;
         refresh_token: string;
+        display_name: string;
+        id: string;
+        external_urls: {
+            spotify: string;
+        };
+        images: Array<{ width: number; height: number; url: string }>;
     };
     lastfm: {
         username: string;
+    };
+    discord: {
+        access_token: string;
+        refresh_token: string;
+        expires_in: number;
+        data: {
+            username: string;
+            display_name: string;
+            discord_id: string;
+            avatar: string;
+        };
     };
 }
 

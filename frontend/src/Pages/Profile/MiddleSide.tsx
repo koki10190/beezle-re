@@ -19,6 +19,7 @@ import pSBC from "../../functions/ShadeColor";
 import ShadeColor from "../../functions/ShadeColor";
 import ProgressBar from "@ramonak/react-progress-bar";
 import months from "../../types/Month";
+import { toast } from "react-toastify";
 
 function Loading() {
     return (
@@ -276,6 +277,35 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                             <i className="fa-solid fa-link"></i> Connections
                         </p>
                         <div className="profile-connections">
+                            {user.connections.discord ? (
+                                <a
+                                    className="remove-textdecor button-field button-field-blurple   "
+                                    onClick={() => {
+                                        navigator.clipboard.writeText(user.connections.discord.data.username).then(
+                                            () => {
+                                                toast.success("Copied to clipboard!");
+                                            },
+                                            (err) => {
+                                                toast.error("Couldn't copy to clipboard: " + err);
+                                            },
+                                        );
+                                    }}
+                                >
+                                    <i className="fa-brands fa-discord"></i> Discord:{" "}
+                                    <div
+                                        style={{
+                                            backgroundImage: `url(https://cdn.discordapp.com/avatars/${user.connections.discord.data.discord_id}/${user.connections.discord.data.avatar}.webp?size=128&animated=true)`,
+                                            verticalAlign: "middle",
+                                            width: "20px",
+                                            height: "20px",
+                                        }}
+                                        className="connections-pfp"
+                                    ></div>{" "}
+                                    @{user.connections.discord.data.username}
+                                </a>
+                            ) : (
+                                ""
+                            )}
                             {user.connections.steam ? (
                                 <a
                                     className="remove-textdecor button-field button-field-blue"
@@ -290,10 +320,31 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                             {user.connections.lastfm ? (
                                 <a
                                     className="remove-textdecor button-field button-field-red"
-                                    href={`https://last.fm/users/${user.connections.lastfm.username}`}
+                                    href={`https://last.fm/user/${user.connections.lastfm.username}`}
                                     target="_blank"
                                 >
-                                    <i className="fa-brands fa-lastfm"></i> last.fm
+                                    <i className="fa-brands fa-lastfm"></i> last.fm ({user.connections.lastfm.username})
+                                </a>
+                            ) : (
+                                ""
+                            )}
+                            {user.connections.spotify ? (
+                                <a
+                                    className="remove-textdecor button-field button-field-green"
+                                    href={`${user.connections.spotify.external_urls.spotify}`}
+                                    target="_blank"
+                                >
+                                    <i className="fa-brands fa-spotify"></i> Spotify:{" "}
+                                    <div
+                                        style={{
+                                            backgroundImage: `url(${user.connections.spotify.images[0].url})`,
+                                            verticalAlign: "middle",
+                                            width: "20px",
+                                            height: "20px",
+                                        }}
+                                        className="connections-pfp"
+                                    ></div>{" "}
+                                    ({user.connections.spotify.display_name})
                                 </a>
                             ) : (
                                 ""

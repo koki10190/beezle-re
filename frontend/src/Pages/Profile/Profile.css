@@ -360,9 +360,10 @@ body {
 
 .profile-connections {
     margin-top: 30px;
-    margin-bottom: 20px;
 }
 
 .profile-connections .button-field {
     margin-right: 10px;
+    margin-bottom: 10px;
+    display: inline-block;
 }

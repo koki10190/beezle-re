@@ -31,6 +31,7 @@ import SpotifyAuth from "./Pages/Auth/SpotifyAuth";
 import { socket } from "./ws/socket";
 import Hashtag_Home from "./Pages/Hashtag/Hashtag_Home";
 import MostUsedTags_Home from "./Pages/MostUsedTags/MostUsedTags_Home";
+import DiscordAuth from "./Pages/Auth/DiscordAuth";
 
 enum UserStatus {
     ONLINE,
@@ -136,6 +137,7 @@ function App() {
                     <Route path="/search" element={<Search_Home />} />
                     <Route path="/dms" element={<DMs_Home />} />
                     <Route path="/dms/:user_handle" element={<DMs_Home />} />
+                    <Route path="/discord_auth" element={<DiscordAuth />} />
                     <Route path="/spotify-auth" element={<SpotifyAuth />} />
                     <Route path="/not-found" element={<NotFound />} />
                     <Route path="/:handle" element={<Profile_Home />} />

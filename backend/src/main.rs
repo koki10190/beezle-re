@@ -160,6 +160,8 @@ async fn main() -> std::io::Result<()> {
             .service(routes::api::connections::spotfiy_disconnect::route)
             .service(routes::api::connections::spotify_refresh_token::route)
             .service(routes::api::connections::spotify_status::route)
+            .service(routes::api::connections::discord_auth::route)
+            .service(routes::api::connections::remove_discord::route)
             .service(routes::api::lastfm::now_playing::route)
             .service(routes::api::lastfm::set_username::route)
             .service(routes::api::lastfm::remove_username::route)

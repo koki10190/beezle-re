@@ -6,10 +6,11 @@ import { Post } from "../../../types/Post";
 import FetchPost from "../../../functions/FetchPost";
 import "./Details.css";
 import Divider from "../../../Components/Divider";
-import { api_uri } from "../../../links";
+import { api_uri, discord_auth_uri } from "../../../links";
 import axios from "axios";
 import PopupToSteamAuth from "../../../functions/RedirectToSteamAuth";
 import { toast } from "react-toastify";
+import "./Connections.css";
 
 interface Props {
     user: UserPrivate;
@@ -19,6 +20,7 @@ function Connections({ user }: Props) {
     const [password, setPassword] = useState("");
     const [steam_connected, setSteamConnected] = useState(user.connections?.steam?.id ? true : false);
     const [spotify_connected, setSpotifyConnected] = useState(user.connections?.spotify?.access_token ? true : false);
+    const [discord_connected, setDiscordConnected] = useState(user.connections?.discord?.access_token ? true : false);
     const [lastfm_connected, setLastfmConnected] = useState(user.connections?.lastfm?.username ? true : false);
     const lastfm_username = useRef<HTMLInputElement>();
     const statePassRef = useRef<HTMLParagraphElement>(null);
@@ -109,6 +111,40 @@ function Connections({ user }: Props) {
                     <button onClick={SpotifyAuth} className="button-field button-field-green">
                         <i className="fa-brands fa-spotify"></i> Connect Spotify
                     </button>
+                )}
+                <Divider />
+                {discord_connected ? (
+                    <>
+                        <p>
+                            <i className="fa-brands fa-discord"></i> Discord:{" "}
+                            <div
+                                style={{
+                                    backgroundImage: `url(https://cdn.discordapp.com/avatars/${user.connections.discord.data.discord_id}/${user.connections.discord.data.avatar}.webp?size=128&animated=true)`,
+                                }}
+                                className="connections-pfp"
+                            ></div>{" "}
+                            @{user.connections.discord.data.username}
+                        </p>
+                        <button
+                            onClick={async () => {
+                                const res = await axios.post(`${api_uri}/api/connections/remove_discord`, {
+                                    token: localStorage.getItem("access_token"),
+                                });
+
+                                toast.success(res.data);
+                                setDiscordConnected(false);
+                            }}
+                            className="button-field button-field-red"
+                        >
+                            <i className="fa-brands fa-discord"></i> Disconnect Discord
+                        </button>
+                    </>
+                ) : (
+                    <>
+                        <button onClick={() => (window.location.href = discord_auth_uri)} className="button-field button-field-blurple">
+                            <i className="fa-brands fa-discord"></i> Connect Discord
+                        </button>
+                    </>
                 )}
                 <Divider />
                 {lastfm_connected ? (

@@ -6,3 +6,5 @@ pub mod spotfiy_auth;
 pub mod spotfiy_disconnect;
 pub mod spotify_refresh_token;
 pub mod spotify_status;
+pub mod discord_auth;
+pub mod remove_discord;
