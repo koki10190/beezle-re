@@ -19,16 +19,22 @@ function SpotifyAuth() {
             }
             console.log("success!");
 
-            const save_token = await axios.post(`${api_uri}/api/connections/spotify_auth`, {
-                code,
-                token: localStorage.getItem("access_token"),
-            });
+            const save_token = await axios
+                .post(`${api_uri}/api/connections/spotify_auth`, {
+                    code,
+                    token: localStorage.getItem("access_token"),
+                })
+                .catch((e) => {
+                    console.error(e);
+                });
+
+            console.log(save_token);
 
             authMessage.current.innerText = "Authenticated!";
             authMessage.current.setAttribute("style", "color: lime;");
 
             setTimeout(() => {
-                window.location.href = "/settings";
+                // window.location.href = "/settings";
             }, 1000);
         })();
     }, []);

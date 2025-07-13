@@ -265,6 +265,44 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                 ) : (
                     ""
                 )}
+                {Object.keys(user.connections).length > 0 ? (
+                    <div
+                        style={{
+                            background: gradient,
+                        }}
+                        className="profile-container"
+                    >
+                        <p className="profile-container-header">
+                            <i className="fa-solid fa-link"></i> Connections
+                        </p>
+                        <div className="profile-connections">
+                            {user.connections.steam ? (
+                                <a
+                                    className="remove-textdecor button-field button-field-blue"
+                                    href={`https://steamcommunity.com/profiles/${user.connections.steam.id}`}
+                                    target="_blank"
+                                >
+                                    <i className="fa-brands fa-steam"></i> Steam
+                                </a>
+                            ) : (
+                                ""
+                            )}
+                            {user.connections.lastfm ? (
+                                <a
+                                    className="remove-textdecor button-field button-field-red"
+                                    href={`https://last.fm/users/${user.connections.lastfm.username}`}
+                                    target="_blank"
+                                >
+                                    <i className="fa-brands fa-lastfm"></i> last.fm
+                                </a>
+                            ) : (
+                                ""
+                            )}
+                        </div>
+                    </div>
+                ) : (
+                    <></>
+                )}
                 {steamData ? (
                     <div
                         style={{

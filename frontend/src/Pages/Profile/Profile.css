@@ -353,3 +353,16 @@ body {
         color: rgba(255, 255, 255, 0.5);
     }
 }
+
+.remove-textdecor {
+    text-decoration: none;
+}
+
+.profile-connections {
+    margin-top: 30px;
+    margin-bottom: 20px;
+}
+
+.profile-connections .button-field {
+    margin-right: 10px;
+}

@@ -89,8 +89,18 @@ pub async fn route(
     let encrypted_access_token = encrypt(response.get("access_token").unwrap().as_str().unwrap(), &pass).unwrap();
     let encrypted_refresh_token = encrypt(response.get("refresh_token").unwrap().as_str().unwrap(), &pass).unwrap();
 
-    beezle::print("Data encrypted!");
+    beezle::print("Data encrypted! Getting user info");
 
+    let user_data_response = reqwest_client.get(
+        "https://api.spotify.com/v1/me"
+    )
+    .header("Authorization", format!("Bearer {}", response.get("access_token").unwrap().as_str().unwrap()))
+    .send()
+    .await
+    .unwrap()
+    .json::<Document>()
+    .await
+    .unwrap();
 
     mongoose::update_document(
         &client,
@@ -104,6 +114,11 @@ pub async fn route(
                 "connections.spotify": {
                     "access_token": base64_encode(encrypted_access_token),
                     "refresh_token": base64_encode(encrypted_refresh_token),
+                    "display_name": user_data_response.get("display_name").unwrap().as_str().unwrap(),
+                    "id": user_data_response.get("id").unwrap().as_str().unwrap(),
+                    "external_urls": user_data_response.get("external_urls").unwrap().as_document().unwrap(),
+                    "product": user_data_response.get("product").unwrap().as_str().unwrap(),
+                    "images": user_data_response.get("images").unwrap().as_array().unwrap(),
                 }
             }
         },
