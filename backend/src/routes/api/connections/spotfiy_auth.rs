@@ -117,7 +117,6 @@ pub async fn route(
                     "display_name": user_data_response.get("display_name").unwrap().as_str().unwrap(),
                     "id": user_data_response.get("id").unwrap().as_str().unwrap(),
                     "external_urls": user_data_response.get("external_urls").unwrap().as_document().unwrap(),
-                    "product": user_data_response.get("product").unwrap().as_str().unwrap(),
                     "images": user_data_response.get("images").unwrap().as_array().unwrap(),
                 }
             }
