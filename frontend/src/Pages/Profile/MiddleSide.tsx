@@ -18,6 +18,7 @@ import Username from "../../Components/Username";
 import pSBC from "../../functions/ShadeColor";
 import ShadeColor from "../../functions/ShadeColor";
 import ProgressBar from "@ramonak/react-progress-bar";
+import months from "../../types/Month";
 
 function Loading() {
     return (
@@ -45,6 +46,7 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
     const [pinnedPost, setPinnedPost] = useState<Post | null>(null);
     const [spotifyData, setSpotifyData] = useState<Spotify.CurrentlyPlayingResponse>();
     const [lastfmData, setLastfmData] = useState<lastfm.NowPlaying | null>(null);
+    const [joinDate, setJoinDate] = useState<string>();
 
     const [bgGradient, setBgGradient] = useState(
         `linear-gradient(-45deg, ${ShadeColor(
@@ -123,6 +125,9 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
 
     useEffect(() => {
         (async () => {
+            const date = new Date(parseInt(user.creation_date.$date.$numberLong));
+            setJoinDate(`${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`);
+
             const posts = (await axios.get(`${api_uri}/api/post/get/profile?handle=${user.handle}&offset=${postOffset}`)).data;
             setPosts(posts.posts);
             setPostOffset(posts.offset);
@@ -245,14 +250,7 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                     className="profile-container"
                 >
                     <p className="profile-container-header">Joined At</p>
-                    <p className="about_me">
-                        {new Date(parseInt(user.creation_date.$date.$numberLong)).toLocaleString("default", {
-                            month: "long",
-                        })}{" "}
-                        {new Date(parseInt(user.creation_date.$date.$numberLong)).getDay()}
-                        {", "}
-                        {new Date(parseInt(user.creation_date.$date.$numberLong)).getFullYear()}
-                    </p>
+                    <p className="about_me">{joinDate}</p>
                 </div>
                 {user.activity.replace(/ /g, "") != "" ? (
                     <div
