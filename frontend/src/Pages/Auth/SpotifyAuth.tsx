@@ -24,16 +24,18 @@ function SpotifyAuth() {
                     code,
                     token: localStorage.getItem("access_token"),
                 })
+                .then((res) => {
+                    authMessage.current.innerText = "Authenticated!";
+                    authMessage.current.setAttribute("style", "color: lime;");
+                    setTimeout(() => {
+                        window.location.href = "/settings";
+                    }, 1000);
+                })
                 .catch((e) => {
                     console.error(e);
+                    authMessage.current.innerText = "Authenticaion Failed!";
+                    authMessage.current.setAttribute("style", "color: red;");
                 });
-
-            authMessage.current.innerText = "Authenticated!";
-            authMessage.current.setAttribute("style", "color: lime;");
-
-            setTimeout(() => {
-                window.location.href = "/settings";
-            }, 1000);
         })();
     }, []);
 

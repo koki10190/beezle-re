@@ -27,9 +27,9 @@ function DiscordAuth() {
                 .then((res) => {
                     authMessage.current.innerText = "Authenticated!";
                     authMessage.current.setAttribute("style", "color: lime;");
-                    // setTimeout(() => {
-                    //     window.location.href = "/settings";
-                    // }, 1000);
+                    setTimeout(() => {
+                        window.location.href = "/settings";
+                    }, 1000);
                 })
                 .catch((e) => {
                     console.error(e);

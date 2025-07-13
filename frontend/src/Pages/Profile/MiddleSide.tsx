@@ -519,7 +519,10 @@ function MiddleSide({ handle }: { handle: string }) {
             if (localStorage.getItem("access_token")) {
                 setSelfUser(await fetchUserPrivate());
             }
-            setUser(await fetchUserPublic(handle));
+            const fetch_user = await fetchUserPublic(handle);
+            setUser(fetch_user);
+
+            if (!fetch_user) window.location.href = "/not-found";
         })();
     }, []);
 
