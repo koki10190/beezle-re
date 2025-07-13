@@ -15,7 +15,7 @@ function NotFound() {
                         color: "#ffffffa0",
                     }}
                 >
-                    The bees cannot find their hives {":("}
+                    The bees cannot find their hive {":("}
                 </h3>
             </div>
             <div className="snowflakes" aria-hidden="true">
