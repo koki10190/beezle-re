@@ -22,6 +22,7 @@ function Connections({ user }: Props) {
     const [spotify_connected, setSpotifyConnected] = useState(user.connections?.spotify?.access_token ? true : false);
     const [discord_connected, setDiscordConnected] = useState(user.connections?.discord?.access_token ? true : false);
     const [lastfm_connected, setLastfmConnected] = useState(user.connections?.lastfm?.username ? true : false);
+    const [show_scrobbling, setShowScrobbling] = useState(user.connections?.lastfm?.show_scrobbling);
     const lastfm_username = useRef<HTMLInputElement>();
     const statePassRef = useRef<HTMLParagraphElement>(null);
 
@@ -54,6 +55,17 @@ function Connections({ user }: Props) {
         setTimeout(() => {
             window.location.reload();
         }, 750);
+    };
+
+    const LastFmSetShowScorbbling = async () => {
+        const res = await axios.post(`${api_uri}/api/lastfm/show_scrobbling`, {
+            token: localStorage.getItem("access_token"),
+            show: !show_scrobbling,
+        });
+
+        setShowScrobbling((old) => !old);
+
+        toast.success(res.data);
     };
 
     return (
@@ -152,6 +164,9 @@ function Connections({ user }: Props) {
                         <p>
                             <i className="fa-brands fa-lastfm"></i> last.fm: {user.connections.lastfm.username}
                         </p>
+                        <button onClick={LastFmSetShowScorbbling} className={`button-field button-field-${show_scrobbling ? "red" : "green"}`}>
+                            {show_scrobbling ? "Disable Showcase" : "Enable Showcase"}
+                        </button>
                         <button
                             onClick={async () => {
                                 const res = await axios.post(`${api_uri}/api/lastfm/remove_username`, {

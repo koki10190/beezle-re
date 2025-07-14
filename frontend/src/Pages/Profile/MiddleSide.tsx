@@ -47,7 +47,9 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
     const [pinnedPost, setPinnedPost] = useState<Post | null>(null);
     const [spotifyData, setSpotifyData] = useState<Spotify.CurrentlyPlayingResponse>();
     const [lastfmData, setLastfmData] = useState<lastfm.NowPlaying | null>(null);
+    const [lastfmUserData, setLastfmUserData] = useState<{ user: lastfm.User } | null>(null);
     const [joinDate, setJoinDate] = useState<string>();
+    const [steam_user_data, setSteamUserData] = useState<Steam.PlayerSummary>();
 
     const [bgGradient, setBgGradient] = useState(
         `linear-gradient(-45deg, ${ShadeColor(
@@ -121,6 +123,15 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
             }
 
             setLastfmData(data);
+
+            const res_user = await axios.get(`${api_uri}/api/lastfm/get_user?username=${user.connections.lastfm.username}`);
+
+            if (res_user.data?.error) {
+                setLastfmUserData(null);
+                return;
+            }
+
+            setLastfmUserData(res_user.data);
         } catch (e) {}
     };
 
@@ -143,6 +154,10 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                     const steam_res = await axios.get(`${api_uri}/api/connections/steam_get_game?steam_id=${user.connections.steam.id}`);
                     const steam_data = steam_res.data;
                     if (steam_data) setSteamData(steam_data[Object.keys(steam_data)[0]].data);
+
+                    const steam_ps_res = await axios.get(`${api_uri}/api/connections/steam_get?steam_id=${user.connections.steam.id}`);
+                    console.log(steam_ps_res.data);
+                    if (steam_ps_res.data) setSteamUserData(steam_ps_res.data as Steam.PlayerSummary);
                 }
             } catch (e) {
                 console.error("STEAM ERROR CAUGHT:", e);
@@ -306,24 +321,44 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                             ) : (
                                 ""
                             )}
-                            {user.connections.steam ? (
+                            {user.connections.steam && steam_user_data ? (
                                 <a
                                     className="remove-textdecor button-field button-field-blue"
                                     href={`https://steamcommunity.com/profiles/${user.connections.steam.id}`}
                                     target="_blank"
                                 >
-                                    <i className="fa-brands fa-steam"></i> Steam
+                                    <i className="fa-brands fa-steam"></i> Steam:{" "}
+                                    <div
+                                        style={{
+                                            backgroundImage: `url(${steam_user_data?.avatar ?? "0"})`,
+                                            verticalAlign: "middle",
+                                            width: "20px",
+                                            height: "20px",
+                                        }}
+                                        className="connections-pfp"
+                                    ></div>{" "}
+                                    {steam_user_data?.personaname ?? "NO_NAME"}
                                 </a>
                             ) : (
                                 ""
                             )}
-                            {user.connections.lastfm ? (
+                            {user.connections.lastfm && lastfmUserData ? (
                                 <a
                                     className="remove-textdecor button-field button-field-red"
                                     href={`https://last.fm/user/${user.connections.lastfm.username}`}
                                     target="_blank"
                                 >
-                                    <i className="fa-brands fa-lastfm"></i> last.fm ({user.connections.lastfm.username})
+                                    <i className="fa-brands fa-lastfm"></i> last.fm:{" "}
+                                    <div
+                                        style={{
+                                            backgroundImage: `url(${lastfmUserData.user.image[0]["#text"]})`,
+                                            verticalAlign: "middle",
+                                            width: "20px",
+                                            height: "20px",
+                                        }}
+                                        className="connections-pfp"
+                                    ></div>{" "}
+                                    {user.connections.lastfm.username}
                                 </a>
                             ) : (
                                 ""
@@ -344,7 +379,7 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                                         }}
                                         className="connections-pfp"
                                     ></div>{" "}
-                                    ({user.connections.spotify.display_name})
+                                    {user.connections.spotify.display_name}
                                 </a>
                             ) : (
                                 ""
@@ -433,7 +468,7 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                 ) : (
                     ""
                 )}
-                {lastfmData && user.connections?.lastfm?.username ? (
+                {lastfmData && user.connections?.lastfm?.username && user.connections?.lastfm?.show_scrobbling ? (
                     <div
                         style={{
                             background: gradient,

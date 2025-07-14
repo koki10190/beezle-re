@@ -165,6 +165,8 @@ async fn main() -> std::io::Result<()> {
             .service(routes::api::lastfm::now_playing::route)
             .service(routes::api::lastfm::set_username::route)
             .service(routes::api::lastfm::remove_username::route)
+            .service(routes::api::lastfm::get_user::route)
+            .service(routes::api::lastfm::show_scrobbling::route)
             .service(routes::api::post::react::route)
             .route("/ws", web::get().to(socket::main_ws))
             // .wrap(middleware::Logger::default())

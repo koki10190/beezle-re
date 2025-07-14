@@ -7,5 +7,3 @@ Content-Type: application/json
   "email": "w@gmail.com",
   "password": "1234567890"
 }
-
-###

@@ -46,6 +46,7 @@ interface UserConnections {
     };
     lastfm: {
         username: string;
+        show_scrobbling?: boolean;
     };
     discord: {
         access_token: string;
