@@ -37,6 +37,8 @@ interface PostBoxData {
     override_gradient?: { gradient1: string; gradient2: string };
     box?: boolean;
     className?: string;
+    reply_box?: boolean;
+    reply_chain_counter?: number;
 }
 
 interface ReactionsInter {
@@ -46,6 +48,9 @@ interface ReactionsInter {
 interface ReactionStruct {
     reactions: ReactionsInter | null;
 }
+
+const MIN_RANDOM_REPLY_CHAIN = 3,
+    MAX_RANDOM_REPLY_CHAIN = 3;
 
 function PostBox({
     post,
@@ -57,8 +62,13 @@ function PostBox({
     pinned = false,
     box = true,
     className = "",
+    reply_box = false,
+    reply_chain_counter = 0,
 }: PostBoxData) {
-    console.log(post);
+    const [MAX_REPLY_CHAIN, setMaxReplyChain] = useState(
+        Math.floor(Math.random() * (MAX_RANDOM_REPLY_CHAIN - MIN_RANDOM_REPLY_CHAIN + 1)) + MIN_RANDOM_REPLY_CHAIN,
+    );
+    const [replyChainCounter, setReplyChainCounter] = useState(reply_chain_counter);
     const [user, setUser] = useState<UserPublic>();
     const [isLiked, setLiked] = useState(false);
     const [isReposted, setReposted] = useState(false);
@@ -192,6 +202,17 @@ function PostBox({
     useEffect(() => {
         GetAllMentions();
 
+        // if (!reply_box) {
+        setPosts((old: Array<Post>) => {
+            const index = old.findIndex((x) => x.post_id == post.replying_to);
+            console.log("deleting", post.post_id, post.replying_to);
+            if (index > -1) {
+                old.splice(index, 1);
+            }
+            return [...old];
+        });
+        // }
+
         (async () => {
             let user: UserPublic = {} as any;
             if (post.repost) {
@@ -228,7 +249,8 @@ function PostBox({
             setBookmarked(self_user.bookmarks.find((s) => s === post.post_id) ? true : false);
             setReplyCount((await axios.get(`${api_uri}/api/post/get/reply_count?post_id=${post.post_id}`)).data.count as number);
             if (post.is_reply) {
-                setReplyingToPost((await axios.get(`${api_uri}/api/post/get/one?post_id=${post.replying_to}`)).data);
+                const reply_data = (await axios.get(`${api_uri}/api/post/get/one?post_id=${post.replying_to}`)).data;
+                setReplyingToPost(reply_data.error ? undefined : reply_data);
             }
 
             if (user.connections?.steam?.id) {
@@ -253,8 +275,24 @@ function PostBox({
     }, []);
 
     useEffect(() => {
-        // console.log("Post", post.content, "Handle", post.handle);
-    }, [user]);
+        (async () => {
+            if (allow_reply_attribute && post?.is_reply && replyingToPost != undefined && !(replyingToPost as any).error) {
+                // console.log("some people deserve to die");
+                const user = await fetchUserPublic(replyingToPost.handle);
+
+                const color1 = ShadeColor(
+                    user.customization?.profile_gradient ? user.customization.profile_gradient.color1 : "rgb(231, 129, 98)",
+                    -25,
+                );
+                const color2 = ShadeColor(
+                    user.customization?.profile_gradient ? user.customization.profile_gradient.color2 : "rgb(231, 129, 98)",
+                    -25,
+                );
+
+                setBgGradient(`linear-gradient(-45deg, ${color1}, ${color2})`);
+            }
+        })();
+    }, [replyingToPost]);
 
     const ReplyInteraction = async () => {
         window.location.href = `/post/${post.post_id}`;
@@ -390,6 +428,8 @@ function PostBox({
                 });
             }
         }
+
+        if (reply_box) window.location.reload();
     };
 
     return (
@@ -409,14 +449,21 @@ function PostBox({
                 }
                 className={"post-box" + className}
             >
-                {allow_reply_attribute && post?.is_reply && replyingToPost != undefined ? (
+                {allow_reply_attribute &&
+                post?.is_reply &&
+                replyingToPost != undefined &&
+                !(replyingToPost as any).error &&
+                replyChainCounter < MAX_REPLY_CHAIN ? (
                     <PostBox
+                        reply_box={true}
                         box={false}
                         delete_post_on_bookmark_remove={true}
                         setPosts={setPosts}
                         self_user={self_user}
                         key={replyingToPost.post_id}
                         post={replyingToPost}
+                        allow_reply_attribute={true}
+                        reply_chain_counter={replyChainCounter + 1}
                     />
                 ) : (
                     ""
@@ -442,19 +489,34 @@ function PostBox({
                 ) : (
                     ""
                 )}
-                {allow_reply_attribute && post.is_reply ? (
+                {allow_reply_attribute && replyChainCounter < MAX_REPLY_CHAIN && post.is_reply ? (
                     <>
-                        <hr
-                            style={{
-                                width: "calc(100% + 40px)",
-                                marginLeft: "-20px",
-                            }}
-                            className="divider"
-                        ></hr>
+                        {replyingToPost != undefined || (replyingToPost as any)?.error != undefined ? (
+                            <hr
+                                style={{
+                                    width: "calc(100% + 40px)",
+                                    marginLeft: "-20px",
+                                }}
+                                className="divider"
+                            ></hr>
+                        ) : (
+                            ""
+                        )}
                         <h1 className="post-replying-to">
-                            <i className="fa-solid fa-reply"></i> Reply
+                            <i className="fa-solid fa-reply"></i>{" "}
+                            {replyingToPost == undefined || (replyingToPost as any).error
+                                ? "Replying to a deleted post"
+                                : `Replying to @${replyingToPost.handle}`}
                         </h1>
                     </>
+                ) : (
+                    ""
+                )}
+                {reply_box && replyChainCounter >= MAX_REPLY_CHAIN && replyingToPost && !(replyingToPost as any)?.error ? (
+                    <h4 onClick={() => (window.location.href = replyingToPost?.content ? `/post/${post.replying_to}` : `/`)} className="post-attr">
+                        <i className="fa-solid fa-comment"></i> Replying to{" "}
+                        {replyingToPost?.content ? TrimToDots(replyingToPost?.content, 16) : "[REDACTED]"}
+                    </h4>
                 ) : (
                     ""
                 )}

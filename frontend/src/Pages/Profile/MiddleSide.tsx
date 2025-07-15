@@ -67,6 +67,7 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
 
         matches?.forEach(async (mention) => {
             const element = document.getElementById("mention-hover-" + mention.replace("@", "") + "-" + user.handle) as HTMLAnchorElement;
+            console.log(element, "mention-hover-" + mention.replace("@", "") + "-" + user.handle);
 
             if (element) {
                 element.onmouseover = () => {
@@ -111,13 +112,13 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
 
     const handleScroll = async (event: UIEvent<HTMLDivElement>) => {
         const element = event.target! as HTMLDivElement;
-        if (!(element.scrollHeight - element.scrollTop === element.clientHeight)) return;
+        if (!(element.scrollHeight - element.scrollTop === element.clientHeight) || posts.length < 6) return;
 
         // detected bottom
 
-        const posts = (await axios.get(`${api_uri}/api/post/get/profile?handle=${user.handle}&offset=${postOffset}`)).data;
-        setPosts((old) => [...old, ...posts.posts]);
-        setPostOffset(posts.offset);
+        const _posts = (await axios.get(`${api_uri}/api/post/get/profile?handle=${user.handle}&offset=${postOffset}`)).data;
+        setPosts((old) => [...old, ..._posts.posts]);
+        setPostOffset(_posts.offset);
 
         // setPosts(old => [...old, ...allPosts.splice(postOffset, postOffset + 5)]);
     };
@@ -278,7 +279,7 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                             <p className="profile-container-header">About Me</p>
                             <p
                                 dangerouslySetInnerHTML={{
-                                    __html: parseURLs(user.about_me, user, false, "koki"),
+                                    __html: parseURLs(user.about_me, user, false, user.handle),
                                 }}
                                 className="about_me"
                             ></p>
@@ -348,7 +349,7 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                                 ) : (
                                     ""
                                 )}
-                                {user.connections.steam && steam_user_data ? (
+                                {user.connections.steam ? (
                                     <a
                                         className="remove-textdecor button-field button-field-blue"
                                         href={`https://steamcommunity.com/profiles/${user.connections.steam.id}`}
@@ -364,12 +365,12 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                                             }}
                                             className="connections-pfp"
                                         ></div>{" "}
-                                        {steam_user_data?.personaname ?? "NO_NAME"}
+                                        {steam_user_data?.personaname ?? ""}
                                     </a>
                                 ) : (
                                     ""
                                 )}
-                                {user.connections.lastfm && lastfmUserData ? (
+                                {user.connections.lastfm ? (
                                     <a
                                         className="remove-textdecor button-field button-field-red"
                                         href={`https://last.fm/user/${user.connections.lastfm.username}`}
@@ -378,7 +379,7 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                                         <i className="fa-brands fa-lastfm"></i> last.fm:{" "}
                                         <div
                                             style={{
-                                                backgroundImage: `url(${lastfmUserData.user.image[0]["#text"]})`,
+                                                backgroundImage: `url(${lastfmUserData?.user.image[0]["#text"] ?? ""})`,
                                                 verticalAlign: "middle",
                                                 width: "20px",
                                                 height: "20px",
@@ -543,7 +544,7 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                                     ? { gradient1: user.customization.profile_gradient.color1, gradient2: user.customization.profile_gradient.color2 }
                                     : null
                             }
-                            setPosts={null}
+                            setPosts={setPosts}
                             self_user={self as UserPrivate}
                             key={pinnedPost.post_id}
                             post={pinnedPost}
