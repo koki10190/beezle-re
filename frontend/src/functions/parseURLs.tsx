@@ -8,10 +8,19 @@ import FetchPost from "./FetchPost";
 import { fetchUserPublic } from "./fetchUserPublic";
 import BeezleEmoji from "../Components/Emoji";
 import { UserPublic } from "../types/User";
+import "./ParseURLs.css";
 
-function parseURLs(content: string, self_user: UserPublic): string {
+function MentionHover({ handle }: { handle: string }) {
+    return (
+        <div className="hover-mention-container">
+            <a>hello</a>
+        </div>
+    );
+}
+
+function parseURLs(content: string, self_user: UserPublic, embed = true, post_id = ""): string {
     let htmlToEmbed = "";
-    {
+    if (embed) {
         const matched = content.match(/\bhttps?:\/\/media\.tenor\.com\S+/gi);
 
         let i = 0;
@@ -26,7 +35,7 @@ function parseURLs(content: string, self_user: UserPublic): string {
         });
     }
 
-    {
+    if (embed) {
         const matched = content.match(/\bhttps?:\/\/i\.tenor\.com\S+/gi);
 
         let i = 0;
@@ -41,7 +50,7 @@ function parseURLs(content: string, self_user: UserPublic): string {
         });
     }
 
-    {
+    if (embed) {
         const matched = content.match(/\bhttps?:\/\/i\.imgur\.com\S+/gi);
 
         let i = 0;
@@ -71,7 +80,7 @@ function parseURLs(content: string, self_user: UserPublic): string {
         // /\bhttps?:\/\/files\.catbox\.moe\S+/gi;
     }
 
-    {
+    if (embed) {
         if (content.match(/youtube\.com|youtu\.be/g)) {
             const matches = content.match(/(?:https?:\/\/)?(?:www\.)?youtu\.?be(?:\.com)?\/?.*(?:watch|embed)?(?:.*v=|v\/|\/)([\w\-_]+)\&?/g);
             matches?.forEach((match) => {
@@ -101,7 +110,14 @@ function parseURLs(content: string, self_user: UserPublic): string {
     // }
 
     let final = sanitize(content)
-        .replace(/@([a-z\d_\.-]+)/gi, `<a class="mention" href="/profile/$1">@$1</a>`)
+        .replace(
+            /@([a-z\d_\.-]+)/gi,
+            ReactDOMServer.renderToStaticMarkup(
+                <a id={"mention-hover-$1-" + post_id} className="mention" href={"/profile/$1"}>
+                    @{"$1"}
+                </a>,
+            ),
+        )
         .replace(/#([A-Za-z0-9]+)/gi, `<a class="mention" href="/hashtag/$1">#$1</a>`);
 
     final = final.replace(/&lt;/g, "<");

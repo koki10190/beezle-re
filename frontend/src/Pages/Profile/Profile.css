@@ -111,6 +111,7 @@ body {
 .profile-container-header {
     margin-bottom: -15px;
     color: rgba(255, 255, 255, 0.7);
+    white-space: pre-line;
 }
 
 .profile-container-header-highlight {

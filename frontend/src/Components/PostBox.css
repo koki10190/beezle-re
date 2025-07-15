@@ -247,3 +247,46 @@ aside li {
 .reactions > p .reaction-count {
     margin-left: 5px;
 }
+
+.mention-hover {
+    position: absolute;
+    width: fit-content;
+    height: fit-content;
+    padding: 15px;
+    border-radius: 5px;
+    background-color: #101010;
+    border: 1px solid black;
+    z-index: 1;
+}
+
+.mention-hover .pfp {
+    background-color: white;
+    width: 50px;
+    height: 50px;
+    border-radius: 100%;
+}
+
+.mention-hover .mention-hover-user-details {
+    margin-top: -60px;
+    margin-left: 60px;
+}
+
+.mention-hover-user-details .username {
+    margin-bottom: -15px;
+}
+
+.mention-hover-user-details .handle {
+    font-size: 14px;
+    color: #ffffffa0;
+}
+
+.mention-hover .about-me {
+    margin-top: 20px;
+    white-space: pre-line;
+    margin-bottom: -15px;
+}
+
+.post-replying-to {
+    color: #ffffffa0;
+    font-size: 15px;
+}

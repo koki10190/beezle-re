@@ -1,16 +1,17 @@
-import axios from 'axios';
-import { FormEvent, useEffect, useRef, useState } from 'react';
-import { BrowserRouter, Routes, Route, redirect } from 'react-router-dom';
-import { api_uri } from '../../links';
-import { checkToken } from '../../functions/checkToken';
-import React from 'react';
-import { fetchUserPrivate } from '../../functions/fetchUserPrivate';
-import { UserPrivate, UserPublic } from '../../types/User';
-import './EditProfile.css';
-import { fetchUserPublic } from '../../functions/fetchUserPublic';
-import { BadgesToJSX } from '../../functions/badgesToJSX';
-import UploadToImgur from '../../functions/UploadToImgur';
-import { toast } from 'react-toastify';
+import axios from "axios";
+import { FormEvent, useEffect, useRef, useState } from "react";
+import { BrowserRouter, Routes, Route, redirect } from "react-router-dom";
+import { api_uri } from "../../links";
+import { checkToken } from "../../functions/checkToken";
+import React from "react";
+import { fetchUserPrivate } from "../../functions/fetchUserPrivate";
+import { UserPrivate, UserPublic } from "../../types/User";
+import "./EditProfile.css";
+import { fetchUserPublic } from "../../functions/fetchUserPublic";
+import { BadgesToJSX } from "../../functions/badgesToJSX";
+import UploadToImgur from "../../functions/UploadToImgur";
+import { toast } from "react-toastify";
+import EmojiPicker, { EmojiClickData, EmojiStyle, Theme } from "emoji-picker-react";
 
 function Loading() {
     return (
@@ -32,11 +33,12 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
     const [about_me, setAboutMe] = useState<string>(user.about_me);
     const [activity, setActivity] = useState<string>(user.activity);
     const [squareAvatar, setSquareAvatar] = useState<boolean>(user.customization?.square_avatar ? true : false);
-    const [profileBgImg, setProfileBgImage] = useState(user.customization?.profile_postbox_img_bought ? user.customization.profile_postbox_img : '');
-    const [g1, setG1] = useState<string>(user.customization?.profile_gradient ? user.customization.profile_gradient.color1 : '#000000');
-    const [g2, setG2] = useState<string>(user.customization?.profile_gradient ? user.customization.profile_gradient.color2 : '#000000');
-    const [ng1, setNG1] = useState<string>(user.customization?.name_color ? user.customization.name_color.color1 : '#000000');
-    const [ng2, setNG2] = useState<string>(user.customization?.name_color ? user.customization.name_color.color2 : '#000000');
+    const [profileBgImg, setProfileBgImage] = useState(user.customization?.profile_postbox_img_bought ? user.customization.profile_postbox_img : "");
+    const [g1, setG1] = useState<string>(user.customization?.profile_gradient ? user.customization.profile_gradient.color1 : "#000000");
+    const [g2, setG2] = useState<string>(user.customization?.profile_gradient ? user.customization.profile_gradient.color2 : "#000000");
+    const [ng1, setNG1] = useState<string>(user.customization?.name_color ? user.customization.name_color.color1 : "#000000");
+    const [ng2, setNG2] = useState<string>(user.customization?.name_color ? user.customization.name_color.color2 : "#000000");
+    const [isEmojiPickerOpened, setEmojiPickerOpened] = useState(false);
     const bannerOverlay = useRef<HTMLDivElement>(null);
     const avatarOverlay = useRef<HTMLDivElement>(null);
     const avatarInput = useRef<HTMLInputElement>(null);
@@ -47,11 +49,11 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
     const buttonRef = useRef<HTMLButtonElement>(null);
 
     const ActivateOverlay = (ref: HTMLDivElement) => {
-        ref.style.display = 'flex';
+        ref.style.display = "flex";
     };
 
     const DeactivateOverlay = (ref: HTMLDivElement) => {
-        ref.style.display = 'none';
+        ref.style.display = "none";
     };
 
     const Buy = async (buy_what: BuyWhat) => {
@@ -59,20 +61,20 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
         switch (buy_what) {
             case BuyWhat.PROFILE_GRADIENT: {
                 res = await axios.post(`${api_uri}/api/user/buy/profile_gradient`, {
-                    token: localStorage.getItem('access_token'),
+                    token: localStorage.getItem("access_token"),
                 });
                 break;
             }
             case BuyWhat.NAME_COLOR: {
                 res = await axios.post(`${api_uri}/api/user/buy/name_color`, {
-                    token: localStorage.getItem('access_token'),
+                    token: localStorage.getItem("access_token"),
                 });
                 break;
             }
         }
 
         if (res.data.bought) {
-            toast.success('Successfully bought the item!');
+            toast.success("Successfully bought the item!");
             window.location.reload();
         } else {
             toast.error(res.data.error);
@@ -90,7 +92,7 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
 
         (async () => {
             buttonRef.current!.disabled = true;
-            buttonRef.current!.innerText = 'Saving Changes...';
+            buttonRef.current!.innerText = "Saving Changes...";
             if (avatarInput.current!.files && avatarInput.current!.files.length > 0)
                 avatar = ((await UploadToImgur(avatarInput.current!)) as any).data.link;
             if (bannerInput.current!.files && bannerInput.current!.files.length > 0)
@@ -101,8 +103,8 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
             // }
 
             const data = {
-                username: username == '' ? user.username : username,
-                token: localStorage.getItem('access_token'),
+                username: username == "" ? user.username : username,
+                token: localStorage.getItem("access_token"),
                 avatar: avatar ? avatar : user.avatar,
                 banner: banner ? banner : user.banner,
                 about_me,
@@ -112,18 +114,18 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
                 name_color1: ng1,
                 name_color2: ng2,
                 square_avatar: squareAvatar,
-                profile_postbox_img: __ProfileBgImage ? __ProfileBgImage : '',
+                profile_postbox_img: __ProfileBgImage ? __ProfileBgImage : "",
             };
             console.log(data);
             const m_data = (await axios.post(`${api_uri}/api/profile/edit`, data)).data;
             if (m_data.changed) {
-                toast.success('Profile has been edited successfully');
+                toast.success("Profile has been edited successfully");
             } else {
                 toast.error(m_data.error);
             }
 
             buttonRef.current!.disabled = false;
-            buttonRef.current!.innerText = 'Save Changes';
+            buttonRef.current!.innerText = "Save Changes";
         })();
     };
 
@@ -174,13 +176,13 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
             </div>
             <input
                 style={{
-                    marginTop: '-110px',
+                    marginTop: "-110px",
                 }}
                 className="username input-field username-edit"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
             />
-            <div style={{ marginTop: '82px' }}>
+            <div style={{ marginTop: "82px" }}>
                 <div className="profile-container-nom">
                     <p className="profile-container-header">About Me</p>
                     <textarea
@@ -191,6 +193,33 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
                     >
                         {user.about_me}
                     </textarea>
+                    <a
+                        onClick={() => {
+                            setEmojiPickerOpened(!isEmojiPickerOpened);
+                        }}
+                        style={{
+                            fontSize: "17px",
+                        }}
+                        className="post-typer-button"
+                    >
+                        <i className="fa-solid fa-face-awesome" /> Emojis
+                    </a>
+                    {isEmojiPickerOpened ? (
+                        <EmojiPicker
+                            onEmojiClick={(emojiData: EmojiClickData, event: MouseEvent) => {
+                                setAboutMe((old) => {
+                                    const _new = old;
+                                    return _new + (emojiData.isCustom ? `<:${emojiData.emoji}:> ` : emojiData.emoji);
+                                });
+                            }}
+                            customEmojis={user.customization?.emojis ? user.customization?.emojis : []}
+                            theme={Theme.DARK}
+                            emojiStyle={EmojiStyle.NATIVE}
+                            className="post-typer-emoji-picker"
+                        />
+                    ) : (
+                        ""
+                    )}
                 </div>
                 <div className="profile-container-nom">
                     <p className="profile-container-header">Activity</p>
@@ -205,13 +234,13 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
                             value={g1}
                             onChange={(e) => setG1(e.target.value)}
                             className="about_me color-picker"
-                            style={{ marginBottom: '-15px' }}
+                            style={{ marginBottom: "-15px" }}
                             type="color"
                         />
                         <input value={g2} onChange={(e) => setG2(e.target.value)} className="about_me color-picker" type="color" />
                     </div>
                 ) : (
-                    ''
+                    ""
                 )}
                 {user.customization?.name_color_bought ? (
                     <div className="profile-container-nom">
@@ -220,13 +249,13 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
                             value={ng1}
                             onChange={(e) => setNG1(e.target.value)}
                             className="about_me color-picker"
-                            style={{ marginBottom: '-15px' }}
+                            style={{ marginBottom: "-15px" }}
                             type="color"
                         />
                         <input value={ng2} onChange={(e) => setNG2(e.target.value)} className="about_me color-picker" type="color" />
                     </div>
                 ) : (
-                    ''
+                    ""
                 )}
                 {/* {user.customization?.profile_postbox_img_bought ? (
                     <div className="profile-container-nom">
@@ -245,17 +274,17 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
                 )} */}
                 {user.customization?.square_avatar_bought ? (
                     <>
-                        <p style={{ display: 'inline' }}>Square Avatar</p>
+                        <p style={{ display: "inline" }}>Square Avatar</p>
                         <input
                             defaultChecked={squareAvatar}
                             onChange={() => setSquareAvatar((old) => !old)}
-                            style={{ marginLeft: '10px', display: 'inline' }}
+                            style={{ marginLeft: "10px", display: "inline" }}
                             className="input-checkbox"
                             type="checkbox"
                         />
                     </>
                 ) : (
-                    ''
+                    ""
                 )}
             </div>
 
@@ -272,7 +301,7 @@ function MiddleSide() {
 
     useEffect(() => {
         (async () => {
-            if (localStorage.getItem('access_token')) {
+            if (localStorage.getItem("access_token")) {
                 setSelfUser(await fetchUserPrivate());
             }
         })();

@@ -103,7 +103,14 @@ function Connections({ user }: Props) {
                 {spotify_connected ? (
                     <>
                         <p>
-                            <i className="fa-brands fa-spotify"></i> Spotify Connected
+                            <i className="fa-brands fa-spotify"></i> Spotify:{" "}
+                            <div
+                                style={{
+                                    backgroundImage: `url(${user.connections.spotify.images[0].url})`,
+                                }}
+                                className="connections-pfp"
+                            ></div>{" "}
+                            {user.connections.spotify.display_name}
                         </p>
                         <button
                             onClick={async () => {
