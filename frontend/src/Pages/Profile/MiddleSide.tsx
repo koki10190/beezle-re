@@ -302,22 +302,26 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                             {isFollowing ? "Unfollow" : "Follow"}
                         </button>
                     )}
-                    {hasNotif ? (
-                        <button
-                            onClick={SetNotificationForSelf}
-                            style={{ marginTop: "50px" }}
-                            className="button-field button-field-red profile-edit-button"
-                        >
-                            <i className="fa-solid fa-bell-on" />
-                        </button>
+                    {user.handle !== self?.handle ? (
+                        hasNotif ? (
+                            <button
+                                onClick={SetNotificationForSelf}
+                                style={{ marginTop: "50px" }}
+                                className="button-field button-field-red profile-edit-button"
+                            >
+                                <i className="fa-solid fa-bell-on" />
+                            </button>
+                        ) : (
+                            <button
+                                onClick={SetNotificationForSelf}
+                                style={{ marginTop: "50px" }}
+                                className="button-field button-field-blurple profile-edit-button"
+                            >
+                                <i className="fa-solid fa-bell-plus" />
+                            </button>
+                        )
                     ) : (
-                        <button
-                            onClick={SetNotificationForSelf}
-                            style={{ marginTop: "50px" }}
-                            className="button-field button-field-blurple profile-edit-button"
-                        >
-                            <i className="fa-solid fa-bell-plus" />
-                        </button>
+                        ""
                     )}
                     {user.about_me !== "" ? (
                         <div
