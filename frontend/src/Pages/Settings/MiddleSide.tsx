@@ -18,6 +18,7 @@ import Connections from "./Pages/Connections";
 import CustomEmojis from "./Pages/CustomEmojis";
 import { toast } from "react-toastify";
 import ChangeAccounts from "./Pages/ChangeAccounts";
+import PostPreferences from "./Pages/PostPreferences";
 
 function SettingsButton({
     redirect = "",
@@ -54,6 +55,7 @@ enum Pages {
     CONNECTIONS,
     CUSTOM_EMOJIS,
     CHANGE_ACCOUNTS,
+    POST_PREFERENCES,
 }
 
 function RightSide({ setPage }: { setPage: any }) {
@@ -128,6 +130,7 @@ function RightSide({ setPage }: { setPage: any }) {
                 />
                 <SettingsButton onClick={() => setPage(Pages.CUSTOM_EMOJIS)} iconClass="fa-solid fa-icons" text="Custom Emojis" style={undefined} />
                 <SettingsButton onClick={() => setPage(Pages.CHANGE_ACCOUNTS)} iconClass="fa-solid fa-users" text="Accounts" style={undefined} />
+                {/* <SettingsButton onClick={() => setPage(Pages.POST_PREFERENCES)} iconClass="fa-solid fa-comment" text="Posts" style={undefined} /> */}
                 <SettingsButton redirect="/home" iconClass="fa-solid fa-home" text="Go Back" style={undefined} />
                 <SettingsButton
                     iconClass="fa-solid fa-trash"
@@ -174,6 +177,8 @@ function MiddleSide() {
                               return <CustomEmojis user={self_user} />;
                           case Pages.CHANGE_ACCOUNTS:
                               return <ChangeAccounts user={self_user} />;
+                          case Pages.POST_PREFERENCES:
+                              return <PostPreferences user={self_user} />;
                       }
                   })()
                 : ""}

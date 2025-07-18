@@ -168,6 +168,8 @@ async fn main() -> std::io::Result<()> {
             .service(routes::api::lastfm::get_user::route)
             .service(routes::api::lastfm::show_scrobbling::route)
             .service(routes::api::post::react::route)
+            .service(routes::api::user::add_notif::route)
+            .service(routes::api::user::check_has_notif::route)
             .route("/ws", web::get().to(socket::main_ws))
             // .wrap(middleware::Logger::default())
     });

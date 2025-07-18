@@ -97,9 +97,10 @@ function FollowBox({ handle, self_user }: FollowBoxData) {
                     style={{
                         whiteSpace: "pre-line",
                     }}
-                >
-                    {user.about_me}
-                </p>
+                    dangerouslySetInnerHTML={{
+                        __html: parseURLs(user?.about_me ?? "Hello! I'm new here.", user, false),
+                    }}
+                ></p>
                 {user.handle !== self_user.handle ? (
                     <button onClick={FollowInteraction} style={{ width: "100%", fontSize: "15px" }} className="button-field">
                         {isFollowing ? "Unfollow" : "Follow"}

@@ -10,6 +10,7 @@ import { fetchUserPrivate } from "../../functions/fetchUserPrivate";
 import { UserPrivate, UserPublic } from "../../types/User";
 import { Post } from "../../types/Post";
 import { RefreshPosts } from "../../functions/RefreshPosts";
+import GetPostPrefsStringQuery from "../../functions/GetPostPrefsStringQuery";
 
 function MiddleSide() {
     const data: {
@@ -35,14 +36,14 @@ function MiddleSide() {
         // detected bottom
 
         console.log("at bottom!");
-        const posts = (await axios.get(`${api_uri}/api/post/get/now?offset=${postOffset}`)).data;
-        setPosts(old => [...old, ...posts.posts]);
+        const posts = (await axios.get(`${api_uri}/api/post/get/now?offset=${postOffset}&${GetPostPrefsStringQuery()}`)).data;
+        setPosts((old) => [...old, ...posts.posts]);
         setPostOffset(posts.offset);
     };
 
     useEffect(() => {
         (async () => {
-            const posts = (await axios.get(`${api_uri}/api/post/get/now?offset=${postOffset}`)).data;
+            const posts = (await axios.get(`${api_uri}/api/post/get/now?offset=${postOffset}&${GetPostPrefsStringQuery()}`)).data;
             setPosts(posts.posts);
             setPostOffset(posts.offset);
             setSelfUser((await fetchUserPrivate()) as UserPrivate);
@@ -50,7 +51,7 @@ function MiddleSide() {
     }, []);
 
     const OnTyperSend = (data: Post) => {
-        setPosts(old => [data, ...old]);
+        setPosts((old) => [data, ...old]);
     };
 
     return (
@@ -61,15 +62,7 @@ function MiddleSide() {
 
             {self_user
                 ? posts.map((post: Post) => {
-                      return (
-                          <PostBox
-                              allow_reply_attribute={true}
-                              setPosts={setPosts}
-                              self_user={self_user}
-                              key={post.post_id}
-                              post={post}
-                          />
-                      );
+                      return <PostBox allow_reply_attribute={true} setPosts={setPosts} self_user={self_user} key={post.post_id} post={post} />;
                   })
                 : ""}
         </div>

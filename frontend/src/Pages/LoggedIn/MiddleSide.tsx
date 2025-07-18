@@ -12,6 +12,7 @@ import { fetchUserPrivate } from "../../functions/fetchUserPrivate";
 import { UserPrivate, UserPublic } from "../../types/User";
 import { Post } from "../../types/Post";
 import { RefreshPosts } from "../../functions/RefreshPosts";
+import GetPostPrefsStringQuery from "../../functions/GetPostPrefsStringQuery";
 
 function MiddleSide() {
     const data: {
@@ -37,9 +38,9 @@ function MiddleSide() {
         // detected bottom
 
         console.log("at bottom!");
-        const data = (await axios.get(`${api_uri}/api/post/get/explore?offset=${offset}`)).data;
+        const data = (await axios.get(`${api_uri}/api/post/get/explore?offset=${offset}&${GetPostPrefsStringQuery()}`)).data;
 
-        setPosts(old => [...old, ...(data.posts as Array<Post>)]);
+        setPosts((old) => [...old, ...(data.posts as Array<Post>)]);
 
         setOffset(data.offset as number);
         // setAllPosts(old => {})
@@ -47,7 +48,7 @@ function MiddleSide() {
 
     useEffect(() => {
         (async () => {
-            const data = (await axios.get(`${api_uri}/api/post/get/explore?offset=${offset}`)).data;
+            const data = (await axios.get(`${api_uri}/api/post/get/explore?offset=${offset}&${GetPostPrefsStringQuery()}`)).data;
             setPosts(data.posts as Array<Post>);
             setOffset(data.offset as number);
             setSelfUser((await fetchUserPrivate()) as UserPrivate);
@@ -55,7 +56,7 @@ function MiddleSide() {
     }, []);
 
     const OnTyperSend = (data: Post) => {
-        setPosts(old => [data, ...old]);
+        setPosts((old) => [data, ...old]);
     };
 
     return (
@@ -66,15 +67,7 @@ function MiddleSide() {
 
             {self_user
                 ? posts.map((post: Post) => {
-                      return (
-                          <PostBox
-                              allow_reply_attribute={true}
-                              setPosts={setPosts}
-                              self_user={self_user}
-                              key={post.post_id}
-                              post={post}
-                          />
-                      );
+                      return <PostBox allow_reply_attribute={true} setPosts={setPosts} self_user={self_user} key={post.post_id} post={post} />;
                   })
                 : ""}
         </div>

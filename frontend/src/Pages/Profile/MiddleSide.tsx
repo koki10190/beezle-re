@@ -55,6 +55,9 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
     const [joinDate, setJoinDate] = useState<string>();
     const [steam_user_data, setSteamUserData] = useState<Steam.PlayerSummary>();
     const [mention_hover, setMentionHover] = useState<UserPublic | null>(null);
+    const [hasNotif, setHasNotif] = useState(false);
+    const [notif_can_enable, setCanEnableNotifs] = useState(true);
+    const [notifCooldown, setNotifCooldown] = useState(setTimeout(() => {}, 0));
     const mousePos = useMousePos();
 
     const OnMentionHovered = async (mention: string) => {
@@ -69,7 +72,7 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
             const element = document.getElementById("mention-hover-" + mention.replace("@", "") + "-" + user.handle) as HTMLAnchorElement;
             console.log(element, "mention-hover-" + mention.replace("@", "") + "-" + user.handle);
 
-            if (element) {
+            if (!element) {
                 element.onmouseover = () => {
                     OnMentionHovered(element.innerText);
                 };
@@ -112,7 +115,7 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
 
     const handleScroll = async (event: UIEvent<HTMLDivElement>) => {
         const element = event.target! as HTMLDivElement;
-        if (!(element.scrollHeight - element.scrollTop === element.clientHeight) || posts.length < 6) return;
+        if (!(element.scrollHeight - element.scrollTop === element.clientHeight)) return;
 
         // detected bottom
 
@@ -154,6 +157,26 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
         } catch (e) {}
     };
 
+    const SetNotificationForSelf = async () => {
+        if (!notif_can_enable) {
+            toast.error("You're on cooldown! Please wait a bit.");
+            return;
+        }
+        clearTimeout(notifCooldown);
+        setNotifCooldown(
+            setTimeout(() => {
+                setCanEnableNotifs(true);
+            }, 2000),
+        );
+        const res = await axios.post(`${api_uri}/api/user/add_notif`, {
+            token: localStorage.getItem("access_token"),
+            handle: user.handle,
+            add: !hasNotif,
+        });
+        setHasNotif((old) => !old);
+        setCanEnableNotifs(false);
+    };
+
     useEffect(() => {
         GetAllMentions();
 
@@ -164,6 +187,16 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
             const posts = (await axios.get(`${api_uri}/api/post/get/profile?handle=${user.handle}&offset=${postOffset}`)).data;
             setPosts(posts.posts);
             setPostOffset(posts.offset);
+
+            if (user.handle !== self.handle) {
+                const hasNotif = await axios.post(`${api_uri}/api/user/check_has_notif`, {
+                    token: localStorage.getItem("access_token"),
+                    handle: user.handle,
+                });
+
+                setHasNotif(hasNotif.data.has);
+                if (hasNotif.data.error) console.error(hasNotif.data.error);
+            }
 
             if (user.pinned_post !== "") {
                 let post = (await axios.get(`${api_uri}/api/post/get/one?post_id=${user.pinned_post}`)).data;
@@ -267,6 +300,23 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                     ) : (
                         <button onClick={FollowInteraction} className="button-field profile-edit-button">
                             {isFollowing ? "Unfollow" : "Follow"}
+                        </button>
+                    )}
+                    {hasNotif ? (
+                        <button
+                            onClick={SetNotificationForSelf}
+                            style={{ marginTop: "50px" }}
+                            className="button-field button-field-red profile-edit-button"
+                        >
+                            <i className="fa-solid fa-bell-on" />
+                        </button>
+                    ) : (
+                        <button
+                            onClick={SetNotificationForSelf}
+                            style={{ marginTop: "50px" }}
+                            className="button-field button-field-blurple profile-edit-button"
+                        >
+                            <i className="fa-solid fa-bell-plus" />
                         </button>
                     )}
                     {user.about_me !== "" ? (

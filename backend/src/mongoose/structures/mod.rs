@@ -5,3 +5,4 @@ pub mod post;
 pub mod report;
 pub mod reactions;
 pub mod hashtag;
+pub mod user_notif;

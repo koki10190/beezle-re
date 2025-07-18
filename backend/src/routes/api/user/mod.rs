@@ -6,3 +6,5 @@ pub mod delete;
 pub mod follow;
 pub mod upload_emoji;
 pub mod mod_verify;
+pub mod add_notif;
+pub mod check_has_notif;

@@ -147,6 +147,33 @@ pub async fn route(
             let serialized_post_doc = mongodb::bson::to_bson(&struct_post_doc).unwrap();
             let document = serialized_post_doc.as_document().unwrap();
 
+            let user_notifs = mongoose::get_many_document(&client, "beezle", "UserNotifs", doc! {
+                "notif_from": &data.claims.handle
+            }).await;
+
+            for notif in user_notifs {
+                let send_to = notif.get("notif_to").unwrap().as_str().unwrap().to_string();
+                mongoose::update_document(
+                    &client,
+                    "beezle",
+                    "Users",
+                    doc! {
+                        "handle": &send_to
+                    },
+                    doc! {
+                        "$addToSet": {
+                            "notifications": {
+                                "caller": &data.claims.handle,
+                                "post_id": &__post_id,
+                                "message": "added a new post!"
+                            }
+                        }
+                    },
+                ).await;
+
+                ws_send_notification(ws_sessions.clone(), &send_to).await;
+            }
+
             mongoose::insert_document(&client, "beezle", "Posts", document.clone()).await;
             add_xp(&client, data.claims.handle.as_str(), 13).await;
             add_coins(&client, data.claims.handle.as_str(), 45).await;

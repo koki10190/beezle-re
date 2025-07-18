@@ -450,6 +450,7 @@ function PostBox({
                 className={"post-box" + className}
             >
                 {allow_reply_attribute &&
+                !post.repost &&
                 post?.is_reply &&
                 replyingToPost != undefined &&
                 !(replyingToPost as any).error &&
@@ -489,7 +490,7 @@ function PostBox({
                 ) : (
                     ""
                 )}
-                {allow_reply_attribute && replyChainCounter < MAX_REPLY_CHAIN && post.is_reply ? (
+                {allow_reply_attribute && !post.repost && replyChainCounter < MAX_REPLY_CHAIN && post.is_reply ? (
                     <>
                         {replyingToPost != undefined || (replyingToPost as any)?.error != undefined ? (
                             <hr
@@ -512,7 +513,7 @@ function PostBox({
                 ) : (
                     ""
                 )}
-                {reply_box && replyChainCounter >= MAX_REPLY_CHAIN && replyingToPost && !(replyingToPost as any)?.error ? (
+                {((replyChainCounter >= MAX_REPLY_CHAIN && reply_box) || post.repost) && replyingToPost && !(replyingToPost as any)?.error ? (
                     <h4 onClick={() => (window.location.href = replyingToPost?.content ? `/post/${post.replying_to}` : `/`)} className="post-attr">
                         <i className="fa-solid fa-comment"></i> Replying to{" "}
                         {replyingToPost?.content ? TrimToDots(replyingToPost?.content, 16) : "[REDACTED]"}
