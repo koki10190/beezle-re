@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { NotificationData } from "../types/Notification";
+import { NotificationData, NotifType } from "../types/Notification";
 import "./NotifBox.css";
 import { UserPublic } from "../types/User";
 import { fetchUserPublic } from "../functions/fetchUserPublic";
@@ -11,6 +11,7 @@ import sanitize from "sanitize-html";
 import RepToIcon from "./RepToIcon";
 import parseURLs from "../functions/parseURLs";
 import { AVATAR_SHAPES, AvaterShape } from "../types/cosmetics/AvatarShapes";
+import { TROPHIES } from "../types/showcase/Trophy";
 
 function NotifPost({ post_data }: { post_data: Post }) {
     const [user, setUser] = useState<UserPublic>();
@@ -96,6 +97,24 @@ function NotifBox({ notif }: { notif: NotificationData }) {
         })();
     }, []);
 
+    const RenderNotifType = () => {
+        switch (notif.notif_type ?? NotifType.None) {
+            case NotifType.Milestone: {
+                const milestone = TROPHIES[notif.milestone];
+                return (
+                    <p className="notif-message">
+                        <i style={{ color: milestone.color }} className={milestone.icon} /> Congratulations! You've achieved{" "}
+                        <b style={{ color: milestone.color }}>{milestone.name}</b> milestone!
+                    </p>
+                );
+            }
+            default:
+                return <></>;
+        }
+
+        return <></>;
+    };
+
     return (
         <div
             onClick={() => {
@@ -143,6 +162,8 @@ function NotifBox({ notif }: { notif: NotificationData }) {
             ) : (
                 ""
             )}
+
+            <RenderNotifType />
         </div>
     );
 }

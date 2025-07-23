@@ -26,6 +26,7 @@ import RepToIcon from "../../Components/RepToIcon";
 import MentionHover from "../../Components/MentionHover";
 import { AVATAR_SHAPES, AvaterShape } from "../../types/cosmetics/AvatarShapes";
 import TrophyShowcase from "./TrophyShowcase";
+import { TROPHIES, Trophy } from "../../types/showcase/Trophy";
 
 function Loading() {
     return (
@@ -307,7 +308,11 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                     </div>
 
                     {user.handle === self?.handle ? (
-                        <button onClick={() => (window.location.href = "/edit/profile")} className="button-field profile-edit-button">
+                        <button
+                            style={{ background: gradient }}
+                            onClick={() => (window.location.href = "/edit/profile")}
+                            className="button-field profile-edit-button"
+                        >
                             Edit Profile
                         </button>
                     ) : (
@@ -484,17 +489,27 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                     ) : (
                         <></>
                     )}
-                    {/* <div
-                        style={{
-                            background: gradient,
-                        }}
-                        className="profile-container"
-                    >
-                        <p className="profile-container-header">Trophies</p>
-                        <div className="about_me">
-                            <TrophyShowcase type={}
+                    {user.milestones?.length > 0 ? (
+                        <div
+                            style={{
+                                background: gradient,
+                            }}
+                            className="profile-container"
+                        >
+                            <p className="profile-container-header">
+                                <i className="fa-solid fa-trophy-star" /> Milestones
+                            </p>
+                            {user.milestones.map((milestone, index) => {
+                                return (
+                                    <div className="about_me">
+                                        <TrophyShowcase type={TROPHIES[milestone]} user={user} />
+                                    </div>
+                                );
+                            })}
                         </div>
-                    </div> */}
+                    ) : (
+                        ""
+                    )}
                     {steamData ? (
                         <div
                             style={{

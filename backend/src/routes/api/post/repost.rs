@@ -5,7 +5,7 @@ use std::env;
 
 use actix_web::{get, post, web, App, HttpRequest, HttpResponse, HttpServer, Responder};
 
-use crate::{beezle, mongoose, poison::LockResultExt};
+use crate::{beezle, mongoose::{self, milestones::check_repost_milestone}, poison::LockResultExt};
 
 #[derive(Deserialize)]
 struct TokenInfo {
@@ -135,6 +135,7 @@ pub async fn route(
                 mongoose::insert_document(&client, "beezle", "Posts", document.clone()).await;
                 mongoose::add_coins(&client, data.claims.handle.as_str(), 25).await;
                 mongoose::add_xp(&client, &data.claims.handle, 15).await;
+                check_repost_milestone(&client, &original_post_doc.get("handle").unwrap().as_str().unwrap(), post_doc.get("reposts").unwrap().as_array().unwrap().len() as i64 + 1).await;
             }
 
             return HttpResponse::Ok().json(

@@ -627,7 +627,7 @@ function PostBox({
                                 color=""
                                 play
                                 nonNumberClassName="like-flip"
-                                numberClassName="like-flip"
+                                numberClassName="like-flip-number"
                                 perspective={100}
                                 numbers={millify(ReplyCount)}
                             />
@@ -640,7 +640,7 @@ function PostBox({
                                 color=""
                                 play
                                 nonNumberClassName="like-flip"
-                                numberClassName="like-flip"
+                                numberClassName="like-flip-number"
                                 perspective={100}
                                 numbers={millify(RepostCount)}
                             />
@@ -659,7 +659,7 @@ function PostBox({
                                 color=""
                                 play
                                 nonNumberClassName="like-flip"
-                                numberClassName="like-flip"
+                                numberClassName="like-flip-number"
                                 perspective={100}
                                 numbers={millify(LikeCount)}
                             />

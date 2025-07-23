@@ -5,7 +5,7 @@ use std::{collections::HashMap, env, sync::Mutex};
 
 use actix_web::{get, post, web, App, HttpRequest, HttpResponse, HttpServer, Responder};
 
-use crate::{beezle::{mongo::add_post_notif, send_socket_to_user, ws_send_notification}, mongoose::{self, structures::post}};
+use crate::{beezle::{mongo::add_post_notif, send_socket_to_user, ws_send_notification}, mongoose::{self, milestones::check_like_milestone, structures::post}};
 
 #[derive(Deserialize)]
 struct TokenInfo {
@@ -76,6 +76,8 @@ pub async fn route(
                 .await;
                 mongoose::add_coins(&client, data.claims.handle.as_str(), 20).await;
                 mongoose::add_xp(&client, &data.claims.handle.as_str(), 15).await;
+
+                check_like_milestone(&client, &post_op, post_unwrapped.get("likes").unwrap().as_array().unwrap().len() as i64 + 1).await;
 
                 if post_op != data.claims.handle {
                     mongoose::add_coins(&client, post_op.as_str(), 25).await;                    

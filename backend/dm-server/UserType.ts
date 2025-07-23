@@ -33,6 +33,10 @@ interface UserConnections {
     };
 }
 
+interface Milestones {
+    unlocked_milestones: Array<any>;
+}
+
 interface UserPublic {
     handle: string;
     username: string;
@@ -59,6 +63,7 @@ interface UserPublic {
     customization: UserCustomization;
     pinned_post: string;
     connections: UserConnections;
+    milestones: Milestones;
 }
 
 interface UserPrivate extends UserPublic {

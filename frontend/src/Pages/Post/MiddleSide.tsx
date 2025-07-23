@@ -451,7 +451,7 @@ function MiddleSide() {
                     ></p>
                 )}
                 <div className="post-interaction-btn">
-                    <a style={isReposted ? { color: "rgb(60, 255, 86)" } : {}} onClick={RepostInteraction} className="post-inter-lime">
+                    <a style={isReposted ? { color: "rgb(60, 255, 86)" } : {}} onClick={RepostInteraction} className="post-inter post-inter-lime">
                         <i className=" fa-solid fa-repeat"></i>{" "}
                         <FlipNumbers
                             height={15}
@@ -459,7 +459,7 @@ function MiddleSide() {
                             color=""
                             play
                             nonNumberClassName="like-flip"
-                            numberClassName="like-flip"
+                            numberClassName="like-flip-number"
                             perspective={100}
                             numbers={millify(RepostCount)}
                         />
@@ -469,16 +469,16 @@ function MiddleSide() {
                         onMouseLeave={() => setLikeHovered(false)}
                         onClick={LikeInteraction}
                         style={isLiked ? { color: "rgb(255, 73, 73)" } : {}}
-                        className="post-inter-red"
+                        className="post-inter post-inter-red"
                     >
-                        <i className=" fa-solid fa-heart"></i>{" "}
+                        <i className="fa-solid fa-heart"></i>{" "}
                         <FlipNumbers
                             height={15}
                             width={15}
                             color=""
                             play
                             nonNumberClassName="like-flip"
-                            numberClassName="like-flip"
+                            numberClassName="like-flip-number"
                             perspective={100}
                             numbers={millify(LikeCount)}
                         />

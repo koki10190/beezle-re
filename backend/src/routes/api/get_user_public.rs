@@ -1,4 +1,4 @@
-use bson::{doc, Document};
+use bson::{doc, Array, Document};
 use jsonwebtoken::{decode, DecodingKey, EncodingKey, Header, Validation};
 use mail_send::mail_auth::flate2::Status;
 use serde::Deserialize;
@@ -25,6 +25,8 @@ pub async fn route(
     let auth_doc =
         mongoose::get_document(&client, "beezle", "Users", doc! { "handle": &body.handle }).await;
 
+    let empty: Array = [].to_vec();
+
     match auth_doc {
         None => HttpResponse::Ok().json(doc! {"error": "Not Found!"}),
         _document => {
@@ -45,7 +47,17 @@ pub async fn route(
             "activity":  _document.clone().unwrap().get("activity").unwrap().as_str().unwrap(),
             "pinned_post":  _document.clone().unwrap().get("pinned_post").unwrap().as_str().unwrap(),
             "customization":  _document.clone().unwrap().get("customization").unwrap().as_document().unwrap(),
-            "connections":  _document.clone().unwrap().get("connections").unwrap().as_document().unwrap()
+            "connections":  _document.clone().unwrap().get("connections").unwrap().as_document().unwrap(),
+            "milestones":  _document.clone().unwrap_or_else(|| {
+                println!("Couldn't unwrap doc for some reason");
+                return doc!{}
+            }).get("milestones").unwrap_or_else(|| {
+                println!("Milestones not found?");
+                return &bson::Bson::Null
+            }).as_array().unwrap_or_else(|| {
+                println!("Couldnt unwrap as array");
+                return &empty
+            })
         }) },
     }
 }

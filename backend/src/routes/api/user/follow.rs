@@ -8,7 +8,7 @@ use actix_web::{get, http::StatusCode, post, web, App, HttpResponse, HttpServer,
 
 use crate::{
     beezle::{self, ws_send_notification},
-    mongoose::{self, structures::user},
+    mongoose::{self, milestones::check_follow_milestone, structures::user},
     poison::LockResultExt,
 };
 
@@ -94,6 +94,8 @@ pub async fn route(
 
                 mongoose::add_coins(&client, body.handle.as_str(), 25).await;
                 mongoose::add_xp(&client, body.handle.as_str(), 25).await;
+                
+                check_follow_milestone(&client, &body.handle, uw_doc.get("followers").unwrap().as_array().unwrap().len() as i64 + 1).await;
             } else {
                 // MODIFY THE REQUESTER
                 mongoose::update_document(

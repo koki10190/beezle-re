@@ -1,6 +1,7 @@
 import { CustomEmoji } from "emoji-picker-react/dist/config/customEmojiConfig";
 import { NotificationData } from "./Notification";
 import { AvaterShape } from "./cosmetics/AvatarShapes";
+import { Trophy, TrophyType } from "./showcase/Trophy";
 
 enum BadgeType {
     VERIFIED,
@@ -63,6 +64,8 @@ interface UserConnections {
     };
 }
 
+type Milestones = Array<Trophy>;
+
 interface UserPublic {
     handle: string;
     username: string;
@@ -89,6 +92,7 @@ interface UserPublic {
     customization: UserCustomization;
     pinned_post: string;
     connections: UserConnections;
+    milestones: Milestones;
 }
 
 interface UserPrivate extends UserPublic {
