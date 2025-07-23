@@ -79,8 +79,8 @@ pub async fn route(
                     "$addToSet": {
                         "customization.emojis": {
                             "imgUrl": &body.emoji_url,
-                            "id": &body.emoji_id,
-                            "names": [&body.emoji_id]
+                            "id": &body.emoji_id.to_lowercase(),
+                            "names": [&body.emoji_id.to_lowercase()]
                         }
                     }
                 },
