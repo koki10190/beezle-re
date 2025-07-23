@@ -3,11 +3,18 @@ use bson::doc;
 use mongodb::bson::Document;
 use mongodb::Client;
 
-use crate::beezle;
+use crate::{beezle, mongoose::coins::{GOLD_RUSH, GOLD_RUSH_MULTIPLYER}};
 
 use super::{get_document, structures::user::UserLevels, update_document};
 
 pub async fn add_xp(client: &Client, handle: &str, xp_to_add: i64) {
+    let mut mut_xp_to_add = xp_to_add;
+    
+    // -100 so that the shop shit wont be affected.
+    if GOLD_RUSH && (mut_xp_to_add > 0 || mut_xp_to_add > -100) {
+        mut_xp_to_add *= GOLD_RUSH_MULTIPLYER;
+    }
+
     update_document(
         client,
         "beezle",
@@ -17,7 +24,7 @@ pub async fn add_xp(client: &Client, handle: &str, xp_to_add: i64) {
         },
         doc! {
             "$inc": {
-                "levels.xp": xp_to_add
+                "levels.xp": mut_xp_to_add
             }
         },
     )

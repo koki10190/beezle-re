@@ -24,7 +24,7 @@ function LeftSide() {
                     :RE
                 </span>
             </h1>
-            <h2 style={{ marginTop: "-20px", color: "rgba(255,255,255,0.2)" }}>Alpha v1.5</h2>
+            <h2 style={{ marginTop: "-20px", color: "rgba(255,255,255,0.2)" }}>Alpha v1.6</h2>
             <div className="left-side-media">
                 <button onClick={() => window.open(github, "_blank")?.focus()} className="button-field button-field-grayblack">
                     <i className="fa-brands fa-github-alt"></i>
