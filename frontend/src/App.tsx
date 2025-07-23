@@ -24,7 +24,7 @@ import Verify from "./Verify/Verify";
 import VerifyPass from "./Verify/VerifyPass";
 import Steam from "./Redirects/Steam";
 import dmSocket from "./ws/dm-socket";
-import { Slide, ToastContainer } from "react-toastify";
+import { Slide, toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import NotFound from "./Pages/404/NotFound";
 import SpotifyAuth from "./Pages/Auth/SpotifyAuth";
@@ -33,6 +33,7 @@ import Hashtag_Home from "./Pages/Hashtag/Hashtag_Home";
 import MostUsedTags_Home from "./Pages/MostUsedTags/MostUsedTags_Home";
 import DiscordAuth from "./Pages/Auth/DiscordAuth";
 import LastfmAuth from "./Pages/Auth/LastfmAuth";
+import CheckServerStatus from "./functions/CheckServerStatus";
 
 enum UserStatus {
     ONLINE,
@@ -94,7 +95,23 @@ function App() {
         console.log("ALERT! DATA GOT", data);
     });
 
-    console.log("ALERT ALAEARTSDAFGSDFGHSFGHJDFSGJ");
+    const ServerStatusInterval = async () => {
+        console.log(window.location.href);
+        if (window.location.pathname === "/") {
+            clearInterval(interval);
+            return;
+        }
+        const status = await CheckServerStatus();
+        if (!status) {
+            toast.error("Servers Might Be Down!");
+            setTimeout(() => {
+                window.location.href = "/";
+            }, 1000);
+            clearInterval(interval);
+        }
+    };
+    ServerStatusInterval();
+    let interval = setInterval(ServerStatusInterval, 10 * 1000);
 
     return (
         <>

@@ -5,7 +5,7 @@ use std::{collections::HashMap, env, sync::Mutex};
 
 use actix_web::{get, post, web, App, HttpRequest, HttpResponse, HttpServer, Responder};
 
-use crate::{beezle::{mongo::add_post_notif, send_socket_to_user, ws_send_notification}, mongoose};
+use crate::{beezle::{mongo::add_post_notif, send_socket_to_user, ws_send_notification}, mongoose::{self, structures::post}};
 
 #[derive(Deserialize)]
 struct TokenInfo {
@@ -40,6 +40,9 @@ pub async fn route(
             )
             .await;
 
+            let post_unwrapped = post_doc.unwrap();
+            let post_op = post_unwrapped.get("handle").unwrap().as_str().unwrap().to_string();
+
             if body.remove_like {
                 mongoose::update_document(
                     &client,
@@ -55,6 +58,9 @@ pub async fn route(
                 .await;
 
                 mongoose::add_coins(&client, data.claims.handle.as_str(), -20).await;
+                if post_op != data.claims.handle {
+                    mongoose::add_coins(&client, post_op.as_str(), -25).await;                    
+                }
             } else {
                 mongoose::update_document(
                     &client,
@@ -71,16 +77,18 @@ pub async fn route(
                 mongoose::add_coins(&client, data.claims.handle.as_str(), 20).await;
                 mongoose::add_xp(&client, &data.claims.handle.as_str(), 15).await;
 
-                let post_doc_unw = post_doc.unwrap();
-                let postdoc_handle = post_doc_unw.get("handle").unwrap().as_str().unwrap();
+                if post_op != data.claims.handle {
+                    mongoose::add_coins(&client, post_op.as_str(), 25).await;                    
+                    mongoose::add_xp(&client, &data.claims.handle.as_str(), 25).await;
+                }
 
-                if postdoc_handle != data.claims.handle {
+                if post_op != data.claims.handle {
                     mongoose::update_document(
                         &client,
                         "beezle",
                         "Users",
                         doc! {
-                            "handle": &postdoc_handle
+                            "handle": &post_op
                         },
                         doc! {
                             "$addToSet": {
@@ -94,7 +102,7 @@ pub async fn route(
                     )
                     .await;
 
-                    ws_send_notification(ws_sessions.clone(), postdoc_handle).await;
+                    ws_send_notification(ws_sessions.clone(), &post_op).await;
                 }
             }
 

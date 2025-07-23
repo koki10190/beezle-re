@@ -10,15 +10,22 @@ import "../Main.css";
 import "./LoginPage.css";
 import { TypeAnimation } from "react-type-animation";
 import CheckServerStatus from "../functions/CheckServerStatus";
+import { toast } from "react-toastify";
 
 function Home() {
     const [isRegister, setRegister] = useState(false);
 
     useEffect(() => {
         (async () => {
-            if (localStorage.getItem("access_token") && (await CheckServerStatus())) {
+            const status = await CheckServerStatus();
+            if (localStorage.getItem("access_token") && status) {
                 window.location.href = "/home";
             }
+
+            if (!status)
+                toast.error("Servers are down! Please come back later.", {
+                    icon: <i style={{ color: "#ff5050" }} className="fa-solid fa-heart-crack"></i>,
+                });
         })();
     }, []);
 

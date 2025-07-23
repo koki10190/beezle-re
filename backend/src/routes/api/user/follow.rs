@@ -42,6 +42,10 @@ pub async fn route(
             let uw_doc = m_doc.unwrap();
             let handle = uw_doc.get("handle").unwrap().as_str().unwrap();
 
+            if handle == token_data.handle {
+                return HttpResponse::Ok().json(doc! {"error": "You cannot follow yourself dumbass!"});
+            }
+
             if body.follow {
                 // MODIFY THE REQUESTER
                 if token_data.handle == handle {
@@ -87,6 +91,9 @@ pub async fn route(
 
                 mongoose::add_coins(&client, token_data.handle.as_str(), 20).await;
                 mongoose::add_xp(&client, token_data.handle.as_str(), 20).await;
+
+                mongoose::add_coins(&client, body.handle.as_str(), 25).await;
+                mongoose::add_xp(&client, body.handle.as_str(), 25).await;
             } else {
                 // MODIFY THE REQUESTER
                 mongoose::update_document(
@@ -121,6 +128,10 @@ pub async fn route(
                 .await;
 
                 mongoose::add_coins(&client, token_data.handle.as_str(), -20).await;
+                mongoose::add_xp(&client, token_data.handle.as_str(), -20).await;
+
+                mongoose::add_coins(&client, body.handle.as_str(), -25).await;
+                mongoose::add_xp(&client, body.handle.as_str(), -25).await;
             }
 
             HttpResponse::Ok().json(uw_doc)
