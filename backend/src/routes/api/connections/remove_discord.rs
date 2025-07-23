@@ -10,11 +10,7 @@ use std::env;
 use steam_connect::Verify;
 
 use actix_web::{
-    get,
-    http::{header::QualityItem, StatusCode},
-    post,
-    web::{self, JsonBody, Query},
-    App, HttpRequest, HttpResponse, HttpServer, Responder,
+    get, http::{header::QualityItem, StatusCode}, patch, post, web::{self, JsonBody, Query}, App, HttpRequest, HttpResponse, HttpServer, Responder
 };
 
 use crate::{
@@ -37,7 +33,7 @@ struct DataBody {
     token: String,
 }
 
-#[post("/api/connections/remove_discord")]
+#[patch("/api/connections/remove_discord")]
 pub async fn route(
     body: web::Json<DataBody>,
     client: web::Data<Client>,

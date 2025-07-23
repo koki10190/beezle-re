@@ -3,9 +3,9 @@ use jsonwebtoken::{decode, DecodingKey, EncodingKey, Header, Validation};
 use mail_send::mail_auth::flate2::Status;
 use mongodb::Client;
 use serde::Deserialize;
-use std::{env, ops::Deref};
+use std::{env, ops::Deref, path};
 
-use actix_web::{get, http::StatusCode, post, web, App, HttpResponse, HttpServer, Responder};
+use actix_web::{delete, get, http::StatusCode, patch, post, web, App, HttpResponse, HttpServer, Responder};
 
 use crate::{
     beezle,
@@ -19,7 +19,7 @@ struct ClearNotifQuery {
     token: String,
 }
 
-#[post("/api/user/clear_notifs")]
+#[patch("/api/user/clear_notifs")]
 pub async fn route(body: web::Json<ClearNotifQuery>, client: web::Data<Client>) -> impl Responder {
     let token_data = decode::<mongoose::structures::user::JwtUser>(
         &body.token,

@@ -29,6 +29,7 @@ function FollowBox({ handle, self_user }: FollowBoxData) {
     const [user, setUser] = useState<UserPublic>();
     const [isFollowing, setFollowing] = useState(false);
     const [bgGradient, setBgGradient] = useState("");
+    const [normalGradient, setNormalGradient] = useState("");
 
     useEffect(() => {
         (async () => {
@@ -37,8 +38,14 @@ function FollowBox({ handle, self_user }: FollowBoxData) {
             setBgGradient(
                 `linear-gradient(-45deg, ${ShadeColor(
                     _user?.customization?.profile_gradient ? _user?.customization.profile_gradient.color1 : "rgb(231, 129, 98)",
-                    -25,
-                )}, ${ShadeColor(_user?.customization?.profile_gradient ? _user?.customization.profile_gradient.color2 : "rgb(231, 129, 98)", -25)})`,
+                    -50,
+                )}, ${ShadeColor(_user?.customization?.profile_gradient ? _user?.customization.profile_gradient.color2 : "rgb(231, 129, 98)", -50)})`,
+            );
+            setNormalGradient(
+                `linear-gradient(-45deg, ${ShadeColor(
+                    _user?.customization?.profile_gradient ? _user?.customization.profile_gradient.color1 : "rgb(231, 129, 98)",
+                    0,
+                )}, ${ShadeColor(_user?.customization?.profile_gradient ? _user?.customization.profile_gradient.color2 : "rgb(231, 129, 98)", 0)})`,
             );
             setFollowing(_user?.followers.find((x) => x === self_user.handle) ? true : false);
         })();
@@ -111,7 +118,11 @@ function FollowBox({ handle, self_user }: FollowBoxData) {
                     }}
                 ></p>
                 {user.handle !== self_user.handle ? (
-                    <button onClick={FollowInteraction} style={{ width: "100%", fontSize: "15px" }} className="button-field">
+                    <button
+                        onClick={FollowInteraction}
+                        style={{ width: "100%", fontSize: "15px", background: normalGradient }}
+                        className="button-field"
+                    >
                         {isFollowing ? "Unfollow" : "Follow"}
                     </button>
                 ) : (

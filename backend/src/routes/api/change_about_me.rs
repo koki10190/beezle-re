@@ -5,7 +5,7 @@ use mongodb::Client;
 use serde::Deserialize;
 use std::{env, ops::Deref};
 
-use actix_web::{get, http::StatusCode, post, web, App, HttpResponse, HttpServer, Responder};
+use actix_web::{get, http::StatusCode, patch, post, web, App, HttpResponse, HttpServer, Responder};
 
 use crate::{
     beezle,
@@ -20,7 +20,7 @@ struct GetUserQuery {
     about_me: String,
 }
 
-#[post("/api/change_about_me")]
+#[patch("/api/change_about_me")]
 pub async fn route(body: web::Json<GetUserQuery>, client: web::Data<Client>) -> impl Responder {
     let token_data = decode::<mongoose::structures::user::JwtUser>(
         &body.token,

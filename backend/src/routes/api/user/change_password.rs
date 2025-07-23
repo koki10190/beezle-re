@@ -6,7 +6,7 @@ use serde::Deserialize;
 use std::env;
 
 use actix_web::{
-    delete, get, http::StatusCode, post, web, App, HttpRequest, HttpResponse, HttpServer, Responder,
+    delete, get, http::StatusCode, patch, post, web, App, HttpRequest, HttpResponse, HttpServer, Responder
 };
 
 use crate::{
@@ -21,7 +21,7 @@ struct ChangePassQuery {
     password: String,
 }
 
-#[post("/api/user/change_password")]
+#[patch("/api/user/change_password")]
 pub async fn route(
     req: HttpRequest,
     body: web::Json<ChangePassQuery>,

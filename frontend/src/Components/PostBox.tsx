@@ -235,11 +235,11 @@ function PostBox({
             } else {
                 const color1 = ShadeColor(
                     user.customization?.profile_gradient ? user.customization.profile_gradient.color1 : "rgb(231, 129, 98)",
-                    -25,
+                    -40,
                 );
                 const color2 = ShadeColor(
                     user.customization?.profile_gradient ? user.customization.profile_gradient.color2 : "rgb(231, 129, 98)",
-                    -25,
+                    -40,
                 );
 
                 setBgGradient(`linear-gradient(-45deg, ${color1}, ${color2})`);
@@ -277,7 +277,7 @@ function PostBox({
 
     useEffect(() => {
         (async () => {
-            if (allow_reply_attribute && post?.is_reply && replyingToPost != undefined && !(replyingToPost as any).error) {
+            if (allow_reply_attribute && post?.is_reply && replyingToPost != undefined && !(replyingToPost as any).error && !override_gradient) {
                 // console.log("some people deserve to die");
                 const user = await fetchUserPublic(replyingToPost.handle);
 
@@ -289,7 +289,6 @@ function PostBox({
                     user.customization?.profile_gradient ? user.customization.profile_gradient.color2 : "rgb(231, 129, 98)",
                     -25,
                 );
-
                 setBgGradient(`linear-gradient(-45deg, ${color1}, ${color2})`);
             }
         })();
@@ -393,7 +392,7 @@ function PostBox({
 
     const SaveEditChanges = async () => {
         setEditing(false);
-        const res = await axios.post(`${api_uri}/api/post/edit`, {
+        const res = await axios.patch(`${api_uri}/api/post/edit`, {
             token: localStorage.getItem("access_token"),
             post_id: post.post_id,
             content: editContent,
@@ -463,6 +462,11 @@ function PostBox({
                         setPosts={setPosts}
                         self_user={self_user}
                         key={replyingToPost.post_id}
+                        override_gradient={
+                            user.customization.profile_gradient_bought && user.customization.profile_gradient
+                                ? { gradient1: user.customization.profile_gradient.color1, gradient2: user.customization.profile_gradient.color2 }
+                                : null
+                        }
                         post={replyingToPost}
                         allow_reply_attribute={true}
                         reply_chain_counter={replyChainCounter + 1}

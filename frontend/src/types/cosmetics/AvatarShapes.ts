@@ -1,4 +1,11 @@
-const AVATAR_SHAPES: Array<{ name: string; price: number; style: string; level_required: number }> = [
+interface AvatarShapeType {
+    name: string;
+    price: number;
+    style: string;
+    level_required: number;
+}
+
+const AVATAR_SHAPES: Array<AvatarShapeType> = [
     {
         name: "Circle Avatar Shape",
         price: 0,

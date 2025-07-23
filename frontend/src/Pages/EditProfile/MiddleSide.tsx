@@ -118,7 +118,7 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
                 profile_postbox_img: __ProfileBgImage ? __ProfileBgImage : "",
             };
             console.log(data);
-            const m_data = (await axios.post(`${api_uri}/api/profile/edit`, data)).data;
+            const m_data = (await axios.patch(`${api_uri}/api/profile/edit`, data)).data;
             if (m_data.changed) {
                 toast.success("Profile has been edited successfully");
             } else {

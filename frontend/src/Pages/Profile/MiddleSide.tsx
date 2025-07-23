@@ -135,7 +135,7 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
             const data = res.data;
 
             if (data.error) {
-                await axios.get(`${api_uri}/api/connections/spotify/refresh_token?handle=${user.handle}`);
+                await axios.patch(`${api_uri}/api/connections/spotify/refresh_token?handle=${user.handle}`);
                 return;
             }
 
@@ -310,7 +310,7 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                             Edit Profile
                         </button>
                     ) : (
-                        <button onClick={FollowInteraction} className="button-field profile-edit-button">
+                        <button style={{ background: gradient }} onClick={FollowInteraction} className="button-field profile-edit-button">
                             {isFollowing ? "Unfollow" : "Follow"}
                         </button>
                     )}

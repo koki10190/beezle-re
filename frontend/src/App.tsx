@@ -94,6 +94,8 @@ function App() {
         console.log("ALERT! DATA GOT", data);
     });
 
+    console.log("ALERT ALAEARTSDAFGSDFGHSFGHJDFSGJ");
+
     return (
         <>
             <ToastContainer

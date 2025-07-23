@@ -10,11 +10,7 @@ use std::env;
 use steam_connect::Verify;
 
 use actix_web::{
-    get,
-    http::{header::QualityItem, StatusCode},
-    post,
-    web::{self, JsonBody, Query},
-    App, HttpRequest, HttpResponse, HttpServer, Responder,
+    get, http::{header::QualityItem, StatusCode}, patch, post, web::{self, JsonBody, Query}, App, HttpRequest, HttpResponse, HttpServer, Responder
 };
 
 use crate::{
@@ -33,7 +29,7 @@ struct QueryData {
     handle: String
 }
 
-#[get("/api/connections/spotify/refresh_token")]
+#[patch("/api/connections/spotify/refresh_token")]
 pub async fn route(
     body: web::Query<QueryData>,
     client: web::Data<Client>,

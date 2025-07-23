@@ -1,26 +1,26 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from "react";
 
-import { fetchUserPrivate } from '../../../functions/fetchUserPrivate';
-import { UserPrivate } from '../../../types/User';
-import { Post } from '../../../types/Post';
-import FetchPost from '../../../functions/FetchPost';
-import './Details.css';
-import Divider from '../../../Components/Divider';
-import { api_uri } from '../../../links';
-import axios from 'axios';
-import { toast } from 'react-toastify';
+import { fetchUserPrivate } from "../../../functions/fetchUserPrivate";
+import { UserPrivate } from "../../../types/User";
+import { Post } from "../../../types/Post";
+import FetchPost from "../../../functions/FetchPost";
+import "./Details.css";
+import Divider from "../../../Components/Divider";
+import { api_uri } from "../../../links";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 interface Props {
     user: UserPrivate;
 }
 
 function Details({ user }: Props) {
-    const [password, setPassword] = useState('');
+    const [password, setPassword] = useState("");
     const statePassRef = useRef<HTMLParagraphElement>(null);
 
     const ChangePassword = async () => {
-        const res = await axios.post(`${api_uri}/api/user/change_password`, {
-            token: localStorage.getItem('access_token'),
+        const res = await axios.patch(`${api_uri}/api/user/change_password`, {
+            token: localStorage.getItem("access_token"),
             password,
         });
 
@@ -28,7 +28,7 @@ function Details({ user }: Props) {
 
         if (res.data.error) toast.error(res.data.error);
         else toast.success(res.data.message);
-        window.location.href = '/logout';
+        window.location.href = "/logout";
     };
 
     return (

@@ -4,7 +4,7 @@ use mail_send::mail_auth::{flate2::Status, hickory_resolver::proto::rr::rdata::n
 use serde::Deserialize;
 use std::env;
 
-use actix_web::{get, http::StatusCode, post, web, App, HttpResponse, HttpServer, Responder};
+use actix_web::{get, http::StatusCode, patch, post, web, App, HttpResponse, HttpServer, Responder};
 
 use crate::{
     beezle,
@@ -28,7 +28,7 @@ struct GetUserQuery {
     profile_postbox_img: String,
 }
 
-#[post("/api/profile/edit")]
+#[patch("/api/profile/edit")]
 pub async fn route(
     body: web::Json<GetUserQuery>,
     client: web::Data<mongodb::Client>,

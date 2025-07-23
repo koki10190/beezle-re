@@ -1,19 +1,19 @@
-import { useEffect, useState } from 'react';
-import { checkToken } from '../../functions/checkToken';
+import { useEffect, useState } from "react";
+import { checkToken } from "../../functions/checkToken";
 
-import Divider from '../../Components/Divider';
-import PostBox from '../../Components/PostBox';
-import { fetchUserPrivate } from '../../functions/fetchUserPrivate';
-import { UserPrivate } from '../../types/User';
-import { Post } from '../../types/Post';
-import FetchPost from '../../functions/FetchPost';
-import { NotificationData } from '../../types/Notification';
-import { fetchUserPublic } from '../../functions/fetchUserPublic';
-import NotifBox from '../../Components/NotifBox';
-import './Notifications.css';
-import axios from 'axios';
-import { api_uri } from '../../links';
-import { toast } from 'react-toastify';
+import Divider from "../../Components/Divider";
+import PostBox from "../../Components/PostBox";
+import { fetchUserPrivate } from "../../functions/fetchUserPrivate";
+import { UserPrivate } from "../../types/User";
+import { Post } from "../../types/Post";
+import FetchPost from "../../functions/FetchPost";
+import { NotificationData } from "../../types/Notification";
+import { fetchUserPublic } from "../../functions/fetchUserPublic";
+import NotifBox from "../../Components/NotifBox";
+import "./Notifications.css";
+import axios from "axios";
+import { api_uri } from "../../links";
+import { toast } from "react-toastify";
 
 function MiddleSide() {
     const [Notifs, setNotifs] = useState<Array<NotificationData>>([]);
@@ -21,13 +21,13 @@ function MiddleSide() {
     const ClearNotifs = async () => {
         setNotifs([]);
         const res = (
-            await axios.post(`${api_uri}/api/user/clear_notifs`, {
-                token: localStorage.getItem('access_token'),
+            await axios.patch(`${api_uri}/api/user/clear_notifs`, {
+                token: localStorage.getItem("access_token"),
             })
         ).data as { error: string | null; changed: boolean };
 
         if (res.error) toast.error(res.error);
-        else toast.success('Cleared Notifications');
+        else toast.success("Cleared Notifications");
     };
 
     useEffect(() => {

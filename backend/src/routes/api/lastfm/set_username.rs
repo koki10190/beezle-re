@@ -7,11 +7,7 @@ use std::env;
 use steam_connect::Verify;
 
 use actix_web::{
-    get,
-    http::{header::QualityItem, StatusCode},
-    post,
-    web::{self, Query},
-    App, HttpRequest, HttpResponse, HttpServer, Responder,
+    get, http::{header::QualityItem, StatusCode}, patch, post, web::{self, Query}, App, HttpRequest, HttpResponse, HttpServer, Responder
 };
 
 use crate::{
@@ -26,7 +22,7 @@ struct AuthBody {
     username: String
 }
 
-#[post("/api/lastfm/set_username")]
+#[patch("/api/lastfm/set_username")]
 pub async fn route(
     body: web::Json<AuthBody>,
     client: web::Data<Client>,

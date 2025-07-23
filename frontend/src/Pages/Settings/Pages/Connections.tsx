@@ -46,7 +46,7 @@ function Connections({ user }: Props) {
         const username = lastfm_username.current.value;
         if (username === "") return;
 
-        const res = await axios.post(`${api_uri}/api/lastfm/set_username`, {
+        const res = await axios.patch(`${api_uri}/api/lastfm/set_username`, {
             token: localStorage.getItem("access_token"),
             username,
         });
@@ -58,7 +58,7 @@ function Connections({ user }: Props) {
     };
 
     const LastFmSetShowScorbbling = async () => {
-        const res = await axios.post(`${api_uri}/api/lastfm/show_scrobbling`, {
+        const res = await axios.patch(`${api_uri}/api/lastfm/show_scrobbling`, {
             token: localStorage.getItem("access_token"),
             show: !show_scrobbling,
         });
@@ -80,7 +80,7 @@ function Connections({ user }: Props) {
                         </p>
                         <button
                             onClick={async () => {
-                                const res = await axios.post(`${api_uri}/api/connections/steam_disconnect`, {
+                                const res = await axios.patch(`${api_uri}/api/connections/steam_disconnect`, {
                                     token: localStorage.getItem("access_token"),
                                 });
 
@@ -114,7 +114,7 @@ function Connections({ user }: Props) {
                         </p>
                         <button
                             onClick={async () => {
-                                const res = await axios.post(`${api_uri}/api/connections/spotify_disconnect`, {
+                                const res = await axios.patch(`${api_uri}/api/connections/spotify_disconnect`, {
                                     token: localStorage.getItem("access_token"),
                                 });
 
@@ -146,7 +146,7 @@ function Connections({ user }: Props) {
                         </p>
                         <button
                             onClick={async () => {
-                                const res = await axios.post(`${api_uri}/api/connections/remove_discord`, {
+                                const res = await axios.patch(`${api_uri}/api/connections/remove_discord`, {
                                     token: localStorage.getItem("access_token"),
                                 });
 
@@ -176,7 +176,7 @@ function Connections({ user }: Props) {
                         </button>
                         <button
                             onClick={async () => {
-                                const res = await axios.post(`${api_uri}/api/lastfm/remove_username`, {
+                                const res = await axios.patch(`${api_uri}/api/lastfm/remove_username`, {
                                     token: localStorage.getItem("access_token"),
                                 });
 

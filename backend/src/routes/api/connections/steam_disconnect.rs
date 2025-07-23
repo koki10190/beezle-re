@@ -7,11 +7,7 @@ use std::{env, ptr::null};
 use steam_connect::Verify;
 
 use actix_web::{
-    get,
-    http::{header::QualityItem, StatusCode},
-    post,
-    web::{self, Query},
-    App, HttpRequest, HttpResponse, HttpServer, Responder,
+    get, http::{header::QualityItem, StatusCode}, patch, post, web::{self, Query}, App, HttpRequest, HttpResponse, HttpServer, Responder
 };
 
 use crate::{
@@ -51,7 +47,7 @@ struct SteamBody {
     token: String,
 }
 
-#[post("/api/connections/steam_disconnect")]
+#[patch("/api/connections/steam_disconnect")]
 pub async fn route(
     body: web::Json<SteamBody>,
     client: web::Data<Client>,
