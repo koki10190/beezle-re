@@ -9,6 +9,7 @@ import { fetchUserPublic } from "./fetchUserPublic";
 import BeezleEmoji from "../Components/Emoji";
 import { UserPublic } from "../types/User";
 import "./ParseURLs.css";
+import { Links, marked } from "marked";
 
 function MentionHover({ handle }: { handle: string }) {
     return (
@@ -18,9 +19,28 @@ function MentionHover({ handle }: { handle: string }) {
     );
 }
 
+var render = new marked.Renderer();
+render.link = function ({ href, title, text }) {
+    return href;
+};
+
+render.br = function () {
+    return "";
+};
+
+render.paragraph = function ({ tokens }) {
+    let joined = "";
+    for (const token of tokens) {
+        joined += token.raw + " ";
+    }
+    return joined;
+};
+
 function parseURLs(content: string, self_user: UserPublic, embed = true, post_id = ""): string {
     if (!content) return "";
     let htmlToEmbed = "";
+    content = sanitize(marked.parse(content, { renderer: render, breaks: false }) as string);
+    console.log(content);
     if (embed) {
         const matched = content.match(/\bhttps?:\/\/media\.tenor\.com\S+/gi);
 
@@ -83,10 +103,13 @@ function parseURLs(content: string, self_user: UserPublic, embed = true, post_id
 
     if (embed) {
         if (content.match(/youtube\.com|youtu\.be/g)) {
-            const matches = content.match(/(?:https?:\/\/)?(?:www\.)?youtu\.?be(?:\.com)?\/?.*(?:watch|embed)?(?:.*v=|v\/|\/)([\w\-_]+)\&?/g);
+            const matches = content.match(
+                /(?:https?:\/\/)?(?:youtu\.be\/|(?:www\.|m\.)?youtube\.com\/(?:watch|v|embed)(?:\.php)?(?:\?.*v=|\/))([a-zA-Z0-9\_-]+)/gi,
+            );
             matches?.forEach((match) => {
+                console.log("MATCH:", match);
                 htmlToEmbed += match.replace(
-                    /(?:https?:\/\/)?(?:www\.)?youtu\.?be(?:\.com)?\/?.*(?:watch|embed)?(?:.*v=|v\/|\/)([\w\-_]+)\&?/g,
+                    /(?:https?:\/\/)?(?:youtu\.be\/|(?:www\.|m\.)?youtube\.com\/(?:watch|v|embed)(?:\.php)?(?:\?.*v=|\/))([a-zA-Z0-9\_-]+)/gi,
                     `<iframe style="width: 100%; min-height: 350px; border: none;" src="https://youtube.com/embed/$1"></iframe>`,
                 );
             });

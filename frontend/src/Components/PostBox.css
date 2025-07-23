@@ -50,8 +50,13 @@
     margin-bottom: 10px;
 }
 
+.post-box .post-attributes {
+    margin-bottom: 10px;
+}
+
 .post-box .post-attr {
     margin-top: 0px;
+    margin-bottom: 5px;
     color: rgba(255, 255, 255, 0.5);
 }
 
@@ -238,6 +243,43 @@ aside li {
 
 .content {
     margin-top: 20px;
+    margin-bottom: 15px;
+}
+
+.content h1,
+.content h2,
+.content h3,
+.content h4,
+.content h5,
+.content h6 {
+    margin-bottom: -25px;
+}
+
+.content li:first-child {
+    margin-top: -25px;
+}
+.content li {
+    margin-top: -15px;
+    margin-left: -15px;
+}
+
+.content li:last-child {
+    margin-bottom: -20px;
+}
+
+.content:last-child {
+    margin-bottom: 0;
+}
+
+.content .post-image-embed,
+.content video,
+.content iframe {
+    margin-top: 20px;
+    margin-bottom: 0px;
+}
+
+.content iframe {
+    border-radius: 5px;
 }
 
 .reactions > p:hover {

@@ -18,6 +18,10 @@
     vertical-align: top;
 }
 
+.post-typer::placeholder {
+    color: #ffffffa0;
+}
+
 .button-field.post-typer-sender {
     margin-top: 10px;
     font-size: 20px;

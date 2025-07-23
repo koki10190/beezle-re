@@ -26,6 +26,7 @@ import { toast } from "react-toastify";
 import { PostReaction, ReactionsData } from "../../types/ReactionsData";
 import TrimToDots from "../../functions/TrimToDots";
 import { AVATAR_SHAPES } from "../../types/cosmetics/AvatarShapes";
+import ShadeColor from "../../functions/ShadeColor";
 
 interface ReactionsInter {
     [key: string]: PostReaction[];
@@ -48,6 +49,7 @@ function MiddleSide() {
     const [isPinned, setPinned] = useState(false);
     const [LikeCount, setLikeCount] = useState(0);
     const [RepostCount, setRepostCount] = useState(0);
+    const [bgGradient, setBgGradient] = useState("linear-gradient(#000000, #000000)");
 
     const [isLikeHovered, setLikeHovered] = useState(false);
     const [isRepostHovered, setRepostHovered] = useState(false);
@@ -68,13 +70,11 @@ function MiddleSide() {
 
     useEffect(() => {
         (async () => {
-            const user = (await fetchUserPrivate()) as UserPrivate;
-            setSelfUser(user);
+            const priv = (await fetchUserPrivate()) as UserPrivate;
 
             console.log("foreach");
             const replies_res = await axios.get(`${api_uri}/api/post/get/replies?post_id=${post_id}`);
             let post_res = await axios.get(`${api_uri}/api/post/get/one?post_id=${post_id}`);
-            const priv = (await fetchUserPrivate()) as UserPrivate;
 
             if (post_res.data.error) {
                 window.location.href = "/not-found";
@@ -125,6 +125,14 @@ function MiddleSide() {
             });
         })();
     }, []);
+
+    useEffect(() => {
+        if (!post_user) return;
+        const color1 = ShadeColor(post_user.customization?.profile_gradient ? post_user.customization.profile_gradient.color1 : "#000000", -100);
+        const color2 = ShadeColor(post_user.customization?.profile_gradient ? post_user.customization.profile_gradient.color2 : "#000000", -100);
+
+        setBgGradient(`linear-gradient(-45deg, ${color1}, ${color2})`);
+    }, [post_user]);
 
     const LikeInteraction = async () => {
         if (isLiked) {
@@ -341,7 +349,7 @@ function MiddleSide() {
     };
 
     return (
-        <div className="page-sides side-middle home-middle">
+        <div style={{ background: bgGradient }} className="page-sides side-middle home-middle">
             <div className="post-page-container">
                 {post && post_user ? (
                     <>
@@ -439,6 +447,7 @@ function MiddleSide() {
                         dangerouslySetInnerHTML={{
                             __html: parseURLs(finalContent, post_user),
                         }}
+                        className="content"
                     ></p>
                 )}
                 <div className="post-interaction-btn">

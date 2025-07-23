@@ -474,58 +474,67 @@ function PostBox({
                 ) : (
                     ""
                 )}
-                {post.repost ? (
-                    <h4 onClick={() => (window.location.href = `/profile/${post.handle}`)} className="post-attr">
-                        <i className="fa-solid fa-repeat"></i> Repost by @{post.handle}
-                    </h4>
+                {allow_reply_attribute &&
+                !post.repost &&
+                replyChainCounter < MAX_REPLY_CHAIN &&
+                post.is_reply &&
+                ((replyingToPost as any)?.error != undefined || replyingToPost != undefined) ? (
+                    <hr
+                        style={{
+                            width: "calc(100% + 40px)",
+                            marginLeft: "-20px",
+                        }}
+                        className="divider"
+                    ></hr>
                 ) : (
                     ""
                 )}
-                {isPostEdited ? (
-                    <h4 className="post-attr">
-                        <i className="fa-solid fa-pencil"></i> Edited
-                    </h4>
-                ) : (
-                    ""
-                )}
-                {pinned ? (
-                    <h4 className="post-attr">
-                        <i className="fa-solid fa-thumbtack"></i> Pinned
-                    </h4>
-                ) : (
-                    ""
-                )}
-                {allow_reply_attribute && !post.repost && replyChainCounter < MAX_REPLY_CHAIN && post.is_reply ? (
-                    <>
-                        {replyingToPost != undefined || (replyingToPost as any)?.error != undefined ? (
-                            <hr
-                                style={{
-                                    width: "calc(100% + 40px)",
-                                    marginLeft: "-20px",
-                                }}
-                                className="divider"
-                            ></hr>
-                        ) : (
-                            ""
-                        )}
-                        <h1 className="post-replying-to">
-                            <i className="fa-solid fa-reply"></i>{" "}
-                            {replyingToPost == undefined || (replyingToPost as any).error
-                                ? "Replying to a deleted post"
-                                : `Replying to @${replyingToPost.handle}`}
-                        </h1>
-                    </>
-                ) : (
-                    ""
-                )}
-                {((replyChainCounter >= MAX_REPLY_CHAIN && reply_box) || post.repost) && replyingToPost && !(replyingToPost as any)?.error ? (
-                    <h4 onClick={() => (window.location.href = replyingToPost?.content ? `/post/${post.replying_to}` : `/`)} className="post-attr">
-                        <i className="fa-solid fa-comment"></i> Replying to{" "}
-                        {replyingToPost?.content ? TrimToDots(replyingToPost?.content, 16) : "[REDACTED]"}
-                    </h4>
-                ) : (
-                    ""
-                )}
+                <div className="post-attributes">
+                    {post.repost ? (
+                        <h4 onClick={() => (window.location.href = `/profile/${post.handle}`)} className="post-attr">
+                            <i className="fa-solid fa-repeat"></i> Repost by @{post.handle}
+                        </h4>
+                    ) : (
+                        ""
+                    )}
+                    {isPostEdited ? (
+                        <h4 className="post-attr">
+                            <i className="fa-solid fa-pencil"></i> Edited
+                        </h4>
+                    ) : (
+                        ""
+                    )}
+                    {pinned ? (
+                        <h4 className="post-attr">
+                            <i className="fa-solid fa-thumbtack"></i> Pinned
+                        </h4>
+                    ) : (
+                        ""
+                    )}
+                    {allow_reply_attribute && !post.repost && replyChainCounter < MAX_REPLY_CHAIN && post.is_reply ? (
+                        <>
+                            <h1 className="post-replying-to">
+                                <i className="fa-solid fa-reply"></i>{" "}
+                                {replyingToPost == undefined || (replyingToPost as any).error
+                                    ? "Replying to a deleted post"
+                                    : `Replying to @${replyingToPost.handle}`}
+                            </h1>
+                        </>
+                    ) : (
+                        ""
+                    )}
+                    {((replyChainCounter >= MAX_REPLY_CHAIN && reply_box) || post.repost) && replyingToPost && !(replyingToPost as any)?.error ? (
+                        <h4
+                            onClick={() => (window.location.href = replyingToPost?.content ? `/post/${post.replying_to}` : `/`)}
+                            className="post-attr"
+                        >
+                            <i className="fa-solid fa-comment"></i> Replying to{" "}
+                            {replyingToPost?.content ? TrimToDots(replyingToPost?.content, 16) : "[REDACTED]"}
+                        </h4>
+                    ) : (
+                        ""
+                    )}
+                </div>
                 <div
                     style={{
                         backgroundImage: `url(${user ? user.avatar : ""})`,
@@ -598,7 +607,7 @@ function PostBox({
                         </button>
                     </>
                 ) : (
-                    <p
+                    <div
                         style={{
                             whiteSpace: "pre-line",
                         }}
@@ -606,7 +615,7 @@ function PostBox({
                             __html: parseURLs(finalContent, user, true, post.post_id),
                         }}
                         className="content"
-                    ></p>
+                    ></div>
                 )}
                 {user ? (
                     <div className="post-interaction-btn">
