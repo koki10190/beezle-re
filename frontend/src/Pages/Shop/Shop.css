@@ -26,3 +26,14 @@
 .mute-music:hover {
     color: #ffffff;
 }
+
+.shop_avatar {
+    width: 25px;
+    height: 25px;
+    display: inline-block;
+    vertical-align: top;
+    margin-right: 10px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}

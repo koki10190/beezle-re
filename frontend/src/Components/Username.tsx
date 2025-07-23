@@ -20,7 +20,7 @@ function Username({ user }: { user: UserPublic }) {
 
     return (
         <span className="webkit-clip" style={style}>
-            {user.username}
+            {user?.username ?? "Username"}
         </span>
     );
 }

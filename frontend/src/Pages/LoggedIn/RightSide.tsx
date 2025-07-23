@@ -10,6 +10,7 @@ import { NotificationData } from "../../types/Notification";
 import dmSocket from "../../ws/dm-socket";
 import { DMData } from "../../types/DM";
 import { socket } from "../../ws/socket";
+import { AVATAR_SHAPES } from "../../types/cosmetics/AvatarShapes";
 
 function SettingsButton({ redirect, iconClass, text, style }: { redirect: string; iconClass: string; text: string; style: any | undefined }) {
     return (
@@ -117,7 +118,15 @@ function RightSide() {
                     <div
                         style={{
                             backgroundImage: `url(${self_user?.avatar})`,
-                            borderRadius: self_user?.customization?.square_avatar ? "5px" : "100%",
+                            clipPath: AVATAR_SHAPES[self_user?.customization?.square_avatar]
+                                ? AVATAR_SHAPES[self_user?.customization?.square_avatar].style
+                                : "",
+                            borderRadius:
+                                AVATAR_SHAPES[self_user?.customization?.square_avatar]?.name !== "Circle Avatar Shape"
+                                    ? self_user?.customization?.square_avatar
+                                        ? "5px"
+                                        : "100%"
+                                    : "100%",
                             verticalAlign: "middle",
                         }}
                         className="pfp"

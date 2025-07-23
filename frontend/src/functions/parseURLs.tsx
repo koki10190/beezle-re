@@ -19,6 +19,7 @@ function MentionHover({ handle }: { handle: string }) {
 }
 
 function parseURLs(content: string, self_user: UserPublic, embed = true, post_id = ""): string {
+    if (!content) return "";
     let htmlToEmbed = "";
     if (embed) {
         const matched = content.match(/\bhttps?:\/\/media\.tenor\.com\S+/gi);

@@ -18,6 +18,7 @@ import parseURLs from "../functions/parseURLs";
 import RepToIcon from "./RepToIcon";
 import Username from "./Username";
 import ShadeColor from "../functions/ShadeColor";
+import { AVATAR_SHAPES, AvaterShape } from "../types/cosmetics/AvatarShapes";
 
 interface FollowBoxData {
     handle: string;
@@ -69,7 +70,15 @@ function FollowBox({ handle, self_user }: FollowBoxData) {
                 <div
                     style={{
                         backgroundImage: `url(${user ? user.avatar : ""})`,
-                        borderRadius: user?.customization?.square_avatar ? "5px" : "100%",
+                        clipPath: AVATAR_SHAPES[user?.customization?.square_avatar]
+                            ? AVATAR_SHAPES[user?.customization?.square_avatar].style
+                            : AVATAR_SHAPES[AvaterShape.CircleAvatarShape].style,
+                        borderRadius:
+                            AVATAR_SHAPES[user?.customization?.square_avatar]?.name !== "Circle Avatar Shape"
+                                ? user?.customization?.square_avatar
+                                    ? "5px"
+                                    : "100%"
+                                : "100%",
                     }}
                     className="pfp-post"
                 ></div>

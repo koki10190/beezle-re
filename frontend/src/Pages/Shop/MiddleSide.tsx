@@ -16,15 +16,16 @@ import axios from "axios";
 import { api_uri } from "../../links";
 import { toast } from "react-toastify";
 import shop_music from "./sans.mp3";
+import { AVATAR_SHAPES, AvaterShape } from "../../types/cosmetics/AvatarShapes";
 
 enum BuyWhat {
     POST_BG_IMG,
     PROFILE_GRADIENT,
     NAME_COLOR,
-    SQUARE_AVATAR,
+    AVATAR_SHAPE,
 }
 
-async function Buy(buy_what: BuyWhat) {
+async function Buy(buy_what: BuyWhat, arg: number = 0, setSelfUser: React.Dispatch<React.SetStateAction<UserPrivate>> = () => {}) {
     let res = null;
     switch (buy_what) {
         case BuyWhat.PROFILE_GRADIENT: {
@@ -39,9 +40,27 @@ async function Buy(buy_what: BuyWhat) {
             });
             break;
         }
-        case BuyWhat.SQUARE_AVATAR: {
-            res = await axios.post(`${api_uri}/api/user/buy/square_avatar`, {
+        case BuyWhat.AVATAR_SHAPE: {
+            res = await axios.post(`${api_uri}/api/user/buy/avatar`, {
                 token: localStorage.getItem("access_token"),
+                shape: arg,
+            });
+            setSelfUser((user) => {
+                const _new = { ...user };
+                try {
+                    _new.customization.owned_shapes.push(arg);
+                } catch (e) {
+                    if (!(_new as any).customization) {
+                        (_new as any).customization = {
+                            owned_shapes: [arg],
+                        };
+                    }
+
+                    if (!(_new as any).customization?.owned_shapes) {
+                        (_new as any).customization.owned_shapes = [arg];
+                    }
+                }
+                return _new;
             });
             break;
         }
@@ -122,15 +141,29 @@ function MiddleSide() {
                         level_required={true}
                         level_needed={10}
                     />
-                    <ShopBox
-                        title="Square Profile Frame"
-                        price={5000}
-                        call_on_purchase={() => Buy(BuyWhat.SQUARE_AVATAR)}
-                        self_user={self_user}
-                        _disabled={self_user?.customization?.square_avatar_bought}
-                        level_required={true}
-                        level_needed={5}
-                    />
+
+                    {AVATAR_SHAPES.map((shape, index) => {
+                        if (index === AvaterShape.CircleAvatarShape) return <></>;
+                        return (
+                            <ShopBox
+                                title={shape.name}
+                                price={shape.price}
+                                call_on_purchase={() => Buy(BuyWhat.AVATAR_SHAPE, index, setSelfUser)}
+                                self_user={self_user}
+                                _disabled={self_user?.customization?.owned_shapes?.find((x) => x === index) ? true : false}
+                                level_required={true}
+                                level_needed={shape.level_required}
+                            >
+                                <div
+                                    className="shop_avatar"
+                                    style={{
+                                        backgroundImage: `url(${self_user?.avatar})`,
+                                        clipPath: shape.style,
+                                    }}
+                                ></div>
+                            </ShopBox>
+                        );
+                    })}
                 </>
             ) : (
                 ""

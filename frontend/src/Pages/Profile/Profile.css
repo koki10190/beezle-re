@@ -43,25 +43,25 @@ body {
 .profile .pfp {
     width: 150px;
     height: 150px;
-    border-radius: 100%;
+    border-radius: 5px;
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
-    border: 7px solid rgb(0, 0, 0);
+    /* border: 7px solid rgb(0, 0, 0); */
     background-image: url();
 }
 
 .profile .username {
     font-size: 25px;
-    margin-top: -126px;
-    margin-left: 170px;
+    margin-top: -115px;
+    margin-left: 160px;
 }
 
 .profile .handle {
-    color: gray;
+    color: #ffffff60;
     font-size: 20px;
     margin-top: -30px;
-    margin-left: 170px;
+    margin-left: 160px;
 }
 
 .profile .about_me {
@@ -195,7 +195,7 @@ body {
     }
 
     .profile .username {
-        margin-top: -105px;
+        margin-top: -90px;
         margin-left: 140px;
         font-size: 17px;
     }

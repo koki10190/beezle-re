@@ -1,4 +1,5 @@
 interface Post {
+    error?: any;
     handle: string;
     post_op_handle: string;
     content: string;

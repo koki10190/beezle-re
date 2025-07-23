@@ -10,6 +10,7 @@ import Divider from "./Divider";
 import sanitize from "sanitize-html";
 import RepToIcon from "./RepToIcon";
 import parseURLs from "../functions/parseURLs";
+import { AVATAR_SHAPES, AvaterShape } from "../types/cosmetics/AvatarShapes";
 
 function NotifPost({ post_data }: { post_data: Post }) {
     const [user, setUser] = useState<UserPublic>();
@@ -28,7 +29,18 @@ function NotifPost({ post_data }: { post_data: Post }) {
             <Divider />
             <div className="notif-post-box">
                 <div
-                    style={{ backgroundImage: `url(${user.avatar})`, borderRadius: user.customization?.square_avatar ? "5px" : "100%" }}
+                    style={{
+                        backgroundImage: `url(${user.avatar})`,
+                        clipPath: AVATAR_SHAPES[user?.customization?.square_avatar]
+                            ? AVATAR_SHAPES[user?.customization?.square_avatar].style
+                            : AVATAR_SHAPES[AvaterShape.CircleAvatarShape].style,
+                        borderRadius:
+                            AVATAR_SHAPES[user?.customization?.square_avatar]?.name !== "Circle Avatar Shape"
+                                ? user?.customization?.square_avatar
+                                    ? "5px"
+                                    : "100%"
+                                : "100%",
+                    }}
                     className="pfp"
                 ></div>
                 <div className="user-detail">
@@ -102,7 +114,15 @@ function NotifBox({ notif }: { notif: NotificationData }) {
                     <div
                         style={{
                             backgroundImage: `url(${user.avatar})`,
-                            borderRadius: user.customization?.square_avatar ? "5px" : "100%",
+                            clipPath: AVATAR_SHAPES[user?.customization?.square_avatar]
+                                ? AVATAR_SHAPES[user?.customization?.square_avatar].style
+                                : "",
+                            borderRadius:
+                                AVATAR_SHAPES[user?.customization?.square_avatar]?.name !== "Circle Avatar Shape"
+                                    ? user?.customization?.square_avatar
+                                        ? "5px"
+                                        : "100%"
+                                    : "100%",
                         }}
                         className="notif-pfp"
                     ></div>

@@ -104,9 +104,39 @@ function PostTyper({ onSend, replying_to = "" }: { onSend: (data: Post) => void;
         // target.innerHTML += ReactDOMServer.renderToStaticMarkup(isVideo ? <VideoEmbed url={link} /> : <ImageEmbed url={link} />);
     };
 
+    const PasteImage = async (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
+        const item = e.clipboardData.items[0];
+
+        if (item.type.indexOf("image") === 0 || item.type.indexOf("video") === 0) {
+            e.preventDefault();
+            const blob = item.getAsFile();
+
+            // const fileFormData = new FormData();
+            // fileFormData.append("file", blob);
+
+            const link = window.URL.createObjectURL(blob);
+            const ext = blob.type;
+            const isVideo = ext.match(/mp4|wmv/gi) ? true : false;
+            setFiles((old) => [
+                ...old,
+                {
+                    file: blob,
+                    isVideo,
+                },
+            ]);
+        }
+    };
+
     return (
         <div>
-            <textarea minLength={1} maxLength={300} ref={textarea} placeholder="Press here to type." className="post-typer"></textarea>
+            <textarea
+                onPaste={PasteImage}
+                minLength={1}
+                maxLength={300}
+                ref={textarea}
+                placeholder="Press here to type."
+                className="post-typer"
+            ></textarea>
             <div ref={filesToUploadRef} className="files-to-upload">
                 {files.map((file, index) =>
                     file.isVideo ? (

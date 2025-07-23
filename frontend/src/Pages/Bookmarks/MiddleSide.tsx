@@ -21,7 +21,7 @@ function MiddleSide() {
             user.bookmarks.forEach(async (post_id: string) => {
                 console.log(post_id);
                 const post = await FetchPost(post_id);
-                setPosts(old => [...old, post]);
+                setPosts((old) => [...old, post]);
             });
         })();
     }, []);
@@ -33,14 +33,10 @@ function MiddleSide() {
             <Divider />
             {self_user
                 ? posts.map((post: Post) => {
-                      return (
-                          <PostBox
-                              delete_post_on_bookmark_remove={true}
-                              setPosts={setPosts}
-                              self_user={self_user}
-                              key={post.post_id}
-                              post={post}
-                          />
+                      return post?.error ? (
+                          <></>
+                      ) : (
+                          <PostBox delete_post_on_bookmark_remove={true} setPosts={setPosts} self_user={self_user} key={post.post_id} post={post} />
                       );
                   })
                 : ""}

@@ -24,6 +24,7 @@ import parseURLs from "../../functions/parseURLs";
 import useMousePos from "../../hooks/useMousePos";
 import RepToIcon from "../../Components/RepToIcon";
 import MentionHover from "../../Components/MentionHover";
+import { AVATAR_SHAPES, AvaterShape } from "../../types/cosmetics/AvatarShapes";
 
 function Loading() {
     return (
@@ -235,7 +236,7 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
             {mention_hover ? <MentionHover user={mention_hover} mousePos={mousePos} /> : ""}
             <div
                 style={{
-                    background: bgGradient,
+                    backgroundImage: bgGradient,
                 }}
                 onScroll={handleScroll}
                 className="page-sides side-middle"
@@ -248,7 +249,18 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                         className="banner"
                     ></div>
                     <div
-                        style={{ backgroundImage: `url(${user.avatar})`, borderRadius: user.customization?.square_avatar ? "5px" : "100%" }}
+                        style={{
+                            backgroundImage: `url(${user.avatar})`,
+                            clipPath: AVATAR_SHAPES[user?.customization?.square_avatar]
+                                ? AVATAR_SHAPES[user?.customization?.square_avatar].style
+                                : "",
+                            borderRadius:
+                                AVATAR_SHAPES[user?.customization?.square_avatar]?.name !== "Circle Avatar Shape"
+                                    ? user?.customization?.square_avatar
+                                        ? "5px"
+                                        : "100%"
+                                    : "100%",
+                        }}
                         className="pfp"
                     ></div>
                     <p className="username">

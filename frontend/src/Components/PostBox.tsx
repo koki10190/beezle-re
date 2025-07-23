@@ -26,6 +26,7 @@ import TrimToDots from "../functions/TrimToDots";
 import useMousePos from "../hooks/useMousePos";
 import MentionHover from "./MentionHover";
 import Divider from "./Divider";
+import { AVATAR_SHAPES, AvaterShape } from "../types/cosmetics/AvatarShapes";
 
 interface PostBoxData {
     post: Post;
@@ -524,7 +525,15 @@ function PostBox({
                 <div
                     style={{
                         backgroundImage: `url(${user ? user.avatar : ""})`,
-                        borderRadius: user?.customization?.square_avatar ? "5px" : "100%",
+                        clipPath: AVATAR_SHAPES[user?.customization?.square_avatar]
+                            ? AVATAR_SHAPES[user?.customization?.square_avatar].style
+                            : AVATAR_SHAPES[AvaterShape.CircleAvatarShape].style,
+                        borderRadius:
+                            AVATAR_SHAPES[user?.customization?.square_avatar]?.name !== "Circle Avatar Shape"
+                                ? user?.customization?.square_avatar
+                                    ? "5px"
+                                    : "100%"
+                                : "100%",
                     }}
                     className="pfp-post"
                 ></div>
@@ -534,7 +543,7 @@ function PostBox({
                         <BadgesToJSX badges={user ? user.badges : []} className="profile-badge profile-badge-shadow" />
                     </p>
                     <p className="handle-post">
-                        @{user ? user.handle : ""}
+                        @{user ? user.handle : "handle"}
                         {user ? (
                             <>
                                 {" "}

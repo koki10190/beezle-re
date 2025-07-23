@@ -25,6 +25,7 @@ import EmojiPicker, { EmojiClickData, EmojiStyle, Theme } from "emoji-picker-rea
 import { toast } from "react-toastify";
 import { PostReaction, ReactionsData } from "../../types/ReactionsData";
 import TrimToDots from "../../functions/TrimToDots";
+import { AVATAR_SHAPES } from "../../types/cosmetics/AvatarShapes";
 
 interface ReactionsInter {
     [key: string]: PostReaction[];
@@ -379,7 +380,15 @@ function MiddleSide() {
                     <div
                         style={{
                             backgroundImage: `url(${post_user?.avatar})`,
-                            borderRadius: post_user?.customization?.square_avatar ? "5px" : "100%",
+                            clipPath: AVATAR_SHAPES[post_user?.customization?.square_avatar]
+                                ? AVATAR_SHAPES[post_user?.customization?.square_avatar].style
+                                : "",
+                            borderRadius:
+                                AVATAR_SHAPES[post_user?.customization?.square_avatar]?.name !== "Circle Avatar Shape"
+                                    ? post_user?.customization?.square_avatar
+                                        ? "5px"
+                                        : "100%"
+                                    : "100%",
                         }}
                         className="post-page-pfp"
                     ></div>

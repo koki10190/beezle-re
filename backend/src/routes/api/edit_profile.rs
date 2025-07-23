@@ -24,7 +24,7 @@ struct GetUserQuery {
     profile_gradient2: String,
     name_color1: String,
     name_color2: String,
-    square_avatar: bool,
+    avatar_shape: i64,
     profile_postbox_img: String,
 }
 
@@ -184,7 +184,24 @@ pub async fn route(
                 .await;
             }
 
-            if square_avatar_bought {
+            println!("{}", body.avatar_shape);
+            mongoose::update_document(
+                &client,
+                "beezle",
+                "Users",
+                doc! {
+                    "handle": &token_data.handle,
+                    "customization.owned_shapes": body.avatar_shape
+                },
+                doc! {
+                    "$set": {
+                        "customization.square_avatar": body.avatar_shape
+                    }
+                },
+            )
+            .await;
+
+            if body.avatar_shape == 0 {
                 mongoose::update_document(
                     &client,
                     "beezle",
@@ -194,7 +211,7 @@ pub async fn route(
                     },
                     doc! {
                         "$set": {
-                            "customization.square_avatar": body.square_avatar
+                            "customization.square_avatar": body.avatar_shape
                         }
                     },
                 )
@@ -211,7 +228,7 @@ pub async fn route(
                     },
                     doc! {
                         "$set": {
-                            "customization.profile_postbox_img_bought": body.square_avatar
+                            "customization.profile_postbox_img_bought": body.avatar_shape
                         }
                     },
                 )

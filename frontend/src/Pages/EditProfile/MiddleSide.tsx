@@ -12,6 +12,7 @@ import { BadgesToJSX } from "../../functions/badgesToJSX";
 import UploadToImgur from "../../functions/UploadToImgur";
 import { toast } from "react-toastify";
 import EmojiPicker, { EmojiClickData, EmojiStyle, Theme } from "emoji-picker-react";
+import { AVATAR_SHAPES, AvaterShape } from "../../types/cosmetics/AvatarShapes";
 
 function Loading() {
     return (
@@ -32,7 +33,7 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
     const [username, setUsername] = useState<string>(user.username);
     const [about_me, setAboutMe] = useState<string>(user.about_me);
     const [activity, setActivity] = useState<string>(user.activity);
-    const [squareAvatar, setSquareAvatar] = useState<boolean>(user.customization?.square_avatar ? true : false);
+    const [avatarShape, setAvatarShape] = useState<AvaterShape>(user.customization?.square_avatar ?? AvaterShape.SquareAvatarShape);
     const [profileBgImg, setProfileBgImage] = useState(user.customization?.profile_postbox_img_bought ? user.customization.profile_postbox_img : "");
     const [g1, setG1] = useState<string>(user.customization?.profile_gradient ? user.customization.profile_gradient.color1 : "#000000");
     const [g2, setG2] = useState<string>(user.customization?.profile_gradient ? user.customization.profile_gradient.color2 : "#000000");
@@ -113,7 +114,7 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
                 profile_gradient2: g2,
                 name_color1: ng1,
                 name_color2: ng2,
-                square_avatar: squareAvatar,
+                avatar_shape: avatarShape,
                 profile_postbox_img: __ProfileBgImage ? __ProfileBgImage : "",
             };
             console.log(data);
@@ -257,6 +258,28 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
                 ) : (
                     ""
                 )}
+                <div className="profile-container-nom">
+                    <p className="profile-container-header">Avatar Shape</p>
+                    <br></br>
+                    <select
+                        onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                            setAvatarShape(parseInt(e.target.value) as AvaterShape);
+                        }}
+                        style={{ width: "100%" }}
+                        className="input-field"
+                    >
+                        <option selected={(user.customization?.square_avatar ?? 0) === 0} value={0}>
+                            Circle Avatar Shape
+                        </option>
+                        {user.customization?.owned_shapes?.map((shape) => {
+                            return (
+                                <option selected={shape === user?.customization.square_avatar} value={shape}>
+                                    {AVATAR_SHAPES[shape].name}
+                                </option>
+                            );
+                        })}
+                    </select>
+                </div>
                 {/* {user.customization?.profile_postbox_img_bought ? (
                     <div className="profile-container-nom">
                         <p className="profile-container-header">
@@ -272,7 +295,7 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
                 ) : (
                     ""
                 )} */}
-                {user.customization?.square_avatar_bought ? (
+                {/* {user.customization?.square_avatar_bought ? (
                     <>
                         <p style={{ display: "inline" }}>Square Avatar</p>
                         <input
@@ -285,7 +308,7 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
                     </>
                 ) : (
                     ""
-                )}
+                )} */}
             </div>
 
             <br />

@@ -45,7 +45,7 @@ pub async fn route(client: web::Data<mongodb::Client>, body: web::Json<_Post>) -
         })
         .build();
 
-    let mut orFilter: Vec<bson::Document> = vec![];
+    let mut orFilter: Vec<bson::Document> = vec![doc!{"handle": "beezle"}];
 
     for bson_handle in &body.filter_users {
         let handle = bson_handle.as_str().unwrap();

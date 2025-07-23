@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { Children, ReactNode, useEffect, useRef, useState } from "react";
 import { checkToken } from "../../functions/checkToken";
 
 import Divider from "../../Components/Divider";
@@ -21,6 +21,7 @@ function ShopBox({
     display = true,
     level_required = false,
     level_needed = 0,
+    children,
 }: {
     self_user: UserPrivate;
     title: string;
@@ -30,6 +31,7 @@ function ShopBox({
     display?: boolean;
     level_required?: boolean;
     level_needed?: number;
+    children?: ReactNode;
 }) {
     const levelBox = useRef<HTMLSpanElement>(null);
     useEffect(() => {
@@ -42,7 +44,10 @@ function ShopBox({
         <>
             {display ? (
                 <div className="shop-box">
-                    <p className="shop-box-header">{title}</p>
+                    <p className="shop-box-header">
+                        {children}
+                        {title}
+                    </p>
                     <p className="shop-box-price">
                         <i className="fa-solid fa-coins" /> Costs {price.toLocaleString("en-US")}
                     </p>

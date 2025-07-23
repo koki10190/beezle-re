@@ -1,5 +1,6 @@
 import { CustomEmoji } from "emoji-picker-react/dist/config/customEmojiConfig";
 import { NotificationData } from "./Notification";
+import { AvaterShape } from "./cosmetics/AvatarShapes";
 
 enum BadgeType {
     VERIFIED,
@@ -22,12 +23,13 @@ interface UserCustomization {
     profile_gradient_bought: boolean;
     name_color_bought: boolean;
     square_avatar_bought: boolean;
-    square_avatar: boolean;
+    square_avatar: number;
 
     profile_postbox_img: string;
     profile_postbox_img_bought: boolean;
 
     emojis: Array<CustomEmoji>;
+    owned_shapes: AvaterShape[];
 }
 
 interface UserConnections {
