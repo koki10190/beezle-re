@@ -72,13 +72,13 @@ function RightSide() {
         //     // localStorage.setItem("notifs", JSON.stringify([data, ...JSON.parse(localStorage.getItem("notifs")!)]));
         // });
 
-        dmSocket.on("get message", (data: DMData) => {
-            console.log('Received a DM From user "', data.from.username, '" Content:', data.content);
-            console.log(notifCount);
-            setNotifCount((old) => {
-                return old++;
-            });
-        });
+        // dmSocket.on("get message", (data: DMData) => {
+        //     console.log('Received a DM From user "', data.from.username, '" Content:', data.content);
+        //     console.log(notifCount);
+        //     setNotifCount((old) => {
+        //         return old++;
+        //     });
+        // });
 
         socket.listen("update_notification_counter", (data) => {
             console.log("Notification Received!");
