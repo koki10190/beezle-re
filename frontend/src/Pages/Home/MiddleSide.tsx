@@ -11,6 +11,7 @@ import { UserPrivate, UserPublic } from "../../types/User";
 import { Post } from "../../types/Post";
 import { RefreshPosts } from "../../functions/RefreshPosts";
 import GetFullAuth from "../../functions/GetFullAuth";
+import { toast } from "react-toastify";
 
 function MiddleSide() {
     const data: {
@@ -36,6 +37,7 @@ function MiddleSide() {
         // detected bottom
 
         console.log("at bottom!");
+        if (self_user?.is_bot) return console.error("Bot accounts cannot use the site.");
         const posts = (
             await axios.post(
                 `${api_uri}/api/post/get/following`,
@@ -54,6 +56,7 @@ function MiddleSide() {
         (async () => {
             const m_user = (await fetchUserPrivate()) as UserPrivate;
             setSelfUser(m_user);
+            if (m_user.is_bot) return toast.error("Bot accounts cannot use the site!");
             const posts = (
                 await axios.post(
                     `${api_uri}/api/post/get/following`,
@@ -78,6 +81,7 @@ function MiddleSide() {
             <PostTyper onSend={OnTyperSend} />
             <Divider />
             <p>You're viewing Home</p>
+            {self_user?.is_bot ? <p>Bot Accounts are not allowed to use the site.</p> : ""}
             {self_user
                 ? posts.map((post: Post) => {
                       return <PostBox allow_reply_attribute={true} setPosts={setPosts} self_user={self_user} key={post.post_id} post={post} />;

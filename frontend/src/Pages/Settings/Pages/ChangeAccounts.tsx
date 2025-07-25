@@ -29,7 +29,6 @@ function AccountDisplay({ main_token, token, accounts, setAccounts }: AccountDis
     useEffect(() => {
         (async () => {
             const user = await fetchUserPrivate(token);
-            console.log(user);
             setUser(user);
         })();
     }, []);
@@ -122,7 +121,6 @@ function ChangeAccounts({ user }: Props) {
         if (localStorage.getItem("accounts") == null || localStorage.getItem("accounts") === "[]") {
             localStorage.setItem("accounts", JSON.stringify([localStorage.getItem("access_token")]));
         }
-
         setAccounts(JSON.parse(localStorage.getItem("accounts") as string) as string[]);
     };
 
@@ -152,9 +150,9 @@ function ChangeAccounts({ user }: Props) {
 
                 <Divider />
                 <div className="change-acc-display-container">
-                    {accounts.map((token) => (
-                        <AccountDisplay setAccounts={setAccounts} accounts={accounts} main_token={main_token} key={token} token={token} />
-                    ))}
+                    {accounts.map((token) => {
+                        return <AccountDisplay setAccounts={setAccounts} accounts={accounts} main_token={main_token} key={token} token={token} />;
+                    })}
                 </div>
             </div>
         </>

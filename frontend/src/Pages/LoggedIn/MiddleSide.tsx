@@ -39,6 +39,8 @@ function MiddleSide() {
         // detected bottom
 
         console.log("at bottom!");
+
+        if (self_user?.is_bot) return console.error("Bot accounts cannot use the site.");
         const data = (await axios.get(`${api_uri}/api/post/get/explore?offset=${offset}&${GetPostPrefsStringQuery()}`, GetFullAuth())).data;
 
         setPosts((old) => [...old, ...(data.posts as Array<Post>)]);
@@ -65,6 +67,7 @@ function MiddleSide() {
             <PostTyper onSend={OnTyperSend} />
             <Divider />
             <p>You're viewing Explore</p>
+            {self_user?.is_bot ? <p>Bot Accounts are not allowed to use the site.</p> : ""}
 
             {self_user
                 ? posts.map((post: Post) => {

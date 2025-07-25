@@ -12,6 +12,7 @@ import { Post } from "../../types/Post";
 import { RefreshPosts } from "../../functions/RefreshPosts";
 import GetPostPrefsStringQuery from "../../functions/GetPostPrefsStringQuery";
 import GetFullAuth from "../../functions/GetFullAuth";
+import { toast } from "react-toastify";
 
 function MiddleSide() {
     const data: {
@@ -37,6 +38,7 @@ function MiddleSide() {
         // detected bottom
 
         console.log("at bottom!");
+        if (self_user?.is_bot) return console.error("Bot Accounts are not allowed to use the site.");
         const posts = (await axios.get(`${api_uri}/api/post/get/now?offset=${postOffset}&${GetPostPrefsStringQuery()}`, GetFullAuth())).data;
         setPosts((old) => [...old, ...posts.posts]);
         setPostOffset(posts.offset);
@@ -44,10 +46,12 @@ function MiddleSide() {
 
     useEffect(() => {
         (async () => {
+            const m_user = await fetchUserPrivate();
+            setSelfUser(m_user);
+            if (m_user?.is_bot) return console.error("Bot Accounts are not allowed to use the site.");
             const posts = (await axios.get(`${api_uri}/api/post/get/now?offset=${postOffset}&${GetPostPrefsStringQuery()}`, GetFullAuth())).data;
             setPosts(posts.posts);
             setPostOffset(posts.offset);
-            setSelfUser((await fetchUserPrivate()) as UserPrivate);
         })();
     }, []);
 
@@ -60,6 +64,7 @@ function MiddleSide() {
             <PostTyper onSend={OnTyperSend} />
             <Divider />
             <p>You're viewing Right Now</p>
+            {self_user?.is_bot ? <p>Bot Accounts are not allowed to use the site.</p> : ""}
 
             {self_user
                 ? posts.map((post: Post) => {

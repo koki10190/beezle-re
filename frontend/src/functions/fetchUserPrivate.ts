@@ -8,7 +8,9 @@ async function fetchUserPrivate(access_token?: string): Promise<UserPrivate | nu
     if (!token) return null;
 
     const res = await axios.get(`${api_uri}/api/user/private`, {
-        headers: GetAuthToken(),
+        headers: {
+            Authorization: token,
+        },
     });
 
     const data = res.data;
@@ -17,6 +19,7 @@ async function fetchUserPrivate(access_token?: string): Promise<UserPrivate | nu
         console.error(data.error);
         return null;
     }
+    console.log("ACCESS2", data);
 
     return data as UserPrivate;
 }

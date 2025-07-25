@@ -17,6 +17,7 @@ import { fetchUserPrivate } from "../functions/fetchUserPrivate";
 import PostTyperVideoEmbed from "./PostTyperVideoEmbed";
 import PostTyperImageEmbed from "./PostTyperImageEmbed";
 import GetAuthToken from "../functions/GetAuthHeader";
+import { toast } from "react-toastify";
 
 interface FileType {
     file: File;
@@ -42,6 +43,9 @@ function PostTyper({ onSend, replying_to = "" }: { onSend: (data: Post) => void;
     }, []);
 
     const CreatePost = () => {
+        if (self_user?.is_bot) {
+            return toast.error("Bot Accounts cannot use the site!");
+        }
         (async () => {
             let links = "";
             for (const file of files) {

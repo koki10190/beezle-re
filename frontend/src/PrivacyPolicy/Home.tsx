@@ -1,16 +1,16 @@
-import axios from 'axios';
-import { FormEvent, useRef, useState } from 'react';
-import { BrowserRouter, Routes, Route, redirect } from 'react-router-dom';
-import { discord, github, twitter, youtube } from '../links';
-import react from 'react';
+import axios from "axios";
+import { FormEvent, useRef, useState } from "react";
+import { BrowserRouter, Routes, Route, redirect } from "react-router-dom";
+import { discord, github, twitter, youtube } from "../links";
+import react from "react";
 
-import '../Main.css';
-import './PrivacyPolicy.css';
+import "../Main.css";
+import "./PrivacyPolicy.css";
 
 function Home() {
     return (
         <>
-            <div style={{ width: '100vw', height: '100vh', overflowY: 'auto', wordWrap: 'break-word' }} className="privacy">
+            <div style={{ width: "100vw", height: "100vh", overflowY: "auto", wordWrap: "break-word" }} className="privacy">
                 <h1>Privacy & Terms</h1>
                 <ul>
                     <h1 className="headline">Privacy</h1>
@@ -24,10 +24,10 @@ function Home() {
                         <br />- Your display name, handle, profile picture and your banner that you upload
                         <br />
                         <br />
-                        If you do not trust us, you can head over the{' '}
+                        If you do not trust us, you can head over the{" "}
                         <a className="link" href="https://github.com/koki10190/beezle-re" target="_blank">
                             GitHub Repository
-                        </a>{' '}
+                        </a>{" "}
                         to check the source code
                     </p>
                     <br />
@@ -95,6 +95,13 @@ function Home() {
                     </ul>
                     <br />
                     <li>You're not allowed to post NSFW content unless your account is private (Coming Soon feature)</li>
+                    <li>
+                        You're not allowed to be a Bot Account while you use the site, if you use the site as a bot account, it can lead to coin/xp
+                        loss & even a ban
+                    </li>
+                    <li>
+                        If you make a bot on Beezle: RE you <b>have</b> to make it a Bot Account, otherwise it will lead to account termination.
+                    </li>
                     <li>
                         You're not allowed to impersonate anyone, if you're running a parody account of theirs, clarify that it is infact a parody
                         account in the Bio or the Display Name
