@@ -10,6 +10,7 @@ import { fetchUserPrivate } from "../../functions/fetchUserPrivate";
 import { UserPrivate, UserPublic } from "../../types/User";
 import { Post } from "../../types/Post";
 import { RefreshPosts } from "../../functions/RefreshPosts";
+import GetFullAuth from "../../functions/GetFullAuth";
 
 function MiddleSide() {
     const { hashtag } = useParams();
@@ -25,7 +26,7 @@ function MiddleSide() {
         // detected bottom
 
         console.log("at bottom!");
-        const posts = (await axios.get(`${api_uri}/api/post/hashtag/get?offset=${postOffset}&hashtag=${hashtag}`)).data;
+        const posts = (await axios.get(`${api_uri}/api/post/hashtag/get?offset=${postOffset}&hashtag=${hashtag}`, GetFullAuth())).data;
         setPosts((old) => [...old, ...posts.posts]);
         setPostOffset(posts.offset);
     };
@@ -34,7 +35,7 @@ function MiddleSide() {
         (async () => {
             const m_user = (await fetchUserPrivate()) as UserPrivate;
             setSelfUser(m_user);
-            const posts = (await axios.get(`${api_uri}/api/post/hashtag/get?offset=${postOffset}&hashtag=${hashtag}`)).data;
+            const posts = (await axios.get(`${api_uri}/api/post/hashtag/get?offset=${postOffset}&hashtag=${hashtag}`, GetFullAuth())).data;
             setPosts(posts.posts);
             setPostOffset(posts.offset);
         })();

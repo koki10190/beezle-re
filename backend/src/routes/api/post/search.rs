@@ -6,10 +6,10 @@ use mongodb::options::FindOptions;
 use serde::Deserialize;
 use std::env;
 
-use actix_web::{get, http::StatusCode, post, web, App, HttpResponse, HttpServer, Responder};
+use actix_web::{get, http::StatusCode, post, web, App, HttpRequest, HttpResponse, HttpServer, Responder};
 
 use crate::{
-    beezle,
+    beezle::{self, auth::verify_token},
     mongoose::{self, get_many::vec_to_str, structures::user},
     poison::LockResultExt,
 };
@@ -20,8 +20,10 @@ struct _Query {
 }
 
 #[get("/api/post/search")]
-pub async fn route(client: web::Data<mongodb::Client>, body: web::Query<_Query>) -> impl Responder {
-    //TODO: do this
+pub async fn route(client: web::Data<mongodb::Client>, req: HttpRequest, body: web::Query<_Query>) -> impl Responder {
+    if !verify_token(&client, &req).await {
+        return HttpResponse::Unauthorized().json(doc!{"error": "Not Authorized!"});
+    }
 
     let db = client.database("beezle");
     let coll: mongodb::Collection<Document> = db.collection("Posts");
@@ -40,7 +42,7 @@ pub async fn route(client: web::Data<mongodb::Client>, body: web::Query<_Query>)
                 "$or": [
                     {
                         "handle": mongodb::bson::Regex {
-                            pattern: body.search.to_string(),
+                            pattern: body.search.replace("@", "").to_string(),
                             options: "i".to_string()
                         }
                     },

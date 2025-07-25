@@ -6,23 +6,14 @@ use mongodb::options::{AggregateOptions, FindOptions};
 use serde::Deserialize;
 use std::env;
 
-use actix_web::{get, http::StatusCode, post, web, App, HttpResponse, HttpServer, Responder};
+use actix_web::{get, http::{self, StatusCode}, post, web, App, HttpRequest, HttpResponse, HttpServer, Responder};
 
 use crate::{
-    beezle,
+    beezle::{self, auth::verify_token},
     mongoose::{self, get_many::vec_to_str, structures::user},
     poison::LockResultExt,
 };
 
-// #[get("/api/post/get/explore")]
-// pub async fn route(client: web::Data<mongodb::Client>) -> impl Responder {
-//     //TODO: do this
-
-//     let many =
-//         mongoose::get_many::get_many_random_document(&client, "beezle", "Posts", doc! {}).await;
-
-//     HttpResponse::Ok().json(many)
-// }
 
 #[derive(Deserialize)]
 struct _Query {
@@ -30,8 +21,11 @@ struct _Query {
 }
 
 #[get("/api/post/get/explore")]
-pub async fn route(client: web::Data<mongodb::Client>, body: web::Query<_Query>) -> impl Responder {
+pub async fn route(client: web::Data<mongodb::Client>, req: HttpRequest, body: web::Query<_Query>) -> impl Responder {
     //TODO: do this
+    if !verify_token(&client, &req).await {
+        return HttpResponse::Unauthorized().json(doc!{"error": "Not Authorized!"});
+    }
 
     let db = client.database("beezle");
     let coll: mongodb::Collection<Document> = db.collection("Posts");

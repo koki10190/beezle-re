@@ -10,6 +10,7 @@ import { fetchUserPrivate } from "../../functions/fetchUserPrivate";
 import { UserPrivate, UserPublic } from "../../types/User";
 import { Post } from "../../types/Post";
 import { RefreshPosts } from "../../functions/RefreshPosts";
+import GetFullAuth from "../../functions/GetFullAuth";
 
 function MiddleSide() {
     const data: {
@@ -36,12 +37,16 @@ function MiddleSide() {
 
         console.log("at bottom!");
         const posts = (
-            await axios.post(`${api_uri}/api/post/get/following`, {
-                offset: postOffset,
-                filter_users: self_user.following,
-            })
+            await axios.post(
+                `${api_uri}/api/post/get/following`,
+                {
+                    offset: postOffset,
+                    filter_users: self_user.following,
+                },
+                GetFullAuth(),
+            )
         ).data;
-        setPosts(old => [...old, ...posts.posts]);
+        setPosts((old) => [...old, ...posts.posts]);
         setPostOffset(posts.offset);
     };
 
@@ -50,10 +55,14 @@ function MiddleSide() {
             const m_user = (await fetchUserPrivate()) as UserPrivate;
             setSelfUser(m_user);
             const posts = (
-                await axios.post(`${api_uri}/api/post/get/following`, {
-                    offset: postOffset,
-                    filter_users: m_user.following,
-                })
+                await axios.post(
+                    `${api_uri}/api/post/get/following`,
+                    {
+                        offset: postOffset,
+                        filter_users: m_user.following,
+                    },
+                    GetFullAuth(),
+                )
             ).data;
             setPosts(posts.posts);
             setPostOffset(posts.offset);
@@ -61,7 +70,7 @@ function MiddleSide() {
     }, []);
 
     const OnTyperSend = (data: Post) => {
-        setPosts(old => [data, ...old]);
+        setPosts((old) => [data, ...old]);
     };
 
     return (
@@ -71,15 +80,7 @@ function MiddleSide() {
             <p>You're viewing Home</p>
             {self_user
                 ? posts.map((post: Post) => {
-                      return (
-                          <PostBox
-                              allow_reply_attribute={true}
-                              setPosts={setPosts}
-                              self_user={self_user}
-                              key={post.post_id}
-                              post={post}
-                          />
-                      );
+                      return <PostBox allow_reply_attribute={true} setPosts={setPosts} self_user={self_user} key={post.post_id} post={post} />;
                   })
                 : ""}
         </div>

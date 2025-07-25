@@ -12,7 +12,7 @@ function Message({ content, user, by_me, data }: { by_me: boolean; content: stri
     const DeleteMessage = () => {};
 
     const EditMessage = () => {
-        setEditing(old => {
+        setEditing((old) => {
             if (!old) editInput.current!.value = m_content;
             return !old;
         });
@@ -34,16 +34,8 @@ function Message({ content, user, by_me, data }: { by_me: boolean; content: stri
             // onMouseLeave={() => setShowOptions(false)}
             className={`dm-message ${by_me ? "by_me" : ""}`}
         >
-            <textarea
-                style={{ display: editing ? "block" : "none" }}
-                ref={editInput}
-                className="input-field"
-            ></textarea>
-            <button
-                onClick={EditButtonSuccess}
-                className="button-field dm-message-edit-button"
-                style={{ display: editing ? "block" : "none" }}
-            >
+            <textarea style={{ display: editing ? "block" : "none" }} ref={editInput} className="input-field"></textarea>
+            <button onClick={EditButtonSuccess} className="button-field dm-message-edit-button" style={{ display: editing ? "block" : "none" }}>
                 Edit
             </button>
             {editing ? "" : <p className="dm-message-content">{m_content}</p>}

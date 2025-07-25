@@ -87,7 +87,7 @@ function Reports({ user }: Props) {
 
     useEffect(() => {
         (async () => {
-            const res = await axios.get(`${api_uri}/api/get_reports`);
+            const res = await axios.get(`${api_uri}/api/get_reports`, { headers: GetAuthToken() });
 
             setReports(res.data as Array<ReportType>);
         })();

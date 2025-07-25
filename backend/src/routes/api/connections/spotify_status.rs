@@ -18,7 +18,7 @@ use actix_web::{
 };
 
 use crate::{
-    beezle::{self, crypt::{base64_encode, decrypt, encrypt}},
+    beezle::{self, auth::verify_token, crypt::{base64_encode, decrypt, encrypt}},
     mongoose::{self, structures::user},
     poison::LockResultExt,
 };
@@ -37,7 +37,12 @@ struct QueryData {
 pub async fn route(
     body: web::Query<QueryData>,
     client: web::Data<Client>,
+    req: HttpRequest
 ) -> actix_web::Result<HttpResponse> {
+    if !verify_token(&client, &req).await {
+        return Ok(HttpResponse::Unauthorized().json(doc!{"error": "Not Authorized!"}));
+    }
+    
     let reqwest_client = reqwest::Client::new();
 
     let client_id = env::var("SPOTIFY_CLIENT_ID").unwrap();

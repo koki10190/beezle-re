@@ -23,7 +23,7 @@ import { fetchUserPrivate } from "./functions/fetchUserPrivate";
 import Verify from "./Verify/Verify";
 import VerifyPass from "./Verify/VerifyPass";
 import Steam from "./Redirects/Steam";
-import dmSocket from "./ws/dm-socket";
+// import dmSocket from "./ws/dm-socket";
 import { Slide, toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import NotFound from "./Pages/404/NotFound";
@@ -47,17 +47,17 @@ interface WsUserData {
     status: UserStatus;
 }
 function App() {
-    dmSocket.on("connect", () => {
-        let _ = setInterval(async () => {
-            console.log("Intervalling DM..");
-            const user = await fetchUserPrivate();
-            if (!user) return;
+    // dmSocket.on("connect", () => {
+    //     let _ = setInterval(async () => {
+    //         console.log("Intervalling DM..");
+    //         const user = await fetchUserPrivate();
+    //         if (!user) return;
 
-            dmSocket.emit("get handle", user.handle);
+    //         dmSocket.emit("get handle", user.handle);
 
-            clearInterval(_);
-        }, 100);
-    });
+    //         clearInterval(_);
+    //     }, 100);
+    // });
 
     // dmSocket.on("get me handle", () => {
     //     dmSocket.emit("get handle", user.handle);

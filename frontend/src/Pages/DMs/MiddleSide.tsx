@@ -16,6 +16,7 @@ import Message from "./Message";
 import { DMData } from "../../types/DM";
 import { fetchUserPublic } from "../../functions/fetchUserPublic";
 import { useHref, useParams } from "react-router-dom";
+import GetFullAuth from "../../functions/GetFullAuth";
 
 function DMSpace({ dm_user, setDMUser, self_user }: { dm_user: UserPublic; setDMUser: any; self_user: UserPrivate }) {
     const [steamData, setSteamData] = useState<any | null>(null);
@@ -31,7 +32,10 @@ function DMSpace({ dm_user, setDMUser, self_user }: { dm_user: UserPublic; setDM
 
         (async () => {
             if (dm_user.connections?.steam?.id) {
-                const steam_res = await axios.get(`${api_uri}/api/connections/steam_get_game?steam_id=${dm_user.connections?.steam?.id}`);
+                const steam_res = await axios.get(
+                    `${api_uri}/api/connections/steam_get_game?steam_id=${dm_user.connections?.steam?.id}`,
+                    GetFullAuth(),
+                );
                 const steam_data = steam_res.data;
                 if (steam_data) setSteamData(steam_data[Object.keys(steam_data)[0]].data);
             }

@@ -15,7 +15,7 @@ use actix_web::{
 };
 
 use crate::{
-    beezle,
+    beezle::{self, auth::verify_token},
     mongoose::{self, structures::user},
     poison::LockResultExt,
 };
@@ -92,7 +92,12 @@ struct SummariesResponse {
 pub async fn route(
     body: web::Query<SteamBody>,
     client: web::Data<Client>,
+    req: HttpRequest
 ) -> actix_web::Result<HttpResponse> {
+    if !verify_token(&client, &req).await {
+        return Ok(HttpResponse::Unauthorized().json(doc!{"error": "Not Authorized!"}));
+    }
+
     let client = reqwest::Client::new();
     let response = client
         .get("https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/")

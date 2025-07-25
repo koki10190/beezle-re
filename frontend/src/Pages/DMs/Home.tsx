@@ -6,7 +6,6 @@ import { checkToken } from "../../functions/checkToken";
 import LeftSide from "./LeftSide";
 import RightSide from "../LoggedIn/RightSide";
 
-import dmSocket from "../../ws/dm-socket";
 import { fetchUserPrivate } from "../../functions/fetchUserPrivate";
 import { UserPrivate, UserPublic } from "../../types/User";
 import Divider from "../../Components/Divider";

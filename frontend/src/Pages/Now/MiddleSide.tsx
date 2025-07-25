@@ -11,6 +11,7 @@ import { UserPrivate, UserPublic } from "../../types/User";
 import { Post } from "../../types/Post";
 import { RefreshPosts } from "../../functions/RefreshPosts";
 import GetPostPrefsStringQuery from "../../functions/GetPostPrefsStringQuery";
+import GetFullAuth from "../../functions/GetFullAuth";
 
 function MiddleSide() {
     const data: {
@@ -36,14 +37,14 @@ function MiddleSide() {
         // detected bottom
 
         console.log("at bottom!");
-        const posts = (await axios.get(`${api_uri}/api/post/get/now?offset=${postOffset}&${GetPostPrefsStringQuery()}`)).data;
+        const posts = (await axios.get(`${api_uri}/api/post/get/now?offset=${postOffset}&${GetPostPrefsStringQuery()}`, GetFullAuth())).data;
         setPosts((old) => [...old, ...posts.posts]);
         setPostOffset(posts.offset);
     };
 
     useEffect(() => {
         (async () => {
-            const posts = (await axios.get(`${api_uri}/api/post/get/now?offset=${postOffset}&${GetPostPrefsStringQuery()}`)).data;
+            const posts = (await axios.get(`${api_uri}/api/post/get/now?offset=${postOffset}&${GetPostPrefsStringQuery()}`, GetFullAuth())).data;
             setPosts(posts.posts);
             setPostOffset(posts.offset);
             setSelfUser((await fetchUserPrivate()) as UserPrivate);

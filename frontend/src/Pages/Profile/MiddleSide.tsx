@@ -28,6 +28,7 @@ import { AVATAR_SHAPES, AvaterShape } from "../../types/cosmetics/AvatarShapes";
 import TrophyShowcase from "./TrophyShowcase";
 import { TROPHIES, Trophy } from "../../types/showcase/Trophy";
 import GetAuthToken from "../../functions/GetAuthHeader";
+import GetFullAuth from "../../functions/GetFullAuth";
 
 function Loading() {
     return (
@@ -128,7 +129,7 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
 
         // detected bottom
 
-        const _posts = (await axios.get(`${api_uri}/api/post/get/profile?handle=${user.handle}&offset=${postOffset}`)).data;
+        const _posts = (await axios.get(`${api_uri}/api/post/get/profile?handle=${user.handle}&offset=${postOffset}`, GetFullAuth())).data;
         setPosts((old) => [...old, ..._posts.posts]);
         setPostOffset(_posts.offset);
 
@@ -139,7 +140,7 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
         try {
             if (!user.connections?.spotify?.access_token) return;
 
-            const res = await axios.get(`${api_uri}/api/connections/spotify/status?handle=${user.handle}`);
+            const res = await axios.get(`${api_uri}/api/connections/spotify/status?handle=${user.handle}`, { headers: GetAuthToken() });
             const data = res.data;
 
             if (data.error) {
@@ -155,12 +156,12 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
         try {
             if (!user.connections?.lastfm?.username) return;
 
-            const res = await axios.get(`${api_uri}/api/lastfm/now_playing?username=${user.connections.lastfm.username}`);
+            const res = await axios.get(`${api_uri}/api/lastfm/now_playing?username=${user.connections.lastfm.username}`, GetFullAuth());
             const data = res.data;
 
             setLastfmData(data.error ? null : data);
 
-            const res_user = await axios.get(`${api_uri}/api/lastfm/get_user?username=${user.connections.lastfm.username}`);
+            const res_user = await axios.get(`${api_uri}/api/lastfm/get_user?username=${user.connections.lastfm.username}`, GetFullAuth());
 
             setLastfmUserData(res_user.data?.error ? null : res_user.data);
         } catch (e) {}
@@ -198,7 +199,7 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
             const date = new Date(parseInt(user.creation_date.$date.$numberLong));
             setJoinDate(`${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`);
 
-            const posts = (await axios.get(`${api_uri}/api/post/get/profile?handle=${user.handle}&offset=${postOffset}`)).data;
+            const posts = (await axios.get(`${api_uri}/api/post/get/profile?handle=${user.handle}&offset=${postOffset}`, GetFullAuth())).data;
             setPosts(posts.posts);
             setPostOffset(posts.offset);
 
@@ -218,17 +219,20 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
             }
 
             if (user.pinned_post !== "") {
-                let post = (await axios.get(`${api_uri}/api/post/get/one?post_id=${user.pinned_post}`)).data;
+                let post = (await axios.get(`${api_uri}/api/post/get/one?post_id=${user.pinned_post}`, GetFullAuth())).data;
                 setPinnedPost(post.error ? null : post);
             }
 
             try {
                 if (user.connections?.steam?.id) {
-                    const steam_res = await axios.get(`${api_uri}/api/connections/steam_get_game?steam_id=${user.connections.steam.id}`);
+                    const steam_res = await axios.get(
+                        `${api_uri}/api/connections/steam_get_game?steam_id=${user.connections.steam.id}`,
+                        GetFullAuth(),
+                    );
                     const steam_data = steam_res.data;
                     if (steam_data) setSteamData(steam_data[Object.keys(steam_data)[0]].data);
 
-                    const steam_ps_res = await axios.get(`${api_uri}/api/connections/steam_get?steam_id=${user.connections.steam.id}`);
+                    const steam_ps_res = await axios.get(`${api_uri}/api/connections/steam_get?steam_id=${user.connections.steam.id}`, GetFullAuth());
                     console.log(steam_ps_res.data);
                     if (steam_ps_res.data) setSteamUserData(steam_ps_res.data as Steam.PlayerSummary);
                 }

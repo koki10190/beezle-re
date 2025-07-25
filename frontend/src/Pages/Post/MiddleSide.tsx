@@ -28,6 +28,7 @@ import TrimToDots from "../../functions/TrimToDots";
 import { AVATAR_SHAPES } from "../../types/cosmetics/AvatarShapes";
 import ShadeColor from "../../functions/ShadeColor";
 import GetAuthToken from "../../functions/GetAuthHeader";
+import GetFullAuth from "../../functions/GetFullAuth";
 
 interface ReactionsInter {
     [key: string]: PostReaction[];
@@ -74,8 +75,8 @@ function MiddleSide() {
             const priv = (await fetchUserPrivate()) as UserPrivate;
 
             console.log("foreach");
-            const replies_res = await axios.get(`${api_uri}/api/post/get/replies?post_id=${post_id}`);
-            let post_res = await axios.get(`${api_uri}/api/post/get/one?post_id=${post_id}`);
+            const replies_res = await axios.get(`${api_uri}/api/post/get/replies?post_id=${post_id}`, GetFullAuth());
+            let post_res = await axios.get(`${api_uri}/api/post/get/one?post_id=${post_id}`, GetFullAuth());
 
             if (post_res.data.error) {
                 window.location.href = "/not-found";
@@ -83,7 +84,7 @@ function MiddleSide() {
 
             if (post_res.data.repost) {
                 setIsRepost(post_res.data.repost);
-                post_res = await axios.get(`${api_uri}/api/post/get/one?post_id=${post_res.data.post_op_id}`);
+                post_res = await axios.get(`${api_uri}/api/post/get/one?post_id=${post_res.data.post_op_id}`, GetFullAuth());
             }
 
             setReplies(replies_res.data.replies);
@@ -110,10 +111,11 @@ function MiddleSide() {
             });
 
             if (post_res.data.is_reply) {
-                setReplyingToPost((await axios.get(`${api_uri}/api/post/get/one?post_id=${post_res.data.replying_to}`)).data);
+                setReplyingToPost((await axios.get(`${api_uri}/api/post/get/one?post_id=${post_res.data.replying_to}`, GetFullAuth())).data);
             }
 
-            const react_data = (await axios.get(`${api_uri}/api/post/get/reacts?post_id=${post_res.data.post_id}`)).data as ReactionsData;
+            const react_data = (await axios.get(`${api_uri}/api/post/get/reacts?post_id=${post_res.data.post_id}`, GetFullAuth()))
+                .data as ReactionsData;
 
             const local_reactions: ReactionStruct = { reactions: {} };
             react_data.reacts.forEach((reaction) => {

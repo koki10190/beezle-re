@@ -19,7 +19,7 @@ use actix_web::{
 };
 
 use crate::{
-    beezle::{self, crypt::{base64_encode, encrypt}},
+    beezle::{self, auth::verify_token, crypt::{base64_encode, encrypt}},
     mongoose::{self, structures::user},
     poison::LockResultExt, routes::api::post::get::now,
 };
@@ -42,7 +42,12 @@ struct QueryBody {
 pub async fn route(
     body: web::Query<QueryBody>,
     client: web::Data<Client>,
+    req: HttpRequest
 ) -> actix_web::Result<HttpResponse> {
+    if !verify_token(&client, &req).await {
+        return Ok(HttpResponse::Unauthorized().json(doc!{"error": "Not Authorized!"}));
+    }
+
     let lastfm_apikey = env::var("LASTFM_API_KEY").unwrap();
     let lastfm_client = lastfm::Client::builder().api_key(lastfm_apikey).username(&body.username).build();
 

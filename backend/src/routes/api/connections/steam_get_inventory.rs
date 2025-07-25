@@ -15,7 +15,7 @@ use actix_web::{
 };
 
 use crate::{
-    beezle,
+    beezle::{self, auth::verify_token},
     mongoose::{self, structures::user},
     poison::LockResultExt,
 };
@@ -95,9 +95,8 @@ pub async fn route(
     req: HttpRequest,
     client: web::Data<Client>,
 ) -> actix_web::Result<HttpResponse> {
-    let auth_header = req.headers().get("Authorization");
-    if let Some(auth_token) = auth_header {
-        println!("Token Found: '{}'", auth_token.to_str().unwrap());
+    if !verify_token(&client, &req).await {
+        return Ok(HttpResponse::Unauthorized().json(doc!{"error": "Not Authorized!"}));
     }
     
     let client = reqwest::Client::new();

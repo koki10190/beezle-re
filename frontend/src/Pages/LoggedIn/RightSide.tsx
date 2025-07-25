@@ -7,7 +7,7 @@ import { checkToken } from "../../functions/checkToken";
 import { BadgeType, UserPrivate } from "../../types/User";
 import { fetchUserPrivate } from "../../functions/fetchUserPrivate";
 import { NotificationData } from "../../types/Notification";
-import dmSocket from "../../ws/dm-socket";
+
 import { DMData } from "../../types/DM";
 import { socket } from "../../ws/socket";
 import { AVATAR_SHAPES } from "../../types/cosmetics/AvatarShapes";

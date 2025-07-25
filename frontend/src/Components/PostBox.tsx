@@ -28,6 +28,7 @@ import MentionHover from "./MentionHover";
 import Divider from "./Divider";
 import { AVATAR_SHAPES, AvaterShape } from "../types/cosmetics/AvatarShapes";
 import GetAuthToken from "../functions/GetAuthHeader";
+import GetFullAuth from "../functions/GetFullAuth";
 
 interface PostBoxData {
     post: Post;
@@ -228,7 +229,7 @@ function PostBox({
         (async () => {
             let user: UserPublic = {} as any;
             if (post.repost) {
-                post = (await axios.get(`${api_uri}/api/post/get/one?post_id=${post.post_op_id}`)).data;
+                post = (await axios.get(`${api_uri}/api/post/get/one?post_id=${post.post_op_id}`, GetFullAuth())).data;
                 user = (await fetchUserPublic(post.handle)) as UserPublic;
                 setUser(user);
                 setLikeCount(post.likes.length);
@@ -259,20 +260,22 @@ function PostBox({
             setLiked(post.likes.find((s) => s === self_user.handle) ? true : false);
             setReposted(post.reposts.find((s) => s === self_user.handle) ? true : false);
             setBookmarked(self_user.bookmarks.find((s) => s === post.post_id) ? true : false);
-            setReplyCount((await axios.get(`${api_uri}/api/post/get/reply_count?post_id=${post.post_id}`)).data.count as number);
+            setReplyCount((await axios.get(`${api_uri}/api/post/get/reply_count?post_id=${post.post_id}`, GetFullAuth())).data.count as number);
             if (post.is_reply) {
-                const reply_data = (await axios.get(`${api_uri}/api/post/get/one?post_id=${post.replying_to}`)).data;
+                const reply_data = (await axios.get(`${api_uri}/api/post/get/one?post_id=${post.replying_to}`, GetFullAuth())).data;
                 setReplyingToPost(reply_data.error ? undefined : reply_data);
             }
 
             if (user.connections?.steam?.id) {
-                const steam_res = await axios.get(`${api_uri}/api/connections/steam_get_game?steam_id=${user.connections?.steam?.id}`);
+                const steam_res = await axios.get(`${api_uri}/api/connections/steam_get_game?steam_id=${user.connections?.steam?.id}`, {
+                    headers: GetAuthToken(),
+                });
                 const steam_data = steam_res.data;
                 if (steam_data) setSteamData(steam_data[Object.keys(steam_data)[0]].data);
             }
 
             // Set Reactions
-            const react_data = (await axios.get(`${api_uri}/api/post/get/reacts?post_id=${post.post_id}`)).data as ReactionsData;
+            const react_data = (await axios.get(`${api_uri}/api/post/get/reacts?post_id=${post.post_id}`, GetFullAuth())).data as ReactionsData;
 
             const local_reactions: ReactionStruct = { reactions: {} };
             react_data.reacts.forEach((reaction) => {

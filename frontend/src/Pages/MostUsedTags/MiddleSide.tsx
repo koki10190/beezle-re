@@ -11,6 +11,7 @@ import { UserPrivate, UserPublic } from "../../types/User";
 import { Post } from "../../types/Post";
 import { RefreshPosts } from "../../functions/RefreshPosts";
 import "./MostUsedTags.css";
+import GetFullAuth from "../../functions/GetFullAuth";
 
 interface HashtagCounter {
     _id: String;
@@ -76,7 +77,7 @@ function MiddleSide() {
 
     useEffect(() => {
         (async () => {
-            const data = (await axios.get(`${api_uri}/api/post/hashtag/topten`)).data;
+            const data = (await axios.get(`${api_uri}/api/post/hashtag/topten`, GetFullAuth())).data;
             setHashtags(data.hashtags);
         })();
     }, []);

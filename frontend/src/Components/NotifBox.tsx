@@ -12,6 +12,7 @@ import RepToIcon from "./RepToIcon";
 import parseURLs from "../functions/parseURLs";
 import { AVATAR_SHAPES, AvaterShape } from "../types/cosmetics/AvatarShapes";
 import { TROPHIES } from "../types/showcase/Trophy";
+import GetFullAuth from "../functions/GetFullAuth";
 
 function NotifPost({ post_data }: { post_data: Post }) {
     const [user, setUser] = useState<UserPublic>();
@@ -88,7 +89,7 @@ function NotifBox({ notif }: { notif: NotificationData }) {
 
             if (notif.post_id) {
                 try {
-                    const res = await axios.get(`${api_uri}/api/post/get/one?post_id=${notif.post_id}`);
+                    const res = await axios.get(`${api_uri}/api/post/get/one?post_id=${notif.post_id}`, GetFullAuth());
                     setPostData(res.data as Post);
                 } catch (e) {
                     console.log("Post was not found with id", notif.post_id);
