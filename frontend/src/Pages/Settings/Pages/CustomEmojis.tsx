@@ -12,6 +12,7 @@ import PopupToSteamAuth from "../../../functions/RedirectToSteamAuth";
 import { CustomEmoji } from "emoji-picker-react/dist/config/customEmojiConfig";
 import UploadToImgur from "../../../functions/UploadToImgur";
 import { toast } from "react-toastify";
+import GetAuthToken from "../../../functions/GetAuthHeader";
 
 interface Props {
     user: UserPrivate;
@@ -67,11 +68,16 @@ function CustomEmojis({ user }: Props) {
 
         // do stuff here
 
-        const res = await axios.post(`${api_uri}/api/user/upload_emoji`, {
-            token: localStorage.getItem("access_token"),
-            emoji_url: emoji_img,
-            emoji_id: idRef.current!.value.toLowerCase(),
-        });
+        const res = await axios.post(
+            `${api_uri}/api/user/upload_emoji`,
+            {
+                emoji_url: emoji_img,
+                emoji_id: idRef.current!.value.toLowerCase(),
+            },
+            {
+                headers: GetAuthToken(),
+            },
+        );
 
         if (res.data.error) toast.error(res.data.error);
         else toast.success(res.data.message);

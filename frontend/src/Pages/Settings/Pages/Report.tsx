@@ -1,14 +1,15 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from "react";
 
-import { fetchUserPrivate } from '../../../functions/fetchUserPrivate';
-import { UserPrivate } from '../../../types/User';
-import { Post } from '../../../types/Post';
-import FetchPost from '../../../functions/FetchPost';
-import './Details.css';
-import Divider from '../../../Components/Divider';
-import { api_uri } from '../../../links';
-import axios from 'axios';
-import { toast } from 'react-toastify';
+import { fetchUserPrivate } from "../../../functions/fetchUserPrivate";
+import { UserPrivate } from "../../../types/User";
+import { Post } from "../../../types/Post";
+import FetchPost from "../../../functions/FetchPost";
+import "./Details.css";
+import Divider from "../../../Components/Divider";
+import { api_uri } from "../../../links";
+import axios from "axios";
+import { toast } from "react-toastify";
+import GetAuthToken from "../../../functions/GetAuthHeader";
 
 interface Props {
     user: UserPrivate;
@@ -26,19 +27,24 @@ function Report({ user }: Props) {
         const subject_value = subject.current!.value;
         const details_value = details.current!.value;
 
-        if (reporting_value.replace(/ /g, '') == '') return toast.error('Must include Post Link/ID or an users handle!');
-        if (subject_value.replace(/ /g, '') == '') return toast.error('Must include a subject!');
-        if (details_value.replace(/ /g, '') == '') return toast.error('Must include a context!');
+        if (reporting_value.replace(/ /g, "") == "") return toast.error("Must include Post Link/ID or an users handle!");
+        if (subject_value.replace(/ /g, "") == "") return toast.error("Must include a subject!");
+        if (details_value.replace(/ /g, "") == "") return toast.error("Must include a context!");
 
-        const res = await axios.post(`${api_uri}/api/report`, {
-            token: localStorage.getItem('access_token'),
-            reporting: reporting_value,
-            subject: subject_value,
-            context: details_value,
-        });
+        const res = await axios.post(
+            `${api_uri}/api/report`,
+            {
+                reporting: reporting_value,
+                subject: subject_value,
+                context: details_value,
+            },
+            {
+                headers: GetAuthToken(),
+            },
+        );
 
         toast.success(res.data.message);
-        window.location.href = '/home';
+        window.location.href = "/home";
     };
 
     return (
@@ -55,7 +61,7 @@ function Report({ user }: Props) {
                     <input ref={subject} required className="input-field fixed-100" />
                     <h2>Context/Details</h2>
                     <textarea ref={details} className="input-field fixed-100" />
-                    <button style={{ marginTop: '15px' }} className="button-field fixed-100">
+                    <button style={{ marginTop: "15px" }} className="button-field fixed-100">
                         Send Report
                     </button>
                 </form>

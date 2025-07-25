@@ -9,6 +9,7 @@ import Divider from "../../../Components/Divider";
 import { api_uri } from "../../../links";
 import axios from "axios";
 import { toast } from "react-toastify";
+import GetAuthToken from "../../../functions/GetAuthHeader";
 
 interface Props {
     user: UserPrivate;
@@ -19,10 +20,15 @@ function Details({ user }: Props) {
     const statePassRef = useRef<HTMLParagraphElement>(null);
 
     const ChangePassword = async () => {
-        const res = await axios.patch(`${api_uri}/api/user/change_password`, {
-            token: localStorage.getItem("access_token"),
-            password,
-        });
+        const res = await axios.patch(
+            `${api_uri}/api/user/change_password`,
+            {
+                password,
+            },
+            {
+                headers: GetAuthToken(),
+            },
+        );
 
         statePassRef.current!.innerText = res.data.error ? res.data.error : res.data.message;
 

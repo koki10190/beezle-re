@@ -5,6 +5,7 @@ import { api_uri, discord, github, twitter, youtube } from "../links";
 import react from "react";
 
 import "../Verify/Verify.css";
+import GetAuthToken from "../functions/GetAuthHeader";
 
 function Steam() {
     const { auth_id } = useParams();
@@ -19,11 +20,16 @@ function Steam() {
 
             setMsg(
                 (
-                    await axios.post(`${api_uri}/api/connections/steam`, {
-                        token: localStorage.getItem("access_token"),
-                        steam_id,
-                    })
-                ).data
+                    await axios.post(
+                        `${api_uri}/api/connections/steam`,
+                        {
+                            steam_id,
+                        },
+                        {
+                            headers: GetAuthToken(),
+                        },
+                    )
+                ).data,
             );
         })();
     }, []);

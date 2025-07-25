@@ -165,9 +165,13 @@ function Connections({ user }: Props) {
                         </p>
                         <button
                             onClick={async () => {
-                                const res = await axios.patch(`${api_uri}/api/connections/remove_discord`, {
-                                    token: localStorage.getItem("access_token"),
-                                });
+                                const res = await axios.patch(
+                                    `${api_uri}/api/connections/remove_discord`,
+                                    {},
+                                    {
+                                        headers: GetAuthToken(),
+                                    },
+                                );
 
                                 toast.success(res.data);
                                 setDiscordConnected(false);
@@ -195,9 +199,13 @@ function Connections({ user }: Props) {
                         </button>
                         <button
                             onClick={async () => {
-                                const res = await axios.patch(`${api_uri}/api/lastfm/remove_username`, {
-                                    token: localStorage.getItem("access_token"),
-                                });
+                                const res = await axios.patch(
+                                    `${api_uri}/api/lastfm/remove_username`,
+                                    {},
+                                    {
+                                        headers: GetAuthToken(),
+                                    },
+                                );
 
                                 toast.success(res.data);
                                 setLastfmConnected(false);

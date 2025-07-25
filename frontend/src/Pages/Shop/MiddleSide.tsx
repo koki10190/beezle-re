@@ -17,6 +17,7 @@ import { api_uri } from "../../links";
 import { toast } from "react-toastify";
 import shop_music from "./sans.mp3";
 import { AVATAR_SHAPES, AvaterShape } from "../../types/cosmetics/AvatarShapes";
+import GetAuthToken from "../../functions/GetAuthHeader";
 
 enum BuyWhat {
     POST_BG_IMG,
@@ -29,22 +30,35 @@ async function Buy(buy_what: BuyWhat, arg: number = 0, setSelfUser: React.Dispat
     let res = null;
     switch (buy_what) {
         case BuyWhat.PROFILE_GRADIENT: {
-            res = await axios.post(`${api_uri}/api/user/buy/profile_gradient`, {
-                token: localStorage.getItem("access_token"),
-            });
+            res = await axios.post(
+                `${api_uri}/api/user/buy/profile_gradient`,
+                {},
+                {
+                    headers: GetAuthToken(),
+                },
+            );
             break;
         }
         case BuyWhat.NAME_COLOR: {
-            res = await axios.post(`${api_uri}/api/user/buy/name_color`, {
-                token: localStorage.getItem("access_token"),
-            });
+            res = await axios.post(
+                `${api_uri}/api/user/buy/name_color`,
+                {},
+                {
+                    headers: GetAuthToken(),
+                },
+            );
             break;
         }
         case BuyWhat.AVATAR_SHAPE: {
-            res = await axios.post(`${api_uri}/api/user/buy/avatar`, {
-                token: localStorage.getItem("access_token"),
-                shape: arg,
-            });
+            res = await axios.post(
+                `${api_uri}/api/user/buy/avatar`,
+                {
+                    shape: arg,
+                },
+                {
+                    headers: GetAuthToken(),
+                },
+            );
             setSelfUser((user) => {
                 const _new = { ...user };
                 try {
@@ -65,9 +79,13 @@ async function Buy(buy_what: BuyWhat, arg: number = 0, setSelfUser: React.Dispat
             break;
         }
         case BuyWhat.POST_BG_IMG: {
-            res = await axios.post(`${api_uri}/api/user/buy/profile_postbox_img`, {
-                token: localStorage.getItem("access_token"),
-            });
+            res = await axios.post(
+                `${api_uri}/api/user/buy/profile_postbox_img`,
+                {},
+                {
+                    headers: GetAuthToken(),
+                },
+            );
             break;
         }
     }
