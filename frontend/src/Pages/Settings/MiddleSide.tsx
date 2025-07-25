@@ -19,6 +19,7 @@ import CustomEmojis from "./Pages/CustomEmojis";
 import { toast } from "react-toastify";
 import ChangeAccounts from "./Pages/ChangeAccounts";
 import PostPreferences from "./Pages/PostPreferences";
+import GetAuthToken from "../../functions/GetAuthHeader";
 
 function SettingsButton({
     redirect = "",
@@ -93,8 +94,8 @@ function RightSide({ setPage }: { setPage: any }) {
     }, [self_user]);
 
     const DeleteAccount = async () => {
-        await axios.post(`${api_uri}/api/user/delete`, {
-            token: localStorage.getItem("access_token"),
+        await axios.delete(`${api_uri}/api/user/delete`, {
+            headers: GetAuthToken(),
         });
         toast.success("Account has been deleted, bye bye :(");
         window.location.href = "/logout";

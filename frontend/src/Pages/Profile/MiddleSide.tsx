@@ -27,6 +27,7 @@ import MentionHover from "../../Components/MentionHover";
 import { AVATAR_SHAPES, AvaterShape } from "../../types/cosmetics/AvatarShapes";
 import TrophyShowcase from "./TrophyShowcase";
 import { TROPHIES, Trophy } from "../../types/showcase/Trophy";
+import GetAuthToken from "../../functions/GetAuthHeader";
 
 function Loading() {
     return (
@@ -102,11 +103,16 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
     const [steamData, setSteamData] = useState<any>();
 
     const FollowInteraction = async () => {
-        const res = await axios.post(`${api_uri}/api/user/follow`, {
-            token: localStorage.getItem("access_token"),
-            handle: user.handle,
-            follow: !isFollowing,
-        });
+        const res = await axios.post(
+            `${api_uri}/api/user/follow`,
+            {
+                handle: user.handle,
+                follow: !isFollowing,
+            },
+            {
+                headers: GetAuthToken(),
+            },
+        );
 
         setFollowersCount(!isFollowing ? followersCount + 1 : followersCount - 1);
         setFollowing(!isFollowing);
@@ -171,11 +177,16 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                 setCanEnableNotifs(true);
             }, 2000),
         );
-        const res = await axios.post(`${api_uri}/api/user/add_notif`, {
-            token: localStorage.getItem("access_token"),
-            handle: user.handle,
-            add: !hasNotif,
-        });
+        const res = await axios.post(
+            `${api_uri}/api/user/add_notif`,
+            {
+                handle: user.handle,
+                add: !hasNotif,
+            },
+            {
+                headers: GetAuthToken(),
+            },
+        );
         setHasNotif((old) => !old);
         setCanEnableNotifs(false);
     };
@@ -192,10 +203,15 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
             setPostOffset(posts.offset);
 
             if (user.handle !== self.handle) {
-                const hasNotif = await axios.post(`${api_uri}/api/user/check_has_notif`, {
-                    token: localStorage.getItem("access_token"),
-                    handle: user.handle,
-                });
+                const hasNotif = await axios.post(
+                    `${api_uri}/api/user/check_has_notif`,
+                    {
+                        handle: user.handle,
+                    },
+                    {
+                        headers: GetAuthToken(),
+                    },
+                );
 
                 setHasNotif(hasNotif.data.has);
                 if (hasNotif.data.error) console.error(hasNotif.data.error);

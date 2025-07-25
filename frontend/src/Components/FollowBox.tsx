@@ -19,6 +19,7 @@ import RepToIcon from "./RepToIcon";
 import Username from "./Username";
 import ShadeColor from "../functions/ShadeColor";
 import { AVATAR_SHAPES, AvaterShape } from "../types/cosmetics/AvatarShapes";
+import GetAuthToken from "../functions/GetAuthHeader";
 
 interface FollowBoxData {
     handle: string;
@@ -57,11 +58,16 @@ function FollowBox({ handle, self_user }: FollowBoxData) {
 
     const FollowInteraction = async (e: UIEvent<HTMLButtonElement>) => {
         e.stopPropagation();
-        const res = await axios.post(`${api_uri}/api/user/follow`, {
-            token: localStorage.getItem("access_token"),
-            handle: user.handle,
-            follow: !isFollowing,
-        });
+        const res = await axios.post(
+            `${api_uri}/api/user/follow`,
+            {
+                handle: user.handle,
+                follow: !isFollowing,
+            },
+            {
+                headers: GetAuthToken(),
+            },
+        );
 
         setFollowing(!isFollowing);
     };

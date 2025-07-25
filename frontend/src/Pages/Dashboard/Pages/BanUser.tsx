@@ -1,34 +1,40 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from "react";
 
-import { fetchUserPrivate } from '../../../functions/fetchUserPrivate';
-import { UserPrivate, UserPublic } from '../../../types/User';
-import { Post } from '../../../types/Post';
-import FetchPost from '../../../functions/FetchPost';
-import Divider from '../../../Components/Divider';
-import { api_uri } from '../../../links';
-import axios from 'axios';
-import { ReportType } from '../../../types/Report';
-import { fetchUserPublic } from '../../../functions/fetchUserPublic';
-import { toast } from 'react-toastify';
+import { fetchUserPrivate } from "../../../functions/fetchUserPrivate";
+import { UserPrivate, UserPublic } from "../../../types/User";
+import { Post } from "../../../types/Post";
+import FetchPost from "../../../functions/FetchPost";
+import Divider from "../../../Components/Divider";
+import { api_uri } from "../../../links";
+import axios from "axios";
+import { ReportType } from "../../../types/Report";
+import { fetchUserPublic } from "../../../functions/fetchUserPublic";
+import { toast } from "react-toastify";
+import GetAuthToken from "../../../functions/GetAuthHeader";
 interface Props {
     user: UserPrivate;
 }
 
 function BanUser({ user }: Props) {
-    const [toBan, setToBan] = useState('');
-    const [reason, setReason] = useState('');
+    const [toBan, setToBan] = useState("");
+    const [reason, setReason] = useState("");
 
     const _BanUser = async () => {
-        const res = await axios.post(`${api_uri}/api/user/ban`, {
-            token: localStorage.getItem('access_token'),
-            handle: toBan,
-            reason: reason.replace(/ /g, '') == '' ? 'No reason provided' : reason,
-        });
+        const res = await axios.post(
+            `${api_uri}/api/user/ban`,
+            {
+                handle: toBan,
+                reason: reason.replace(/ /g, "") == "" ? "No reason provided" : reason,
+            },
+            {
+                headers: GetAuthToken(),
+            },
+        );
 
         if (res.data.error) toast.error(res.data.error);
         else toast.success(res.data.message);
-        setToBan('');
-        setReason('');
+        setToBan("");
+        setReason("");
     };
 
     return (

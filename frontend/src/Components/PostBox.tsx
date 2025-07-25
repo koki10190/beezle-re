@@ -27,6 +27,7 @@ import useMousePos from "../hooks/useMousePos";
 import MentionHover from "./MentionHover";
 import Divider from "./Divider";
 import { AVATAR_SHAPES, AvaterShape } from "../types/cosmetics/AvatarShapes";
+import GetAuthToken from "../functions/GetAuthHeader";
 
 interface PostBoxData {
     post: Post;
@@ -125,11 +126,16 @@ function PostBox({
 
         const emoji = emojiData.isCustom ? emojiData.imageUrl : emojiData.emoji;
 
-        const res = await axios.post(`${api_uri}/api/post/react`, {
-            token: localStorage.getItem("access_token"),
-            emoji: emoji,
-            post_id: post.post_id,
-        });
+        const res = await axios.post(
+            `${api_uri}/api/post/react`,
+            {
+                emoji: emoji,
+                post_id: post.post_id,
+            },
+            {
+                headers: GetAuthToken(),
+            },
+        );
 
         if (res.data.error) {
             toast.error(res.data.error);
@@ -165,11 +171,16 @@ function PostBox({
             return;
         }
 
-        const res = await axios.post(`${api_uri}/api/post/react`, {
-            token: localStorage.getItem("access_token"),
-            emoji: emoji,
-            post_id: post.post_id,
-        });
+        const res = await axios.post(
+            `${api_uri}/api/post/react`,
+            {
+                emoji: emoji,
+                post_id: post.post_id,
+            },
+            {
+                headers: GetAuthToken(),
+            },
+        );
 
         if (res.data.error) {
             toast.error(res.data.error);
@@ -300,11 +311,16 @@ function PostBox({
 
     const LikeInteraction = async () => {
         if (isLiked) {
-            await axios.post(`${api_uri}/api/post/like`, {
-                token: localStorage.getItem("access_token"),
-                post_id: post.repost ? post.post_op_id : post.post_id,
-                remove_like: true,
-            });
+            await axios.post(
+                `${api_uri}/api/post/like`,
+                {
+                    post_id: post.repost ? post.post_op_id : post.post_id,
+                    remove_like: true,
+                },
+                {
+                    headers: GetAuthToken(),
+                },
+            );
             setLiked(false);
             setLikeCount(LikeCount - 1);
             return;
@@ -313,11 +329,16 @@ function PostBox({
         console.log("CHANNEL: notification");
         post.reactions = [];
 
-        await axios.post(`${api_uri}/api/post/like`, {
-            token: localStorage.getItem("access_token"),
-            post_id: post.repost ? post.post_op_id : post.post_id,
-            remove_like: false,
-        });
+        await axios.post(
+            `${api_uri}/api/post/like`,
+            {
+                post_id: post.repost ? post.post_op_id : post.post_id,
+                remove_like: false,
+            },
+            {
+                headers: GetAuthToken(),
+            },
+        );
         setLiked(true);
         setLikeCount(LikeCount + 1);
     };
@@ -325,22 +346,32 @@ function PostBox({
     const RepostInteraction = async () => {
         if (isReposted) {
             console.log(post.post_id);
-            await axios.post(`${api_uri}/api/post/repost`, {
-                token: localStorage.getItem("access_token"),
-                post_id: post.repost ? post.post_op_id : post.post_id,
-                remove_repost: true,
-            });
+            await axios.post(
+                `${api_uri}/api/post/repost`,
+                {
+                    post_id: post.repost ? post.post_op_id : post.post_id,
+                    remove_repost: true,
+                },
+                {
+                    headers: GetAuthToken(),
+                },
+            );
             setReposted(false);
             setRepostCount(RepostCount - 1);
 
             return;
         }
 
-        const res = await axios.post(`${api_uri}/api/post/repost`, {
-            token: localStorage.getItem("access_token"),
-            post_id: post.repost ? post.post_op_id : post.post_id,
-            remove_repost: false,
-        });
+        const res = await axios.post(
+            `${api_uri}/api/post/repost`,
+            {
+                post_id: post.repost ? post.post_op_id : post.post_id,
+                remove_repost: false,
+            },
+            {
+                headers: GetAuthToken(),
+            },
+        );
 
         setReposted(true);
         setRepostCount(RepostCount + 1);
@@ -348,11 +379,16 @@ function PostBox({
 
     const BookmarkInteraction = async () => {
         if (isBookmarked) {
-            await axios.post(`${api_uri}/api/post/bookmark`, {
-                token: localStorage.getItem("access_token"),
-                post_id: post.repost ? post.post_op_id : post.post_id,
-                remove_bookmark: true,
-            });
+            await axios.post(
+                `${api_uri}/api/post/bookmark`,
+                {
+                    post_id: post.repost ? post.post_op_id : post.post_id,
+                    remove_bookmark: true,
+                },
+                {
+                    headers: GetAuthToken(),
+                },
+            );
             setBookmarked(false);
 
             if (setPosts && delete_post_on_bookmark_remove) {
@@ -368,11 +404,16 @@ function PostBox({
             return;
         }
 
-        const res = await axios.post(`${api_uri}/api/post/bookmark`, {
-            token: localStorage.getItem("access_token"),
-            post_id: post.repost ? post.post_op_id : post.post_id,
-            remove_bookmark: false,
-        });
+        const res = await axios.post(
+            `${api_uri}/api/post/bookmark`,
+            {
+                post_id: post.repost ? post.post_op_id : post.post_id,
+                remove_bookmark: false,
+            },
+            {
+                headers: GetAuthToken(),
+            },
+        );
 
         setBookmarked(true);
     };
@@ -392,11 +433,16 @@ function PostBox({
 
     const SaveEditChanges = async () => {
         setEditing(false);
-        const res = await axios.patch(`${api_uri}/api/post/edit`, {
-            token: localStorage.getItem("access_token"),
-            post_id: post.post_id,
-            content: editContent,
-        });
+        const res = await axios.patch(
+            `${api_uri}/api/post/edit`,
+            {
+                post_id: post.post_id,
+                content: editContent,
+            },
+            {
+                headers: GetAuthToken(),
+            },
+        );
 
         if (res.data.error) {
             toast.error(res.data.error);
@@ -409,10 +455,15 @@ function PostBox({
     };
 
     const DeleteInteraction = async () => {
-        const res = await axios.post(`${api_uri}/api/post/delete`, {
-            token: localStorage.getItem("access_token"),
-            post_id: post.post_id,
-        });
+        const res = await axios.post(
+            `${api_uri}/api/post/delete`,
+            {
+                post_id: post.post_id,
+            },
+            {
+                headers: GetAuthToken(),
+            },
+        );
 
         if (res.data.error) {
             toast.error(res.data.error);

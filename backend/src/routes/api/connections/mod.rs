@@ -8,3 +8,4 @@ pub mod spotify_refresh_token;
 pub mod spotify_status;
 pub mod discord_auth;
 pub mod remove_discord;
+pub mod steam_get_inventory;

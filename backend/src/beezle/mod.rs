@@ -12,6 +12,7 @@ pub mod crypt;
 
 pub mod mail;
 pub mod mongo;
+pub mod auth;
 
 pub fn rem_first_and_last(value: &str) -> &str {
     let mut chars = value.chars();

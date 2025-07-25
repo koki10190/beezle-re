@@ -155,6 +155,7 @@ async fn main() -> std::io::Result<()> {
             .service(routes::api::connections::steam_auth::route)
             .service(routes::api::connections::steam_get::route)
             .service(routes::api::connections::steam_get_game::route)
+            .service(routes::api::connections::steam_get_inventory::route)
             .service(routes::api::connections::steam_disconnect::route)
             .service(routes::api::connections::spotfiy_auth::route)
             .service(routes::api::connections::spotfiy_disconnect::route)

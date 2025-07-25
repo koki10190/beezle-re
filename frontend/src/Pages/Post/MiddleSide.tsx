@@ -27,6 +27,7 @@ import { PostReaction, ReactionsData } from "../../types/ReactionsData";
 import TrimToDots from "../../functions/TrimToDots";
 import { AVATAR_SHAPES } from "../../types/cosmetics/AvatarShapes";
 import ShadeColor from "../../functions/ShadeColor";
+import GetAuthToken from "../../functions/GetAuthHeader";
 
 interface ReactionsInter {
     [key: string]: PostReaction[];
@@ -136,43 +137,63 @@ function MiddleSide() {
 
     const LikeInteraction = async () => {
         if (isLiked) {
-            await axios.post(`${api_uri}/api/post/like`, {
-                token: localStorage.getItem("access_token"),
-                post_id: post!.post_id,
-                remove_like: true,
-            });
+            await axios.post(
+                `${api_uri}/api/post/like`,
+                {
+                    post_id: post!.post_id,
+                    remove_like: true,
+                },
+                {
+                    headers: GetAuthToken(),
+                },
+            );
             setLiked(false);
             setLikeCount(LikeCount - 1);
             return;
         }
 
-        await axios.post(`${api_uri}/api/post/like`, {
-            token: localStorage.getItem("access_token"),
-            post_id: post!.post_id,
-            remove_like: false,
-        });
+        await axios.post(
+            `${api_uri}/api/post/like`,
+            {
+                post_id: post!.post_id,
+                remove_like: false,
+            },
+            {
+                headers: GetAuthToken(),
+            },
+        );
         setLiked(true);
         setLikeCount(LikeCount + 1);
     };
 
     const RepostInteraction = async () => {
         if (isReposted) {
-            await axios.post(`${api_uri}/api/post/repost`, {
-                token: localStorage.getItem("access_token"),
-                post_id: post!.post_id,
-                remove_repost: true,
-            });
+            await axios.post(
+                `${api_uri}/api/post/repost`,
+                {
+                    post_id: post!.post_id,
+                    remove_repost: true,
+                },
+                {
+                    headers: GetAuthToken(),
+                },
+            );
             setReposted(false);
             setRepostCount(RepostCount - 1);
 
             return;
         }
 
-        const res = await axios.post(`${api_uri}/api/post/repost`, {
-            token: localStorage.getItem("access_token"),
-            post_id: post!.post_id,
-            remove_repost: false,
-        });
+        const res = await axios.post(
+            `${api_uri}/api/post/repost`,
+            {
+                post_id: post!.post_id,
+                remove_repost: false,
+            },
+            {
+                headers: GetAuthToken(),
+            },
+        );
 
         setReposted(true);
         setRepostCount(RepostCount + 1);
@@ -180,40 +201,60 @@ function MiddleSide() {
 
     const PinInteraction = async () => {
         if (isPinned) {
-            await axios.post(`${api_uri}/api/post/pin`, {
-                token: localStorage.getItem("access_token"),
-                post_id: post!.post_id,
-                remove_pin: true,
-            });
+            await axios.post(
+                `${api_uri}/api/post/pin`,
+                {
+                    post_id: post!.post_id,
+                    remove_pin: true,
+                },
+                {
+                    headers: GetAuthToken(),
+                },
+            );
             setPinned(false);
             return;
         }
 
-        const res = await axios.post(`${api_uri}/api/post/pin`, {
-            token: localStorage.getItem("access_token"),
-            post_id: post!.post_id,
-            remove_pin: false,
-        });
+        const res = await axios.post(
+            `${api_uri}/api/post/pin`,
+            {
+                post_id: post!.post_id,
+                remove_pin: false,
+            },
+            {
+                headers: GetAuthToken(),
+            },
+        );
 
         setPinned(true);
     };
 
     const BookmarkInteraction = async () => {
         if (isBookmarked) {
-            await axios.post(`${api_uri}/api/post/bookmark`, {
-                token: localStorage.getItem("access_token"),
-                post_id: post!.post_id,
-                remove_bookmark: true,
-            });
+            await axios.post(
+                `${api_uri}/api/post/bookmark`,
+                {
+                    post_id: post!.post_id,
+                    remove_bookmark: true,
+                },
+                {
+                    headers: GetAuthToken(),
+                },
+            );
             setBookmarked(false);
             return;
         }
 
-        const res = await axios.post(`${api_uri}/api/post/bookmark`, {
-            token: localStorage.getItem("access_token"),
-            post_id: post!.post_id,
-            remove_bookmark: false,
-        });
+        const res = await axios.post(
+            `${api_uri}/api/post/bookmark`,
+            {
+                post_id: post!.post_id,
+                remove_bookmark: false,
+            },
+            {
+                headers: GetAuthToken(),
+            },
+        );
 
         setBookmarked(true);
     };
@@ -224,11 +265,16 @@ function MiddleSide() {
 
     const SaveEditChanges = async () => {
         setEditing(false);
-        const res = await axios.post(`${api_uri}/api/post/edit`, {
-            token: localStorage.getItem("access_token"),
-            post_id: post!.post_id,
-            content: editContent,
-        });
+        const res = await axios.post(
+            `${api_uri}/api/post/edit`,
+            {
+                post_id: post!.post_id,
+                content: editContent,
+            },
+            {
+                headers: GetAuthToken(),
+            },
+        );
 
         if (res.data.error) {
             toast.error(res.data.error);
@@ -241,10 +287,15 @@ function MiddleSide() {
     };
 
     const DeleteInteraction = async () => {
-        const res = await axios.post(`${api_uri}/api/post/delete`, {
-            token: localStorage.getItem("access_token"),
-            post_id: post!.post_id,
-        });
+        const res = await axios.post(
+            `${api_uri}/api/post/delete`,
+            {
+                post_id: post!.post_id,
+            },
+            {
+                headers: GetAuthToken(),
+            },
+        );
 
         if (res.data.error) {
             toast.error(res.data.error);
@@ -273,11 +324,16 @@ function MiddleSide() {
         // if (emojiData.isCustom) return toast.error("Custom emojis on reactions is not supported!");
         const emoji = emojiData.isCustom ? emojiData.imageUrl : emojiData.emoji;
 
-        const res = await axios.post(`${api_uri}/api/post/react`, {
-            token: localStorage.getItem("access_token"),
-            emoji: emoji,
-            post_id: post.post_id,
-        });
+        const res = await axios.post(
+            `${api_uri}/api/post/react`,
+            {
+                emoji: emoji,
+                post_id: post.post_id,
+            },
+            {
+                headers: GetAuthToken(),
+            },
+        );
 
         if (res.data.error) {
             toast.error(res.data.error);
@@ -313,11 +369,16 @@ function MiddleSide() {
             return;
         }
 
-        const res = await axios.post(`${api_uri}/api/post/react`, {
-            token: localStorage.getItem("access_token"),
-            emoji: emoji,
-            post_id: post.post_id,
-        });
+        const res = await axios.post(
+            `${api_uri}/api/post/react`,
+            {
+                emoji: emoji,
+                post_id: post.post_id,
+            },
+            {
+                headers: GetAuthToken(),
+            },
+        );
 
         if (res.data.error) {
             toast.error(res.data.error);

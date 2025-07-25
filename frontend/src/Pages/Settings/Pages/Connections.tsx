@@ -11,6 +11,7 @@ import axios from "axios";
 import PopupToSteamAuth from "../../../functions/RedirectToSteamAuth";
 import { toast } from "react-toastify";
 import "./Connections.css";
+import GetAuthToken from "../../../functions/GetAuthHeader";
 
 interface Props {
     user: UserPrivate;
@@ -46,10 +47,15 @@ function Connections({ user }: Props) {
         const username = lastfm_username.current.value;
         if (username === "") return;
 
-        const res = await axios.patch(`${api_uri}/api/lastfm/set_username`, {
-            token: localStorage.getItem("access_token"),
-            username,
-        });
+        const res = await axios.patch(
+            `${api_uri}/api/lastfm/set_username`,
+            {
+                username,
+            },
+            {
+                headers: GetAuthToken(),
+            },
+        );
 
         toast.success(res.data);
         setTimeout(() => {
@@ -58,10 +64,15 @@ function Connections({ user }: Props) {
     };
 
     const LastFmSetShowScorbbling = async () => {
-        const res = await axios.patch(`${api_uri}/api/lastfm/show_scrobbling`, {
-            token: localStorage.getItem("access_token"),
-            show: !show_scrobbling,
-        });
+        const res = await axios.patch(
+            `${api_uri}/api/lastfm/show_scrobbling`,
+            {
+                show: !show_scrobbling,
+            },
+            {
+                headers: GetAuthToken(),
+            },
+        );
 
         setShowScrobbling((old) => !old);
 
@@ -80,9 +91,13 @@ function Connections({ user }: Props) {
                         </p>
                         <button
                             onClick={async () => {
-                                const res = await axios.patch(`${api_uri}/api/connections/steam_disconnect`, {
-                                    token: localStorage.getItem("access_token"),
-                                });
+                                const res = await axios.patch(
+                                    `${api_uri}/api/connections/steam_disconnect`,
+                                    {},
+                                    {
+                                        headers: GetAuthToken(),
+                                    },
+                                );
 
                                 toast.success(res.data);
                                 setSteamConnected(false);
@@ -114,9 +129,13 @@ function Connections({ user }: Props) {
                         </p>
                         <button
                             onClick={async () => {
-                                const res = await axios.patch(`${api_uri}/api/connections/spotify_disconnect`, {
-                                    token: localStorage.getItem("access_token"),
-                                });
+                                const res = await axios.patch(
+                                    `${api_uri}/api/connections/spotify_disconnect`,
+                                    {},
+                                    {
+                                        headers: GetAuthToken(),
+                                    },
+                                );
 
                                 toast.success(res.data);
                                 setSpotifyConnected(false);

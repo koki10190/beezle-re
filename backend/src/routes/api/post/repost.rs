@@ -5,11 +5,10 @@ use std::env;
 
 use actix_web::{get, post, web, App, HttpRequest, HttpResponse, HttpServer, Responder};
 
-use crate::{beezle, mongoose::{self, milestones::check_repost_milestone}, poison::LockResultExt};
+use crate::{beezle::{self, auth::get_token}, mongoose::{self, milestones::check_repost_milestone}, poison::LockResultExt};
 
 #[derive(Deserialize)]
 struct TokenInfo {
-    token: String,
     post_id: String,
     remove_repost: bool,
 }
@@ -17,10 +16,11 @@ struct TokenInfo {
 #[post("/api/post/repost")]
 pub async fn route(
     body: web::Json<TokenInfo>,
+    req: HttpRequest,
     client: web::Data<mongodb::Client>,
 ) -> impl Responder {
     let token = decode::<mongoose::structures::user::JwtUser>(
-        &body.token,
+        &get_token(&req).unwrap(),
         &DecodingKey::from_secret(env::var("TOKEN_SECRET").unwrap().as_ref()),
         &Validation::default(),
     );

@@ -13,6 +13,7 @@ import UploadToImgur from "../../functions/UploadToImgur";
 import { toast } from "react-toastify";
 import EmojiPicker, { EmojiClickData, EmojiStyle, Theme } from "emoji-picker-react";
 import { AVATAR_SHAPES, AvaterShape } from "../../types/cosmetics/AvatarShapes";
+import GetAuthToken from "../../functions/GetAuthHeader";
 
 function Loading() {
     return (
@@ -61,15 +62,23 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
         let res = null;
         switch (buy_what) {
             case BuyWhat.PROFILE_GRADIENT: {
-                res = await axios.post(`${api_uri}/api/user/buy/profile_gradient`, {
-                    token: localStorage.getItem("access_token"),
-                });
+                res = await axios.post(
+                    `${api_uri}/api/user/buy/profile_gradient`,
+                    {},
+                    {
+                        headers: GetAuthToken(),
+                    },
+                );
                 break;
             }
             case BuyWhat.NAME_COLOR: {
-                res = await axios.post(`${api_uri}/api/user/buy/name_color`, {
-                    token: localStorage.getItem("access_token"),
-                });
+                res = await axios.post(
+                    `${api_uri}/api/user/buy/name_color`,
+                    {},
+                    {
+                        headers: GetAuthToken(),
+                    },
+                );
                 break;
             }
         }
@@ -105,7 +114,6 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
 
             const data = {
                 username: username == "" ? user.username : username,
-                token: localStorage.getItem("access_token"),
                 avatar: avatar ? avatar : user.avatar,
                 banner: banner ? banner : user.banner,
                 about_me,
@@ -118,7 +126,11 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
                 profile_postbox_img: __ProfileBgImage ? __ProfileBgImage : "",
             };
             console.log(data);
-            const m_data = (await axios.patch(`${api_uri}/api/profile/edit`, data)).data;
+            const m_data = (
+                await axios.patch(`${api_uri}/api/profile/edit`, data, {
+                    headers: GetAuthToken(),
+                })
+            ).data;
             if (m_data.changed) {
                 toast.success("Profile has been edited successfully");
             } else {

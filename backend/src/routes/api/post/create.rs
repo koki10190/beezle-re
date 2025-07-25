@@ -7,14 +7,13 @@ use std::{collections::HashMap, env, sync::Mutex};
 use actix_web::{get, post, web, App, HttpRequest, HttpResponse, HttpServer, Responder};
 
 use crate::{
-    beezle::{self, user_exists, ws_send_notification},
+    beezle::{self, auth::get_token, user_exists, ws_send_notification},
     mongoose::{self, add_coins, add_xp, structures::hashtag::Hashtag},
     poison::LockResultExt,
 };
 
 #[derive(Deserialize)]
 struct TokenInfo {
-    token: String,
     content: String,
     replying_to: String,
     is_reply: bool,
@@ -24,10 +23,11 @@ struct TokenInfo {
 pub async fn route(
     body: web::Json<TokenInfo>,
     client: web::Data<mongodb::Client>,
+    req: HttpRequest,
     ws_sessions: web::Data<Mutex<HashMap<String, actix_ws::Session>>>
 ) -> impl Responder {
     let token = decode::<mongoose::structures::user::JwtUser>(
-        &body.token,
+        &get_token(&req).unwrap(),
         &DecodingKey::from_secret(env::var("TOKEN_SECRET").unwrap().as_ref()),
         &Validation::default(),
     );

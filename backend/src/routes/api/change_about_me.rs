@@ -5,10 +5,10 @@ use mongodb::Client;
 use serde::Deserialize;
 use std::{env, ops::Deref};
 
-use actix_web::{get, http::StatusCode, patch, post, web, App, HttpResponse, HttpServer, Responder};
+use actix_web::{get, http::StatusCode, patch, post, web, App, HttpRequest, HttpResponse, HttpServer, Responder};
 
 use crate::{
-    beezle,
+    beezle::{self, auth::get_token},
     data_struct::AppData,
     mongoose::{self, structures::user},
     poison::LockResultExt,
@@ -16,14 +16,14 @@ use crate::{
 
 #[derive(Deserialize)]
 struct GetUserQuery {
-    token: String,
     about_me: String,
 }
 
 #[patch("/api/change_about_me")]
-pub async fn route(body: web::Json<GetUserQuery>, client: web::Data<Client>) -> impl Responder {
+pub async fn route(body: web::Json<GetUserQuery>, req: HttpRequest, client: web::Data<Client>) -> impl Responder {
+    let token = get_token(&req).unwrap();
     let token_data = decode::<mongoose::structures::user::JwtUser>(
-        &body.token,
+        &token,
         &DecodingKey::from_secret(env::var("TOKEN_SECRET").unwrap().as_ref()),
         &Validation::default(),
     )

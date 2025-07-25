@@ -16,6 +16,7 @@ import { UserPrivate } from "../types/User";
 import { fetchUserPrivate } from "../functions/fetchUserPrivate";
 import PostTyperVideoEmbed from "./PostTyperVideoEmbed";
 import PostTyperImageEmbed from "./PostTyperImageEmbed";
+import GetAuthToken from "../functions/GetAuthHeader";
 
 interface FileType {
     file: File;
@@ -65,12 +66,17 @@ function PostTyper({ onSend, replying_to = "" }: { onSend: (data: Post) => void;
             sendButtonRef.current!.disabled = true;
             sendButtonRef.current!.innerText = "Posting...";
 
-            const res = await axios.post(`${api_uri}/api/post/create`, {
-                token: localStorage.getItem("access_token"),
-                content: textarea.current.value + " " + links,
-                replying_to,
-                is_reply: replying_to !== "",
-            });
+            const res = await axios.post(
+                `${api_uri}/api/post/create`,
+                {
+                    content: textarea.current.value + " " + links,
+                    replying_to,
+                    is_reply: replying_to !== "",
+                },
+                {
+                    headers: GetAuthToken(),
+                },
+            );
 
             console.log(res.data);
             onSend(res.data as Post);

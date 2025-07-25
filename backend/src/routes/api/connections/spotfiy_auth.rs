@@ -18,7 +18,7 @@ use actix_web::{
 };
 
 use crate::{
-    beezle::{self, crypt::{base64_encode, encrypt}},
+    beezle::{self, auth::get_token, crypt::{base64_encode, encrypt}},
     mongoose::{self, structures::user},
     poison::LockResultExt,
 };
@@ -35,16 +35,17 @@ struct SpotifyTokenResponse {
 #[derive(Deserialize)]
 struct SteamBody {
     code: String,
-    token: String,
 }
 
 #[post("/api/connections/spotify_auth")]
 pub async fn route(
     body: web::Json<SteamBody>,
+    req: HttpRequest,
     client: web::Data<Client>,
 ) -> actix_web::Result<HttpResponse> {
+    let token = get_token(&req).unwrap();
     let token_data = decode::<mongoose::structures::user::JwtUser>(
-        &body.token,
+        &token,
         &DecodingKey::from_secret(env::var("TOKEN_SECRET").unwrap().as_ref()),
         &Validation::default(),
     )

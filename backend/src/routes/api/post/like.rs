@@ -5,11 +5,10 @@ use std::{collections::HashMap, env, sync::Mutex};
 
 use actix_web::{get, post, web, App, HttpRequest, HttpResponse, HttpServer, Responder};
 
-use crate::{beezle::{mongo::add_post_notif, send_socket_to_user, ws_send_notification}, mongoose::{self, milestones::check_like_milestone, structures::post}};
+use crate::{beezle::{auth::get_token, mongo::add_post_notif, send_socket_to_user, ws_send_notification}, mongoose::{self, milestones::check_like_milestone, structures::post}};
 
 #[derive(Deserialize)]
 struct TokenInfo {
-    token: String,
     post_id: String,
     remove_like: bool,
 }
@@ -18,10 +17,11 @@ struct TokenInfo {
 pub async fn route(
     body: web::Json<TokenInfo>,
     client: web::Data<mongodb::Client>,
+    req: HttpRequest,
     ws_sessions: web::Data<Mutex<HashMap<String, actix_ws::Session>>>
 ) -> impl Responder {
     let token = decode::<mongoose::structures::user::JwtUser>(
-        &body.token,
+        &get_token(&req).unwrap(),
         &DecodingKey::from_secret(env::var("TOKEN_SECRET").unwrap().as_ref()),
         &Validation::default(),
     );

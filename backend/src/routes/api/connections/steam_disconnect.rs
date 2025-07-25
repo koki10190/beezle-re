@@ -11,7 +11,7 @@ use actix_web::{
 };
 
 use crate::{
-    beezle,
+    beezle::{self, auth::get_token},
     mongoose::{self, structures::user},
     poison::LockResultExt,
 };
@@ -44,16 +44,16 @@ use crate::{
 
 #[derive(Deserialize)]
 struct SteamBody {
-    token: String,
 }
 
 #[patch("/api/connections/steam_disconnect")]
 pub async fn route(
-    body: web::Json<SteamBody>,
+    req: HttpRequest,
     client: web::Data<Client>,
 ) -> actix_web::Result<HttpResponse> {
+    let token = get_token(&req).unwrap();
     let token_data = decode::<mongoose::structures::user::JwtUser>(
-        &body.token,
+        &token,
         &DecodingKey::from_secret(env::var("TOKEN_SECRET").unwrap().as_ref()),
         &Validation::default(),
     )

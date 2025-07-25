@@ -3,6 +3,7 @@ import { FormEvent, useEffect, useRef, useState } from "react";
 import { BrowserRouter, Routes, Route, redirect, useParams } from "react-router-dom";
 import react from "react";
 import { api_uri } from "../../links";
+import GetAuthToken from "../../functions/GetAuthHeader";
 
 function DiscordAuth() {
     const authMessage = useRef<HTMLSpanElement>();
@@ -20,10 +21,15 @@ function DiscordAuth() {
             console.log("success!");
 
             axios
-                .post(`${api_uri}/api/connections/discord_auth`, {
-                    code,
-                    token: localStorage.getItem("access_token"),
-                })
+                .post(
+                    `${api_uri}/api/connections/discord_auth`,
+                    {
+                        code,
+                    },
+                    {
+                        headers: GetAuthToken(),
+                    },
+                )
                 .then((res) => {
                     authMessage.current.innerText = "Authenticated!";
                     authMessage.current.setAttribute("style", "color: lime;");

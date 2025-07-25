@@ -10,6 +10,7 @@ import axios from "axios";
 import { ReportType } from "../../../types/Report";
 import { fetchUserPublic } from "../../../functions/fetchUserPublic";
 import { toast } from "react-toastify";
+import GetAuthToken from "../../../functions/GetAuthHeader";
 interface Props {
     user: UserPrivate;
 }
@@ -18,11 +19,16 @@ function VerifyUser({ user }: Props) {
     const [handle, setHandle] = useState("");
 
     const _verify_user_api = async (type: BadgeType) => {
-        const res = await axios.post(`${api_uri}/api/user/mod_verify`, {
-            token: localStorage.getItem("access_token"),
-            handle,
-            badge_type: type,
-        });
+        const res = await axios.post(
+            `${api_uri}/api/user/mod_verify`,
+            {
+                handle,
+                badge_type: type,
+            },
+            {
+                headers: GetAuthToken(),
+            },
+        );
 
         if (res.data.error) toast.error(res.data.error);
         else toast.success(res.data.message);

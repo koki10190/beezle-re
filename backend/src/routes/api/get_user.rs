@@ -5,26 +5,27 @@ use mongodb::options::Predicate;
 use serde::Deserialize;
 use std::env;
 
-use actix_web::{get, http::StatusCode, post, web, App, HttpResponse, HttpServer, Responder};
+use actix_web::{get, http::StatusCode, post, web, App, HttpRequest, HttpResponse, HttpServer, Responder};
 
 use crate::{
-    beezle,
+    beezle::{self, auth::get_token},
     mongoose::{self, structures::user},
     poison::LockResultExt,
 };
 
 #[derive(Deserialize)]
 struct GetUserQuery {
-    token: String,
 }
 
 #[post("/api/get_user")]
 pub async fn route(
     body: web::Json<GetUserQuery>,
+    req: HttpRequest,
     client: web::Data<mongodb::Client>,
 ) -> impl Responder {
+    let token = get_token(&req).unwrap(); 
     let token_data = decode::<mongoose::structures::user::JwtUser>(
-        &body.token,
+        &token,
         &DecodingKey::from_secret(env::var("TOKEN_SECRET").unwrap().as_ref()),
         &Validation::default(),
     )

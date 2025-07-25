@@ -14,17 +14,17 @@ import "./Notifications.css";
 import axios from "axios";
 import { api_uri } from "../../links";
 import { toast } from "react-toastify";
+import GetAuthToken from "../../functions/GetAuthHeader";
 
 function MiddleSide() {
     const [Notifs, setNotifs] = useState<Array<NotificationData>>([]);
 
     const ClearNotifs = async () => {
         setNotifs([]);
-        const res = (
-            await axios.patch(`${api_uri}/api/user/clear_notifs`, {
-                token: localStorage.getItem("access_token"),
-            })
-        ).data as { error: string | null; changed: boolean };
+        const res = (await axios.patch(`${api_uri}/api/user/clear_notifs`, {}, { headers: GetAuthToken() })).data as {
+            error: string | null;
+            changed: boolean;
+        };
 
         if (res.error) toast.error(res.error);
         else toast.success("Cleared Notifications");

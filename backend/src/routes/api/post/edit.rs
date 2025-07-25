@@ -4,10 +4,10 @@ use mail_send::mail_auth::flate2::Status;
 use serde::Deserialize;
 use std::env;
 
-use actix_web::{get, http::StatusCode, patch, post, web, App, HttpResponse, HttpServer, Responder};
+use actix_web::{get, http::StatusCode, patch, post, web, App, HttpRequest, HttpResponse, HttpServer, Responder};
 
 use crate::{
-    beezle,
+    beezle::{self, auth::get_token},
     mongoose::{self, structures::user},
     poison::LockResultExt,
 };
@@ -15,17 +15,17 @@ use crate::{
 #[derive(Deserialize)]
 struct PostEditData {
     post_id: String,
-    token: String,
     content: String,
 }
 
 #[patch("/api/post/edit")]
 pub async fn route(
     body: web::Json<PostEditData>,
+    req: HttpRequest,
     client: web::Data<mongodb::Client>,
 ) -> impl Responder {
     let token = decode::<mongoose::structures::user::JwtUser>(
-        &body.token,
+        &get_token(&req).unwrap(),
         &DecodingKey::from_secret(env::var("TOKEN_SECRET").unwrap().as_ref()),
         &Validation::default(),
     );

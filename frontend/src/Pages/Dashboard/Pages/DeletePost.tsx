@@ -1,32 +1,38 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from "react";
 
-import { fetchUserPrivate } from '../../../functions/fetchUserPrivate';
-import { UserPrivate, UserPublic } from '../../../types/User';
-import { Post } from '../../../types/Post';
-import FetchPost from '../../../functions/FetchPost';
-import Divider from '../../../Components/Divider';
-import { api_uri } from '../../../links';
-import axios from 'axios';
-import { ReportType } from '../../../types/Report';
-import { fetchUserPublic } from '../../../functions/fetchUserPublic';
-import { toast } from 'react-toastify';
+import { fetchUserPrivate } from "../../../functions/fetchUserPrivate";
+import { UserPrivate, UserPublic } from "../../../types/User";
+import { Post } from "../../../types/Post";
+import FetchPost from "../../../functions/FetchPost";
+import Divider from "../../../Components/Divider";
+import { api_uri } from "../../../links";
+import axios from "axios";
+import { ReportType } from "../../../types/Report";
+import { fetchUserPublic } from "../../../functions/fetchUserPublic";
+import { toast } from "react-toastify";
+import GetAuthToken from "../../../functions/GetAuthHeader";
 interface Props {
     user: UserPrivate;
 }
 
 function DeletePost({ user }: Props) {
-    const [PostID, setPostID] = useState('');
+    const [PostID, setPostID] = useState("");
 
     const _DeletePost = async () => {
-        const res = await axios.post(`${api_uri}/api/post/mod_delete`, {
-            token: localStorage.getItem('access_token'),
-            post_id: PostID,
-        });
+        const res = await axios.post(
+            `${api_uri}/api/post/mod_delete`,
+            {
+                post_id: PostID,
+            },
+            {
+                headers: GetAuthToken(),
+            },
+        );
 
         if (res.data.error) toast.error(res.data.error);
         else toast.success(res.data.message);
 
-        setPostID('');
+        setPostID("");
     };
 
     return (

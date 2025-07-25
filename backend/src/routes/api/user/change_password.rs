@@ -10,14 +10,13 @@ use actix_web::{
 };
 
 use crate::{
-    beezle,
+    beezle::{self, auth::get_token},
     mongoose::{self, structures::user},
     poison::LockResultExt,
 };
 
 #[derive(Deserialize)]
 struct ChangePassQuery {
-    token: String,
     password: String,
 }
 
@@ -28,7 +27,7 @@ pub async fn route(
     client: web::Data<mongodb::Client>,
 ) -> impl Responder {
     let token_data = decode::<mongoose::structures::user::JwtUser>(
-        &body.token,
+        &get_token(&req).unwrap(),
         &DecodingKey::from_secret(env::var("TOKEN_SECRET").unwrap().as_ref()),
         &Validation::default(),
     )

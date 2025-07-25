@@ -4,17 +4,16 @@ use mail_send::mail_auth::flate2::Status;
 use serde::Deserialize;
 use std::{collections::HashMap, env, sync::Mutex};
 
-use actix_web::{get, http::StatusCode, post, web, App, HttpResponse, HttpServer, Responder};
+use actix_web::{get, http::StatusCode, post, web, App, HttpRequest, HttpResponse, HttpServer, Responder};
 
 use crate::{
-    beezle::{self, ws_send_notification},
+    beezle::{self, auth::get_token, ws_send_notification},
     mongoose::{self, milestones::check_follow_milestone, structures::user},
     poison::LockResultExt,
 };
 
 #[derive(Deserialize)]
 struct FollowData {
-    token: String,
     handle: String,
     follow: bool,
 }
@@ -22,11 +21,12 @@ struct FollowData {
 #[post("/api/user/follow")]
 pub async fn route(
     body: web::Json<FollowData>,
+    req: HttpRequest,
     client: web::Data<mongodb::Client>,
     ws_sessions: web::Data<Mutex<HashMap<String, actix_ws::Session>>>
 ) -> impl Responder {
     let token_data = decode::<mongoose::structures::user::JwtUser>(
-        &body.token,
+        &get_token(&req).unwrap(),
         &DecodingKey::from_secret(env::var("TOKEN_SECRET").unwrap().as_ref()),
         &Validation::default(),
     )

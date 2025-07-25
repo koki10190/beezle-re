@@ -7,3 +7,14 @@ Content-Type: application/json
   "email": "w@gmail.com",
   "password": "1234567890"
 }
+
+###
+
+GET http://localhost:3000/api/connections/steam_get_inventory?steam_id=76561198900889234&app_id=730
+Authorization: TOKEN_HERE_MORON
+Content-Type: application/json
+
+{
+  "steam_id": "76561198900889234",
+  "app_id": "730"
+}

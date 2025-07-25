@@ -6,27 +6,27 @@ use serde::Deserialize;
 use std::env;
 
 use actix_web::{
-    delete, get, http::StatusCode, post, web, App, HttpResponse, HttpServer, Responder,
+    delete, get, http::StatusCode, post, web, App, HttpRequest, HttpResponse, HttpServer, Responder
 };
 
 use crate::{
-    beezle,
+    beezle::{self, auth::get_token},
     mongoose::{self, structures::user},
     poison::LockResultExt,
 };
 
 #[derive(Deserialize)]
 struct GetUserQuery {
-    token: String,
 }
 
-#[post("/api/user/delete")]
+#[delete("/api/user/delete")]
 pub async fn route(
     body: web::Json<GetUserQuery>,
+    req: HttpRequest,
     client: web::Data<mongodb::Client>,
 ) -> impl Responder {
     let token_data = decode::<mongoose::structures::user::JwtUser>(
-        &body.token,
+        &get_token(&req).unwrap(),
         &DecodingKey::from_secret(env::var("TOKEN_SECRET").unwrap().as_ref()),
         &Validation::default(),
     )
