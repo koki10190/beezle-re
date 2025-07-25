@@ -40,6 +40,18 @@ pub async fn route(
             .await
             .unwrap();
 
+            let post_doc_repost_check = mongoose::get_document(
+                &client,
+                "beezle",
+                "Posts",
+                doc! {
+                    "post_op_id": &body.post_id,
+                    "handle": &data.claims.handle,
+                    "repost": true
+                },
+            )
+            .await;
+
             if post_doc.get("repost").unwrap().as_bool().unwrap() {
                 return HttpResponse::Ok().json(doc! {"error": "Cannot repost a repost"});
             }
@@ -58,7 +70,7 @@ pub async fn route(
                 )
                 .await;
 
-                mongoose::delete_document(
+                mongoose::delete_many_document(
                     &client,
                     "beezle",
                     "Posts",
@@ -71,6 +83,10 @@ pub async fn route(
 
                 mongoose::add_coins(&client, data.claims.handle.as_str(), -25).await;
             } else {
+                if let Some(_) = post_doc_repost_check {
+                    return HttpResponse::BadRequest().json(doc!{"error": "Post is already reposted!"});
+                } 
+                
                 mongoose::update_document(
                     &client,
                     "beezle",

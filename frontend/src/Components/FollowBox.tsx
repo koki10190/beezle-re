@@ -97,7 +97,7 @@ function FollowBox({ handle, self_user }: FollowBoxData) {
                 ></div>
                 <p className="username-post">
                     {user ? <Username user={user} /> : ""}{" "}
-                    <BadgesToJSX badges={user ? user.badges : []} className="profile-badge profile-badge-shadow" />
+                    <BadgesToJSX is_bot={user?.is_bot} badges={user ? user.badges : []} className="profile-badge profile-badge-shadow" />
                 </p>
                 <p className="handle-post">
                     @{user ? user.handle : ""}

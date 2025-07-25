@@ -17,7 +17,7 @@ struct GetUserPublicQuery {
     handle: String,
 }
 
-#[get("/api/get_user")]
+#[get("/api/user")]
 pub async fn route(
     body: web::Query<GetUserPublicQuery>,
     client: web::Data<mongodb::Client>,
@@ -53,6 +53,16 @@ pub async fn route(
             "pinned_post":  _document.clone().unwrap().get("pinned_post").unwrap().as_str().unwrap(),
             "customization":  _document.clone().unwrap().get("customization").unwrap().as_document().unwrap(),
             "connections":  _document.clone().unwrap().get("connections").unwrap().as_document().unwrap(),
+            "is_bot":  _document.clone().unwrap_or_else(|| {
+                println!("Couldn't unwrap doc for some reason");
+                return doc!{}
+            }).get("is_bot").unwrap_or_else(|| {
+                println!("Milestones not found?");
+                return &bson::Bson::Null
+            }).as_bool().unwrap_or_else(|| {
+                println!("Couldnt unwrap as array");
+                return false
+            }),
             "milestones":  _document.clone().unwrap_or_else(|| {
                 println!("Couldn't unwrap doc for some reason");
                 return doc!{}

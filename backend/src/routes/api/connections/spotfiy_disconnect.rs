@@ -10,7 +10,7 @@ use std::env;
 use steam_connect::Verify;
 
 use actix_web::{
-    get, http::{header::QualityItem, StatusCode}, patch, post, web::{self, JsonBody, Query}, App, HttpRequest, HttpResponse, HttpServer, Responder
+    delete, get, http::{header::QualityItem, StatusCode}, patch, post, web::{self, JsonBody, Query}, App, HttpRequest, HttpResponse, HttpServer, Responder
 };
 
 use crate::{
@@ -32,7 +32,7 @@ struct SpotifyTokenResponse {
 struct SteamBody {
 }
 
-#[patch("/api/connections/spotify_disconnect")]
+#[delete("/api/connections/spotify_disconnect")]
 pub async fn route(
     req: HttpRequest,
     client: web::Data<Client>,

@@ -41,6 +41,7 @@ pub struct User {
     pub customization: Bson,
     pub pinned_post: String,
     pub connections: Bson,
+    pub is_bot: bool
 }
 
 #[derive(Serialize, Deserialize, Debug)]

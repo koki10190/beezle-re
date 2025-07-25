@@ -91,13 +91,9 @@ function Connections({ user }: Props) {
                         </p>
                         <button
                             onClick={async () => {
-                                const res = await axios.patch(
-                                    `${api_uri}/api/connections/steam_disconnect`,
-                                    {},
-                                    {
-                                        headers: GetAuthToken(),
-                                    },
-                                );
+                                const res = await axios.delete(`${api_uri}/api/connections/steam_disconnect`, {
+                                    headers: GetAuthToken(),
+                                });
 
                                 toast.success(res.data);
                                 setSteamConnected(false);
@@ -129,13 +125,9 @@ function Connections({ user }: Props) {
                         </p>
                         <button
                             onClick={async () => {
-                                const res = await axios.patch(
-                                    `${api_uri}/api/connections/spotify_disconnect`,
-                                    {},
-                                    {
-                                        headers: GetAuthToken(),
-                                    },
-                                );
+                                const res = await axios.delete(`${api_uri}/api/connections/spotify_disconnect`, {
+                                    headers: GetAuthToken(),
+                                });
 
                                 toast.success(res.data);
                                 setSpotifyConnected(false);
@@ -165,13 +157,9 @@ function Connections({ user }: Props) {
                         </p>
                         <button
                             onClick={async () => {
-                                const res = await axios.patch(
-                                    `${api_uri}/api/connections/remove_discord`,
-                                    {},
-                                    {
-                                        headers: GetAuthToken(),
-                                    },
-                                );
+                                const res = await axios.delete(`${api_uri}/api/connections/remove_discord`, {
+                                    headers: GetAuthToken(),
+                                });
 
                                 toast.success(res.data);
                                 setDiscordConnected(false);
@@ -199,13 +187,9 @@ function Connections({ user }: Props) {
                         </button>
                         <button
                             onClick={async () => {
-                                const res = await axios.patch(
-                                    `${api_uri}/api/lastfm/remove_username`,
-                                    {},
-                                    {
-                                        headers: GetAuthToken(),
-                                    },
-                                );
+                                const res = await axios.delete(`${api_uri}/api/lastfm/remove_username`, {
+                                    headers: GetAuthToken(),
+                                });
 
                                 toast.success(res.data);
                                 setLastfmConnected(false);

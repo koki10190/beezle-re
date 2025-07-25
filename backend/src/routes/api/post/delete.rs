@@ -4,7 +4,7 @@ use mail_send::mail_auth::flate2::Status;
 use serde::Deserialize;
 use std::env;
 
-use actix_web::{get, http::StatusCode, post, web, App, HttpRequest, HttpResponse, HttpServer, Responder};
+use actix_web::{delete, get, http::StatusCode, post, web, App, HttpRequest, HttpResponse, HttpServer, Responder};
 
 use crate::{
     beezle::{self, auth::get_token},
@@ -17,9 +17,9 @@ struct PostEditData {
     post_id: String,
 }
 
-#[post("/api/post/delete")]
+#[delete("/api/post/delete")]
 pub async fn route(
-    body: web::Json<PostEditData>,
+    body: web::Query<PostEditData>,
     req: HttpRequest,
     client: web::Data<mongodb::Client>,
 ) -> impl Responder {

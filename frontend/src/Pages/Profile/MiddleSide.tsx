@@ -286,7 +286,7 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                         className="pfp"
                     ></div>
                     <p className="username">
-                        <Username user={user} /> <BadgesToJSX badges={user.badges} className="profile-badge" />
+                        <Username user={user} /> <BadgesToJSX is_bot={user?.is_bot} badges={user.badges} className="profile-badge" />
                     </p>
                     <p className="handle">@{user.handle} </p>
                     <p style={{ color: "white", marginTop: "-20px", fontSize: "20px" }} className="handle">

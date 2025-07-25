@@ -12,7 +12,7 @@ use crate::{
     poison::LockResultExt,
 };
 
-#[get("/api/get_user_many")]
+#[get("/api/user/many")]
 pub async fn route(client: web::Data<mongodb::Client>, req: HttpRequest) -> impl Responder {
     //TODO: do this
     if !verify_token(&client, &req).await {

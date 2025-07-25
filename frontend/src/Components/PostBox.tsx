@@ -314,7 +314,7 @@ function PostBox({
 
     const LikeInteraction = async () => {
         if (isLiked) {
-            await axios.post(
+            await axios.patch(
                 `${api_uri}/api/post/like`,
                 {
                     post_id: post.repost ? post.post_op_id : post.post_id,
@@ -332,7 +332,7 @@ function PostBox({
         console.log("CHANNEL: notification");
         post.reactions = [];
 
-        await axios.post(
+        await axios.patch(
             `${api_uri}/api/post/like`,
             {
                 post_id: post.repost ? post.post_op_id : post.post_id,
@@ -458,15 +458,12 @@ function PostBox({
     };
 
     const DeleteInteraction = async () => {
-        const res = await axios.post(
-            `${api_uri}/api/post/delete`,
-            {
+        const res = await axios.delete(`${api_uri}/api/post/delete`, {
+            headers: GetAuthToken(),
+            params: {
                 post_id: post.post_id,
             },
-            {
-                headers: GetAuthToken(),
-            },
-        );
+        });
 
         if (res.data.error) {
             toast.error(res.data.error);
@@ -607,7 +604,7 @@ function PostBox({
                 <div onClick={() => (window.location.href = `/profile/${user ? user.handle : ""}`)} className="user-detail">
                     <p className="username-post">
                         {user ? <Username user={user} /> : ""}{" "}
-                        <BadgesToJSX badges={user ? user.badges : []} className="profile-badge profile-badge-shadow" />
+                        <BadgesToJSX is_bot={user?.is_bot} badges={user ? user.badges : []} className="profile-badge profile-badge-shadow" />
                     </p>
                     <p className="handle-post">
                         @{user ? user.handle : "handle"}

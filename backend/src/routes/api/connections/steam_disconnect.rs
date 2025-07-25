@@ -7,7 +7,7 @@ use std::{env, ptr::null};
 use steam_connect::Verify;
 
 use actix_web::{
-    get, http::{header::QualityItem, StatusCode}, patch, post, web::{self, Query}, App, HttpRequest, HttpResponse, HttpServer, Responder
+    delete, get, http::{header::QualityItem, StatusCode}, patch, post, web::{self, Query}, App, HttpRequest, HttpResponse, HttpServer, Responder
 };
 
 use crate::{
@@ -16,37 +16,12 @@ use crate::{
     poison::LockResultExt,
 };
 
-// #[derive(Deserialize)]
-// struct SteamQuery {
-//     #[serde(rename = "openid.ns")]
-//     ns: String,
-//     #[serde(rename = "openid.mode")]
-//     mode: String,
-//     #[serde(rename = "openid.op_endpoint")]
-//     op_endpoint: String,
-//     #[serde(rename = "openid.claimed_id")]
-//     claimed_id: String,
-//     #[serde(rename = "openid.identity")]
-//     identity: String,
-//     #[serde(rename = "openid.return_to")]
-//     return_to: String,
-//     #[serde(rename = "openid.response_nonce")]
-//     response_nonce: String,
-//     #[serde(rename = "openid.invalidate_handle")]
-//     invalidate_handle: Option<String>,
-//     #[serde(rename = "openid.assoc_handle")]
-//     assoc_handle: String,
-//     #[serde(rename = "openid.signed")]
-//     signed: String,
-//     #[serde(rename = "openid.sig")]
-//     sig: String,
-// }
 
 #[derive(Deserialize)]
 struct SteamBody {
 }
 
-#[patch("/api/connections/steam_disconnect")]
+#[delete("/api/connections/steam_disconnect")]
 pub async fn route(
     req: HttpRequest,
     client: web::Data<Client>,

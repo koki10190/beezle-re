@@ -3,7 +3,7 @@ use jsonwebtoken::{decode, DecodingKey, EncodingKey, Header, Validation};
 use serde::Deserialize;
 use std::{collections::HashMap, env, sync::Mutex};
 
-use actix_web::{get, post, web, App, HttpRequest, HttpResponse, HttpServer, Responder};
+use actix_web::{get, patch, post, web, App, HttpRequest, HttpResponse, HttpServer, Responder};
 
 use crate::{beezle::{auth::get_token, mongo::add_post_notif, send_socket_to_user, ws_send_notification}, mongoose::{self, milestones::check_like_milestone, structures::post}};
 
@@ -13,7 +13,7 @@ struct TokenInfo {
     remove_like: bool,
 }
 
-#[post("/api/post/like")]
+#[patch("/api/post/like")]
 pub async fn route(
     body: web::Json<TokenInfo>,
     client: web::Data<mongodb::Client>,

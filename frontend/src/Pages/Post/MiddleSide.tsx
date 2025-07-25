@@ -139,7 +139,7 @@ function MiddleSide() {
 
     const LikeInteraction = async () => {
         if (isLiked) {
-            await axios.post(
+            await axios.patch(
                 `${api_uri}/api/post/like`,
                 {
                     post_id: post!.post_id,
@@ -154,7 +154,7 @@ function MiddleSide() {
             return;
         }
 
-        await axios.post(
+        await axios.patch(
             `${api_uri}/api/post/like`,
             {
                 post_id: post!.post_id,
@@ -465,7 +465,7 @@ function MiddleSide() {
                     ></div>
                     <p className="post-page-username">
                         {post_user ? <Username user={post_user} /> : ""}{" "}
-                        <BadgesToJSX badges={post_user ? post_user.badges : []} className="profile-badge" />
+                        <BadgesToJSX is_bot={post_user?.is_bot} badges={post_user ? post_user.badges : []} className="profile-badge" />
                     </p>
                     <p className="post-page-handle">
                         @{post_user?.handle} -{" "}

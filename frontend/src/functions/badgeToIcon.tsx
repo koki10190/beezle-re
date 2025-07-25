@@ -1,7 +1,12 @@
 import { BadgeType } from "../types/User";
 import React from "react";
 
-function BadgeToIcon({ badge, className = "" }: { badge: BadgeType; className: string }) {
+function BadgeToIcon({ badge, is_bot = false, className = "" }: { badge: BadgeType; is_bot?: boolean; className: string }) {
+    console.log(is_bot);
+    if (is_bot) {
+        console.log("IS BOT");
+        return <i title="Bot ACcount" style={{ color: "rgb(255, 228, 76)" }} className={`${className} fa-solid fa-robot`}></i>;
+    }
     switch (badge) {
         case BadgeType.VERIFIED: {
             return <i title="Verified" style={{ color: "rgb(255, 142, 76)" }} className={`${className} fa-solid fa-badge-check`}></i>;

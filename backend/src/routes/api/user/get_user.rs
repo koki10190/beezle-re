@@ -17,9 +17,8 @@ use crate::{
 struct GetUserQuery {
 }
 
-#[post("/api/get_user")]
+#[get("/api/user/private")]
 pub async fn route(
-    body: web::Json<GetUserQuery>,
     req: HttpRequest,
     client: web::Data<mongodb::Client>,
 ) -> impl Responder {

@@ -93,6 +93,7 @@ pub async fn route(
                 customization: doc! {}.into(),
                 pinned_post: "".to_string(),
                 connections: doc! {}.into(),
+                is_bot: false
             };
 
             let serialized_user_doc = mongodb::bson::to_bson(&struct_user_doc).unwrap();

@@ -7,7 +7,7 @@ async function fetchUserPublic(handle: string): Promise<UserPublic | null> {
     const token = localStorage.getItem("access_token");
     // if (!token) window.location.href = ("/");
 
-    const res = await axios.get(`${api_uri}/api/get_user?handle=${handle}`, { headers: GetAuthToken() });
+    const res = await axios.get(`${api_uri}/api/user?handle=${handle}`, { headers: GetAuthToken() });
     const data = res.data;
 
     if (data.error) {

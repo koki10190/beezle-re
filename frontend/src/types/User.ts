@@ -93,6 +93,7 @@ interface UserPublic {
     pinned_post: string;
     connections: UserConnections;
     milestones: Milestones;
+    is_bot: boolean;
 }
 
 interface UserPrivate extends UserPublic {

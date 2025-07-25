@@ -3,9 +3,10 @@ import { fetchUserPrivate } from "./fetchUserPrivate";
 import { BadgeType } from "../types/User";
 import BadgeToIcon from "./badgeToIcon";
 
-function BadgesToJSX({ badges, className = "" }: { badges: Array<BadgeType>; className: string }) {
+function BadgesToJSX({ badges, is_bot = false, className = "" }: { badges: Array<BadgeType>; is_bot?: boolean; className: string }) {
     return (
         <>
+            {is_bot ? <BadgeToIcon is_bot={is_bot} badge={BadgeType.VERIFIED} className={className} /> : ""}
             {badges.map((badge: BadgeType) => {
                 return <BadgeToIcon key={badge} badge={badge} className={className} />;
             })}
