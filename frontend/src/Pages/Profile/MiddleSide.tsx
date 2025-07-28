@@ -29,6 +29,7 @@ import TrophyShowcase from "./TrophyShowcase";
 import { TROPHIES, Trophy } from "../../types/showcase/Trophy";
 import GetAuthToken from "../../functions/GetAuthHeader";
 import GetFullAuth from "../../functions/GetFullAuth";
+import { STEAM_ICON_URL } from "../../types/steam/steam_urls";
 
 function Loading() {
     return (
@@ -63,6 +64,8 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
     const [hasNotif, setHasNotif] = useState(false);
     const [notif_can_enable, setCanEnableNotifs] = useState(true);
     const [notifCooldown, setNotifCooldown] = useState(setTimeout(() => {}, 0));
+    const [blocked, setBlocked] = useState(false);
+    const [blockBtn, setBlockedBtn] = useState(false);
     const mousePos = useMousePos();
 
     const OnMentionHovered = async (mention: string) => {
@@ -102,6 +105,7 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
     );
     const levelBox = useRef<HTMLSpanElement>(null);
     const [steamData, setSteamData] = useState<any>();
+    const [steamInventory, setSteamInventory] = useState<Steam.InventoryJSON>();
 
     const FollowInteraction = async () => {
         const res = await axios.post(
@@ -132,6 +136,7 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
         const _posts = (await axios.get(`${api_uri}/api/post/get/profile?handle=${user.handle}&offset=${postOffset}`, GetFullAuth())).data;
         setPosts((old) => [...old, ..._posts.posts]);
         setPostOffset(_posts.offset);
+        setBlocked(_posts.blocked ?? false);
 
         // setPosts(old => [...old, ...allPosts.splice(postOffset, postOffset + 5)]);
     };
@@ -167,6 +172,24 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
         } catch (e) {}
     };
 
+    const BlockUser = async () => {
+        const res = await axios.post(
+            `${api_uri}/api/user/block`,
+            {
+                handle: user.handle,
+                block: !blockBtn,
+            },
+            {
+                headers: GetAuthToken(),
+            },
+        );
+
+        toast.success(res.data.message as string);
+        setBlockedBtn((old) => !old);
+
+        return;
+    };
+
     const SetNotificationForSelf = async () => {
         if (!notif_can_enable) {
             toast.error("You're on cooldown! Please wait a bit.");
@@ -196,12 +219,23 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
         GetAllMentions();
 
         (async () => {
+            const isBlocked = await axios.get(`${api_uri}/api/user/is_blocked`, {
+                params: {
+                    by: self.handle,
+                    who: user.handle,
+                },
+                headers: GetAuthToken(),
+            });
+
+            setBlockedBtn(isBlocked.data?.is_blocked ?? false);
+
             const date = new Date(parseInt(user.creation_date.$date.$numberLong));
             setJoinDate(`${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`);
 
             const posts = (await axios.get(`${api_uri}/api/post/get/profile?handle=${user.handle}&offset=${postOffset}`, GetFullAuth())).data;
             setPosts(posts.posts);
             setPostOffset(posts.offset);
+            setBlocked(posts.blocked ?? false);
 
             if (user.handle !== self.handle) {
                 const hasNotif = await axios.post(
@@ -232,6 +266,16 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                     const steam_data = steam_res.data;
                     if (steam_data) setSteamData(steam_data[Object.keys(steam_data)[0]].data);
 
+                    // const steam_inventory_res = await axios.get(`${api_uri}/api/connections/steam_get_inventory`, {
+                    //     params: {
+                    //         steam_id: user.connections.steam.id,
+                    //         app_id: 730,
+                    //     },
+                    //     headers: GetAuthToken(),
+                    // });
+
+                    // setSteamInventory(steam_inventory_res.data);
+
                     const steam_ps_res = await axios.get(`${api_uri}/api/connections/steam_get?steam_id=${user.connections.steam.id}`, GetFullAuth());
                     console.log(steam_ps_res.data);
                     if (steam_ps_res.data) setSteamUserData(steam_ps_res.data as Steam.PlayerSummary);
@@ -258,12 +302,27 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
             {mention_hover ? <MentionHover user={mention_hover} mousePos={mousePos} /> : ""}
             <div
                 style={{
-                    backgroundImage: bgGradient,
+                    backgroundImage: blocked ? bgGradient : "black",
                 }}
                 onScroll={handleScroll}
                 className="page-sides side-middle"
             >
-                <div className="profile">
+                {blocked ? (
+                    <div
+                        style={{
+                            display: "flex",
+                            width: "100%",
+                            alignItems: "center",
+                            textAlign: "center",
+                            justifyContent: "center",
+                        }}
+                    >
+                        <h1>You're blocked by this user.</h1>
+                    </div>
+                ) : (
+                    ""
+                )}
+                <div style={{ display: blocked ? "none" : "block" }} className="profile">
                     <div
                         style={{
                             backgroundImage: `url(${user.banner})`,
@@ -344,7 +403,7 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                         hasNotif ? (
                             <button
                                 onClick={SetNotificationForSelf}
-                                style={{ marginTop: "50px" }}
+                                style={{ width: "50px", marginTop: "50px" }}
                                 className="button-field button-field-red profile-edit-button"
                             >
                                 <i className="fa-solid fa-bell-on" />
@@ -356,6 +415,19 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                                 className="button-field button-field-blurple profile-edit-button"
                             >
                                 <i className="fa-solid fa-bell-plus" />
+                            </button>
+                        )
+                    ) : (
+                        ""
+                    )}
+                    {user.handle !== self?.handle ? (
+                        !blockBtn ? (
+                            <button onClick={BlockUser} className="button-field button-field-red profile-edit-button profile-block-button">
+                                <i className="fa-solid fa-ban"></i> Block
+                            </button>
+                        ) : (
+                            <button onClick={BlockUser} className="button-field button-field-green profile-edit-button profile-block-button">
+                                <i className="fa-solid fa-ban"></i> Unblock
                             </button>
                         )
                     ) : (
@@ -526,6 +598,45 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                                     </div>
                                 );
                             })}
+                        </div>
+                    ) : (
+                        ""
+                    )}
+                    {steamInventory ? (
+                        <div
+                            style={{
+                                background: gradient,
+                            }}
+                            className="profile-container"
+                        >
+                            <p className="profile-container-header">
+                                <i className="fa-brands fa-steam" /> Steam Inventory
+                            </p>
+
+                            <div
+                                style={{ "--cols": Math.ceil(steamInventory.descriptions.length / 5) } as React.CSSProperties}
+                                className="steam-inventory-container"
+                            >
+                                {steamInventory.descriptions.map((item: Steam.RGDecsription) => {
+                                    return (
+                                        <div
+                                            title={item.name}
+                                            onClick={() => window.open(item.actions[0].link, "_blank")}
+                                            className="steam-inventory-box"
+                                        >
+                                            <div
+                                                className="steam-inventory-image"
+                                                style={{
+                                                    border: `solid 2px #${item.name_color ?? "FFFFFF"}`,
+                                                    backgroundImage: `url(${STEAM_ICON_URL}${item.icon_url})`,
+                                                }}
+                                            />
+                                        </div>
+                                    );
+                                })}
+                            </div>
+
+                            <br />
                         </div>
                     ) : (
                         ""

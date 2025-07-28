@@ -9,7 +9,7 @@ use std::env;
 use actix_web::{get, http::{self, StatusCode}, post, web, App, HttpRequest, HttpResponse, HttpServer, Responder};
 
 use crate::{
-    beezle::{self, auth::verify_token},
+    beezle::{self, auth::{get_blocked_users_as_vec, get_token_data, get_users_that_blocked_as_vec, verify_token}},
     mongoose::{self, get_many::vec_to_str, structures::user},
     poison::LockResultExt,
 };
@@ -31,6 +31,11 @@ pub async fn route(client: web::Data<mongodb::Client>, req: HttpRequest, body: w
     let coll: mongodb::Collection<Document> = db.collection("Posts");
     let collection_size = coll.count_documents(doc! {}, None).await.unwrap();
 
+    let token_user = get_token_data(&client, &req).unwrap().claims;
+    let mut blocked_users = get_blocked_users_as_vec(&client, &token_user.handle).await;
+    let mut blocked_by_users = get_users_that_blocked_as_vec(&client, &token_user.handle).await;
+    blocked_users.append(&mut blocked_by_users);
+
     let mut cursor = coll
         .aggregate(
             vec![
@@ -46,6 +51,13 @@ pub async fn route(client: web::Data<mongodb::Client>, req: HttpRequest, body: w
                     "$match": doc! {
                         "user_info.reputation": doc! {
                             "$gte": 25
+                        }
+                    }
+                },
+                doc! {
+                    "$match": { 
+                        "handle": {
+                            "$nin": blocked_users
                         }
                     }
                 },

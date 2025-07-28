@@ -40,7 +40,7 @@ function parseURLs(content: string, self_user: UserPublic, embed = true, post_id
     if (!content) return "";
     let htmlToEmbed = "";
     content = sanitize(marked.parse(content, { renderer: render, breaks: false }) as string);
-    console.log(content);
+    // console.log(content);
     if (embed) {
         const matched = content.match(/\bhttps?:\/\/media\.tenor\.com\S+/gi);
 
@@ -107,7 +107,7 @@ function parseURLs(content: string, self_user: UserPublic, embed = true, post_id
                 /(?:https?:\/\/)?(?:youtu\.be\/|(?:www\.|m\.)?youtube\.com\/(?:watch|v|embed)(?:\.php)?(?:\?.*v=|\/))([a-zA-Z0-9\_-]+)/gi,
             );
             matches?.forEach((match) => {
-                console.log("MATCH:", match);
+                // console.log("MATCH:", match);
                 htmlToEmbed += match.replace(
                     /(?:https?:\/\/)?(?:youtu\.be\/|(?:www\.|m\.)?youtube\.com\/(?:watch|v|embed)(?:\.php)?(?:\?.*v=|\/))([a-zA-Z0-9\_-]+)/gi,
                     `<iframe style="width: 100%; min-height: 350px; border: none;" src="https://youtube.com/embed/$1"></iframe>`,
@@ -160,7 +160,6 @@ function parseURLs(content: string, self_user: UserPublic, embed = true, post_id
         const matches = final.match(/\<\:([^\:\>]+)\:\>/g);
         // console.log("Emoji matches", matches);
         matches?.forEach((match) => {
-            console.log("Matched something", match);
             const emoji_name = match.replace("<:", "").replace(":>", "");
 
             if (self_user.customization?.emojis) {

@@ -145,6 +145,8 @@ async fn main() -> std::io::Result<()> {
             .service(routes::api::report::route)
             .service(routes::api::resolve_report::route)
             .service(routes::api::user::ban::route)
+            .service(routes::api::user::block::route)
+            .service(routes::api::user::is_blocked::route)
             .service(routes::api::post::mod_delete::route)
             .service(routes::api::post::get::following::route)
             .service(routes::api::user::buy::profile_gradient::route)

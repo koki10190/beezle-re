@@ -98,37 +98,16 @@ pub async fn route(
     if !verify_token(&client, &req).await {
         return Ok(HttpResponse::Unauthorized().json(doc!{"error": "Not Authorized!"}));
     }
-    
+    println!("{}", format!("https://steamcommunity.com/inventory/{0}/{1}/2", body.steam_id, body.app_id));
     let client = reqwest::Client::new();
     let response = client
-        .get("https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/")
-        .query(&[
-            ("key", env::var("STEAM_API_KEY").unwrap().as_str()),
-            ("steamids", body.steam_id.as_str()),
-        ])
+        .get(format!("https://steamcommunity.com/inventory/{0}/{1}/2", body.steam_id, body.app_id))
         .send()
         .await
         .unwrap()
-        .json::<SummariesResponse>()
+        .text()
         .await
-        .unwrap();
+        .unwrap(); 
 
-    let player = response.response.players.first().unwrap();
-
-    let gameid = &player.gameid;
-    let mut game_response = "".to_string();
-
-    if gameid.is_some() {
-        game_response = client
-            .get("http://store.steampowered.com/api/appdetails")
-            .query(&[("appids", gameid.clone().unwrap())])
-            .send()
-            .await
-            .unwrap()
-            .text()
-            .await
-            .unwrap();
-    }
-
-    Ok(HttpResponse::Ok().body(game_response))
+    Ok(HttpResponse::Ok().body(response))
 }

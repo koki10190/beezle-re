@@ -2,7 +2,6 @@ import axios from "axios";
 import { toast } from "react-toastify";
 
 async function UploadToImgurVideoByFile(file: File) {
-    console.log("afasdf");
     let formData = new FormData();
     formData.append("image", file);
 

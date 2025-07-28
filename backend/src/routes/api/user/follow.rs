@@ -136,7 +136,7 @@ pub async fn route(
                 mongoose::add_xp(&client, body.handle.as_str(), -25).await;
             }
 
-            HttpResponse::Ok().json(uw_doc)
+            HttpResponse::Ok().json(doc!{})
         }
     }
 }

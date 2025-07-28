@@ -5,7 +5,7 @@ use std::{collections::HashMap, env, sync::Mutex};
 
 use actix_web::{get, patch, post, web, App, HttpRequest, HttpResponse, HttpServer, Responder};
 
-use crate::{beezle::{auth::get_token, mongo::add_post_notif, send_socket_to_user, ws_send_notification}, mongoose::{self, milestones::check_like_milestone, structures::post}};
+use crate::{beezle::{auth::{check_if_blocked, get_token}, mongo::add_post_notif, send_socket_to_user, ws_send_notification}, mongoose::{self, milestones::check_like_milestone, structures::post}};
 
 #[derive(Deserialize)]
 struct TokenInfo {
@@ -27,9 +27,7 @@ pub async fn route(
     );
 
     match token {
-        Ok(_) => {
-            let data = token.unwrap();
-
+        Ok(data) => {
             let post_doc = mongoose::get_document(
                 &client,
                 "beezle",
@@ -42,6 +40,12 @@ pub async fn route(
 
             let post_unwrapped = post_doc.unwrap();
             let post_op = post_unwrapped.get("handle").unwrap().as_str().unwrap().to_string();
+
+            let is_block = check_if_blocked(&client, &data.claims.handle, &post_op).await;
+
+            if is_block {
+                return HttpResponse::Ok().json(doc! {"error": "You're blocked!"});
+            }
 
             if body.remove_like {
                 mongoose::update_document(

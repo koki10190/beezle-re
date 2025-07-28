@@ -9,8 +9,8 @@ use std::env;
 use actix_web::{get, http::StatusCode, post, web, App, HttpRequest, HttpResponse, HttpServer, Responder};
 
 use crate::{
-    beezle::{self, auth::verify_token},
-    mongoose::{self, get_many::vec_to_str, structures::user},
+    beezle::{self, auth::{check_if_blocked, get_token_data, verify_token}},
+    mongoose::{self, get_many::vec_to_str, structures::{post::Post, user}},
     poison::LockResultExt,
 };
 
@@ -30,6 +30,19 @@ pub async fn route(
     if !verify_token(&client, &req).await {
         return HttpResponse::Unauthorized().json(doc!{"error": "Not Authorized!"});
     }
+
+    let token_user = get_token_data(&client, &req).unwrap().claims;
+
+    // User is blocked!
+    if check_if_blocked(&client, &token_user.handle, &body.handle).await {
+        println!("you're blocked buddy");
+        return HttpResponse::Ok().json(doc! {
+            "posts": vec![] as Vec<Document>,
+            "offset": &body.offset,
+            "blocked": true
+        });
+    }
+
 
     let db = client.database("beezle");
     let coll: mongodb::Collection<Document> = db.collection("Posts");

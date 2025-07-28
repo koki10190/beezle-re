@@ -139,7 +139,7 @@ function MiddleSide() {
 
     const LikeInteraction = async () => {
         if (isLiked) {
-            await axios.patch(
+            const res = await axios.patch(
                 `${api_uri}/api/post/like`,
                 {
                     post_id: post!.post_id,
@@ -149,12 +149,16 @@ function MiddleSide() {
                     headers: GetAuthToken(),
                 },
             );
+            if (res.data.error) {
+                toast.error(res.data.error);
+                return;
+            }
             setLiked(false);
             setLikeCount(LikeCount - 1);
             return;
         }
 
-        await axios.patch(
+        const res = await axios.patch(
             `${api_uri}/api/post/like`,
             {
                 post_id: post!.post_id,
@@ -164,13 +168,17 @@ function MiddleSide() {
                 headers: GetAuthToken(),
             },
         );
+        if (res.data.error) {
+            toast.error(res.data.error);
+            return;
+        }
         setLiked(true);
         setLikeCount(LikeCount + 1);
     };
 
     const RepostInteraction = async () => {
         if (isReposted) {
-            await axios.post(
+            const res = await axios.post(
                 `${api_uri}/api/post/repost`,
                 {
                     post_id: post!.post_id,
@@ -180,6 +188,10 @@ function MiddleSide() {
                     headers: GetAuthToken(),
                 },
             );
+            if (res.data.error) {
+                toast.error(res.data.error);
+                return;
+            }
             setReposted(false);
             setRepostCount(RepostCount - 1);
 
@@ -196,6 +208,10 @@ function MiddleSide() {
                 headers: GetAuthToken(),
             },
         );
+        if (res.data.error) {
+            toast.error(res.data.error);
+            return;
+        }
 
         setReposted(true);
         setRepostCount(RepostCount + 1);

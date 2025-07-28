@@ -1,7 +1,6 @@
 import axios from "axios";
 
 async function UploadToImgur(input: HTMLInputElement) {
-    console.log("afasdf");
     let formData = new FormData();
     formData.append("image", input.files![0]);
 

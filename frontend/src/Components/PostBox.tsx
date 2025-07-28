@@ -314,7 +314,7 @@ function PostBox({
 
     const LikeInteraction = async () => {
         if (isLiked) {
-            await axios.patch(
+            const res = await axios.patch(
                 `${api_uri}/api/post/like`,
                 {
                     post_id: post.repost ? post.post_op_id : post.post_id,
@@ -324,15 +324,19 @@ function PostBox({
                     headers: GetAuthToken(),
                 },
             );
+            if (res.data.error) {
+                toast.error(res.data.error);
+                return;
+            }
             setLiked(false);
             setLikeCount(LikeCount - 1);
             return;
         }
 
-        console.log("CHANNEL: notification");
+        // console.log("CHANNEL: notification");
         post.reactions = [];
 
-        await axios.patch(
+        const res = await axios.patch(
             `${api_uri}/api/post/like`,
             {
                 post_id: post.repost ? post.post_op_id : post.post_id,
@@ -342,14 +346,18 @@ function PostBox({
                 headers: GetAuthToken(),
             },
         );
+        if (res.data.error) {
+            toast.error(res.data.error);
+            return;
+        }
         setLiked(true);
         setLikeCount(LikeCount + 1);
     };
 
     const RepostInteraction = async () => {
         if (isReposted) {
-            console.log(post.post_id);
-            await axios.post(
+            // console.log(post.post_id);
+            const res = await axios.post(
                 `${api_uri}/api/post/repost`,
                 {
                     post_id: post.repost ? post.post_op_id : post.post_id,
@@ -359,6 +367,10 @@ function PostBox({
                     headers: GetAuthToken(),
                 },
             );
+            if (res.data.error) {
+                toast.error(res.data.error);
+                return;
+            }
             setReposted(false);
             setRepostCount(RepostCount - 1);
 
@@ -375,6 +387,10 @@ function PostBox({
                 headers: GetAuthToken(),
             },
         );
+        if (res.data.error) {
+            toast.error(res.data.error);
+            return;
+        }
 
         setReposted(true);
         setRepostCount(RepostCount + 1);

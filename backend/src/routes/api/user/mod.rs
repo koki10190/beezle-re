@@ -14,3 +14,5 @@ pub mod get_user_many;
 pub mod get_user_public;
 
 pub mod is_bot;
+pub mod block;
+pub mod is_blocked;

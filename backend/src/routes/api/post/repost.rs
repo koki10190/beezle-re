@@ -5,7 +5,7 @@ use std::env;
 
 use actix_web::{get, post, web, App, HttpRequest, HttpResponse, HttpServer, Responder};
 
-use crate::{beezle::{self, auth::get_token}, mongoose::{self, milestones::check_repost_milestone}, poison::LockResultExt};
+use crate::{beezle::{self, auth::{check_if_blocked, get_token}}, mongoose::{self, milestones::check_repost_milestone}, poison::LockResultExt};
 
 #[derive(Deserialize)]
 struct TokenInfo {
@@ -26,9 +26,7 @@ pub async fn route(
     );
 
     match token {
-        Ok(_) => {
-            let data = token.unwrap();
-
+        Ok(data) => {
             let post_doc = mongoose::get_document(
                 &client,
                 "beezle",
@@ -54,6 +52,12 @@ pub async fn route(
 
             if post_doc.get("repost").unwrap().as_bool().unwrap() {
                 return HttpResponse::Ok().json(doc! {"error": "Cannot repost a repost"});
+            }
+
+            let is_block = check_if_blocked(&client, &data.claims.handle, &post_doc.get("handle").unwrap().as_str().unwrap().to_string()).await;
+
+            if is_block {
+                return HttpResponse::Ok().json(doc! {"error": "You're blocked!"});
             }
 
             if body.remove_repost {

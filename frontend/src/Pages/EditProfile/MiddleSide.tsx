@@ -14,6 +14,7 @@ import { toast } from "react-toastify";
 import EmojiPicker, { EmojiClickData, EmojiStyle, Theme } from "emoji-picker-react";
 import { AVATAR_SHAPES, AvaterShape } from "../../types/cosmetics/AvatarShapes";
 import GetAuthToken from "../../functions/GetAuthHeader";
+import { STEAM_ICON_URL } from "../../types/steam/steam_urls";
 
 function Loading() {
     return (
@@ -49,6 +50,24 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
     const avatarDiv = useRef<HTMLDivElement>(null);
     const bannerDiv = useRef<HTMLDivElement>(null);
     const buttonRef = useRef<HTMLButtonElement>(null);
+
+    // Connections
+    const [steamInventory, setSteamInventory] = useState<Steam.InventoryJSON>();
+
+    useEffect(() => {
+        (async () => {
+            if (!user.connections?.steam?.id) return;
+            // const steam_inventory_res = await axios.get(`${api_uri}/api/connections/steam_get_inventory`, {
+            //     params: {
+            //         steam_id: user.connections.steam.id,
+            //         app_id: 730,
+            //     },
+            //     headers: GetAuthToken(),
+            // });
+            // console.log(steam_inventory_res.data);
+            // setSteamInventory(steam_inventory_res.data);
+        })();
+    }, []);
 
     const ActivateOverlay = (ref: HTMLDivElement) => {
         ref.style.display = "flex";
@@ -291,7 +310,39 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
                             );
                         })}
                     </select>
+                    <br />
                 </div>
+                {user.connections?.steam?.id && steamInventory?.descriptions ? (
+                    <div className="profile-container-nom">
+                        <p className="profile-container-header">
+                            <i className="fa-brands fa-steam" /> Steam Inventory
+                        </p>
+                        <div
+                            style={{ "--cols": Math.ceil(steamInventory.descriptions.length / 5) } as React.CSSProperties}
+                            className="steam-inventory-container"
+                        >
+                            {steamInventory.descriptions.map((item: Steam.RGDecsription) => {
+                                return (
+                                    <div
+                                        title={item.name}
+                                        onClick={() => window.open(item.actions[0].link, "_blank")}
+                                        className="steam-inventory-box"
+                                    >
+                                        <div
+                                            className="steam-inventory-image"
+                                            style={{
+                                                border: `solid 2px #${item.name_color ?? "FFFFFF"}`,
+                                                backgroundImage: `url(${STEAM_ICON_URL}${item.icon_url})`,
+                                            }}
+                                        />
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+                ) : (
+                    ""
+                )}
                 {/* {user.customization?.profile_postbox_img_bought ? (
                     <div className="profile-container-nom">
                         <p className="profile-container-header">

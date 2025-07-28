@@ -34,7 +34,7 @@ function LoginForm({ setRegister, isRegister }: Params) {
 
         setBtnText("Logging in...");
         btn.current!.disabled = true;
-        console.log(btn.current!.innerHTML);
+        // console.log(btn.current!.innerHTML);
         // prettier-ignore
         axios.post(`${api_uri}/api/login_user`, {
             email: email.current!.value,

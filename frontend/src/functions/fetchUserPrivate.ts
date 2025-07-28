@@ -19,7 +19,6 @@ async function fetchUserPrivate(access_token?: string): Promise<UserPrivate | nu
         console.error(data.error);
         return null;
     }
-    console.log("ACCESS2", data);
 
     return data as UserPrivate;
 }

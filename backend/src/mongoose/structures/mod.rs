@@ -6,3 +6,5 @@ pub mod report;
 pub mod reactions;
 pub mod hashtag;
 pub mod user_notif;
+pub mod blocked_user;
+pub use blocked_user::BlockedUser;
