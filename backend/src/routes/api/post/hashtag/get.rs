@@ -48,7 +48,7 @@ pub async fn route(client: web::Data<mongodb::Client>, req: HttpRequest, body: w
                 "user_info.reputation": doc! {
                     "$gte": 25
                 },
-                "content": Regex { pattern: format!("#{}", body.hashtag), options: "".to_string() }
+                "content": Regex { pattern: format!("#{}", body.hashtag.to_lowercase()), options: "i".to_string() }
             }
         },
         doc! {

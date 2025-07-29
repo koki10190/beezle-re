@@ -130,14 +130,24 @@ pub async fn route(
             }
 
             for (_, [hashtag]) in hashtag_regex.captures_iter(body.content.clone().as_str()).map(|c| c.extract()) {
-                beezle::print(format!("Found a hashtag: \"{}\"", hashtag).as_str());
+                beezle::print(format!("Found a hashtag: \"{}\"", hashtag.to_lowercase()).as_str());
 
                 let hashtag_struct = Hashtag {
                     id: None,
-                    hashtag: hashtag.to_string(),
+                    hashtag: hashtag.to_string().to_lowercase(),
                     from_user: data.claims.handle.clone(),
                     post_id: __post_id.clone()
                 };
+
+                let find = mongoose::get_document(&client, "beezle", "Hashtags", doc! {
+                    "hashtag": hashtag.to_string().to_lowercase(),
+                    "from_user": data.claims.handle.clone(),
+                    "post_id": __post_id.clone()
+                }).await;
+
+                if let Some(_) = find {
+                    continue;
+                }
 
                 let serialized_doc = mongodb::bson::to_bson(&hashtag_struct).unwrap();
                 let document = serialized_doc.as_document().unwrap();
