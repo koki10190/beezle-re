@@ -29,6 +29,7 @@ import { AVATAR_SHAPES } from "../../types/cosmetics/AvatarShapes";
 import ShadeColor from "../../functions/ShadeColor";
 import GetAuthToken from "../../functions/GetAuthHeader";
 import GetFullAuth from "../../functions/GetFullAuth";
+import CStatus from "../../functions/StatusToClass";
 
 interface ReactionsInter {
     [key: string]: PostReaction[];
@@ -464,21 +465,24 @@ function MiddleSide() {
                     ""
                 )}
                 <div style={{ cursor: "pointer" }} onClick={() => (window.location.href = `/profile/${post_user?.handle}`)}>
-                    <div
-                        style={{
-                            backgroundImage: `url(${post_user?.avatar})`,
-                            clipPath: AVATAR_SHAPES[post_user?.customization?.square_avatar]
-                                ? AVATAR_SHAPES[post_user?.customization?.square_avatar].style
-                                : "",
-                            borderRadius:
-                                AVATAR_SHAPES[post_user?.customization?.square_avatar]?.name !== "Circle Avatar Shape"
-                                    ? post_user?.customization?.square_avatar
-                                        ? "5px"
-                                        : "100%"
-                                    : "100%",
-                        }}
-                        className="post-page-pfp"
-                    ></div>
+                    <div className="avatar-container">
+                        <div
+                            style={{
+                                backgroundImage: `url(${post_user?.avatar})`,
+                                clipPath: AVATAR_SHAPES[post_user?.customization?.square_avatar]
+                                    ? AVATAR_SHAPES[post_user?.customization?.square_avatar].style
+                                    : "",
+                                borderRadius:
+                                    AVATAR_SHAPES[post_user?.customization?.square_avatar]?.name !== "Circle Avatar Shape"
+                                        ? post_user?.customization?.square_avatar
+                                            ? "5px"
+                                            : "100%"
+                                        : "100%",
+                            }}
+                            className="post-page-pfp"
+                        ></div>
+                        <div style={{ bottom: "1px", right: "1px" }} className={`status-indicator ${CStatus(post_user?.status ?? "offline")}`}></div>
+                    </div>
                     <p className="post-page-username">
                         {post_user ? <Username user={post_user} /> : ""}{" "}
                         <BadgesToJSX is_bot={post_user?.is_bot} badges={post_user ? post_user.badges : []} className="profile-badge" />

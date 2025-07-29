@@ -16,6 +16,7 @@ import { AVATAR_SHAPES, AvaterShape } from "../../types/cosmetics/AvatarShapes";
 import GetAuthToken from "../../functions/GetAuthHeader";
 import { STEAM_ICON_URL } from "../../types/steam/steam_urls";
 import GetFullAuth from "../../functions/GetFullAuth";
+import { STATUS, STATUS_ID, StatusEnum } from "../../types/Status";
 
 function Loading() {
     return (
@@ -36,6 +37,7 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
     const [username, setUsername] = useState<string>(user.username);
     const [about_me, setAboutMe] = useState<string>(user.about_me);
     const [activity, setActivity] = useState<string>(user.activity);
+    const [status, setStatus] = useState<string>(user.status ?? "online");
     const [avatarShape, setAvatarShape] = useState<AvaterShape>(user.customization?.square_avatar ?? AvaterShape.SquareAvatarShape);
     const [profileBgImg, setProfileBgImage] = useState(user.customization?.profile_postbox_img_bought ? user.customization.profile_postbox_img : "");
     const [g1, setG1] = useState<string>(user.customization?.profile_gradient ? user.customization.profile_gradient.color1 : "#000000");
@@ -143,6 +145,7 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
                 name_color1: ng1,
                 name_color2: ng2,
                 avatar_shape: avatarShape,
+                status,
                 profile_postbox_img: __ProfileBgImage ? __ProfileBgImage : "",
             };
             console.log(data);
@@ -217,7 +220,9 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
             />
             <div style={{ marginTop: "82px" }}>
                 <div className="profile-container-nom">
-                    <p className="profile-container-header">About Me</p>
+                    <p className="profile-container-header">
+                        <i className="fa-solid fa-user"></i> About Me
+                    </p>
                     <textarea
                         maxLength={1000}
                         value={about_me}
@@ -255,10 +260,32 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
                     )}
                 </div>
                 <div className="profile-container-nom">
-                    <p className="profile-container-header">Activity</p>
+                    <p className="profile-container-header">
+                        <i className="fa-solid fa-person-running-fast"></i> Activity
+                    </p>
                     <textarea maxLength={35} value={activity} onChange={(e) => setActivity(e.target.value)} className="about_me input-field">
                         {user.activity}
                     </textarea>
+                </div>
+                <div className="profile-container-nom">
+                    <p className="profile-container-header">
+                        <i className="fa-solid fa-signal"></i> Status
+                    </p>
+                    <br></br>
+                    <select
+                        onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                            setStatus(e.target.value);
+                        }}
+                        style={{ width: "100%" }}
+                        className="input-field"
+                    >
+                        {STATUS.map((st, index) => (
+                            <option value={STATUS_ID[index]} selected={STATUS_ID[index] === status}>
+                                {st}
+                            </option>
+                        ))}
+                    </select>
+                    <br />
                 </div>
                 {user.customization?.profile_gradient_bought ? (
                     <div className="profile-container-nom">
@@ -291,7 +318,9 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
                     ""
                 )}
                 <div className="profile-container-nom">
-                    <p className="profile-container-header">Avatar Shape</p>
+                    <p className="profile-container-header">
+                        <i className="fa-solid fa-hexagon"></i> Avatar Shape
+                    </p>
                     <br></br>
                     <select
                         onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -313,7 +342,7 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
                     </select>
                     <br />
                 </div>
-                {user.connections?.steam?.id && steamInventory?.descriptions ? (
+                {/* {user.connections?.steam?.id && steamInventory?.descriptions ? (
                     <div className="profile-container-nom">
                         <p className="profile-container-header">
                             <i className="fa-brands fa-steam" /> Steam Inventory
@@ -343,7 +372,7 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
                     </div>
                 ) : (
                     ""
-                )}
+                )} */}
                 {/* {user.customization?.profile_postbox_img_bought ? (
                     <div className="profile-container-nom">
                         <p className="profile-container-header">

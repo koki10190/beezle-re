@@ -30,6 +30,7 @@ import { TROPHIES, Trophy } from "../../types/showcase/Trophy";
 import GetAuthToken from "../../functions/GetAuthHeader";
 import GetFullAuth from "../../functions/GetFullAuth";
 import { STEAM_ICON_URL } from "../../types/steam/steam_urls";
+import CStatus from "../../functions/StatusToClass";
 
 function Loading() {
     return (
@@ -329,21 +330,24 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                         }}
                         className="banner"
                     ></div>
-                    <div
-                        style={{
-                            backgroundImage: `url(${user.avatar})`,
-                            clipPath: AVATAR_SHAPES[user?.customization?.square_avatar]
-                                ? AVATAR_SHAPES[user?.customization?.square_avatar].style
-                                : "",
-                            borderRadius:
-                                AVATAR_SHAPES[user?.customization?.square_avatar]?.name !== "Circle Avatar Shape"
-                                    ? user?.customization?.square_avatar
-                                        ? "5px"
-                                        : "100%"
-                                    : "100%",
-                        }}
-                        className="pfp"
-                    ></div>
+                    <div className="avatar-container">
+                        <div
+                            style={{
+                                backgroundImage: `url(${user.avatar})`,
+                                clipPath: AVATAR_SHAPES[user?.customization?.square_avatar]
+                                    ? AVATAR_SHAPES[user?.customization?.square_avatar].style
+                                    : "",
+                                borderRadius:
+                                    AVATAR_SHAPES[user?.customization?.square_avatar]?.name !== "Circle Avatar Shape"
+                                        ? user?.customization?.square_avatar
+                                            ? "5px"
+                                            : "100%"
+                                        : "100%",
+                            }}
+                            className="pfp"
+                        ></div>
+                        <div className={`status-indicator-profile ${CStatus(user?.status ?? "offline")}`}></div>
+                    </div>
                     <p className="username">
                         <Username user={user} /> <BadgesToJSX is_bot={user?.is_bot} badges={user.badges} className="profile-badge" />
                     </p>

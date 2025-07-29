@@ -97,3 +97,23 @@ pub async fn ws_send_notification(ws_sessions: web::Data<Mutex<HashMap<String, a
 
     send_socket_to_user(ws_sessions, handle, "update_notification_counter", data).await;
 }
+
+pub fn is_user_online(ws_sessions: web::Data<Mutex<HashMap<String, actix_ws::Session>>>, handle: &str) -> bool {
+    let locked = ws_sessions.lock();
+                    
+    match locked {
+        Ok(mut sessions) => {
+            let option_to = sessions.get_mut(handle);
+
+            if let Some(to_session) = option_to {
+                return true
+            }
+
+            false
+        }
+        Err(err) => {
+            println!("Poisont error: {:?}", err);
+            false
+        }
+    }
+}

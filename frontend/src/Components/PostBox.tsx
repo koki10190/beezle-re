@@ -29,6 +29,7 @@ import Divider from "./Divider";
 import { AVATAR_SHAPES, AvaterShape } from "../types/cosmetics/AvatarShapes";
 import GetAuthToken from "../functions/GetAuthHeader";
 import GetFullAuth from "../functions/GetFullAuth";
+import CStatus from "../functions/StatusToClass";
 
 interface PostBoxData {
     post: Post;
@@ -236,6 +237,7 @@ function PostBox({
                 setRepostCount(post.reposts.length);
             } else {
                 user = (await fetchUserPublic(post.handle)) as UserPublic;
+                console.log(user);
                 setUser(user);
             }
 
@@ -602,21 +604,24 @@ function PostBox({
                         ""
                     )}
                 </div>
-                <div
-                    style={{
-                        backgroundImage: `url(${user ? user.avatar : ""})`,
-                        clipPath: AVATAR_SHAPES[user?.customization?.square_avatar]
-                            ? AVATAR_SHAPES[user?.customization?.square_avatar].style
-                            : AVATAR_SHAPES[AvaterShape.CircleAvatarShape].style,
-                        borderRadius:
-                            AVATAR_SHAPES[user?.customization?.square_avatar]?.name !== "Circle Avatar Shape"
-                                ? user?.customization?.square_avatar
-                                    ? "5px"
-                                    : "100%"
-                                : "100%",
-                    }}
-                    className="pfp-post"
-                ></div>
+                <div className="avatar-container">
+                    <div
+                        style={{
+                            backgroundImage: `url(${user ? user.avatar : ""})`,
+                            clipPath: AVATAR_SHAPES[user?.customization?.square_avatar]
+                                ? AVATAR_SHAPES[user?.customization?.square_avatar].style
+                                : AVATAR_SHAPES[AvaterShape.CircleAvatarShape].style,
+                            borderRadius:
+                                AVATAR_SHAPES[user?.customization?.square_avatar]?.name !== "Circle Avatar Shape"
+                                    ? user?.customization?.square_avatar
+                                        ? "5px"
+                                        : "100%"
+                                    : "100%",
+                        }}
+                        className="pfp-post"
+                    ></div>
+                    <div className={`status-indicator ${CStatus(user?.status ?? "offline")}`}></div>
+                </div>
                 <div onClick={() => (window.location.href = `/profile/${user ? user.handle : ""}`)} className="user-detail">
                     <p className="username-post">
                         {user ? <Username user={user} /> : ""}{" "}

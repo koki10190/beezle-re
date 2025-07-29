@@ -94,6 +94,7 @@ interface UserPublic {
     connections: UserConnections;
     milestones: Milestones;
     is_bot: boolean;
+    status: "offline" | "idle" | "online" | "dnd";
 }
 
 interface UserPrivate extends UserPublic {

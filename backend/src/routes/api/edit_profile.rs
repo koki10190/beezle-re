@@ -25,6 +25,7 @@ struct GetUserQuery {
     name_color1: String,
     name_color2: String,
     avatar_shape: i64,
+    status: String,
     profile_postbox_img: String,
 }
 
@@ -149,7 +150,8 @@ pub async fn route(
                         "about_me": &body.about_me,
                         "avatar": &s_Avatar,
                         "banner": &s_Banner,
-                        "activity": &body.activity
+                        "activity": &body.activity,
+                        "status": &body.status
                     }
                 },
             )

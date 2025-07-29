@@ -433,3 +433,14 @@ body {
     background-size: contain;
     background-repeat: no-repeat;
 }
+
+.status-indicator-profile {
+    width: 25px;
+    height: 25px;
+    position: absolute;
+    bottom: 5px;
+    right: 10px;
+
+    border-radius: 100%;
+    box-sizing: border-box;
+}

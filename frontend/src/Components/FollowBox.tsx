@@ -20,6 +20,7 @@ import Username from "./Username";
 import ShadeColor from "../functions/ShadeColor";
 import { AVATAR_SHAPES, AvaterShape } from "../types/cosmetics/AvatarShapes";
 import GetAuthToken from "../functions/GetAuthHeader";
+import CStatus from "../functions/StatusToClass";
 
 interface FollowBoxData {
     handle: string;
@@ -80,21 +81,24 @@ function FollowBox({ handle, self_user }: FollowBoxData) {
             className="post-box"
         >
             <div onClick={() => (window.location.href = `/profile/${user ? user.handle : ""}`)} className="user-detail">
-                <div
-                    style={{
-                        backgroundImage: `url(${user ? user.avatar : ""})`,
-                        clipPath: AVATAR_SHAPES[user?.customization?.square_avatar]
-                            ? AVATAR_SHAPES[user?.customization?.square_avatar].style
-                            : AVATAR_SHAPES[AvaterShape.CircleAvatarShape].style,
-                        borderRadius:
-                            AVATAR_SHAPES[user?.customization?.square_avatar]?.name !== "Circle Avatar Shape"
-                                ? user?.customization?.square_avatar
-                                    ? "5px"
-                                    : "100%"
-                                : "100%",
-                    }}
-                    className="pfp-post"
-                ></div>
+                <div className="avatar-container">
+                    <div
+                        style={{
+                            backgroundImage: `url(${user ? user.avatar : ""})`,
+                            clipPath: AVATAR_SHAPES[user?.customization?.square_avatar]
+                                ? AVATAR_SHAPES[user?.customization?.square_avatar].style
+                                : AVATAR_SHAPES[AvaterShape.CircleAvatarShape].style,
+                            borderRadius:
+                                AVATAR_SHAPES[user?.customization?.square_avatar]?.name !== "Circle Avatar Shape"
+                                    ? user?.customization?.square_avatar
+                                        ? "5px"
+                                        : "100%"
+                                    : "100%",
+                        }}
+                        className="pfp-post"
+                    ></div>
+                    <div className={`status-indicator ${CStatus(user?.status ?? "offline")}`}></div>
+                </div>
                 <p className="username-post">
                     {user ? <Username user={user} /> : ""}{" "}
                     <BadgesToJSX is_bot={user?.is_bot} badges={user ? user.badges : []} className="profile-badge profile-badge-shadow" />

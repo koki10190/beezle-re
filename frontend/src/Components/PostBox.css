@@ -22,6 +22,7 @@
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
+    position: relative;
     width: 55px;
     height: 55px;
     border: none;
@@ -344,4 +345,38 @@ aside li {
 .post-replying-to {
     color: #ffffffa0;
     font-size: 15px;
+}
+
+.avatar-container {
+    width: fit-content;
+    height: fit-content;
+    position: relative;
+}
+
+.status-indicator {
+    width: 15px;
+    height: 15px;
+    position: absolute;
+    bottom: -1px;
+    right: -1px;
+
+    border-radius: 100%;
+    box-sizing: border-box;
+    background-color: gray;
+}
+
+.status-offline {
+    background-color: gray;
+}
+
+.status-online {
+    background-color: lime;
+}
+
+.status-idle {
+    background-color: orange;
+}
+
+.status-dnd {
+    background-color: rgb(255, 34, 34);
 }
