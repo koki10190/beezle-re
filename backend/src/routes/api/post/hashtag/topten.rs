@@ -31,7 +31,9 @@ pub async fn route(client: web::Data<mongodb::Client>, req: HttpRequest) -> impl
     let cursor = coll.aggregate([
         doc! {
             "$group": doc! {
-                "_id": "$hashtag",
+                "_id": {
+                    "$toLower": "$hashtag"
+                },
                 "count": doc! {
                     "$sum": 1
                 }
