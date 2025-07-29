@@ -2,6 +2,7 @@ use bson::{doc, uuid, Document};
 use jsonwebtoken::{decode, DecodingKey, EncodingKey, Header, Validation};
 use mail_send::mail_auth::flate2::Status;
 use mongodb::options::Predicate;
+use regex::Regex;
 use serde::Deserialize;
 use std::env;
 
@@ -43,6 +44,13 @@ pub async fn route(
     )
     .await;
 
+    let regex = Regex::new(r"\b^https?:\/\/i\.imgur\.com\S+").unwrap();
+    // let trimmed 
+
+    if !regex.is_match(&body.emoji_url) {
+        return HttpResponse::Ok().json(doc! {"error": "Only Imgur links are allowed for safety reasons! You dirty ass fucking hacker, eat shit faggot"});
+    }
+    
     match user_doc {
         None => HttpResponse::Ok().json(doc! {"error": "Not Found!"}),
         _document => {

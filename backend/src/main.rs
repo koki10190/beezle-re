@@ -1,8 +1,11 @@
 extern crate dotenv;
 use actix_cors::Cors;
+use actix_limitation::Limiter;
 use actix_web::body::MessageBody;
+use actix_session::SessionExt;
+use actix_web::dev::ServiceRequest;
 use actix_web::{get, middleware, post, web, App, HttpResponse, HttpServer, Responder};
-use actix_web_middleware_redirect_https::RedirectHTTPS;
+use actix_web_middleware_redirect_https::RedirectHTTPS; 
 use aes_gcm::aead::Aead;
 use aes_gcm::{AeadCore, Aes256Gcm, Key, KeyInit};
 use base64::engine::general_purpose;
@@ -19,6 +22,7 @@ use serde::Deserialize;
 use serde_json::ser;
 use socketioxide::extract::Data;
 use std::collections::HashMap;
+use std::time::Duration;
 use std::{env, str};
 use std::sync::Mutex;
 
@@ -99,6 +103,18 @@ async fn main() -> std::io::Result<()> {
     // };
 
     let ws_session_map: web::Data<Mutex<HashMap<String, actix_ws::Session>>> = web::Data::new(Mutex::new(HashMap::new()));
+    let limiter = web::Data::new(
+        Limiter::builder("redis://127.0.0.1")
+            .key_by(|req: &ServiceRequest| {
+                req.get_session()
+                    .get(&"session-id")
+                    .unwrap_or_else(|_| req.cookie(&"rate-api-id").map(|c| c.to_string()))
+            })
+            .limit(100)
+            .period(Duration::from_secs(20)) // 60 minutes
+            .build()
+            .unwrap(),
+    );
 
     let http_server = HttpServer::new(move || {
         App::new()
@@ -174,6 +190,7 @@ async fn main() -> std::io::Result<()> {
             .service(routes::api::post::react::route)
             .service(routes::api::user::add_notif::route)
             .service(routes::api::user::check_has_notif::route)
+            .service(routes::api::file::upload::route)
             .route("/ws", web::get().to(socket::main_ws))
             // .wrap(middleware::Logger::default())
     });

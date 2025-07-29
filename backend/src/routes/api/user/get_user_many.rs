@@ -21,5 +21,5 @@ pub async fn route(client: web::Data<mongodb::Client>, req: HttpRequest) -> impl
 
     let mut many = mongoose::get_many_document(&client, "beezle", "Users", doc! {}).await;
 
-    HttpResponse::Ok().json(many)
+    HttpResponse::Ok().json(doc!{})
 }
