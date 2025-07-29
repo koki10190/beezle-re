@@ -1,7 +1,6 @@
 use bson::{doc, Document};
 use jsonwebtoken::{decode, DecodingKey, EncodingKey, Header, Validation};
 use mail_send::mail_auth::{flate2::Status, hickory_resolver::proto::rr::rdata::name};
-use regex::Regex;
 use serde::Deserialize;
 use std::env;
 
@@ -53,15 +52,6 @@ pub async fn route(
 
     let mut s_Avatar = body.avatar.clone();
     let mut s_Banner = body.banner.clone();
-
-    let regex = Regex::new(r"\b^https?:\/\/i\.imgur\.com\S+").unwrap();
-    if !regex.is_match(&s_Avatar) {
-        return HttpResponse::Ok().json(doc! {"error": "Only Imgur links are allowed for safety reasons! You dirty ass fucking hacker, eat shit faggot"});
-    }
-
-    if !regex.is_match(&s_Banner) {
-        return HttpResponse::Ok().json(doc! {"error": "Only Imgur links are allowed for safety reasons! You dirty ass fucking hacker, eat shit faggot"});
-    }
 
     if body.username == "" {
         return HttpResponse::Ok()

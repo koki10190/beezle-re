@@ -15,4 +15,3 @@ pub mod user;
 pub mod verification;
 pub mod verify_pass;
 pub mod lastfm;
-pub mod file;

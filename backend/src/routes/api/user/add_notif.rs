@@ -67,7 +67,7 @@ pub async fn route(
                 }).await;
             }
 
-            HttpResponse::Ok().json(doc!{"message": "Success!"})
+            HttpResponse::Ok().json(uw_doc)
         }
     }
 }

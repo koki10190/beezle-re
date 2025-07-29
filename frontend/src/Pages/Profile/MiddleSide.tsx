@@ -173,7 +173,6 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
     };
 
     const BlockUser = async () => {
-        setBlockedBtn((old) => !old);
         const res = await axios.post(
             `${api_uri}/api/user/block`,
             {
@@ -186,6 +185,7 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
         );
 
         toast.success(res.data.message as string);
+        setBlockedBtn((old) => !old);
 
         return;
     };
@@ -302,7 +302,7 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
             {mention_hover ? <MentionHover user={mention_hover} mousePos={mousePos} /> : ""}
             <div
                 style={{
-                    background: bgGradient,
+                    backgroundImage: blocked ? bgGradient : "black",
                 }}
                 onScroll={handleScroll}
                 className="page-sides side-middle"

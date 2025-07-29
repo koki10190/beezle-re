@@ -149,5 +149,3 @@ host.sh
 server.txt
 certificate_tutorial.txt
 *.rest
-.gitignore
-index.js

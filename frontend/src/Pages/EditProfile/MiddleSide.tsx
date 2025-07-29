@@ -15,7 +15,6 @@ import EmojiPicker, { EmojiClickData, EmojiStyle, Theme } from "emoji-picker-rea
 import { AVATAR_SHAPES, AvaterShape } from "../../types/cosmetics/AvatarShapes";
 import GetAuthToken from "../../functions/GetAuthHeader";
 import { STEAM_ICON_URL } from "../../types/steam/steam_urls";
-import GetFullAuth from "../../functions/GetFullAuth";
 
 function Loading() {
     return (

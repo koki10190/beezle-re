@@ -1,7 +1,6 @@
 use bson::{doc, Document};
 use jsonwebtoken::{decode, DecodingKey, EncodingKey, Header, Validation};
 use mail_send::mail_auth::flate2::Status;
-use regex::Regex;
 use serde::Deserialize;
 use std::env;
 
@@ -40,11 +39,6 @@ pub async fn route(
         doc! { "handle": &token_data.handle, "hash_password": &token_data.hash_password },
     )
     .await;
-
-    let regex = Regex::new(r"\b^https?:\/\/i\.imgur\.com\S+").unwrap();
-    if !regex.is_match(&body.banner) {
-        return HttpResponse::Ok().json(doc! {"error": "Only Imgur links are allowed for safety reasons! You dirty ass fucking hacker, eat shit faggot"});
-    }
 
     match auth_doc {
         None => HttpResponse::Ok().json(doc! {"changed": false, "error": "User not found!"}),
