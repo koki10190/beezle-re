@@ -64,6 +64,14 @@ function API({ user }: Props) {
                         <i className="fa-solid fa-robot" /> Enable Bot Account
                     </button>
                 )}
+                <Divider />
+                <p>
+                    Want to make a bot on beezle but you are a dumbass who has no idea how to use the network tab in inspect element? Well good news
+                    for you! we have a list of all API calls!
+                </p>
+                <button onClick={() => (window.location.href = "/api-calls")} className="button-field">
+                    <i className="fa-solid fa-code"></i> API Calls
+                </button>
             </div>
         </>
     );

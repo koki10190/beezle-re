@@ -34,6 +34,7 @@ import MostUsedTags_Home from "./Pages/MostUsedTags/MostUsedTags_Home";
 import DiscordAuth from "./Pages/Auth/DiscordAuth";
 import LastfmAuth from "./Pages/Auth/LastfmAuth";
 import CheckServerStatus from "./functions/CheckServerStatus";
+import APICalls from "./Pages/APICalls/APICalls";
 
 enum UserStatus {
     ONLINE,
@@ -132,6 +133,7 @@ function App() {
                 <Routes>
                     <Route path="/" element={<Home />} />
                     <Route path="/home" element={<FollowingHome_Home />} />
+                    <Route path="/api-calls" element={<APICalls />} />
                     <Route path="/most-used-hashtags" element={<MostUsedTags_Home />} />
                     <Route path="/hashtag/:hashtag" element={<Hashtag_Home />} />
                     <Route path="/explore" element={<LoggedIn_Home />} />
