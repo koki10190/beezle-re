@@ -187,12 +187,12 @@ async fn main() -> std::io::Result<()> {
         builder.set_certificate_chain_file("cert.crt").unwrap();
 
         http_server
-            .bind_openssl((env::var("ADDRESS").unwrap(), 443), builder)?
+            .bind_openssl((env::var("ADDRESS").unwrap(), port), builder)?
             .run()
             .await
     } else {
         http_server
-            .bind((env::var("ADDRESS").unwrap(), 443))?
+            .bind((env::var("ADDRESS").unwrap(), port))?
             .run()
             .await
     }
