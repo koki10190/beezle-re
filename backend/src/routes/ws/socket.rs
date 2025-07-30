@@ -63,6 +63,17 @@ async fn ws(mut session: Session, mut msg_stream: MessageStream, ws_sessions: we
                             "ping" => {
                                 last_heartbeat = Instant::now();
                                 let _ = session.text("{\"channel\": \"pong\", \"data\": {}}").await;
+                                let locked = ws_sessions.lock();
+                                    
+                                match locked {
+                                    Ok(mut sessions) => {
+                                        sessions.insert(user_handle.clone(), session.clone());
+                                        beezle::print("Inserted user to sessions.");
+                                    }
+                                    Err(err) => {
+                                        beezle::print(format!("Error in mutex: {:?}", err).as_str());
+                                    }
+                                }
                             }
                             "pong" => {
                                 last_heartbeat = Instant::now();

@@ -438,8 +438,8 @@ body {
     width: 25px;
     height: 25px;
     position: absolute;
-    bottom: 0;
-    right: 0;
+    bottom: 5px;
+    right: 5px;
 
     border-radius: 100%;
     box-sizing: border-box;

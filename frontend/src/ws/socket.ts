@@ -24,7 +24,7 @@ class BeezleSocket {
 
         this.webSocket.onmessage = (msg: MessageEvent<any>) => {
             const { channel, data } = JSON.parse(msg.data as string);
-            console.log(`Got a message for "${channel}", data:`, data);
+            // console.log(`Got a message for "${channel}", data:`, data);
             if (this.channels.get(channel)) {
                 this.channels.get(channel).callback(data);
             }
