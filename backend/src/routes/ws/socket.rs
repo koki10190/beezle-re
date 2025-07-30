@@ -31,7 +31,6 @@ pub async fn main_ws(
 
 
 async fn ws(mut session: Session, mut msg_stream: MessageStream, ws_sessions: web::Data<Mutex<HashMap<String, actix_ws::Session>>>) {
-
     let mut user_handle = String::new();
 
     let mut last_heartbeat = Instant::now();
