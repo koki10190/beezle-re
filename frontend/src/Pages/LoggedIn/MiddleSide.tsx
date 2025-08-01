@@ -54,6 +54,7 @@ function MiddleSide() {
             const data = (await axios.get(`${api_uri}/api/post/get/explore?offset=${offset}&${GetPostPrefsStringQuery()}`, GetFullAuth())).data;
             setPosts(data.posts as Array<Post>);
             setOffset(data.offset as number);
+            console.log(data);
             setSelfUser((await fetchUserPrivate()) as UserPrivate);
         })();
     }, []);

@@ -2,7 +2,7 @@ use bson::{doc, Document};
 use jsonwebtoken::{decode, DecodingKey, EncodingKey, Header, Validation};
 use mail_send::mail_auth::flate2::Status;
 use serde::Deserialize;
-use std::{collections::HashMap, env, sync::Mutex};
+use std::{collections::HashMap, env, sync::{Arc, Mutex}};
 
 use actix_web::{get, http::StatusCode, post, web, App, HttpRequest, HttpResponse, HttpServer, Responder};
 
@@ -23,7 +23,7 @@ pub async fn route(
     body: web::Json<FollowData>,
     req: HttpRequest,
     client: web::Data<mongodb::Client>,
-    ws_sessions: web::Data<Mutex<HashMap<String, actix_ws::Session>>>
+    ws_sessions: web::Data<Arc<Mutex<HashMap<String, actix_ws::Session>>>>
 ) -> impl Responder {
     let token_data = decode::<mongoose::structures::user::JwtUser>(
         &get_token(&req).unwrap(),
@@ -87,7 +87,7 @@ pub async fn route(
                 )
                 .await;
 
-                ws_send_notification(ws_sessions.clone(), &handle).await;
+                ws_send_notification(&ws_sessions, &handle).await;
 
                 mongoose::add_coins(&client, token_data.handle.as_str(), 20).await;
                 mongoose::add_xp(&client, token_data.handle.as_str(), 20).await;

@@ -58,6 +58,10 @@ function PostTyper({ onSend, replying_to = "" }: { onSend: (data: Post) => void;
                     return;
                 }
                 console.log(vid);
+                if (vid.data.link == undefined) {
+                    toast.error("There was an error uploading the image using a fallback: " + vid.data.error);
+                    continue;
+                }
                 links += file.isVideo ? vid.data.link + " " : (await UploadToImgurFile(file.file)).data.link + " ";
             }
 

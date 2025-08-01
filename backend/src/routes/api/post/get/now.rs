@@ -10,7 +10,7 @@ use actix_web::{get, http::StatusCode, post, web, App, HttpRequest, HttpResponse
 
 use crate::{
     beezle::{self, auth::{get_blocked_users_as_vec, get_token_data, get_users_that_blocked_as_vec, verify_token}},
-    mongoose::{self, get_many::vec_to_str, structures::user},
+    mongoose::{self, get_many::vec_to_str, structures::{post::POST_OFFSET, user}},
     poison::LockResultExt,
 };
 
@@ -87,7 +87,30 @@ pub async fn route(client: web::Data<mongodb::Client>, req: HttpRequest, body: w
             "$skip": &body.offset
         },
         doc! {
-            "$limit": 5
+            "$limit": POST_OFFSET
+        },
+        doc! {
+            "$lookup": {
+                "from": "Posts",
+                "localField": "post_id",
+                "foreignField": "replying_to",
+                "as": "replies",
+            }
+        },
+        doc! {
+            "$addFields": {
+                "reply_count": {
+                    "$size": "$replies"
+                }
+            }
+        },
+        doc! {
+            "$lookup": {
+                "from": "Reactions",
+                "localField": "post_id",
+                "foreignField": "post_id",
+                "as": "post_reactions",
+            }
         },
         doc! {
             "$project": doc! {
@@ -111,7 +134,7 @@ pub async fn route(client: web::Data<mongodb::Client>, req: HttpRequest, body: w
     let vec: Vec<Document> = cursor.try_collect().await.unwrap();
 
     HttpResponse::Ok().json(doc! {
-        "offset": body.offset + 5,
+        "offset": body.offset + POST_OFFSET,
         "posts": vec
     })
 }

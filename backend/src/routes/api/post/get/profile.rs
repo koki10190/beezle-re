@@ -10,7 +10,7 @@ use actix_web::{get, http::StatusCode, post, web, App, HttpRequest, HttpResponse
 
 use crate::{
     beezle::{self, auth::{check_if_blocked, get_token_data, verify_token}},
-    mongoose::{self, get_many::vec_to_str, structures::{post::Post, user}},
+    mongoose::{self, get_many::vec_to_str, structures::{post::{Post, POST_OFFSET}, user}},
     poison::LockResultExt,
 };
 
@@ -75,6 +75,6 @@ pub async fn route(
 
     HttpResponse::Ok().json(doc! {
         "posts": vec,
-        "offset": body.offset + 5
+        "offset": body.offset + POST_OFFSET
     })
 }

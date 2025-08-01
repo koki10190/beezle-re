@@ -2,7 +2,7 @@ use bson::{doc, uuid, Document};
 use jsonwebtoken::{decode, DecodingKey, EncodingKey, Header, Validation};
 use regex::Regex;
 use serde::Deserialize;
-use std::{collections::HashMap, env, sync::Mutex};
+use std::{collections::HashMap, env, sync::{Arc, Mutex}};
 
 use actix_web::{get, post, web, App, HttpRequest, HttpResponse, HttpServer, Responder};
 
@@ -24,7 +24,7 @@ pub async fn route(
     body: web::Json<TokenInfo>,
     client: web::Data<mongodb::Client>,
     req: HttpRequest,
-    ws_sessions: web::Data<Mutex<HashMap<String, actix_ws::Session>>>
+    ws_sessions: web::Data<Arc<Mutex<HashMap<String, actix_ws::Session>>>>
 ) -> impl Responder {
     let token = decode::<mongoose::structures::user::JwtUser>(
         &get_token(&req).unwrap(),
@@ -91,7 +91,7 @@ pub async fn route(
                     )
                     .await;
 
-                    ws_send_notification(ws_sessions.clone(), &handle).await;
+                    ws_send_notification(&ws_sessions, &handle).await;
                 }
             }
 
@@ -125,7 +125,7 @@ pub async fn route(
                     )
                     .await;
 
-                    ws_send_notification(ws_sessions.clone(), &data.claims.handle).await;
+                    ws_send_notification(&ws_sessions, &data.claims.handle).await;
                 }
             }
 
@@ -181,7 +181,7 @@ pub async fn route(
                     },
                 ).await;
 
-                ws_send_notification(ws_sessions.clone(), &send_to).await;
+                ws_send_notification(&ws_sessions, &send_to).await;
             }
 
             mongoose::insert_document(&client, "beezle", "Posts", document.clone()).await;

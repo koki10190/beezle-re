@@ -24,7 +24,7 @@ use socketioxide::extract::Data;
 use std::collections::HashMap;
 use std::time::Duration;
 use std::{env, str};
-use std::sync::Mutex;
+use std::sync::{Arc, Mutex};
 
 use mongodb::bson::doc;
 use mongodb::{options::ClientOptions, Client};
@@ -102,7 +102,7 @@ async fn main() -> std::io::Result<()> {
     //     }
     // };
 
-    let ws_session_map: web::Data<Mutex<HashMap<String, actix_ws::Session>>> = web::Data::new(Mutex::new(HashMap::new()));
+    let ws_session_map: web::Data<Arc<Mutex<HashMap<String, actix_ws::Session>>>> = web::Data::new(Arc::new(Mutex::new(HashMap::new())));
     let limiter = web::Data::new(
         Limiter::builder("redis://127.0.0.1")
             .key_by(|req: &ServiceRequest| {

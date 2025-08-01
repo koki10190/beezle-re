@@ -1,4 +1,4 @@
-use std::{collections::HashMap, sync::Mutex, time::{Duration, Instant}};
+use std::{collections::HashMap, sync::{Arc, Mutex}, time::{Duration, Instant}};
 
 use actix_web::{middleware::Logger, web, App, Error, HttpRequest, HttpResponse, HttpServer, Responder};
 use actix_ws::{Message, MessageStream, Session};
@@ -15,7 +15,7 @@ const CLIENT_TIMEOUT: Duration = Duration::from_secs(10);
 pub async fn main_ws(
     req: HttpRequest,
     body: web::Payload, 
-    ws_sessions: web::Data<Mutex<HashMap<String, actix_ws::Session>>>
+    ws_sessions: web::Data<Arc<Mutex<HashMap<String, actix_ws::Session>>>>
 ) -> actix_web::Result<impl Responder> {
     let (res, session, msg_stream) = actix_ws::handle(&req, body)?;
 
@@ -30,8 +30,9 @@ pub async fn main_ws(
 }
 
 
-async fn ws(mut session: Session, mut msg_stream: MessageStream, ws_sessions: web::Data<Mutex<HashMap<String, actix_ws::Session>>>) {
+async fn ws(mut session: Session, mut msg_stream: MessageStream, ws_sessions: web::Data<Arc<Mutex<HashMap<String, actix_ws::Session>>>>) {
     let mut user_handle = String::new();
+    let arc_clone = Arc::clone(ws_sessions.get_ref());
 
     let mut last_heartbeat = Instant::now();
     let mut interval = time::interval(HEARTBEAT_INTERVAL);
@@ -63,11 +64,11 @@ async fn ws(mut session: Session, mut msg_stream: MessageStream, ws_sessions: we
                             "ping" => {
                                 last_heartbeat = Instant::now();
                                 let _ = session.text("{\"channel\": \"pong\", \"data\": {}}").await;
-                                let locked = ws_sessions.lock();
+                                let locked = arc_clone.lock();
                                     
                                 match locked {
                                     Ok(mut sessions) => {
-                                        sessions.insert(user_handle.clone(), session.clone());
+                                        (*sessions).insert(user_handle.clone(), session.clone());
                                         beezle::print("Inserted user to sessions.");
                                     }
                                     Err(err) => {
@@ -85,11 +86,11 @@ async fn ws(mut session: Session, mut msg_stream: MessageStream, ws_sessions: we
                             "connect" => {
                                 if let Some(data) = data {
                                     user_handle = data.get("handle").expect("Handle not found").as_str().unwrap().to_string();
-                                    let locked = ws_sessions.lock();
+                                    let locked = arc_clone.lock();
                                     
                                     match locked {
                                         Ok(mut sessions) => {
-                                            sessions.insert(user_handle.clone(), session.clone());
+                                            (*sessions).insert(user_handle.clone(), session.clone());
                                             beezle::print("Inserted user to sessions.");
                                         }
                                         Err(err) => {
@@ -108,7 +109,7 @@ async fn ws(mut session: Session, mut msg_stream: MessageStream, ws_sessions: we
                             "talk_other" => {
                                 if let Some(data) = data {
                                     let others_handle = data.get("talking_to").expect("talking_to not found").as_str().unwrap().to_string();
-                                    let locked = ws_sessions.lock();
+                                    let locked = arc_clone.lock();
                                     println!("Got message for channel talk_other {}", others_handle);
                                     
                                     match locked {
@@ -168,7 +169,7 @@ async fn ws(mut session: Session, mut msg_stream: MessageStream, ws_sessions: we
     };
 
     if !user_handle.is_empty() {
-        let locked = ws_sessions.lock();
+        let locked = arc_clone.lock();
 
         match locked {
             Ok(mut sessions) =>  {

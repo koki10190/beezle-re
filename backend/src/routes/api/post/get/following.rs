@@ -10,7 +10,7 @@ use actix_web::{get, http::StatusCode, post, web, App, HttpRequest, HttpResponse
 
 use crate::{
     beezle::{self, auth::verify_token},
-    mongoose::{self, get_many::vec_to_str, structures::user},
+    mongoose::{self, get_many::vec_to_str, structures::{post::POST_OFFSET, user}},
     poison::LockResultExt,
 };
 
@@ -42,7 +42,7 @@ pub async fn route(client: web::Data<mongodb::Client>, body: web::Json<_Post>, r
 
     let options = FindOptions::builder()
         .skip(body.offset as u64)
-        .limit(5)
+        .limit(POST_OFFSET)
         .sort(doc! {
             "$natural": -1
         })
@@ -70,7 +70,7 @@ pub async fn route(client: web::Data<mongodb::Client>, body: web::Json<_Post>, r
     let vec: Vec<Document> = cursor.try_collect().await.unwrap();
 
     HttpResponse::Ok().json(doc! {
-        "offset": body.offset + 5,
+        "offset": body.offset + POST_OFFSET,
         "posts": vec
     })
 }

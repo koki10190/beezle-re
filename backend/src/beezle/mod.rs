@@ -1,5 +1,5 @@
 pub mod print;
-use std::{collections::HashMap, sync::Mutex};
+use std::{collections::HashMap, sync::{Arc, Mutex}};
 
 use actix_web::web;
 use bson::{doc, Document};
@@ -68,8 +68,9 @@ pub async fn user_exists(client: &Client, handle: String) -> bool {
     }
 }
 
-pub async fn send_socket_to_user(ws_sessions: web::Data<Mutex<HashMap<String, actix_ws::Session>>>, handle: &str, channel: &str, data: Document) {
-    let locked = ws_sessions.lock();
+pub async fn send_socket_to_user(ws_sessions: &web::Data<Arc<Mutex<HashMap<String, actix_ws::Session>>>>, handle: &str, channel: &str, data: Document) {
+    let arc_clone = Arc::clone(ws_sessions.get_ref());
+    let locked = arc_clone.lock();
                     
     match locked {
         Ok(mut sessions) => {
@@ -91,15 +92,16 @@ pub async fn send_socket_to_user(ws_sessions: web::Data<Mutex<HashMap<String, ac
 }
 
 
-pub async fn ws_send_notification(ws_sessions: web::Data<Mutex<HashMap<String, actix_ws::Session>>>, handle: &str) {
+pub async fn ws_send_notification(ws_sessions: &web::Data<Arc<Mutex<HashMap<String, actix_ws::Session>>>>, handle: &str) {
     let data = doc! {
     };
 
-    send_socket_to_user(ws_sessions, handle, "update_notification_counter", data).await;
+    send_socket_to_user(&ws_sessions, handle, "update_notification_counter", data).await;
 }
 
-pub fn is_user_online(ws_sessions: web::Data<Mutex<HashMap<String, actix_ws::Session>>>, handle: &str) -> bool {
-    let locked = ws_sessions.lock();
+pub fn is_user_online(ws_sessions: &web::Data<Arc<Mutex<HashMap<String, actix_ws::Session>>>>, handle: &str) -> bool {
+    let arc_clone = Arc::clone(ws_sessions.get_ref());
+    let locked = arc_clone.lock();
                     
     match locked {
         Ok(mut sessions) => {

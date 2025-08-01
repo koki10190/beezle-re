@@ -2,7 +2,7 @@ use bson::{doc, Array, Document};
 use jsonwebtoken::{decode, DecodingKey, EncodingKey, Header, Validation};
 use mail_send::mail_auth::flate2::Status;
 use serde::Deserialize;
-use std::{collections::HashMap, env, sync::Mutex};
+use std::{collections::HashMap, env, sync::{Arc, Mutex}};
 
 use actix_web::{get, http::StatusCode, post, web, App, HttpRequest, HttpResponse, HttpServer, Responder};
 
@@ -22,7 +22,7 @@ pub async fn route(
     body: web::Query<GetUserPublicQuery>,
     client: web::Data<mongodb::Client>,
     req: HttpRequest,
-    ws_sessions: web::Data<Mutex<HashMap<String, actix_ws::Session>>>
+    ws_sessions: web::Data<Arc<Mutex<HashMap<String, actix_ws::Session>>>>
 ) -> impl Responder {
     if !verify_token(&client, &req).await {
         return HttpResponse::Unauthorized().json(doc!{"error": "Not Authorized!"});
@@ -39,7 +39,7 @@ pub async fn route(
             _document.remove("email");
             _document.remove("password");
             
-            let status = is_user_online(ws_sessions, &body.handle);
+            let status = is_user_online(&ws_sessions, &body.handle);
             let cloned = _document.clone();
             let status_string = cloned.get("status").unwrap_or(&bson::Bson::Null).as_str().unwrap_or("online");
             _document.insert("status", if status {status_string} else {"offline"});

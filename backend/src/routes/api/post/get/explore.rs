@@ -10,7 +10,7 @@ use actix_web::{get, http::{self, StatusCode}, post, web, App, HttpRequest, Http
 
 use crate::{
     beezle::{self, auth::{get_blocked_users_as_vec, get_token_data, get_users_that_blocked_as_vec, verify_token}},
-    mongoose::{self, get_many::vec_to_str, structures::user},
+    mongoose::{self, get_many::vec_to_str, structures::{post::POST_OFFSET, user}},
     poison::LockResultExt,
 };
 
@@ -69,7 +69,30 @@ pub async fn route(client: web::Data<mongodb::Client>, req: HttpRequest, body: w
                 doc! {
                     "$sample": {"size": collection_size as u32}
                 },
-                doc! { "$limit": 5 },
+                doc! { "$limit": POST_OFFSET },
+                doc! {
+                    "$lookup": {
+                        "from": "Posts",
+                        "localField": "post_id",
+                        "foreignField": "replying_to",
+                        "as": "replies",
+                    }
+                },
+                doc! {
+                    "$addFields": {
+                        "reply_count": {
+                            "$size": "$replies"
+                        }
+                    }
+                },
+                doc! {
+                    "$lookup": {
+                        "from": "Reactions",
+                        "localField": "post_id",
+                        "foreignField": "post_id",
+                        "as": "post_reactions",
+                    }
+                },
                 doc! {
                     "$project": doc! {
                         "edited": 1,
@@ -80,11 +103,12 @@ pub async fn route(client: web::Data<mongodb::Client>, req: HttpRequest, body: w
                         "post_op_id": 1,
                         "is_reply": 1,
                         "post_id": 1,
-                        "reactions": 1,
+                        "post_reactions": 1,
                         "reposts": 1,
                         "repost": 1,
                         "likes": 1,
-                        "replying_to": 1
+                        "replying_to": 1,
+                        "reply_count": 1
                     }
                 },
             ],
@@ -96,7 +120,7 @@ pub async fn route(client: web::Data<mongodb::Client>, req: HttpRequest, body: w
     let vec: Vec<Document> = cursor.try_collect().await.unwrap();
 
     HttpResponse::Ok().json(doc! {
-        "offset": body.offset + 5,
+        "offset": body.offset + POST_OFFSET,
         "posts": vec
     })
 }

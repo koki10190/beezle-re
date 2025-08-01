@@ -21,6 +21,7 @@ async function UploadToImgurFile(file: File) {
         try {
             const res = await axios.post(`${api_uri}/api/file/upload`, formData, GetFullAuth());
             if (typeof res.data === "string") throw "Faggot";
+            if (res.data.error) throw res.data.error;
             return res.data;
         } catch (_) {
             toast.error("Couldn't Upload Image/Video to Imgur: " + e + " | " + _);

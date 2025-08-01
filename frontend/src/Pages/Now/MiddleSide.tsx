@@ -40,6 +40,7 @@ function MiddleSide() {
         console.log("at bottom!");
         if (self_user?.is_bot) return console.error("Bot Accounts are not allowed to use the site.");
         const posts = (await axios.get(`${api_uri}/api/post/get/now?offset=${postOffset}&${GetPostPrefsStringQuery()}`, GetFullAuth())).data;
+        console.log(posts);
         setPosts((old) => [...old, ...posts.posts]);
         setPostOffset(posts.offset);
     };

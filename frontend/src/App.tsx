@@ -48,7 +48,21 @@ interface WsUserData {
     status: UserStatus;
 }
 function App() {
-    // Probably a terrible way to handle useNavigate lol
+    // dmSocket.on("connect", () => {
+    //     let _ = setInterval(async () => {
+    //         console.log("Intervalling DM..");
+    //         const user = await fetchUserPrivate();
+    //         if (!user) return;
+
+    //         dmSocket.emit("get handle", user.handle);
+
+    //         clearInterval(_);
+    //     }, 100);
+    // });
+
+    // dmSocket.on("get me handle", () => {
+    //     dmSocket.emit("get handle", user.handle);
+    // });
 
     socket.webSocket.onopen = async () => {
         console.log("Open");
@@ -69,17 +83,17 @@ function App() {
     };
 
     socket.listen("pong", () => {
-        // console.log("Got a pong, sending a ping");
+        console.log("Got a pong, sending a ping");
         setTimeout(() => socket.send("ping", {}), 5000);
     });
 
     socket.listen("ping", () => {
-        // console.log("Got a ping, sending a pong");
+        console.log("Got a ping, sending a pong");
         setTimeout(() => socket.send("pong", {}), 5000);
     });
 
     socket.listen("from_other", (data: { message: string }) => {
-        // console.log("ALERT! DATA GOT", data);
+        console.log("ALERT! DATA GOT", data);
     });
 
     const ServerStatusInterval = async () => {

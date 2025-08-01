@@ -1,7 +1,7 @@
 use bson::{doc, uuid, Document};
 use jsonwebtoken::{decode, DecodingKey, EncodingKey, Header, Validation};
 use serde::Deserialize;
-use std::{collections::HashMap, env, sync::Mutex};
+use std::{collections::HashMap, env, sync::{Arc, Mutex}};
 
 use actix_web::{get, patch, post, web, App, HttpRequest, HttpResponse, HttpServer, Responder};
 
@@ -18,7 +18,7 @@ pub async fn route(
     body: web::Json<TokenInfo>,
     client: web::Data<mongodb::Client>,
     req: HttpRequest,
-    ws_sessions: web::Data<Mutex<HashMap<String, actix_ws::Session>>>
+    ws_sessions: web::Data<Arc<Mutex<HashMap<String, actix_ws::Session>>>>
 ) -> impl Responder {
     let token = decode::<mongoose::structures::user::JwtUser>(
         &get_token(&req).unwrap(),
@@ -108,7 +108,7 @@ pub async fn route(
                     )
                     .await;
 
-                    ws_send_notification(ws_sessions.clone(), &post_op).await;
+                    ws_send_notification(&ws_sessions, &post_op).await;
                 }
             }
 

@@ -289,7 +289,9 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
                 </div>
                 {user.customization?.profile_gradient_bought ? (
                     <div className="profile-container-nom">
-                        <p className="profile-container-header">Profile Gradient</p>
+                        <p className="profile-container-header">
+                            <i className="fa-solid fa-fill-drip"></i> Profile Gradient
+                        </p>
                         <input
                             value={g1}
                             onChange={(e) => setG1(e.target.value)}
@@ -304,7 +306,9 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
                 )}
                 {user.customization?.name_color_bought ? (
                     <div className="profile-container-nom">
-                        <p className="profile-container-header">Name Color Gradient</p>
+                        <p className="profile-container-header">
+                            <i className="fa-solid fa-palette"></i> Name Color Gradient
+                        </p>
                         <input
                             value={ng1}
                             onChange={(e) => setNG1(e.target.value)}
