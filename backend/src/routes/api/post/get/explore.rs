@@ -36,6 +36,8 @@ pub async fn route(client: web::Data<mongodb::Client>, req: HttpRequest, body: w
     let mut blocked_by_users = get_users_that_blocked_as_vec(&client, &token_user.handle).await;
     blocked_users.append(&mut blocked_by_users);
 
+    let options = AggregateOptions::builder().allow_disk_use(true).build();
+    beezle::print("REATATRDRSDAFASDCGHLKJFGSDVHKJDFGSHJKSHFGJ");
     let mut cursor = coll
         .aggregate(
             vec![
@@ -62,37 +64,9 @@ pub async fn route(client: web::Data<mongodb::Client>, req: HttpRequest, body: w
                     }
                 },
                 doc! {
-                    "$sort": doc! {
-                        "creation_date": -1
-                    }
-                },
-                doc! {
-                    "$sample": {"size": collection_size as u32}
+                    "$sample": {"size": POST_OFFSET}
                 },
                 doc! { "$limit": POST_OFFSET },
-                doc! {
-                    "$lookup": {
-                        "from": "Posts",
-                        "localField": "post_id",
-                        "foreignField": "replying_to",
-                        "as": "replies",
-                    }
-                },
-                doc! {
-                    "$addFields": {
-                        "reply_count": {
-                            "$size": "$replies"
-                        }
-                    }
-                },
-                doc! {
-                    "$lookup": {
-                        "from": "Reactions",
-                        "localField": "post_id",
-                        "foreignField": "post_id",
-                        "as": "post_reactions",
-                    }
-                },
                 doc! {
                     "$project": doc! {
                         "edited": 1,
@@ -103,16 +77,13 @@ pub async fn route(client: web::Data<mongodb::Client>, req: HttpRequest, body: w
                         "post_op_id": 1,
                         "is_reply": 1,
                         "post_id": 1,
-                        "post_reactions": 1,
                         "reposts": 1,
                         "repost": 1,
                         "likes": 1,
-                        "replying_to": 1,
-                        "reply_count": 1
                     }
                 },
             ],
-            None,
+            options,
         )
         .await
         .unwrap();

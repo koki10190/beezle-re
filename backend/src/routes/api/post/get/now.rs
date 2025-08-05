@@ -90,29 +90,6 @@ pub async fn route(client: web::Data<mongodb::Client>, req: HttpRequest, body: w
             "$limit": POST_OFFSET
         },
         doc! {
-            "$lookup": {
-                "from": "Posts",
-                "localField": "post_id",
-                "foreignField": "replying_to",
-                "as": "replies",
-            }
-        },
-        doc! {
-            "$addFields": {
-                "reply_count": {
-                    "$size": "$replies"
-                }
-            }
-        },
-        doc! {
-            "$lookup": {
-                "from": "Reactions",
-                "localField": "post_id",
-                "foreignField": "post_id",
-                "as": "post_reactions",
-            }
-        },
-        doc! {
             "$project": doc! {
                 "edited": 1,
                 "handle": 1,

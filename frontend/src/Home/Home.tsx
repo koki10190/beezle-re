@@ -9,23 +9,20 @@ import react from "react";
 import "../Main.css";
 import "./LoginPage.css";
 import { TypeAnimation } from "react-type-animation";
-import CheckServerStatus from "../functions/CheckServerStatus";
+import { SERVER_ONLINE, ServerDownMessage } from "../functions/CheckServerStatus";
 import { toast } from "react-toastify";
+import { socket } from "../ws/socket";
 
 function Home() {
     const [isRegister, setRegister] = useState(false);
 
     useEffect(() => {
         (async () => {
-            const status = await CheckServerStatus();
-            if (localStorage.getItem("access_token") && status) {
+            if (localStorage.getItem("access_token") && SERVER_ONLINE) {
                 window.location.href = "/home";
             }
 
-            if (!status)
-                toast.error("Servers are down! Please come back later.", {
-                    icon: <i style={{ color: "#ff5050" }} className="fa-solid fa-heart-crack"></i>,
-                });
+            if (!SERVER_ONLINE) ServerDownMessage();
         })();
     }, []);
 

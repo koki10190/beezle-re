@@ -16,14 +16,12 @@ import Following_Home from "./Pages/Following/Home";
 import Search_Home from "./Pages/Search/Home";
 import FollowingHome_Home from "./Pages/Home/Home";
 import Shop_Home from "./Pages/Shop/Home";
-import DMs_Home from "./Pages/DMs/Home";
 import { api_uri } from "./links";
 import { useEffect, useState } from "react";
 import { fetchUserPrivate } from "./functions/fetchUserPrivate";
 import Verify from "./Verify/Verify";
 import VerifyPass from "./Verify/VerifyPass";
 import Steam from "./Redirects/Steam";
-// import dmSocket from "./ws/dm-socket";
 import { Slide, toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import NotFound from "./Pages/404/NotFound";
@@ -33,8 +31,8 @@ import Hashtag_Home from "./Pages/Hashtag/Hashtag_Home";
 import MostUsedTags_Home from "./Pages/MostUsedTags/MostUsedTags_Home";
 import DiscordAuth from "./Pages/Auth/DiscordAuth";
 import LastfmAuth from "./Pages/Auth/LastfmAuth";
-import CheckServerStatus from "./functions/CheckServerStatus";
 import APICalls from "./Pages/APICalls/APICalls";
+import { SERVER_ONLINE, ServerDownMessage } from "./functions/CheckServerStatus";
 
 enum UserStatus {
     ONLINE,
@@ -48,22 +46,6 @@ interface WsUserData {
     status: UserStatus;
 }
 function App() {
-    // dmSocket.on("connect", () => {
-    //     let _ = setInterval(async () => {
-    //         console.log("Intervalling DM..");
-    //         const user = await fetchUserPrivate();
-    //         if (!user) return;
-
-    //         dmSocket.emit("get handle", user.handle);
-
-    //         clearInterval(_);
-    //     }, 100);
-    // });
-
-    // dmSocket.on("get me handle", () => {
-    //     dmSocket.emit("get handle", user.handle);
-    // });
-
     socket.webSocket.onopen = async () => {
         console.log("Open");
         let _ = setInterval(async () => {
@@ -95,24 +77,6 @@ function App() {
     socket.listen("from_other", (data: { message: string }) => {
         console.log("ALERT! DATA GOT", data);
     });
-
-    const ServerStatusInterval = async () => {
-        console.log(window.location.href);
-        if (window.location.pathname === "/") {
-            clearInterval(interval);
-            return;
-        }
-        const status = await CheckServerStatus();
-        if (!status) {
-            toast.error("Servers Might Be Down!");
-            setTimeout(() => {
-                window.location.href = "/";
-            }, 1000);
-            clearInterval(interval);
-        }
-    };
-    ServerStatusInterval();
-    let interval = setInterval(ServerStatusInterval, 10 * 1000);
 
     return (
         <>
@@ -157,8 +121,6 @@ function App() {
                     <Route path="/shop" element={<Shop_Home />} />
                     <Route path="/connect/steam" element={<Steam />} />
                     <Route path="/search" element={<Search_Home />} />
-                    <Route path="/dms" element={<DMs_Home />} />
-                    <Route path="/dms/:user_handle" element={<DMs_Home />} />
                     <Route path="/discord_auth" element={<DiscordAuth />} />
                     <Route path="/spotify-auth" element={<SpotifyAuth />} />
                     <Route path="/lastfm_auth" element={<LastfmAuth />} />

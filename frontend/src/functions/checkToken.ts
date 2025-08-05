@@ -3,7 +3,8 @@ import { fetchUserPrivate } from "./fetchUserPrivate";
 import { api_uri } from "../links";
 import axios from "axios";
 import { toast } from "react-toastify";
-import CheckServerStatus from "./CheckServerStatus";
+import { socket } from "../ws/socket";
+import { SERVER_ONLINE } from "./CheckServerStatus";
 
 async function checkToken() {
     const token = localStorage.getItem("access_token");
@@ -11,9 +12,8 @@ async function checkToken() {
     const user = await fetchUserPrivate();
     if (!user) window.location.href = "/";
 
-    if (!(await CheckServerStatus())) {
-        toast.error("Oops! Seems like the servers are down, sorry :(");
-        window.location.href = "/";
+    if (!SERVER_ONLINE) {
+        toast.error("Oops! Seems like the servers are down.");
     }
 }
 

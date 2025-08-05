@@ -1,4 +1,6 @@
+import { toast } from "react-toastify";
 import { ws_uri } from "../links";
+import { SERVER_ONLINE, ServerDownMessage, SetServerStatus } from "../functions/CheckServerStatus";
 
 type ChannelCallback = (data: object) => void;
 
@@ -27,6 +29,16 @@ class BeezleSocket {
             // console.log(`Got a message for "${channel}", data:`, data);
             if (this.channels.get(channel)) {
                 this.channels.get(channel).callback(data);
+            }
+        };
+
+        this.webSocket.onclose = () => {
+            SetServerStatus(false);
+            ServerDownMessage();
+            if (window.location.pathname != "/") {
+                setTimeout(() => {
+                    window.location.pathname = "/";
+                }, 1000);
             }
         };
     }
