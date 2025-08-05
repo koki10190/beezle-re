@@ -97,7 +97,11 @@ function FollowBox({ handle, self_user }: FollowBoxData) {
                         }}
                         className="pfp-post"
                     ></div>
-                    <div className={`status-indicator ${CStatus(user?.status ?? "offline")}`}></div>
+                    <div
+                        className={`status-indicator ${
+                            user?.handle == self_user.handle ? CStatus(user?.status_db ?? "offline") : CStatus(user?.status ?? "offline")
+                        }`}
+                    ></div>
                 </div>
                 <p className="username-post">
                     {user ? <Username user={user} /> : ""}{" "}
@@ -130,7 +134,7 @@ function FollowBox({ handle, self_user }: FollowBoxData) {
                 {user.handle !== self_user.handle ? (
                     <button
                         onClick={FollowInteraction}
-                        style={{ width: "100%", fontSize: "15px", background: normalGradient }}
+                        style={{ width: "100%", fontSize: "15px", marginBottom: "0px", background: normalGradient }}
                         className="button-field"
                     >
                         {isFollowing ? "Unfollow" : "Follow"}

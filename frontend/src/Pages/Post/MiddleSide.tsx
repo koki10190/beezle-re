@@ -481,7 +481,12 @@ function MiddleSide() {
                             }}
                             className="post-page-pfp"
                         ></div>
-                        <div style={{ bottom: "1px", right: "1px" }} className={`status-indicator ${CStatus(post_user?.status ?? "offline")}`}></div>
+                        <div
+                            style={{ bottom: "1px", right: "1px" }}
+                            className={`status-indicator ${
+                                post_user?.handle == self_user?.handle ? CStatus(post_user?.status_db) : CStatus(post_user?.status ?? "offline")
+                            }`}
+                        ></div>
                     </div>
                     <p className="post-page-username">
                         {post_user ? <Username user={post_user} /> : ""}{" "}
@@ -498,6 +503,7 @@ function MiddleSide() {
                                 .replace("hours", "h")
                                 .replace("afew seconds", "1s")
                                 .replace("aminute", "1m")
+                                .replace("amonth", "1 month")
                                 .replace("ahour", "1h")
                                 .replace("anhour", "1h")
                                 .replace("aday", "1d")

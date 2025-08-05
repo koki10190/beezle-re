@@ -662,6 +662,7 @@ function PostBox({
                                   .replace("days", "d")
                                   .replace("day", "1d")
                                   .replace("months", " months")
+                                  .replace("amonth", "1 month")
                                   .replace("ayear", "1 year")
                             : "0"}
                     </p>

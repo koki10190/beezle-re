@@ -65,6 +65,7 @@ interface UserConnections {
 }
 
 type Milestones = Array<Trophy>;
+type StatusStr = "offline" | "idle" | "online" | "dnd";
 
 interface UserPublic {
     handle: string;
@@ -94,7 +95,8 @@ interface UserPublic {
     connections: UserConnections;
     milestones: Milestones;
     is_bot: boolean;
-    status: "offline" | "idle" | "online" | "dnd";
+    status: StatusStr;
+    status_db: StatusStr;
 }
 
 interface UserPrivate extends UserPublic {

@@ -48,6 +48,7 @@ pub async fn route(
             let cloned = _document.clone();
             let status_string = cloned.get("status").unwrap_or(&bson::Bson::Null).as_str().unwrap_or("online");
             _document.insert("status", if status {status_string} else {"offline"});
+            _document.insert("status_db", status_string);
 
             HttpResponse::Ok().json(_document)
         },

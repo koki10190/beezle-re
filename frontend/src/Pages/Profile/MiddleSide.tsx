@@ -346,7 +346,11 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                             }}
                             className="pfp"
                         ></div>
-                        <div className={`status-indicator-profile ${CStatus(user?.status ?? "offline")}`}></div>
+                        <div
+                            className={`status-indicator-profile ${
+                                user.handle == self.handle ? CStatus(user?.status_db ?? "offline") : CStatus(user?.status ?? "offline")
+                            }`}
+                        ></div>
                     </div>
                     <p className="username">
                         <Username user={user} /> <BadgesToJSX is_bot={user?.is_bot} badges={user.badges} className="profile-badge" />

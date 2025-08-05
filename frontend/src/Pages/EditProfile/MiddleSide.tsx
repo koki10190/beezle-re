@@ -37,7 +37,7 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
     const [username, setUsername] = useState<string>(user.username);
     const [about_me, setAboutMe] = useState<string>(user.about_me);
     const [activity, setActivity] = useState<string>(user.activity);
-    const [status, setStatus] = useState<string>(user.status ?? "online");
+    const [status, setStatus] = useState<string>(user.status_db ?? "online");
     const [avatarShape, setAvatarShape] = useState<AvaterShape>(user.customization?.square_avatar ?? AvaterShape.SquareAvatarShape);
     const [profileBgImg, setProfileBgImage] = useState(user.customization?.profile_postbox_img_bought ? user.customization.profile_postbox_img : "");
     const [g1, setG1] = useState<string>(user.customization?.profile_gradient ? user.customization.profile_gradient.color1 : "#000000");
