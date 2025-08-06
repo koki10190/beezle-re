@@ -3,10 +3,10 @@ import { checkToken } from "../../functions/checkToken";
 
 import Divider from "../../Components/Divider";
 import PostBox from "../../Components/PostBox";
-import { fetchUserPrivate } from "../../functions/fetchUserPrivate";
+import { fetchUserPrivate, GetUserPrivate } from "../../functions/fetchUserPrivate";
 import { UserPrivate, UserPublic } from "../../types/User";
 import { Post } from "../../types/Post";
-import FetchPost from "../../functions/FetchPost";
+import { FetchPost } from "../../functions/FetchPost";
 import FollowBox from "../../Components/FollowBox";
 import { useParams } from "react-router";
 import { fetchUserPublic } from "../../functions/fetchUserPublic";
@@ -19,7 +19,7 @@ function MiddleSide() {
 
     useEffect(() => {
         (async () => {
-            const user = (await fetchUserPrivate()) as UserPrivate;
+            const user = GetUserPrivate() as UserPrivate;
             setSelfUser(user);
             setUser((await fetchUserPublic(handle)) as UserPublic);
 
@@ -27,7 +27,7 @@ function MiddleSide() {
             user.bookmarks.forEach(async (post_id: string) => {
                 console.log(post_id);
                 const post = await FetchPost(post_id);
-                setPosts(old => [...old, post]);
+                setPosts((old) => [...old, post]);
             });
         })();
     }, []);

@@ -4,7 +4,7 @@ import { BrowserRouter, Routes, Route, redirect } from "react-router-dom";
 import { api_uri } from "../../links";
 import { checkToken } from "../../functions/checkToken";
 import React from "react";
-import { fetchUserPrivate } from "../../functions/fetchUserPrivate";
+import { fetchUserPrivate, GetUserPrivate } from "../../functions/fetchUserPrivate";
 import { UserPrivate, UserPublic } from "../../types/User";
 import "./Profile.css";
 import { fetchUserPublic } from "../../functions/fetchUserPublic";
@@ -31,6 +31,7 @@ import GetAuthToken from "../../functions/GetAuthHeader";
 import GetFullAuth from "../../functions/GetFullAuth";
 import { STEAM_ICON_URL } from "../../types/steam/steam_urls";
 import CStatus from "../../functions/StatusToClass";
+import { FetchPost } from "../../functions/FetchPost";
 
 function Loading() {
     return (
@@ -160,7 +161,7 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
 
     const FetchLastfmData = async () => {
         try {
-            if (!user.connections?.lastfm?.username) return;
+            if (!user.connections?.lastfm?.username || !user.connections?.lastfm?.show_scrobbling) return;
 
             const res = await axios.get(`${api_uri}/api/lastfm/now_playing?username=${user.connections.lastfm.username}`, GetFullAuth());
             const data = res.data;
@@ -254,36 +255,11 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
             }
 
             if (user.pinned_post !== "") {
-                let post = (await axios.get(`${api_uri}/api/post/get/one?post_id=${user.pinned_post}`, GetFullAuth())).data;
+                let post = await FetchPost(user.pinned_post);
                 setPinnedPost(post.error ? null : post);
             }
 
-            try {
-                if (user.connections?.steam?.id) {
-                    const steam_res = await axios.get(
-                        `${api_uri}/api/connections/steam_get_game?steam_id=${user.connections.steam.id}`,
-                        GetFullAuth(),
-                    );
-                    const steam_data = steam_res.data;
-                    if (steam_data) setSteamData(steam_data[Object.keys(steam_data)[0]].data);
-
-                    // const steam_inventory_res = await axios.get(`${api_uri}/api/connections/steam_get_inventory`, {
-                    //     params: {
-                    //         steam_id: user.connections.steam.id,
-                    //         app_id: 730,
-                    //     },
-                    //     headers: GetAuthToken(),
-                    // });
-
-                    // setSteamInventory(steam_inventory_res.data);
-
-                    const steam_ps_res = await axios.get(`${api_uri}/api/connections/steam_get?steam_id=${user.connections.steam.id}`, GetFullAuth());
-                    console.log(steam_ps_res.data);
-                    if (steam_ps_res.data) setSteamUserData(steam_ps_res.data as Steam.PlayerSummary);
-                }
-            } catch (e) {
-                console.error("STEAM ERROR CAUGHT:", e);
-            }
+            setSteamData(Object.keys(user?.steam_data ?? {}).length > 0 ? user.steam_data[Object.keys(user.steam_data)[0]].data : null);
 
             FetchLastfmData();
             FetchSpotifyData();
@@ -817,10 +793,11 @@ function MiddleSide({ handle }: { handle: string }) {
     useEffect(() => {
         (async () => {
             if (localStorage.getItem("access_token")) {
-                setSelfUser(await fetchUserPrivate());
+                setSelfUser(GetUserPrivate());
             }
-            const fetch_user = await fetchUserPublic(handle);
+            const fetch_user = await fetchUserPublic(handle, true);
             setUser(fetch_user);
+            console.log(fetch_user);
 
             if (!fetch_user) window.location.href = "/not-found";
         })();

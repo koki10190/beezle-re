@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 
-import { fetchUserPrivate } from "../../../functions/fetchUserPrivate";
+import { fetchUserPrivate, GetUserPrivate } from "../../../functions/fetchUserPrivate";
 import { UserPrivate } from "../../../types/User";
 import { Post } from "../../../types/Post";
-import FetchPost from "../../../functions/FetchPost";
+import { FetchPost } from "../../../functions/FetchPost";
 import "./Details.css";
 import Divider from "../../../Components/Divider";
 import { api_uri } from "../../../links";
@@ -28,7 +28,7 @@ function AccountDisplay({ main_token, token, accounts, setAccounts }: AccountDis
 
     useEffect(() => {
         (async () => {
-            const user = await fetchUserPrivate(token);
+            const user = GetUserPrivate();
             setUser(user);
         })();
     }, []);

@@ -2,7 +2,7 @@ use bson::{bson, doc, Array, Document};
 use futures::{StreamExt, TryStreamExt};
 use jsonwebtoken::{decode, DecodingKey, EncodingKey, Header, Validation};
 use mail_send::mail_auth::flate2::Status;
-use mongodb::options::{AggregateOptions, FindOptions};
+use mongodb::options::{AggregateOptions, Collation, FindOptions};
 use serde::Deserialize;
 use std::env;
 
@@ -48,6 +48,9 @@ pub async fn route(client: web::Data<mongodb::Client>, body: web::Json<_Post>, r
         })
         .build();
 
+    let collation = Collation::builder().locale("en_US").numeric_ordering(true).build();
+    let options = AggregateOptions::builder().collation(collation).build();
+
     let mut orFilter: Vec<bson::Document> = vec![doc!{"handle": "beezle"}];
 
     for bson_handle in &body.filter_users {
@@ -59,11 +62,49 @@ pub async fn route(client: web::Data<mongodb::Client>, body: web::Json<_Post>, r
     }
 
     let cursor = coll
-        .find(
-            doc! {
-                "$or": orFilter
-            },
-            options,
+        .aggregate(
+            [
+                doc! {
+                    "$match": {
+                        "$or": orFilter
+                    }
+                },
+                doc! {
+                    "$sort": doc! {
+                        "creation_date": -1
+                    }
+                },
+                doc! {
+                    "$skip": &body.offset
+                },
+                doc! {
+                    "$limit": POST_OFFSET
+                },
+                doc! {
+                    "$lookup": doc! {
+                        "from": "Reactions",
+                        "localField": "post_id",
+                        "foreignField": "post_id",
+                        "as": "post_reactions"
+                    }
+                },
+                doc! {
+                    "$lookup": doc! {
+                        "from": "Posts",
+                        "localField": "post_id",
+                        "foreignField": "replying_to",
+                        "as": "reply_posts"
+                    }
+                },
+                doc! {
+                    "$addFields": doc! {
+                        "reply_count": doc! {
+                            "$size": "$reply_posts"
+                        }
+                    }
+                },
+            ],
+            options
         )
         .await
         .unwrap();

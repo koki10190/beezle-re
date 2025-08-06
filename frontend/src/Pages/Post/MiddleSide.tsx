@@ -3,10 +3,10 @@ import { checkToken } from "../../functions/checkToken";
 
 import Divider from "../../Components/Divider";
 import PostBox from "../../Components/PostBox";
-import { fetchUserPrivate } from "../../functions/fetchUserPrivate";
+import { fetchUserPrivate, GetUserPrivate } from "../../functions/fetchUserPrivate";
 import { UserPrivate, UserPublic } from "../../types/User";
 import { Post } from "../../types/Post";
-import FetchPost from "../../functions/FetchPost";
+import { FetchPost } from "../../functions/FetchPost";
 import { api_uri } from "../../links";
 import axios from "axios";
 import { fetchUserPublic } from "../../functions/fetchUserPublic";
@@ -73,53 +73,53 @@ function MiddleSide() {
 
     useEffect(() => {
         (async () => {
-            const priv = (await fetchUserPrivate()) as UserPrivate;
+            const priv = GetUserPrivate() as UserPrivate;
 
             console.log("foreach");
             const replies_res = await axios.get(`${api_uri}/api/post/get/replies?post_id=${post_id}`, GetFullAuth());
-            let post_res = await axios.get(`${api_uri}/api/post/get/one?post_id=${post_id}`, GetFullAuth());
+            let post_res = await FetchPost(post_id);
 
-            if (post_res.data.error) {
+            if (post_res.error) {
                 window.location.href = "/not-found";
             }
 
-            if (post_res.data.repost) {
-                setIsRepost(post_res.data.repost);
-                post_res = await axios.get(`${api_uri}/api/post/get/one?post_id=${post_res.data.post_op_id}`, GetFullAuth());
+            if (post_res.repost) {
+                setIsRepost(post_res.repost);
+                post_res = await FetchPost(post_res.post_op_id);
             }
 
             setReplies(replies_res.data.replies);
             setSelfUser(priv);
-            setPost(post_res.data);
-            setPostUser((await fetchUserPublic(post_res.data.repost ? post_res.data.post_op_handle : post_res.data.handle)) as UserPublic);
+            setPost(post_res);
+            setPostUser((await fetchUserPublic(post_res.repost ? post_res.post_op_handle : post_res.handle)) as UserPublic);
 
-            setLiked((post_res.data as Post).likes.find((s) => s === priv.handle) ? true : false);
-            setReposted((post_res.data as Post).reposts.find((s) => s === priv.handle) ? true : false);
-            setBookmarked(priv.bookmarks.find((s) => s === (post_res.data as Post).post_id) ? true : false);
-            setPinned(priv.pinned_post === post_res.data.post_id);
-            setLikeCount((post_res.data as Post).likes.length);
-            setRepostCount((post_res.data as Post).reposts.length);
+            setLiked((post_res as Post).likes.find((s) => s === priv.handle) ? true : false);
+            setReposted((post_res as Post).reposts.find((s) => s === priv.handle) ? true : false);
+            setBookmarked(priv.bookmarks.find((s) => s === (post_res as Post).post_id) ? true : false);
+            setPinned(priv.pinned_post === post_res.post_id);
+            setLikeCount((post_res as Post).likes.length);
+            setRepostCount((post_res as Post).reposts.length);
 
-            setEditContent(post_res.data.content);
-            setFinalContent(post_res.data.content);
-            setPostEdited(post_res.data.edited);
+            setEditContent(post_res.content);
+            setFinalContent(post_res.content);
+            setPostEdited(post_res.edited);
 
-            setPost((old) => {
-                setReactions({
-                    reactions: (old.reactions as ReactionsInter) ? (old.reactions as ReactionsInter) : {},
-                });
-                return old;
-            });
+            // setPost((old) => {
+            //     setReactions({
+            //         reactions: (old.post_reactions as ReactionsInter) ? (old.post_reactions as ReactionsInter) : {},
+            //     });
+            //     return old;
+            // });
 
-            if (post_res.data.is_reply) {
-                setReplyingToPost((await axios.get(`${api_uri}/api/post/get/one?post_id=${post_res.data.replying_to}`, GetFullAuth())).data);
+            if (post_res.is_reply) {
+                setReplyingToPost(await FetchPost(post_res.replying_to));
             }
 
-            const react_data = (await axios.get(`${api_uri}/api/post/get/reacts?post_id=${post_res.data.post_id}`, GetFullAuth()))
-                .data as ReactionsData;
+            // const react_data = (await axios.get(`${api_uri}/api/post/get/reacts?post_id=${post_res.post_id}`, GetFullAuth()))
+            //     .data as ReactionsData;
 
             const local_reactions: ReactionStruct = { reactions: {} };
-            react_data.reacts.forEach((reaction) => {
+            post.post_reactions.forEach((reaction) => {
                 if (!local_reactions.reactions[reaction.emoji]) local_reactions.reactions[reaction.emoji] = [];
 
                 local_reactions.reactions[reaction.emoji].push(reaction);

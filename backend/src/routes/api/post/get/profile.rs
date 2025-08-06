@@ -2,7 +2,7 @@ use bson::{bson, doc, Document};
 use futures::TryStreamExt;
 use jsonwebtoken::{decode, DecodingKey, EncodingKey, Header, Validation};
 use mail_send::mail_auth::flate2::Status;
-use mongodb::options::FindOptions;
+use mongodb::options::{AggregateOptions, Collation, FindOptions};
 use serde::Deserialize;
 use std::env;
 
@@ -53,20 +53,53 @@ pub async fn route(
     // next skip 5, so its 6 since 5 elements got skipped
     // limit five meaning we fetch 6,7,8,9,10
 
-    let options = FindOptions::builder()
-        .skip(body.offset as u64)
-        .limit(5)
-        .sort(doc! {
-            "$natural": -1
-        })
-        .build();
+    let collation = Collation::builder().locale("en_US").numeric_ordering(true).build();
+    let options = AggregateOptions::builder().collation(collation).build();
 
     let cursor = coll
-        .find(
-            doc! {
-                "handle": &body.handle
-            },
-            options,
+        .aggregate(
+            [
+                doc! {
+                    "$match": {
+                        "handle": &body.handle
+                    }
+                },
+                doc! {
+                    "$sort": doc! {
+                        "creation_date": -1
+                    }
+                },
+                doc! {
+                    "$skip": &body.offset
+                },
+                doc! {
+                    "$limit": POST_OFFSET
+                },
+                doc! {
+                    "$lookup": doc! {
+                        "from": "Reactions",
+                        "localField": "post_id",
+                        "foreignField": "post_id",
+                        "as": "post_reactions"
+                    }
+                },
+                doc! {
+                    "$lookup": doc! {
+                        "from": "Posts",
+                        "localField": "post_id",
+                        "foreignField": "replying_to",
+                        "as": "reply_posts"
+                    }
+                },
+                doc! {
+                    "$addFields": doc! {
+                        "reply_count": doc! {
+                            "$size": "$reply_posts"
+                        }
+                    }
+                },
+            ],
+            options
         )
         .await
         .unwrap();

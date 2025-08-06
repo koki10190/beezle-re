@@ -8,7 +8,7 @@ import "./ScopeLoggedIn.css";
 import PostTyper from "../../Components/PostTyper";
 import Divider from "../../Components/Divider";
 import PostBox from "../../Components/PostBox";
-import { fetchUserPrivate } from "../../functions/fetchUserPrivate";
+import { fetchUserPrivate, GetUserPrivate } from "../../functions/fetchUserPrivate";
 import { UserPrivate, UserPublic } from "../../types/User";
 import { Post } from "../../types/Post";
 import { RefreshPosts } from "../../functions/RefreshPosts";
@@ -54,8 +54,8 @@ function MiddleSide() {
             const data = (await axios.get(`${api_uri}/api/post/get/explore?offset=${offset}&${GetPostPrefsStringQuery()}`, GetFullAuth())).data;
             setPosts(data.posts as Array<Post>);
             setOffset(data.offset as number);
-            console.log(data);
-            setSelfUser((await fetchUserPrivate()) as UserPrivate);
+            console.log("EXPLORE:", data);
+            setSelfUser(GetUserPrivate() as UserPrivate);
         })();
     }, []);
 

@@ -6,7 +6,7 @@ import { checkToken } from "../../functions/checkToken";
 import PostTyper from "../../Components/PostTyper";
 import Divider from "../../Components/Divider";
 import PostBox from "../../Components/PostBox";
-import { fetchUserPrivate } from "../../functions/fetchUserPrivate";
+import { fetchUserPrivate, GetUserPrivate } from "../../functions/fetchUserPrivate";
 import { UserPrivate, UserPublic } from "../../types/User";
 import { Post } from "../../types/Post";
 import { RefreshPosts } from "../../functions/RefreshPosts";
@@ -47,10 +47,11 @@ function MiddleSide() {
 
     useEffect(() => {
         (async () => {
-            const m_user = await fetchUserPrivate();
+            const m_user = GetUserPrivate();
             setSelfUser(m_user);
             if (m_user?.is_bot) return console.error("Bot Accounts are not allowed to use the site.");
             const posts = (await axios.get(`${api_uri}/api/post/get/now?offset=${postOffset}&${GetPostPrefsStringQuery()}`, GetFullAuth())).data;
+            console.log(posts);
             setPosts(posts.posts);
             setPostOffset(posts.offset);
         })();

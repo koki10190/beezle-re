@@ -35,8 +35,27 @@ pub async fn route(
     )
     .await;
 
+    let reactions = mongoose::get_many_document(&client, "beezle", "Reactions", doc!{
+        "post_id": &body.post_id
+    }).await;
+
+    let count = mongoose::get_count(
+        &client,
+        "beezle",
+        "Posts",
+        doc! {
+            "replying_to": &body.post_id,
+            "repost": false
+        },
+    )
+    .await as i64;
+
     match auth_doc {
         None => HttpResponse::Ok().json(doc! {"error": "Not Found!"}),
-        _document => HttpResponse::Ok().json(_document),
+        Some(mut _document) => {
+            _document.insert("post_reactions", reactions);
+            _document.insert("reply_count", count);
+            HttpResponse::Ok().json(_document)
+        },
     }
 }

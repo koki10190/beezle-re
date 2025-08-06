@@ -6,7 +6,7 @@ import { checkToken } from "../../functions/checkToken";
 import PostTyper from "../../Components/PostTyper";
 import Divider from "../../Components/Divider";
 import PostBox from "../../Components/PostBox";
-import { fetchUserPrivate } from "../../functions/fetchUserPrivate";
+import { fetchUserPrivate, GetUserPrivate } from "../../functions/fetchUserPrivate";
 import { UserPrivate, UserPublic } from "../../types/User";
 import { Post } from "../../types/Post";
 import { RefreshPosts } from "../../functions/RefreshPosts";
@@ -33,7 +33,7 @@ function MiddleSide() {
 
     useEffect(() => {
         (async () => {
-            const m_user = (await fetchUserPrivate()) as UserPrivate;
+            const m_user = GetUserPrivate() as UserPrivate;
             setSelfUser(m_user);
             const posts = (await axios.get(`${api_uri}/api/post/hashtag/get?offset=${postOffset}&hashtag=${hashtag}`, GetFullAuth())).data;
             setPosts(posts.posts);

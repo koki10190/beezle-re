@@ -6,7 +6,7 @@ import { checkToken } from "../../functions/checkToken";
 import PostTyper from "../../Components/PostTyper";
 import Divider from "../../Components/Divider";
 import PostBox from "../../Components/PostBox";
-import { fetchUserPrivate } from "../../functions/fetchUserPrivate";
+import { fetchUserPrivate, GetUserPrivate } from "../../functions/fetchUserPrivate";
 import { UserPrivate, UserPublic } from "../../types/User";
 import { Post } from "../../types/Post";
 import { RefreshPosts } from "../../functions/RefreshPosts";
@@ -54,7 +54,7 @@ function MiddleSide() {
 
     useEffect(() => {
         (async () => {
-            const m_user = (await fetchUserPrivate()) as UserPrivate;
+            const m_user = GetUserPrivate() as UserPrivate;
             setSelfUser(m_user);
             if (m_user.is_bot) return toast.error("Bot accounts cannot use the site!");
             const posts = (
@@ -67,6 +67,7 @@ function MiddleSide() {
                     GetFullAuth(),
                 )
             ).data;
+            console.log("FOL", posts);
             setPosts(posts.posts);
             setPostOffset(posts.offset);
         })();

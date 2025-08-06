@@ -3,10 +3,10 @@ import { checkToken } from "../../functions/checkToken";
 
 import Divider from "../../Components/Divider";
 import PostBox from "../../Components/PostBox";
-import { fetchUserPrivate } from "../../functions/fetchUserPrivate";
+import { fetchUserPrivate, GetUserPrivate } from "../../functions/fetchUserPrivate";
 import { BadgeType, UserPrivate } from "../../types/User";
 import { Post } from "../../types/Post";
-import FetchPost from "../../functions/FetchPost";
+import { FetchPost } from "../../functions/FetchPost";
 import { NotificationData } from "../../types/Notification";
 import "./Settings.css";
 import axios from "axios";
@@ -117,7 +117,7 @@ function MiddleSide() {
 
     useEffect(() => {
         (async () => {
-            const user = (await fetchUserPrivate()) as UserPrivate;
+            const user = GetUserPrivate() as UserPrivate;
             setSelfUser(user);
 
             let hasBadge = false;

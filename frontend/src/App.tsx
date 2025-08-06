@@ -18,7 +18,7 @@ import FollowingHome_Home from "./Pages/Home/Home";
 import Shop_Home from "./Pages/Shop/Home";
 import { api_uri } from "./links";
 import { useEffect, useState } from "react";
-import { fetchUserPrivate } from "./functions/fetchUserPrivate";
+import { fetchUserPrivate, GetUserPrivate } from "./functions/fetchUserPrivate";
 import Verify from "./Verify/Verify";
 import VerifyPass from "./Verify/VerifyPass";
 import Steam from "./Redirects/Steam";
@@ -33,6 +33,8 @@ import DiscordAuth from "./Pages/Auth/DiscordAuth";
 import LastfmAuth from "./Pages/Auth/LastfmAuth";
 import APICalls from "./Pages/APICalls/APICalls";
 import { SERVER_ONLINE, ServerDownMessage } from "./functions/CheckServerStatus";
+import { QueryClient, QueryClientProvider, useQuery } from "react-query";
+import { UserPrivate } from "./types/User";
 
 enum UserStatus {
     ONLINE,
@@ -45,19 +47,26 @@ interface WsUserData {
     handle: "hi socket!";
     status: UserStatus;
 }
+
+const query_client = new QueryClient();
+
 function App() {
+    const [user, setUser] = useState<UserPrivate>();
     socket.webSocket.onopen = async () => {
         console.log("Open");
         let _ = setInterval(async () => {
             console.log("Intervalling Socket Connection..");
-            const user = await fetchUserPrivate();
+            const user = GetUserPrivate();
             if (!user) return;
+            localStorage.setItem("user_handle", user.handle);
 
             socket.send("connect", {
                 handle: user.handle,
             });
 
-            socket.send("ping", {});
+            socket.send("ping", {
+                handle: user.handle,
+            });
             console.log("Connected, sent a ping");
 
             clearInterval(_);
@@ -66,7 +75,7 @@ function App() {
 
     socket.listen("pong", () => {
         console.log("Got a pong, sending a ping");
-        setTimeout(() => socket.send("ping", {}), 5000);
+        setTimeout(() => socket.send("ping", { handle: localStorage.getItem("user_handle") }), 5000);
     });
 
     socket.listen("ping", () => {
@@ -77,6 +86,12 @@ function App() {
     socket.listen("from_other", (data: { message: string }) => {
         console.log("ALERT! DATA GOT", data);
     });
+
+    useEffect(() => {
+        (async () => {
+            setUser(await fetchUserPrivate());
+        })();
+    }, []);
 
     return (
         <>
@@ -93,42 +108,50 @@ function App() {
                 theme="dark"
                 transition={Slide}
             />
-            <BrowserRouter>
-                <Routes>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/home" element={<FollowingHome_Home />} />
-                    <Route path="/api-calls" element={<APICalls />} />
-                    <Route path="/most-used-hashtags" element={<MostUsedTags_Home />} />
-                    <Route path="/hashtag/:hashtag" element={<Hashtag_Home />} />
-                    <Route path="/explore" element={<LoggedIn_Home />} />
-                    <Route path="/right-now" element={<Now_Home />} />
-                    <Route path="/edit/profile" element={<EditProfile_Home />} />
-                    <Route path="/profile/:handle" element={<Profile_Home />} />
-                    <Route path="/p/:handle" element={<Profile_Home />} />
-                    <Route path="/user/:handle" element={<Profile_Home />} />
-                    <Route path="/user/:handle" element={<Profile_Home />} />
-                    <Route path="/logout" element={<Logout_Home />} />
-                    <Route path="/bookmarks" element={<Bookmarks_Home />} />
-                    <Route path="/post/:post_id" element={<Post_Home />} />
-                    <Route path="/notifications" element={<Notifications_Home />} />
-                    <Route path="/settings" element={<Settings_Home />} />
-                    <Route path="/dashboard" element={<Dashboard_Home />} />
-                    <Route path="/followers/:handle" element={<Followers_Home />} />
-                    <Route path="/following/:handle" element={<Following_Home />} />
-                    <Route path="/verify/:auth_id" element={<Verify />} />
-                    <Route path="/verify_pass/:auth_id" element={<VerifyPass />} />
-                    <Route path="/privacy-and-terms" element={<PrivacyPolicy_Home />} />
-                    <Route path="/shop" element={<Shop_Home />} />
-                    <Route path="/connect/steam" element={<Steam />} />
-                    <Route path="/search" element={<Search_Home />} />
-                    <Route path="/discord_auth" element={<DiscordAuth />} />
-                    <Route path="/spotify-auth" element={<SpotifyAuth />} />
-                    <Route path="/lastfm_auth" element={<LastfmAuth />} />
-                    <Route path="/not-found" element={<NotFound />} />
-                    <Route path="/:handle" element={<Profile_Home />} />
-                    <Route path="*" element={<NotFound />} />
-                </Routes>
-            </BrowserRouter>
+            <QueryClientProvider client={query_client}>
+                <BrowserRouter>
+                    <Routes>
+                        <Route path="/" element={<Home />} />
+                        {user ? (
+                            <>
+                                <Route path="/home" element={<FollowingHome_Home />} />
+                                <Route path="/api-calls" element={<APICalls />} />
+                                <Route path="/most-used-hashtags" element={<MostUsedTags_Home />} />
+                                <Route path="/hashtag/:hashtag" element={<Hashtag_Home />} />
+                                <Route path="/explore" element={<LoggedIn_Home />} />
+                                <Route path="/right-now" element={<Now_Home />} />
+                                <Route path="/edit/profile" element={<EditProfile_Home />} />
+                                <Route path="/profile/:handle" element={<Profile_Home />} />
+                                <Route path="/p/:handle" element={<Profile_Home />} />
+                                <Route path="/user/:handle" element={<Profile_Home />} />
+                                <Route path="/user/:handle" element={<Profile_Home />} />
+                                <Route path="/logout" element={<Logout_Home />} />
+                                <Route path="/bookmarks" element={<Bookmarks_Home />} />
+                                <Route path="/post/:post_id" element={<Post_Home />} />
+                                <Route path="/notifications" element={<Notifications_Home />} />
+                                <Route path="/settings" element={<Settings_Home />} />
+                                <Route path="/dashboard" element={<Dashboard_Home />} />
+                                <Route path="/followers/:handle" element={<Followers_Home />} />
+                                <Route path="/following/:handle" element={<Following_Home />} />
+                                <Route path="/verify/:auth_id" element={<Verify />} />
+                                <Route path="/verify_pass/:auth_id" element={<VerifyPass />} />
+                                <Route path="/privacy-and-terms" element={<PrivacyPolicy_Home />} />
+                                <Route path="/shop" element={<Shop_Home />} />
+                                <Route path="/connect/steam" element={<Steam />} />
+                                <Route path="/search" element={<Search_Home />} />
+                                <Route path="/discord_auth" element={<DiscordAuth />} />
+                                <Route path="/spotify-auth" element={<SpotifyAuth />} />
+                                <Route path="/lastfm_auth" element={<LastfmAuth />} />
+                                <Route path="/not-found" element={<NotFound />} />
+                                <Route path="/:handle" element={<Profile_Home />} />
+                                <Route path="*" element={<NotFound />} />
+                            </>
+                        ) : (
+                            ""
+                        )}
+                    </Routes>
+                </BrowserRouter>
+            </QueryClientProvider>
         </>
     );
 }

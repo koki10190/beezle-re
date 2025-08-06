@@ -1,6 +1,6 @@
 import axios from "axios";
 import { FormEvent, LegacyRef, useEffect, useRef, useState } from "react";
-import { BrowserRouter, Routes, Route, redirect } from "react-router-dom";
+import { BrowserRouter, Routes, Route, redirect, useNavigate, useNavigation } from "react-router-dom";
 import "./PostBox.css";
 import moment from "moment";
 import { UserPrivate, UserPublic } from "../types/User";
@@ -30,6 +30,8 @@ import { AVATAR_SHAPES, AvaterShape } from "../types/cosmetics/AvatarShapes";
 import GetAuthToken from "../functions/GetAuthHeader";
 import GetFullAuth from "../functions/GetFullAuth";
 import CStatus from "../functions/StatusToClass";
+import { useQuery } from "react-query";
+import { FetchPost } from "../functions/FetchPost";
 
 interface PostBoxData {
     post: Post;
@@ -53,8 +55,8 @@ interface ReactionStruct {
     reactions: ReactionsInter | null;
 }
 
-const MIN_RANDOM_REPLY_CHAIN = 3,
-    MAX_RANDOM_REPLY_CHAIN = 3;
+const MIN_RANDOM_REPLY_CHAIN = 1,
+    MAX_RANDOM_REPLY_CHAIN = 1;
 
 function PostBox({
     post,
@@ -69,11 +71,13 @@ function PostBox({
     reply_box = false,
     reply_chain_counter = 0,
 }: PostBoxData) {
+    const navigate = useNavigate();
     const [MAX_REPLY_CHAIN, setMaxReplyChain] = useState(
         Math.floor(Math.random() * (MAX_RANDOM_REPLY_CHAIN - MIN_RANDOM_REPLY_CHAIN + 1)) + MIN_RANDOM_REPLY_CHAIN,
     );
     const [replyChainCounter, setReplyChainCounter] = useState(reply_chain_counter);
     const [user, setUser] = useState<UserPublic>();
+
     const [isLiked, setLiked] = useState(false);
     const [isReposted, setReposted] = useState(false);
     const [isBookmarked, setBookmarked] = useState(false);
@@ -219,27 +223,22 @@ function PostBox({
         // if (!reply_box) {
         setPosts((old: Array<Post>) => {
             const index = old.findIndex((x) => x.post_id == post.replying_to);
-            console.log("deleting", post.post_id, post.replying_to);
             if (index > -1) {
                 old.splice(index, 1);
             }
             return [...old];
         });
         // }
-
         (async () => {
             let user: UserPublic = {} as any;
             if (post.repost) {
-                post = (await axios.get(`${api_uri}/api/post/get/one?post_id=${post.post_op_id}`, GetFullAuth())).data;
-                user = (await fetchUserPublic(post.handle)) as UserPublic;
-                setUser(user);
+                post = await FetchPost(post.post_op_id);
                 setLikeCount(post.likes.length);
                 setRepostCount(post.reposts.length);
-            } else {
-                user = (await fetchUserPublic(post.handle)) as UserPublic;
-                console.log(user);
-                setUser(user);
             }
+
+            user = await fetchUserPublic(post.handle);
+            setUser(user);
 
             if (override_gradient) {
                 const color1 = ShadeColor(override_gradient.gradient1, -25);
@@ -262,25 +261,27 @@ function PostBox({
             setLiked(post.likes.find((s) => s === self_user.handle) ? true : false);
             setReposted(post.reposts.find((s) => s === self_user.handle) ? true : false);
             setBookmarked(self_user.bookmarks.find((s) => s === post.post_id) ? true : false);
-            setReplyCount((await axios.get(`${api_uri}/api/post/get/reply_count?post_id=${post.post_id}`, GetFullAuth())).data.count as number);
+            setReplyCount(post.reply_count ?? 0);
             if (post.is_reply) {
-                const reply_data = (await axios.get(`${api_uri}/api/post/get/one?post_id=${post.replying_to}`, GetFullAuth())).data;
+                const reply_data = await FetchPost(post.replying_to);
                 setReplyingToPost(reply_data.error ? undefined : reply_data);
             }
+            setSteamData(user);
+            // if (user?.connections?.steam?.id) {
+            //     const steam_res = await axios.get(`${api_uri}/api/connections/steam_get_game?steam_id=${user?.connections?.steam?.id}`, {
+            //         headers: GetAuthToken(),
+            //     });
+            //     const steam_data = steam_res.data;
+            //     if (steam_data) setSteamData(steam_data[Object.keys(steam_data)[0]].data);
+            // }
 
-            if (user.connections?.steam?.id) {
-                const steam_res = await axios.get(`${api_uri}/api/connections/steam_get_game?steam_id=${user.connections?.steam?.id}`, {
-                    headers: GetAuthToken(),
-                });
-                const steam_data = steam_res.data;
-                if (steam_data) setSteamData(steam_data[Object.keys(steam_data)[0]].data);
-            }
+            setSteamData(Object.keys(user?.steam_data ?? {}).length > 0 ? user.steam_data[Object.keys(user.steam_data)[0]].data : null);
 
             // Set Reactions
-            const react_data = (await axios.get(`${api_uri}/api/post/get/reacts?post_id=${post.post_id}`, GetFullAuth())).data as ReactionsData;
+            // const react_data = (await axios.get(`${api_uri}/api/post/get/reacts?post_id=${post.post_id}`, GetFullAuth())).data as ReactionsData;
 
             const local_reactions: ReactionStruct = { reactions: {} };
-            react_data.reacts.forEach((reaction) => {
+            post.post_reactions?.forEach((reaction) => {
                 if (!local_reactions.reactions[reaction.emoji]) local_reactions.reactions[reaction.emoji] = [];
 
                 local_reactions.reactions[reaction.emoji].push(reaction);
@@ -293,9 +294,15 @@ function PostBox({
 
     useEffect(() => {
         (async () => {
-            if (allow_reply_attribute && post?.is_reply && replyingToPost != undefined && !(replyingToPost as any).error && !override_gradient) {
+            if (
+                allow_reply_attribute &&
+                post?.is_reply &&
+                replyingToPost != undefined &&
+                !(replyingToPost as any).error &&
+                !override_gradient &&
+                user
+            ) {
                 // console.log("some people deserve to die");
-                const user = await fetchUserPublic(replyingToPost.handle);
 
                 const color1 = ShadeColor(
                     user.customization?.profile_gradient ? user.customization.profile_gradient.color1 : "rgb(231, 129, 98)",
@@ -308,7 +315,7 @@ function PostBox({
                 setBgGradient(`linear-gradient(-45deg, ${color1}, ${color2})`);
             }
         })();
-    }, [replyingToPost]);
+    }, [replyingToPost, user]);
 
     const ReplyInteraction = async () => {
         window.location.href = `/post/${post.post_id}`;
@@ -336,7 +343,7 @@ function PostBox({
         }
 
         // console.log("CHANNEL: notification");
-        post.reactions = [];
+        // post.post_reactions = [];
 
         const res = await axios.patch(
             `${api_uri}/api/post/like`,
@@ -560,7 +567,7 @@ function PostBox({
                 )}
                 <div className="post-attributes">
                     {post.repost ? (
-                        <h4 onClick={() => (window.location.href = `/profile/${post.handle}`)} className="post-attr">
+                        <h4 onClick={() => navigate(`/profile/${post.handle}`, { replace: true })} className="post-attr">
                             <i className="fa-solid fa-repeat"></i> Repost by @{post.handle}
                         </h4>
                     ) : (
@@ -622,7 +629,7 @@ function PostBox({
                     ></div>
                     <div className={`status-indicator ${CStatus(user?.status ?? "offline")}`}></div>
                 </div>
-                <div onClick={() => (window.location.href = `/profile/${user ? user.handle : ""}`)} className="user-detail">
+                <div onClick={() => navigate(`/profile/${user ? user.handle : ""}`, { replace: true })} className="user-detail">
                     <p className="username-post">
                         {user ? <Username user={user} /> : ""}{" "}
                         <BadgesToJSX is_bot={user?.is_bot} badges={user ? user.badges : []} className="profile-badge profile-badge-shadow" />

@@ -4,7 +4,7 @@ import { BrowserRouter, Routes, Route, redirect } from "react-router-dom";
 import { api_uri } from "../../links";
 import { checkToken } from "../../functions/checkToken";
 import React from "react";
-import { fetchUserPrivate } from "../../functions/fetchUserPrivate";
+import { fetchUserPrivate, GetUserPrivate } from "../../functions/fetchUserPrivate";
 import { UserPrivate, UserPublic } from "../../types/User";
 import "./EditProfile.css";
 import { fetchUserPublic } from "../../functions/fetchUserPublic";
@@ -422,7 +422,7 @@ function MiddleSide() {
     useEffect(() => {
         (async () => {
             if (localStorage.getItem("access_token")) {
-                setSelfUser(await fetchUserPrivate());
+                setSelfUser(GetUserPrivate());
             }
         })();
     }, []);

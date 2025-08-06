@@ -13,7 +13,7 @@ import UploadToImgurFile from "../functions/UploadToImgurByFile";
 import UploadToImgurVideoByFile from "../functions/UploadToImgurVideoByFile";
 import VideoEmbed from "./VideoEmbed";
 import { UserPrivate } from "../types/User";
-import { fetchUserPrivate } from "../functions/fetchUserPrivate";
+import { fetchUserPrivate, GetUserPrivate } from "../functions/fetchUserPrivate";
 import PostTyperVideoEmbed from "./PostTyperVideoEmbed";
 import PostTyperImageEmbed from "./PostTyperImageEmbed";
 import GetAuthToken from "../functions/GetAuthHeader";
@@ -38,7 +38,7 @@ function PostTyper({ onSend, replying_to = "" }: { onSend: (data: Post) => void;
 
     useEffect(() => {
         (async () => {
-            setSelfUser(await fetchUserPrivate());
+            setSelfUser(GetUserPrivate());
         })();
     }, []);
 

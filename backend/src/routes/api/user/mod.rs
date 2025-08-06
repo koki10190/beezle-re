@@ -10,7 +10,6 @@ pub mod add_notif;
 pub mod check_has_notif;
 
 pub mod get_user;
-pub mod get_user_many;
 pub mod get_user_public;
 
 pub mod is_bot;

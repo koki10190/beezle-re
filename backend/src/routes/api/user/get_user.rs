@@ -10,7 +10,7 @@ use actix_web::{get, http::StatusCode, post, web, App, HttpRequest, HttpResponse
 use crate::{
     beezle::{self, auth::get_token, is_user_online},
     mongoose::{self, structures::user},
-    poison::LockResultExt,
+    poison::LockResultExt, routes::api::connections::steam_get_game::get_steam_playing_now,
 };
 
 #[derive(Deserialize)]
@@ -49,6 +49,23 @@ pub async fn route(
             let status_string = cloned.get("status").unwrap_or(&bson::Bson::Null).as_str().unwrap_or("online");
             _document.insert("status", if status {status_string} else {"offline"});
             _document.insert("status_db", status_string);
+
+            let connections = _document.get("connections");
+            match connections {
+                Some(cons) => {
+                    let con_doc = cons.as_document().unwrap();
+                    let steam_con = con_doc.get("steam");
+
+                    if let Some(steam) = steam_con {
+                        let id = steam.as_document().unwrap().get("id").unwrap().as_str().unwrap();
+                        let game_data = get_steam_playing_now(id).await;
+                        if let Ok(game) = game_data {
+                            _document.insert("steam_data", game);
+                        }
+                    }
+                }
+                _ => {}
+            }
 
             HttpResponse::Ok().json(_document)
         },

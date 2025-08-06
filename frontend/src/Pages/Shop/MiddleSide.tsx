@@ -3,10 +3,10 @@ import { checkToken } from "../../functions/checkToken";
 
 import Divider from "../../Components/Divider";
 import PostBox from "../../Components/PostBox";
-import { fetchUserPrivate } from "../../functions/fetchUserPrivate";
+import { fetchUserPrivate, GetUserPrivate } from "../../functions/fetchUserPrivate";
 import { UserPrivate, UserPublic } from "../../types/User";
 import { Post } from "../../types/Post";
-import FetchPost from "../../functions/FetchPost";
+import { FetchPost } from "../../functions/FetchPost";
 import FollowBox from "../../Components/FollowBox";
 import { useParams } from "react-router";
 import { fetchUserPublic } from "../../functions/fetchUserPublic";
@@ -104,13 +104,13 @@ function MiddleSide() {
 
     useEffect(() => {
         (async () => {
-            const user = (await fetchUserPrivate()) as UserPrivate;
+            const user = GetUserPrivate() as UserPrivate;
             setSelfUser(user);
         })();
 
         const music = new Audio(shop_music);
         music.loop = true;
-        music.play();
+        // music.play();
         setMusic(music);
     }, []);
 
@@ -126,9 +126,9 @@ function MiddleSide() {
             <p style={{ marginTop: "-15px" }}>
                 <i className="fa-solid fa-coins"></i> {self_user?.coins.toLocaleString("en-US")}
             </p>
-            <a onClick={() => setMuted(!muted)} className="mute-music">
+            {/* <a onClick={() => setMuted(!muted)} className="mute-music">
                 {muted ? "Unmute Music" : "Mute Music"}
-            </a>
+            </a> */}
             <Divider />
             {self_user ? (
                 <>

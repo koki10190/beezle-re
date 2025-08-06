@@ -1,20 +1,33 @@
 import axios from "axios";
 import { FormEvent, useEffect, useRef, useState } from "react";
-import { BrowserRouter, Routes, Route, redirect } from "react-router-dom";
+import { BrowserRouter, Routes, Route, redirect, useNavigate } from "react-router-dom";
 import { api_uri } from "../../links";
 import React from "react";
 import { checkToken } from "../../functions/checkToken";
 import { BadgeType, UserPrivate } from "../../types/User";
-import { fetchUserPrivate } from "../../functions/fetchUserPrivate";
+import { fetchUserPrivate, GetUserPrivate } from "../../functions/fetchUserPrivate";
 import { NotificationData } from "../../types/Notification";
 
 import { DMData } from "../../types/DM";
 import { socket } from "../../ws/socket";
 import { AVATAR_SHAPES } from "../../types/cosmetics/AvatarShapes";
 
-function SettingsButton({ redirect, iconClass, text, style }: { redirect: string; iconClass: string; text: string; style: any | undefined }) {
+function SettingsButton({
+    redirect,
+    iconClass,
+    text,
+    style,
+    options,
+}: {
+    redirect: string;
+    iconClass: string;
+    text: string;
+    style: any | undefined;
+    options?: any | undefined;
+}) {
+    const navigate = useNavigate();
     return (
-        <a style={style ? style : {}} href={redirect} className="settings-button">
+        <a style={style ? style : {}} onClick={() => navigate(redirect, options)} className="settings-button">
             <i className={iconClass}></i> <span>{text}</span>
         </a>
     );
@@ -59,7 +72,7 @@ function RightSide() {
             if (localStorage.getItem("access_token")) {
                 const user = await fetchUserPrivate();
                 setSelfUser(user);
-                setNotifCount(user!.notifications.length);
+                setNotifCount(user?.notifications?.length ?? 0);
             }
         })();
 

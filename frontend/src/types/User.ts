@@ -97,6 +97,7 @@ interface UserPublic {
     is_bot: boolean;
     status: StatusStr;
     status_db: StatusStr;
+    steam_data?: object;
 }
 
 interface UserPrivate extends UserPublic {

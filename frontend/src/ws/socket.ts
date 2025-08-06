@@ -37,7 +37,7 @@ class BeezleSocket {
             ServerDownMessage();
             if (window.location.pathname != "/") {
                 setTimeout(() => {
-                    window.location.pathname = "/";
+                    // window.location.pathname = "/";
                 }, 1000);
             }
         };

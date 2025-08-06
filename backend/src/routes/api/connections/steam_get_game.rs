@@ -88,6 +88,42 @@ struct SummariesResponse {
     response: SummariesPlayers,
 }
 
+pub async fn get_steam_playing_now(steam_id: &str) -> Result<Document, bson::ser::Error> {
+    let client = reqwest::Client::new();
+    let response = client
+        .get("https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/")
+        .query(&[
+            ("key", env::var("STEAM_API_KEY").unwrap().as_str()),
+            ("steamids", steam_id),
+        ])
+        .send()
+        .await
+        .unwrap()
+        .json::<SummariesResponse>()
+        .await
+        .unwrap();
+
+    let player = response.response.players.first().unwrap();
+
+    let gameid = &player.gameid;
+    let mut game_response = "{}".to_string();
+
+    if gameid.is_some() {
+        game_response = client
+            .get("http://store.steampowered.com/api/appdetails")
+            .query(&[("appids", gameid.clone().unwrap())])
+            .send()
+            .await
+            .unwrap()
+            .text()
+            .await
+            .unwrap();
+    }
+    println!("{}", game_response);
+    let serde_value = serde_json::from_str::<serde_json::Value>(&game_response).expect("Invalid Response");
+    bson::to_document(&serde_value)
+}
+
 #[get("/api/connections/steam_get_game")]
 pub async fn route(
     body: web::Query<SteamBody>,

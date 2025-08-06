@@ -4,7 +4,7 @@ import VideoEmbed from "../Components/VideoEmbed";
 import React from "react";
 import sanitize from "sanitize-html";
 import PostBox from "../Components/PostBox";
-import FetchPost from "./FetchPost";
+import { FetchPost } from "./FetchPost";
 import { fetchUserPublic } from "./fetchUserPublic";
 import BeezleEmoji from "../Components/Emoji";
 import { UserPublic } from "../types/User";

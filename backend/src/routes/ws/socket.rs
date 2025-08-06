@@ -68,7 +68,10 @@ async fn ws(mut session: Session, mut msg_stream: MessageStream, ws_sessions: we
                                     
                                 match locked {
                                     Ok(mut sessions) => {
-                                        (*sessions).insert(user_handle.clone(), session.clone());
+                                        let handle = data.unwrap().get("handle").unwrap().as_str().unwrap().to_string();
+                                        beezle::print(format!("{} <-", handle).as_str());
+                                        user_handle = handle.clone();
+                                        (*sessions).insert(handle, session.clone());
                                         beezle::print("Inserted user to sessions.");
                                     }
                                     Err(err) => {

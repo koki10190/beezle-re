@@ -133,7 +133,6 @@ async fn main() -> std::io::Result<()> {
             .service(routes::api::change_banner::route)
             .service(routes::api::change_username::route)
             .service(routes::api::edit_profile::route)
-            .service(routes::api::user::get_user_many::route)
             .service(routes::api::user::is_bot::route)
             .service(routes::api::post::create::route)
             .service(routes::api::post::search::route)

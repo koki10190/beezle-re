@@ -1,5 +1,5 @@
 import { redirect } from "react-router-dom";
-import { fetchUserPrivate } from "./fetchUserPrivate";
+import { fetchUserPrivate, GetUserPrivate } from "./fetchUserPrivate";
 import { BadgeType } from "../types/User";
 import BadgeToIcon from "./badgeToIcon";
 

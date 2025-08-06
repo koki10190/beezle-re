@@ -90,6 +90,29 @@ pub async fn route(client: web::Data<mongodb::Client>, req: HttpRequest, body: w
             "$limit": POST_OFFSET
         },
         doc! {
+            "$lookup": doc! {
+                "from": "Reactions",
+                "localField": "post_id",
+                "foreignField": "post_id",
+                "as": "post_reactions"
+            }
+        },
+        doc! {
+            "$lookup": doc! {
+                "from": "Posts",
+                "localField": "post_id",
+                "foreignField": "replying_to",
+                "as": "reply_posts"
+            }
+        },
+        doc! {
+            "$addFields": doc! {
+                "reply_count": doc! {
+                    "$size": "$reply_posts"
+                }
+            }
+        },
+        doc! {
             "$project": doc! {
                 "edited": 1,
                 "handle": 1,
@@ -99,10 +122,11 @@ pub async fn route(client: web::Data<mongodb::Client>, req: HttpRequest, body: w
                 "post_op_id": 1,
                 "is_reply": 1,
                 "post_id": 1,
-                "reactions": 1,
+                "post_reactions": 1,
                 "reposts": 1,
                 "repost": 1,
                 "likes": 1,
+                "reply_count": 1,
                 "replying_to": 1
             }
         }

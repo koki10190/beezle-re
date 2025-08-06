@@ -3,10 +3,10 @@ import { checkToken } from "../../functions/checkToken";
 
 import Divider from "../../Components/Divider";
 import PostBox from "../../Components/PostBox";
-import { fetchUserPrivate } from "../../functions/fetchUserPrivate";
+import { fetchUserPrivate, GetUserPrivate } from "../../functions/fetchUserPrivate";
 import { UserPrivate } from "../../types/User";
 import { Post } from "../../types/Post";
-import FetchPost from "../../functions/FetchPost";
+import { FetchPost } from "../../functions/FetchPost";
 import { NotificationData } from "../../types/Notification";
 import { fetchUserPublic } from "../../functions/fetchUserPublic";
 import NotifBox from "../../Components/NotifBox";
@@ -32,7 +32,7 @@ function MiddleSide() {
 
     useEffect(() => {
         (async () => {
-            let notifs = (await fetchUserPrivate())!.notifications as Array<NotificationData>;
+            let notifs = (GetUserPrivate()?.notifications as Array<NotificationData>) ?? [];
 
             notifs.forEach((notif: NotificationData) => {
                 (async () => {
