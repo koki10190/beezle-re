@@ -74,17 +74,17 @@ function App() {
     };
 
     socket.listen("pong", () => {
-        console.log("Got a pong, sending a ping");
+        // console.log("Got a pong, sending a ping");
         setTimeout(() => socket.send("ping", { handle: localStorage.getItem("user_handle") }), 5000);
     });
 
     socket.listen("ping", () => {
-        console.log("Got a ping, sending a pong");
+        // console.log("Got a ping, sending a pong");
         setTimeout(() => socket.send("pong", {}), 5000);
     });
 
     socket.listen("from_other", (data: { message: string }) => {
-        console.log("ALERT! DATA GOT", data);
+        // console.log("ALERT! DATA GOT", data);
     });
 
     useEffect(() => {

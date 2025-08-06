@@ -64,20 +64,20 @@ async fn ws(mut session: Session, mut msg_stream: MessageStream, ws_sessions: we
                             "ping" => {
                                 last_heartbeat = Instant::now();
                                 let _ = session.text("{\"channel\": \"pong\", \"data\": {}}").await;
-                                let locked = arc_clone.lock();
+                                // let locked = arc_clone.lock();
                                     
-                                match locked {
-                                    Ok(mut sessions) => {
-                                        let handle = data.unwrap().get("handle").unwrap().as_str().unwrap().to_string();
-                                        beezle::print(format!("{} <-", handle).as_str());
-                                        user_handle = handle.clone();
-                                        (*sessions).insert(handle, session.clone());
-                                        beezle::print("Inserted user to sessions.");
-                                    }
-                                    Err(err) => {
-                                        beezle::print(format!("Error in mutex: {:?}", err).as_str());
-                                    }
-                                }
+                                // match locked {
+                                //     Ok(mut sessions) => {
+                                //         let handle = data.unwrap().get("handle").unwrap().as_str().unwrap().to_string();
+                                //         beezle::print(format!("{} <-", handle).as_str());
+                                //         user_handle = handle.clone();
+                                //         (*sessions).insert(handle, session.clone());
+                                //         beezle::print("Inserted user to sessions.");
+                                //     }
+                                //     Err(err) => {
+                                //         beezle::print(format!("Error in mutex: {:?}", err).as_str());
+                                //     }
+                                // }
                             }
                             "pong" => {
                                 last_heartbeat = Instant::now();
