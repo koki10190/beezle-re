@@ -102,7 +102,7 @@ function RightSide() {
                 <SettingsButton redirect="/hives" iconClass="fa-solid fa-bee" text="Hives" style={undefined} />
                 <SettingsButton redirect="/settings" iconClass="fa-solid fa-cog" text="Settings" style={undefined} />
                 {self_user ? (
-                    self_user.badges.findIndex((x) => x == BadgeType.OWNER || x == BadgeType.MODERATOR) > -1 ? (
+                    self_user?.badges?.findIndex((x) => x == BadgeType.OWNER || x == BadgeType.MODERATOR) > -1 ? (
                         <SettingsButton redirect="/dashboard" iconClass="fa-solid fa-shield" text="Dashboard" style={undefined} />
                     ) : (
                         ""

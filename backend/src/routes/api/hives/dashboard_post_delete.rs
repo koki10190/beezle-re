@@ -34,9 +34,16 @@ pub async fn route(
     let token_data = get_token_data(&client, &req).unwrap();
 
     let mongo_hive = mongoose::get_document(&client, "beezle", "Hives", doc! {
-        "moderators": {
-            "$in": [&token_data.claims.handle]
-        },
+        "$or": [
+            {
+                "moderators": {
+                    "$in": [&token_data.claims.handle]
+                },
+            },
+            {
+                "owner": &token_data.claims.handle
+            }
+        ],
         "hive_id": &body.hive_id
     }).await;
 

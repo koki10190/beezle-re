@@ -7,7 +7,7 @@ use regex::Regex;
 use serde::Deserialize;
 use std::{collections::HashMap, env, sync::{Arc, Mutex}};
 
-use actix_web::{delete, get, post, web, App, HttpRequest, HttpResponse, HttpServer, Responder};
+use actix_web::{delete, get, patch, post, web, App, HttpRequest, HttpResponse, HttpServer, Responder};
 
 use crate::{
     beezle::{self, auth::{get_token, get_token_data, verify_token}, mongo, user_exists, ws_send_notification},
@@ -18,12 +18,13 @@ use crate::{
 #[derive(Deserialize)]
 struct _Query {
     hive_id: String,
-    handle: String
+    handle: String,
+    remove: bool
 }
 
-#[post("/api/hives/dashboard/mod")]
+#[patch("/api/hives/dashboard/mod")]
 pub async fn route(
-    body: web::Query<_Query>,
+    body: web::Json<_Query>,
     client: web::Data<mongodb::Client>,
     req: HttpRequest,
 ) -> impl Responder {
@@ -42,14 +43,23 @@ pub async fn route(
         return HttpResponse::Ok().json(doc! {"error": "You're not the queen of this hive!"});
     }
 
-    mongoose::delete_document(&client, "beezle", "Hives", doc!{
-        "hive_id": &body.hive_id,
-        "owner": &token_data.claims.handle
-    }).await;
+    if body.remove {
+        mongoose::update_document(&client, "beezle", "Hives", doc!{
+            "hive_id": &body.hive_id,
+        }, doc!{
+            "$pull": {
+                "moderators": &body.handle
+            }
+        }).await;
+    } else {
+        mongoose::update_document(&client, "beezle", "Hives", doc!{
+            "hive_id": &body.hive_id,
+        }, doc!{
+            "$push": {
+                "moderators": &body.handle
+            }
+        }).await;
+    }
 
-    mongoose::delete_many_document(&client, "beezle", "HiveMembers", doc!{
-        "part_of": &body.hive_id
-    }).await;
-
-    HttpResponse::Ok().json(doc!{"message": "Hive has been deleted successfully."})
+    HttpResponse::Ok().json(doc!{"message": "Added them as a moderator successfully."})
 }

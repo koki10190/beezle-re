@@ -63,7 +63,7 @@ pub async fn route(
         banner: body.banner.clone(),
         owner: token_data.claims.handle.clone(),
         creation_date: chrono::Utc::now(),
-        moderators: None
+        moderators: vec![].into()
     };
 
     let serialized = mongodb::bson::to_bson(&hive).unwrap();

@@ -31,6 +31,8 @@ function MiddleSide() {
     const buttonRef = useRef<HTMLButtonElement>(null);
     const [kickUser, setKickUser] = useState("");
     const [postDelete, setPostDelete] = useState("");
+    const [modGrant, setModGrant] = useState("");
+    const [modUngrant, setModUngrant] = useState("");
 
     useEffect(() => {
         (async () => {
@@ -50,13 +52,74 @@ function MiddleSide() {
         );
     }
 
-    if (hive?.owner !== self?.handle || hive?.moderators?.findIndex((x) => x === self?.handle) < 0) {
+    if (hive?.owner !== self?.handle && hive?.moderators?.findIndex((x) => x === self?.handle) < 0) {
         return (
             <div className="page-sides side-middle home-middle">
                 <h1>You're not authorized to use the dashboard of this hive!</h1>
             </div>
         );
     }
+
+    const KickUser = async () => {
+        const res = await axios.delete(`${api_uri}/api/hives/dashboard/kick`, {
+            params: {
+                hive_id,
+                handle: kickUser,
+            },
+            headers: GetAuthToken(),
+        });
+
+        if (res.data.message) {
+            toast.success(res.data.message);
+            setKickUser("");
+        }
+
+        if (res.data.error) {
+            toast.error(res.data.error);
+        }
+    };
+
+    const DeletePost = async () => {
+        const res = await axios.delete(`${api_uri}/api/hives/dashboard/delete_post`, {
+            params: {
+                hive_id,
+                post_id: postDelete,
+            },
+            headers: GetAuthToken(),
+        });
+
+        if (res.data.message) {
+            toast.success(res.data.message);
+            setKickUser("");
+        }
+
+        if (res.data.error) {
+            toast.error(res.data.error);
+        }
+    };
+
+    const GrantOrRevokeMod = async (grant: boolean) => {
+        const res = await axios.patch(
+            `${api_uri}/api/hives/dashboard/mod`,
+            {
+                hive_id,
+                handle: grant ? modGrant : modUngrant,
+                remove: !grant,
+            },
+            {
+                headers: GetAuthToken(),
+            },
+        );
+
+        if (res.data.message) {
+            toast.success(res.data.message);
+            setKickUser("");
+        }
+
+        if (res.data.error) {
+            toast.error(res.data.error);
+        }
+    };
 
     return (
         <div className="page-sides side-middle home-middle">
@@ -73,6 +136,7 @@ function MiddleSide() {
                 className="divider"
             ></hr>
             <div>
+                <label>Kick a member</label>
                 <input
                     onChange={(e) => setKickUser(e.target.value)}
                     value={kickUser}
@@ -81,7 +145,7 @@ function MiddleSide() {
                     className="input-field"
                     style={{ width: "100%" }}
                 />
-                <button className="button-field button-field-red">
+                <button onClick={KickUser} className="button-field button-field-red">
                     <i className="fa-solid fa-ban"></i> Kick User
                 </button>
                 <hr
@@ -92,6 +156,7 @@ function MiddleSide() {
                     }}
                     className="divider"
                 ></hr>
+                <label>Delete a Post</label>
                 <input
                     onChange={(e) => setPostDelete(e.target.value)}
                     value={postDelete}
@@ -100,8 +165,48 @@ function MiddleSide() {
                     className="input-field"
                     style={{ width: "100%" }}
                 />
-                <button className="button-field button-field-red">
+                <button onClick={DeletePost} className="button-field button-field-red">
                     <i className="fa-solid fa-ban"></i> Delete Post
+                </button>
+                <hr
+                    style={{
+                        width: "calc(100% + 40px)",
+                        marginLeft: "-20px",
+                        borderTop: "1px solid rgba(255, 255,255, 0.4)",
+                    }}
+                    className="divider"
+                ></hr>
+                <label>Grant Moderator</label>
+                <input
+                    onChange={(e) => setModGrant(e.target.value)}
+                    value={modGrant}
+                    maxLength={32}
+                    placeholder="Handle"
+                    className="input-field"
+                    style={{ width: "100%" }}
+                />
+                <button onClick={() => GrantOrRevokeMod(true)} className="button-field button-field-blurple">
+                    <i className="fa-solid fa-shield-halved"></i> Grant Moderator
+                </button>
+                <hr
+                    style={{
+                        width: "calc(100% + 40px)",
+                        marginLeft: "-20px",
+                        borderTop: "1px solid rgba(255, 255,255, 0.4)",
+                    }}
+                    className="divider"
+                ></hr>
+                <label>Remove Someone's Moderation Permissions</label>
+                <input
+                    onChange={(e) => setModUngrant(e.target.value)}
+                    value={modUngrant}
+                    maxLength={32}
+                    placeholder="Handle"
+                    className="input-field"
+                    style={{ width: "100%" }}
+                />
+                <button onClick={() => GrantOrRevokeMod(false)} className="button-field button-field-red">
+                    <i className="fa-solid fa-shield-halved"></i> Remove Moderator
                 </button>
                 <hr
                     style={{

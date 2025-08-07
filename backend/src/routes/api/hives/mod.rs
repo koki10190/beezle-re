@@ -10,3 +10,4 @@ pub mod edit;
 pub mod delete;
 pub mod dashboard_post_delete;
 pub mod dashboard_kick;
+pub mod dashboard_moderator;
