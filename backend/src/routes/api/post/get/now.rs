@@ -1,4 +1,4 @@
-use bson::{bson, doc, Document};
+use bson::{bson, doc, Bson, Document};
 use futures::TryStreamExt;
 use jsonwebtoken::{decode, DecodingKey, EncodingKey, Header, Validation};
 use mail_send::mail_auth::flate2::Status;
@@ -62,7 +62,7 @@ pub async fn route(client: web::Data<mongodb::Client>, req: HttpRequest, body: w
                 "foreignField": "handle",
                 "as": "user_info"
             }
-        },
+        }, 
         doc! {
             "$match": doc! {
                 "user_info.reputation": doc! {
@@ -72,9 +72,16 @@ pub async fn route(client: web::Data<mongodb::Client>, req: HttpRequest, body: w
         },
         doc! {
             "$match": doc! {
-                "hive_post": {
-                    "$exists": false
-                }
+                "$or": [
+                    {
+                        "hive_post": {
+                            "$exists": false
+                        },
+                    },
+                    {
+                        "hive_post": Bson::Null
+                    }
+                ]
             }
         },
         // Blocked Users are excluded
