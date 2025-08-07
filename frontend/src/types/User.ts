@@ -109,6 +109,7 @@ interface UserPublic {
     status: StatusStr;
     status_db: StatusStr;
     steam_data?: object;
+    hive_tag?: string;
 }
 
 interface UserPrivate extends UserPublic {

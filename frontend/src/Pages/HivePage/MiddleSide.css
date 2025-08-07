@@ -1,0 +1,108 @@
+.hive-page-banner {
+    width: calc(100% + 40px);
+    height: 300px;
+    margin-top: -15px;
+    margin-left: -20px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.hive-page-avatar {
+    width: 200px;
+    height: 200px;
+    margin-top: -15px;
+    margin-left: -10px;
+    margin-top: -75px;
+    border-radius: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.hive-page-username {
+    margin-top: -110px;
+    margin-left: 200px;
+}
+
+.hive-page-handle {
+    margin-top: -20px;
+    margin-left: 200px;
+}
+
+.hive-page-section {
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.1);
+    box-sizing: border-box;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border-radius: 5px;
+}
+
+.hive-page-section-header h5 {
+    color: #ffffffa0;
+    margin-bottom: -10px;
+}
+
+.hive-page-sections {
+    margin-top: 80px;
+}
+
+.hive-page-post-seperators {
+    width: 100%;
+    /* background-color: green; */
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.hive-page-post-selector {
+    width: 100%;
+    cursor: pointer;
+    height: 100%;
+    /* background-color: red; */
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    transition: ease-in-out 150ms background-color;
+}
+
+.hive-page-post-selector:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+.bee-queen-h5 {
+    margin-bottom: 5px;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+@media screen and (max-width: 750px) {
+    .hive-page-username {
+        margin-top: 10px;
+        margin-left: 0px;
+    }
+
+    .hive-page-banner {
+        height: 250px;
+    }
+
+    .hive-page-avatar {
+        margin-left: -10px;
+        height: 150px;
+        width: 150px;
+    }
+
+    .hive-page-handle {
+        margin-top: -20px;
+        margin-left: 0px;
+    }
+    .hive-page-sections {
+        margin-top: 0px;
+    }
+}

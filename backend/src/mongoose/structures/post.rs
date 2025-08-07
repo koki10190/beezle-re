@@ -20,6 +20,7 @@ pub struct Post {
     #[serde(with = "chrono_datetime_as_bson_datetime")]
     pub creation_date: chrono::DateTime<chrono::Utc>,
     pub reactions: Bson,
+    pub hive_post: Option<String>
 }
 
 #[derive(Serialize, Deserialize, Debug)]

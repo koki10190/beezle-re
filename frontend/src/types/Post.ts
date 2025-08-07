@@ -15,6 +15,7 @@ interface Post {
     is_reply: boolean;
     post_reactions: Array<PostReaction>;
     reply_count: number;
+    hive_post?: string | null;
     creation_date: {
         $date: {
             $numberLong: string;

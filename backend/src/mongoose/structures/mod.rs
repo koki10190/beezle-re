@@ -8,3 +8,5 @@ pub mod hashtag;
 pub mod user_notif;
 pub mod blocked_user;
 pub use blocked_user::BlockedUser;
+pub mod hive;
+pub use hive::Hive;

@@ -17,6 +17,7 @@ struct TokenInfo {
     content: String,
     replying_to: String,
     is_reply: bool,
+    hive_post: Option<String>
 }
 
 #[post("/api/post/create")]
@@ -49,6 +50,7 @@ pub async fn route(
                 replying_to: body.replying_to.to_string(),
                 is_reply: body.is_reply,
                 reactions: doc! {}.into(),
+                hive_post: body.hive_post.clone()
             };
 
             // do notifications

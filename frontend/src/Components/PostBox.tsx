@@ -45,6 +45,7 @@ interface PostBoxData {
     className?: string;
     reply_box?: boolean;
     reply_chain_counter?: number;
+    ignore_hive_attrib?: boolean;
 }
 
 interface ReactionsInter {
@@ -70,6 +71,7 @@ function PostBox({
     className = "",
     reply_box = false,
     reply_chain_counter = 0,
+    ignore_hive_attrib = false,
 }: PostBoxData) {
     const navigate = useNavigate();
     const [MAX_REPLY_CHAIN, setMaxReplyChain] = useState(
@@ -92,6 +94,8 @@ function PostBox({
 
     const [bgGradient, setBgGradient] = useState("");
     const [steamData, setSteamData] = useState<any | null>(null);
+
+    const [hive, setHive] = useState<BeezleHives.Hive>();
 
     const [reactions, setReactions] = useState<ReactionStruct>({
         reactions: {},
@@ -235,6 +239,22 @@ function PostBox({
                 post = await FetchPost(post.post_op_id);
                 setLikeCount(post.likes.length);
                 setRepostCount(post.reposts.length);
+            }
+
+            if (post.hive_post) {
+                console.log("HIVE", post.hive_post);
+                axios
+                    .get(`${api_uri}/api/hives/get`, {
+                        params: {
+                            handle: post.hive_post,
+                        },
+                        headers: GetAuthToken(),
+                    })
+                    .then((res) => {
+                        const hive = res.data.hive as BeezleHives.Hive;
+
+                        setHive(hive);
+                    });
             }
 
             user = await fetchUserPublic(post.handle);
@@ -569,6 +589,19 @@ function PostBox({
                     {post.repost ? (
                         <h4 onClick={() => (window.location.href = `/profile/${post.handle}`)} className="post-attr">
                             <i className="fa-solid fa-repeat"></i> Repost by @{post.handle}
+                        </h4>
+                    ) : (
+                        ""
+                    )}
+                    {post.hive_post && !ignore_hive_attrib ? (
+                        <h4 onClick={() => (window.location.href = `/hive/${hive?.hive_id}`)} className="post-attr">
+                            <div
+                                style={{
+                                    backgroundImage: `url(${hive?.icon})`,
+                                }}
+                                className="post-attrib-hive"
+                            ></div>{" "}
+                            In Hive "{hive?.name ?? "Not Found"}"
                         </h4>
                     ) : (
                         ""

@@ -1,12 +1,12 @@
 use bson::{bson, doc, Document};
-use futures::{StreamExt, TryStreamExt};
+use futures::TryStreamExt;
 use jsonwebtoken::{decode, DecodingKey, EncodingKey, Header, Validation};
 use mail_send::mail_auth::flate2::Status;
-use mongodb::options::{AggregateOptions, FindOptions};
+use mongodb::options::{AggregateOptions, Collation, FindOptions};
 use serde::Deserialize;
 use std::env;
 
-use actix_web::{get, http::{self, StatusCode}, post, web, App, HttpRequest, HttpResponse, HttpServer, Responder};
+use actix_web::{get, http::StatusCode, post, web, App, HttpRequest, HttpResponse, HttpServer, Responder};
 
 use crate::{
     beezle::{self, auth::{get_blocked_users_as_vec, get_token_data, get_users_that_blocked_as_vec, verify_token}},
@@ -14,15 +14,16 @@ use crate::{
     poison::LockResultExt,
 };
 
-
 #[derive(Deserialize)]
 struct _Query {
     offset: i64,
+    hive_id: String
 }
 
-#[get("/api/post/get/explore")]
+#[get("/api/hives/posts/explore")]
 pub async fn route(client: web::Data<mongodb::Client>, req: HttpRequest, body: web::Query<_Query>) -> impl Responder {
     //TODO: do this
+
     if !verify_token(&client, &req).await {
         return HttpResponse::Unauthorized().json(doc!{"error": "Not Authorized!"});
     }
@@ -53,6 +54,11 @@ pub async fn route(client: web::Data<mongodb::Client>, req: HttpRequest, body: w
                         "user_info.reputation": doc! {
                             "$gte": 25
                         }
+                    }
+                },
+                doc! {
+                    "$match": doc! {
+                        "hive_post": &body.hive_id
                     }
                 },
                 doc! {
@@ -101,7 +107,7 @@ pub async fn route(client: web::Data<mongodb::Client>, req: HttpRequest, body: w
                         "post_reactions": 1,
                         "post_id": 1,
                         "reply_count": 1,
-"hive_post": 1,
+                        "hive_post": 1,
                         "reposts": 1,
                         "repost": 1,
                         "likes": 1,

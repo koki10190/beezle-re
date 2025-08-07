@@ -264,6 +264,10 @@ form > a {
     background-color: rgb(81, 107, 255);
 }
 
+.button-field-blurple:disabled {
+    background-color: rgb(61, 82, 196);
+}
+
 .button-field-blurple:hover {
     background-color: rgb(61, 82, 196);
 }
@@ -284,6 +288,10 @@ form > a {
     background-color: rgb(194, 62, 62);
 }
 
+.button-field-red:disabled {
+    background-color: rgb(163, 52, 52);
+}
+
 .button-field-pink {
     background-color: rgb(249, 81, 255);
 }
@@ -293,11 +301,11 @@ form > a {
 }
 
 .button-field-green {
-    background-color: rgb(41, 243, 0);
+    background-color: rgb(38, 226, 0);
 }
 
 .button-field-green:hover {
-    background-color: rgb(7, 206, 0);
+    background-color: rgb(6, 184, 0);
 }
 
 .instead-anchor {

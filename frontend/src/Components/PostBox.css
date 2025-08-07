@@ -385,3 +385,15 @@ aside li {
 .status-dnd {
     background-color: rgb(255, 34, 34);
 }
+
+.post-attrib-hive {
+    background-color: black;
+    width: 30px;
+    height: 30px;
+    display: inline-block;
+    vertical-align: middle;
+    border-radius: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}

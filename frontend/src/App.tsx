@@ -35,6 +35,11 @@ import APICalls from "./Pages/APICalls/APICalls";
 import { SERVER_ONLINE, ServerDownMessage } from "./functions/CheckServerStatus";
 import { QueryClient, QueryClientProvider, useQuery } from "react-query";
 import { UserPrivate } from "./types/User";
+import Hives_Home from "./Pages/Hives/Home";
+import HivesCreate_Home from "./Pages/HivesCreate/Home";
+import HivePage_Home from "./Pages/HivePage/Home";
+import EditHive_Home from "./Pages/EditHive/Home";
+import HiveDashboard_Home from "./Pages/HiveDashboard/Home";
 
 enum UserStatus {
     ONLINE,
@@ -114,6 +119,11 @@ function App() {
                         <Route path="/logout" element={<Logout_Home />} />
                         <Route path="/" element={<Home />} />
                         <Route path="/home" element={<FollowingHome_Home />} />
+                        <Route path="/hives" element={<Hives_Home />} />
+                        <Route path="/hive/:handle" element={<HivePage_Home />} />
+                        <Route path="/hives/create" element={<HivesCreate_Home />} />
+                        <Route path="/hives/edit/:hive_id" element={<EditHive_Home />} />
+                        <Route path="/hives/dashboard/:hive_id" element={<HiveDashboard_Home />} />
                         <Route path="/api-calls" element={<APICalls />} />
                         <Route path="/most-used-hashtags" element={<MostUsedTags_Home />} />
                         <Route path="/hashtag/:hashtag" element={<Hashtag_Home />} />

@@ -1,0 +1,26 @@
+.hive-tag {
+    display: inline-block;
+    margin: 0;
+    font-family: "Open Sans";
+    background-color: rgba(0, 0, 0, 0.295);
+    box-sizing: border-box;
+    border-radius: 5px;
+    font-size: 14px;
+    width: fit-content;
+    padding-left: 3px;
+    margin-right: 5px;
+    padding-top: 0px;
+    padding-bottom: 1px;
+    padding-right: 3px;
+}
+
+.hive-tag .tag-text {
+    margin: 0;
+}
+
+.tag-image {
+    width: 10px;
+    height: 10px;
+    background-color: red;
+    /* display: inline-block; */
+}

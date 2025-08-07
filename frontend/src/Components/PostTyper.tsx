@@ -24,7 +24,7 @@ interface FileType {
     isVideo: boolean;
 }
 
-function PostTyper({ onSend, replying_to = "" }: { onSend: (data: Post) => void; replying_to?: string }) {
+function PostTyper({ onSend, replying_to = "", hive_post = null }: { onSend: (data: Post) => void; replying_to?: string; hive_post?: string }) {
     const textarea = useRef<HTMLTextAreaElement>(null);
     const [canCreate, setCanCreate] = useState(true);
     const [isEmojiPickerOpened, setEmojiPickerOpened] = useState(false);
@@ -80,6 +80,7 @@ function PostTyper({ onSend, replying_to = "" }: { onSend: (data: Post) => void;
                     content: textarea.current.value + " " + links,
                     replying_to,
                     is_reply: replying_to !== "",
+                    hive_post,
                 },
                 {
                     headers: GetAuthToken(),

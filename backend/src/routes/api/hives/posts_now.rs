@@ -17,9 +17,10 @@ use crate::{
 #[derive(Deserialize)]
 struct _Query {
     offset: i64,
+    hive_id: String
 }
 
-#[get("/api/post/get/now")]
+#[get("/api/hives/posts/now")]
 pub async fn route(client: web::Data<mongodb::Client>, req: HttpRequest, body: web::Query<_Query>) -> impl Responder {
     //TODO: do this
 
@@ -72,9 +73,7 @@ pub async fn route(client: web::Data<mongodb::Client>, req: HttpRequest, body: w
         },
         doc! {
             "$match": doc! {
-                "hive_post": {
-                    "$exists": false
-                }
+                "hive_post": &body.hive_id
             }
         },
         // Blocked Users are excluded
