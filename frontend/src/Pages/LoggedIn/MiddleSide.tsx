@@ -55,7 +55,7 @@ function MiddleSide() {
             setPosts(data.posts as Array<Post>);
             setOffset(data.offset as number);
             console.log("EXPLORE:", data);
-            setSelfUser(GetUserPrivate() as UserPrivate);
+            setSelfUser((await fetchUserPrivate()) as UserPrivate);
         })();
     }, []);
 

@@ -17,6 +17,7 @@ import GetAuthToken from "../../functions/GetAuthHeader";
 import { STEAM_ICON_URL } from "../../types/steam/steam_urls";
 import GetFullAuth from "../../functions/GetFullAuth";
 import { STATUS, STATUS_ID, StatusEnum } from "../../types/Status";
+import Divider from "../../Components/Divider";
 
 function Loading() {
     return (
@@ -49,7 +50,8 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
     const avatarOverlay = useRef<HTMLDivElement>(null);
     const avatarInput = useRef<HTMLInputElement>(null);
     const bannerInput = useRef<HTMLInputElement>(null);
-    const profileBgImgInput = useRef<HTMLInputElement>(null);
+    const bgImageInput = useRef<HTMLInputElement>(null);
+    const bgImageDiv = useRef<HTMLInputElement>(null);
     const avatarDiv = useRef<HTMLDivElement>(null);
     const bannerDiv = useRef<HTMLDivElement>(null);
     const buttonRef = useRef<HTMLButtonElement>(null);
@@ -175,6 +177,13 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
     const ApplyImageChange_Banner = (e: any) => {
         const target = bannerDiv.current!;
         const files = bannerInput.current!.files as FileList;
+        const link = window.URL.createObjectURL(files[0]);
+        target.style.backgroundImage = `url(${link})`;
+    };
+
+    const ApplyImageChange_BgImage = (e: any) => {
+        const target = bgImageDiv.current!;
+        const files = bgImageInput.current!.files as FileList;
         const link = window.URL.createObjectURL(files[0]);
         target.style.backgroundImage = `url(${link})`;
     };
@@ -346,6 +355,58 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
                     </select>
                     <br />
                 </div>
+                {user?.customization?.profile_image?.bought ? (
+                    <div className="profile-container-nom">
+                        <p className="profile-container-header">
+                            <i className="fa-solid fa-images"></i> Background Image
+                        </p>
+                        <br></br>
+                        <input
+                            onChange={ApplyImageChange_BgImage}
+                            className="display-none"
+                            type="file"
+                            ref={bgImageInput}
+                            accept=".jpeg,.gif,.png,.jpg"
+                        />
+                        <div
+                            ref={bgImageDiv}
+                            // style={{ marginBottom: "10px" }}
+                            onClick={() => bgImageInput.current!.click()}
+                            className="edit-background-image"
+                        >
+                            <p>Click To Upload Image</p>
+                        </div>
+                        <p style={{ fontFamily: "Open Sans", display: "inline" }}>Enabled</p>
+                        <input
+                            defaultChecked={user.customization?.profile_image.enabled}
+                            style={{ marginLeft: "10px", display: "inline" }}
+                            className="input-checkbox"
+                            type="checkbox"
+                        />
+                        <br />
+                        <p style={{ fontFamily: "Open Sans", display: "inline" }}>Repeat</p>
+                        <input
+                            defaultChecked={user.customization?.profile_image.repeat}
+                            style={{ marginLeft: "10px", display: "inline" }}
+                            className="input-checkbox"
+                            type="checkbox"
+                        />
+                        <p style={{ marginTop: "0px" }}>Size Option</p>
+                        <select defaultValue={"none"} style={{ marginTop: "-10px", width: "100%" }} className="input-field">
+                            <option selected={user.customization.profile_image.size === ""} value="">
+                                None
+                            </option>
+                            <option selected={user.customization.profile_image.size === "cover"} value="cover">
+                                Cover
+                            </option>
+                            <option selected={user.customization.profile_image.size === "contain"} value="contain">
+                                Contain
+                            </option>
+                        </select>
+                    </div>
+                ) : (
+                    ""
+                )}
                 {/* {user.connections?.steam?.id && steamInventory?.descriptions ? (
                     <div className="profile-container-nom">
                         <p className="profile-container-header">
@@ -422,7 +483,7 @@ function MiddleSide() {
     useEffect(() => {
         (async () => {
             if (localStorage.getItem("access_token")) {
-                setSelfUser(GetUserPrivate());
+                setSelfUser(await fetchUserPrivate());
             }
         })();
     }, []);

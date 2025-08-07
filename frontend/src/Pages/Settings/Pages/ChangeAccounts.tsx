@@ -28,7 +28,7 @@ function AccountDisplay({ main_token, token, accounts, setAccounts }: AccountDis
 
     useEffect(() => {
         (async () => {
-            const user = GetUserPrivate();
+            const user = await fetchUserPrivate(token);
             setUser(user);
         })();
     }, []);

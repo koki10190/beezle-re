@@ -33,7 +33,7 @@ function MiddleSide() {
 
     useEffect(() => {
         (async () => {
-            const m_user = GetUserPrivate() as UserPrivate;
+            const m_user = (await fetchUserPrivate()) as UserPrivate;
             setSelfUser(m_user);
             const posts = (await axios.get(`${api_uri}/api/post/hashtag/get?offset=${postOffset}&hashtag=${hashtag}`, GetFullAuth())).data;
             setPosts(posts.posts);

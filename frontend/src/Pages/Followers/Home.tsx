@@ -6,6 +6,7 @@ import { checkToken } from "../../functions/checkToken";
 import LeftSide from "../LoggedIn/LeftSide";
 import MiddleSide from "./MiddleSide";
 import RightSide from "../LoggedIn/RightSide";
+import { Helmet } from "react-helmet";
 
 function Home() {
     useEffect(() => {
@@ -13,6 +14,7 @@ function Home() {
     }, []);
     return (
         <>
+            <Helmet>Beezle: RE | Followers</Helmet>
             <div className="sides-container">
                 <LeftSide />
                 <MiddleSide />

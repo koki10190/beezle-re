@@ -7,7 +7,6 @@ var CACHED_POSTS: Map<string, Post> = new Map();
 
 async function FetchPost(post_id: string): Promise<Post> {
     const cache = GetCachedPost(post_id);
-    console.log("CACHE:", CACHED_POSTS.get(post_id), "|", `"${post_id}"`);
     if (cache) return cache;
 
     const res = await axios.get(`${api_uri}/api/post/get/one?post_id=${post_id}`, GetFullAuth());

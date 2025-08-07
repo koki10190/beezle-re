@@ -24,6 +24,7 @@ enum BuyWhat {
     PROFILE_GRADIENT,
     NAME_COLOR,
     AVATAR_SHAPE,
+    PROFILE_BACKGROUND_IMAGE,
 }
 
 async function Buy(buy_what: BuyWhat, arg: number = 0, setSelfUser: React.Dispatch<React.SetStateAction<UserPrivate>> = () => {}) {
@@ -78,9 +79,9 @@ async function Buy(buy_what: BuyWhat, arg: number = 0, setSelfUser: React.Dispat
             });
             break;
         }
-        case BuyWhat.POST_BG_IMG: {
+        case BuyWhat.PROFILE_BACKGROUND_IMAGE: {
             res = await axios.post(
-                `${api_uri}/api/user/buy/profile_postbox_img`,
+                `${api_uri}/api/user/buy/profile_background_image`,
                 {},
                 {
                     headers: GetAuthToken(),
@@ -92,8 +93,10 @@ async function Buy(buy_what: BuyWhat, arg: number = 0, setSelfUser: React.Dispat
 
     if (res.data.bought) {
         toast.success("Successfully bought the item!");
+        return true;
     } else {
         toast.warn(res.data.error);
+        return false;
     }
 }
 
@@ -104,7 +107,7 @@ function MiddleSide() {
 
     useEffect(() => {
         (async () => {
-            const user = GetUserPrivate() as UserPrivate;
+            const user = (await fetchUserPrivate()) as UserPrivate;
             setSelfUser(user);
         })();
 
@@ -158,6 +161,15 @@ function MiddleSide() {
                         _disabled={self_user?.customization?.name_color_bought}
                         level_required={true}
                         level_needed={10}
+                    />
+                    <ShopBox
+                        title="Profile Background Image"
+                        price={25000}
+                        call_on_purchase={() => Buy(BuyWhat.PROFILE_BACKGROUND_IMAGE)}
+                        self_user={self_user}
+                        _disabled={self_user?.customization?.profile_image?.bought}
+                        level_required={true}
+                        level_needed={20}
                     />
 
                     {AVATAR_SHAPES.map((shape, index) => {

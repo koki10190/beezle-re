@@ -14,7 +14,7 @@ function MiddleSide() {
 
     useEffect(() => {
         (async () => {
-            const user = GetUserPrivate() as UserPrivate;
+            const user = (await fetchUserPrivate()) as UserPrivate;
             setSelfUser(user);
 
             console.log("foreach");

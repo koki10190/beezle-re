@@ -6,10 +6,14 @@ import react from "react";
 
 import "../Main.css";
 import "./PrivacyPolicy.css";
+import { Helmet } from "react-helmet";
 
 function Home() {
     return (
         <>
+            <Helmet>
+                <title>Beezle: RE | Privacy & Terms</title>
+            </Helmet>
             <div style={{ width: "100vw", height: "100vh", overflowY: "auto", wordWrap: "break-word" }} className="privacy">
                 <h1>Privacy & Terms</h1>
                 <ul>

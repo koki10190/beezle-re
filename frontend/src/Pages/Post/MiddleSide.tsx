@@ -73,7 +73,7 @@ function MiddleSide() {
 
     useEffect(() => {
         (async () => {
-            const priv = GetUserPrivate() as UserPrivate;
+            const priv = (await fetchUserPrivate()) as UserPrivate;
 
             console.log("foreach");
             const replies_res = await axios.get(`${api_uri}/api/post/get/replies?post_id=${post_id}`, GetFullAuth());
@@ -429,229 +429,241 @@ function MiddleSide() {
     };
 
     return (
-        <div style={{ background: bgGradient }} className="page-sides side-middle home-middle">
-            <div className="post-page-container">
-                {post && post_user ? (
-                    <>
-                        {post.repost ? (
-                            <h4 onClick={() => (window.location.href = `/profile/${post.handle}`)} className="post-attr">
-                                <i className="fa-solid fa-repeat"></i> Repost by @{post.handle}
-                            </h4>
-                        ) : (
-                            ""
-                        )}
-
-                        {isPostEdited ? (
-                            <h4 className="post-attr">
-                                <i className="fa-solid fa-pencil"></i> Edited
-                            </h4>
-                        ) : (
-                            ""
-                        )}
-
-                        {post.is_reply && replyingToPost ? (
-                            <h4
-                                onClick={() => (window.location.href = replyingToPost?.content ? `/post/${post.replying_to}` : `/`)}
-                                className="post-attr"
-                            >
-                                <i className="fa-solid fa-comment"></i> Replying to{" "}
-                                {replyingToPost?.content ? TrimToDots(replyingToPost.content, 100) : "[REDACTED]"}
-                            </h4>
-                        ) : (
-                            ""
-                        )}
-                    </>
-                ) : (
-                    ""
-                )}
-                <div style={{ cursor: "pointer" }} onClick={() => (window.location.href = `/profile/${post_user?.handle}`)}>
-                    <div className="avatar-container">
-                        <div
-                            style={{
-                                backgroundImage: `url(${post_user?.avatar})`,
-                                clipPath: AVATAR_SHAPES[post_user?.customization?.square_avatar]
-                                    ? AVATAR_SHAPES[post_user?.customization?.square_avatar].style
-                                    : "",
-                                borderRadius:
-                                    AVATAR_SHAPES[post_user?.customization?.square_avatar]?.name !== "Circle Avatar Shape"
-                                        ? post_user?.customization?.square_avatar
-                                            ? "5px"
-                                            : "100%"
-                                        : "100%",
-                            }}
-                            className="post-page-pfp"
-                        ></div>
-                        <div
-                            style={{ bottom: "1px", right: "1px" }}
-                            className={`status-indicator ${
-                                post_user?.handle == self_user?.handle ? CStatus(post_user?.status_db) : CStatus(post_user?.status ?? "offline")
-                            }`}
-                        ></div>
-                    </div>
-                    <p className="post-page-username">
-                        {post_user ? <Username user={post_user} /> : ""}{" "}
-                        <BadgesToJSX is_bot={post_user?.is_bot} badges={post_user ? post_user.badges : []} className="profile-badge" />
-                    </p>
-                    <p className="post-page-handle">
-                        @{post_user?.handle} -{" "}
-                        <span style={{ color: "white" }}>
-                            {" "}
-                            {moment(new Date(parseInt(post ? post.creation_date.$date.$numberLong : "0")))
-                                .fromNow(true)
-                                .replace("minutes", "m")
-                                .replace(" ", "")
-                                .replace("hours", "h")
-                                .replace("afew seconds", "1s")
-                                .replace("aminute", "1m")
-                                .replace("amonth", "1 month")
-                                .replace("ahour", "1h")
-                                .replace("anhour", "1h")
-                                .replace("aday", "1d")
-                                .replace("days", "d")
-                                .replace("day", "1d")
-                                .replace("months", " months")
-                                .replace("ayear", "1 year")}
-                        </span>
-                    </p>
-                </div>
-                {isEditing ? (
-                    <>
-                        <textarea
-                            placeholder="Edit Post"
-                            minLength={1}
-                            maxLength={300}
-                            value={editContent}
-                            onChange={(e) => setEditContent(e.target.value)}
-                            className="input-field"
-                        ></textarea>
-                        <button onClick={SaveEditChanges} style={{ marginTop: "10px" }} className="button-field shadow fixed-100">
-                            Save Changes
-                        </button>
-                    </>
-                ) : (
-                    <p
-                        style={{
-                            whiteSpace: "pre-line",
-                        }}
-                        dangerouslySetInnerHTML={{
-                            __html: parseURLs(finalContent, post_user),
-                        }}
-                        className="content"
-                    ></p>
-                )}
-                <div className="post-interaction-btn">
-                    <a style={isReposted ? { color: "rgb(60, 255, 86)" } : {}} onClick={RepostInteraction} className="post-inter post-inter-lime">
-                        <i className=" fa-solid fa-repeat"></i>{" "}
-                        <FlipNumbers
-                            height={15}
-                            width={15}
-                            color=""
-                            play
-                            nonNumberClassName="like-flip"
-                            numberClassName="like-flip-number"
-                            perspective={100}
-                            numbers={millify(RepostCount)}
-                        />
-                    </a>
-                    <a
-                        onMouseEnter={() => setLikeHovered(true)}
-                        onMouseLeave={() => setLikeHovered(false)}
-                        onClick={LikeInteraction}
-                        style={isLiked ? { color: "rgb(255, 73, 73)" } : {}}
-                        className="post-inter post-inter-red"
-                    >
-                        <i className="fa-solid fa-heart"></i>{" "}
-                        <FlipNumbers
-                            height={15}
-                            width={15}
-                            color=""
-                            play
-                            nonNumberClassName="like-flip"
-                            numberClassName="like-flip-number"
-                            perspective={100}
-                            numbers={millify(LikeCount)}
-                        />
-                    </a>
-                    <a onClick={ReactionInteraction} className="post-inter-orange">
-                        <i className="fa-solid fa-face-awesome"></i>{" "}
-                    </a>
-                    <a onClick={BookmarkInteraction} style={isBookmarked ? { color: "rgb(60, 193, 255)" } : {}} className="post-inter-blue">
-                        <i className=" fa-solid fa-bookmark"></i>
-                    </a>
-                    <a onClick={PinInteraction} style={isPinned ? { color: "rgb(60, 193, 255)" } : {}} className="post-inter-blue">
-                        <i className=" fa-solid fa-thumbtack"></i>
-                    </a>
-
-                    {self_user?.handle == post?.handle && !post?.repost ? (
+        <>
+            <Helmet>
+                <meta name="theme-color" content={post_user?.customization?.profile_gradient?.color1 ?? "#ff8e3d"} data-react-helmet="true"></meta>
+                <title>Beezle: RE | @{post_user?.handle ?? ""}'s Post</title>
+            </Helmet>
+            <div style={{ background: bgGradient }} className="page-sides side-middle home-middle">
+                <div className="post-page-container">
+                    {post && post_user ? (
                         <>
-                            <a onClick={EditInteraction} className="post-inter">
-                                <i className=" fa-solid fa-pen-to-square"></i>
-                            </a>
-                            <a onClick={DeleteInteraction} className="post-inter-red">
-                                <i className=" fa-solid fa-trash"></i>
-                            </a>
+                            {post.repost ? (
+                                <h4 onClick={() => (window.location.href = `/profile/${post.handle}`)} className="post-attr">
+                                    <i className="fa-solid fa-repeat"></i> Repost by @{post.handle}
+                                </h4>
+                            ) : (
+                                ""
+                            )}
+
+                            {isPostEdited ? (
+                                <h4 className="post-attr">
+                                    <i className="fa-solid fa-pencil"></i> Edited
+                                </h4>
+                            ) : (
+                                ""
+                            )}
+
+                            {post.is_reply && replyingToPost ? (
+                                <h4
+                                    onClick={() => (window.location.href = replyingToPost?.content ? `/post/${post.replying_to}` : `/`)}
+                                    className="post-attr"
+                                >
+                                    <i className="fa-solid fa-comment"></i> Replying to{" "}
+                                    {replyingToPost?.content ? TrimToDots(replyingToPost.content, 100) : "[REDACTED]"}
+                                </h4>
+                            ) : (
+                                ""
+                            )}
                         </>
                     ) : (
                         ""
                     )}
+                    <div style={{ cursor: "pointer" }} onClick={() => (window.location.href = `/profile/${post_user?.handle}`)}>
+                        <div className="avatar-container">
+                            <div
+                                style={{
+                                    backgroundImage: `url(${post_user?.avatar})`,
+                                    clipPath: AVATAR_SHAPES[post_user?.customization?.square_avatar]
+                                        ? AVATAR_SHAPES[post_user?.customization?.square_avatar].style
+                                        : "",
+                                    borderRadius:
+                                        AVATAR_SHAPES[post_user?.customization?.square_avatar]?.name !== "Circle Avatar Shape"
+                                            ? post_user?.customization?.square_avatar
+                                                ? "5px"
+                                                : "100%"
+                                            : "100%",
+                                }}
+                                className="post-page-pfp"
+                            ></div>
+                            <div
+                                style={{ bottom: "1px", right: "1px" }}
+                                className={`status-indicator ${
+                                    post_user?.handle == self_user?.handle ? CStatus(post_user?.status_db) : CStatus(post_user?.status ?? "offline")
+                                }`}
+                            ></div>
+                        </div>
+                        <p className="post-page-username">
+                            {post_user ? <Username user={post_user} /> : ""}{" "}
+                            <BadgesToJSX is_bot={post_user?.is_bot} badges={post_user ? post_user.badges : []} className="profile-badge" />
+                        </p>
+                        <p className="post-page-handle">
+                            @{post_user?.handle} -{" "}
+                            <span style={{ color: "white" }}>
+                                {" "}
+                                {moment(new Date(parseInt(post ? post.creation_date.$date.$numberLong : "0")))
+                                    .fromNow(true)
+                                    .replace("minutes", "m")
+                                    .replace(" ", "")
+                                    .replace("hours", "h")
+                                    .replace("afew seconds", "1s")
+                                    .replace("aminute", "1m")
+                                    .replace("amonth", "1 month")
+                                    .replace("ahour", "1h")
+                                    .replace("anhour", "1h")
+                                    .replace("aday", "1d")
+                                    .replace("days", "d")
+                                    .replace("day", "1d")
+                                    .replace("months", " months")
+                                    .replace("ayear", "1 year")}
+                            </span>
+                        </p>
+                    </div>
+                    {isEditing ? (
+                        <>
+                            <textarea
+                                placeholder="Edit Post"
+                                minLength={1}
+                                maxLength={300}
+                                value={editContent}
+                                onChange={(e) => setEditContent(e.target.value)}
+                                className="input-field"
+                            ></textarea>
+                            <button onClick={SaveEditChanges} style={{ marginTop: "10px" }} className="button-field shadow fixed-100">
+                                Save Changes
+                            </button>
+                        </>
+                    ) : (
+                        <p
+                            style={{
+                                whiteSpace: "pre-line",
+                            }}
+                            dangerouslySetInnerHTML={{
+                                __html: parseURLs(finalContent, post_user),
+                            }}
+                            className="content"
+                        ></p>
+                    )}
+                    <div className="post-interaction-btn">
+                        <a style={isReposted ? { color: "rgb(60, 255, 86)" } : {}} onClick={RepostInteraction} className="post-inter post-inter-lime">
+                            <i className=" fa-solid fa-repeat"></i>{" "}
+                            <FlipNumbers
+                                height={15}
+                                width={15}
+                                color=""
+                                play
+                                nonNumberClassName="like-flip"
+                                numberClassName="like-flip-number"
+                                perspective={100}
+                                numbers={millify(RepostCount)}
+                            />
+                        </a>
+                        <a
+                            onMouseEnter={() => setLikeHovered(true)}
+                            onMouseLeave={() => setLikeHovered(false)}
+                            onClick={LikeInteraction}
+                            style={isLiked ? { color: "rgb(255, 73, 73)" } : {}}
+                            className="post-inter post-inter-red"
+                        >
+                            <i className="fa-solid fa-heart"></i>{" "}
+                            <FlipNumbers
+                                height={15}
+                                width={15}
+                                color=""
+                                play
+                                nonNumberClassName="like-flip"
+                                numberClassName="like-flip-number"
+                                perspective={100}
+                                numbers={millify(LikeCount)}
+                            />
+                        </a>
+                        <a onClick={ReactionInteraction} className="post-inter-orange">
+                            <i className="fa-solid fa-face-awesome"></i>{" "}
+                        </a>
+                        <a onClick={BookmarkInteraction} style={isBookmarked ? { color: "rgb(60, 193, 255)" } : {}} className="post-inter-blue">
+                            <i className=" fa-solid fa-bookmark"></i>
+                        </a>
+                        <a onClick={PinInteraction} style={isPinned ? { color: "rgb(60, 193, 255)" } : {}} className="post-inter-blue">
+                            <i className=" fa-solid fa-thumbtack"></i>
+                        </a>
+
+                        {self_user?.handle == post?.handle && !post?.repost ? (
+                            <>
+                                <a onClick={EditInteraction} className="post-inter">
+                                    <i className=" fa-solid fa-pen-to-square"></i>
+                                </a>
+                                <a onClick={DeleteInteraction} className="post-inter-red">
+                                    <i className=" fa-solid fa-trash"></i>
+                                </a>
+                            </>
+                        ) : (
+                            ""
+                        )}
+                    </div>
+                    {reactionOpened ? (
+                        <EmojiPicker
+                            onEmojiClick={ReactToPost}
+                            theme={Theme.DARK}
+                            emojiStyle={EmojiStyle.NATIVE}
+                            customEmojis={self_user?.customization?.emojis ?? []}
+                            reactionsDefaultOpen={true}
+                            style={{
+                                backgroundColor: "rgba(0,0,0,0.7)",
+                                border: "none",
+                            }}
+                        />
+                    ) : (
+                        ""
+                    )}
+                    <div className="reactions white-bg">
+                        {Object.keys(reactions.reactions).map((key: string, index: number) => {
+                            if (index > 12) return <></>;
+                            if (reactions.reactions[key].length <= 0) return <></>;
+                            return (
+                                <p
+                                    style={
+                                        reactions.reactions[key].findIndex((x) => x.handle === self_user?.handle) > -1
+                                            ? { border: `solid 2px rgba(255, 255, 255, 0.6)` }
+                                            : {}
+                                    }
+                                    onClick={() => ReactSpecific(key)}
+                                >
+                                    {key.startsWith("http") ? (
+                                        <div
+                                            style={{
+                                                backgroundImage: `url(${key})`,
+                                            }}
+                                            title={"custom_emoji"}
+                                            className="emoji"
+                                        ></div>
+                                    ) : (
+                                        <span className="reaction-emoji">{key}</span>
+                                    )}
+                                    <span className="reaction-count">{reactions.reactions[key].length}</span>
+                                </p>
+                            );
+                        })}
+                    </div>
                 </div>
-                {reactionOpened ? (
-                    <EmojiPicker
-                        onEmojiClick={ReactToPost}
-                        theme={Theme.DARK}
-                        emojiStyle={EmojiStyle.NATIVE}
-                        customEmojis={self_user?.customization?.emojis ?? []}
-                        reactionsDefaultOpen={true}
-                        style={{
-                            backgroundColor: "rgba(0,0,0,0.7)",
-                            border: "none",
-                        }}
-                    />
-                ) : (
-                    ""
-                )}
-                <div className="reactions white-bg">
-                    {Object.keys(reactions.reactions).map((key: string, index: number) => {
-                        if (index > 12) return <></>;
-                        if (reactions.reactions[key].length <= 0) return <></>;
-                        return (
-                            <p
-                                style={
-                                    reactions.reactions[key].findIndex((x) => x.handle === self_user?.handle) > -1
-                                        ? { border: `solid 2px rgba(255, 255, 255, 0.6)` }
-                                        : {}
-                                }
-                                onClick={() => ReactSpecific(key)}
-                            >
-                                {key.startsWith("http") ? (
-                                    <div
-                                        style={{
-                                            backgroundImage: `url(${key})`,
-                                        }}
-                                        title={"custom_emoji"}
-                                        className="emoji"
-                                    ></div>
-                                ) : (
-                                    <span className="reaction-emoji">{key}</span>
-                                )}
-                                <span className="reaction-count">{reactions.reactions[key].length}</span>
-                            </p>
-                        );
-                    })}
-                </div>
+                <Divider />
+                <PostTyper replying_to={post ? post.post_id : ""} onSend={OnReplySend} />
+                <Divider />
+                {self_user
+                    ? replies.map((post: Post) => {
+                          if (post.repost) return;
+                          return (
+                              <PostBox
+                                  delete_post_on_bookmark_remove={true}
+                                  setPosts={setReplies}
+                                  self_user={self_user}
+                                  key={post.post_id}
+                                  post={post}
+                              />
+                          );
+                      })
+                    : ""}
             </div>
-            <Divider />
-            <PostTyper replying_to={post ? post.post_id : ""} onSend={OnReplySend} />
-            <Divider />
-            {self_user
-                ? replies.map((post: Post) => {
-                      if (post.repost) return;
-                      return (
-                          <PostBox delete_post_on_bookmark_remove={true} setPosts={setReplies} self_user={self_user} key={post.post_id} post={post} />
-                      );
-                  })
-                : ""}
-        </div>
+        </>
     );
 }
 

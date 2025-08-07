@@ -19,7 +19,7 @@ function MiddleSide() {
 
     useEffect(() => {
         (async () => {
-            const user = GetUserPrivate() as UserPrivate;
+            const user = (await fetchUserPrivate()) as UserPrivate;
             setSelfUser(user);
             setUser((await fetchUserPublic(handle)) as UserPublic);
 

@@ -8,6 +8,7 @@ import MiddleSide from "./MiddleSide";
 import RightSide from "../LoggedIn/RightSide";
 import "../LoggedIn.css";
 import "../../assets/main.css";
+import { Helmet } from "react-helmet";
 
 function Home() {
     useEffect(() => {

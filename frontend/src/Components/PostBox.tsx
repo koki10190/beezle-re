@@ -567,7 +567,7 @@ function PostBox({
                 )}
                 <div className="post-attributes">
                     {post.repost ? (
-                        <h4 onClick={() => navigate(`/profile/${post.handle}`, { replace: true })} className="post-attr">
+                        <h4 onClick={() => (window.location.href = `/profile/${post.handle}`)} className="post-attr">
                             <i className="fa-solid fa-repeat"></i> Repost by @{post.handle}
                         </h4>
                     ) : (
@@ -629,7 +629,7 @@ function PostBox({
                     ></div>
                     <div className={`status-indicator ${CStatus(user?.status ?? "offline")}`}></div>
                 </div>
-                <div onClick={() => navigate(`/profile/${user ? user.handle : ""}`, { replace: true })} className="user-detail">
+                <div onClick={() => (window.location.href = `/profile/${user ? user.handle : ""}`)} className="user-detail">
                     <p className="username-post">
                         {user ? <Username user={user} /> : ""}{" "}
                         <BadgesToJSX is_bot={user?.is_bot} badges={user ? user.badges : []} className="profile-badge profile-badge-shadow" />

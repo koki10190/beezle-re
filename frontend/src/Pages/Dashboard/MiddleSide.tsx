@@ -117,7 +117,7 @@ function MiddleSide() {
 
     useEffect(() => {
         (async () => {
-            const user = GetUserPrivate() as UserPrivate;
+            const user = (await fetchUserPrivate()) as UserPrivate;
             setSelfUser(user);
 
             let hasBadge = false;

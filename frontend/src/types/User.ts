@@ -12,6 +12,14 @@ enum BadgeType {
     CONTRIBUTOR,
 }
 
+interface ProfileImage {
+    bought: boolean;
+    image: string;
+    repeat: boolean;
+    enabled: boolean;
+    size: "contain" | "cover" | "";
+}
+
 interface UserCustomization {
     name_color: {
         color1: string;
@@ -31,6 +39,8 @@ interface UserCustomization {
 
     emojis: Array<CustomEmoji>;
     owned_shapes: AvaterShape[];
+
+    profile_image: ProfileImage;
 }
 
 interface UserConnections {
@@ -107,4 +117,4 @@ interface UserPrivate extends UserPublic {
 }
 
 export { BadgeType };
-export type { UserPrivate, UserPublic, UserCustomization };
+export type { UserPrivate, UserPublic, UserCustomization, ProfileImage };

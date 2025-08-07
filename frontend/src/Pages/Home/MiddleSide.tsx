@@ -54,7 +54,7 @@ function MiddleSide() {
 
     useEffect(() => {
         (async () => {
-            const m_user = GetUserPrivate() as UserPrivate;
+            const m_user = (await fetchUserPrivate()) as UserPrivate;
             setSelfUser(m_user);
             if (m_user.is_bot) return toast.error("Bot accounts cannot use the site!");
             const posts = (

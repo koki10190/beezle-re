@@ -12,7 +12,7 @@ function LeftSide() {
 
     useEffect(() => {
         (async () => {
-            setSelfUser(GetUserPrivate());
+            setSelfUser(await fetchUserPrivate());
         })();
     }, []);
 

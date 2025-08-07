@@ -69,8 +69,7 @@ pub async fn user_exists(client: &Client, handle: String) -> bool {
 }
 
 pub async fn send_socket_to_user(ws_sessions: &web::Data<Arc<Mutex<HashMap<String, actix_ws::Session>>>>, handle: &str, channel: &str, data: Document) {
-    let arc_clone = Arc::clone(ws_sessions.get_ref());
-    let locked = arc_clone.lock();
+    let locked = ws_sessions.lock();
                     
     match locked {
         Ok(mut sessions) => {
@@ -100,7 +99,7 @@ pub async fn ws_send_notification(ws_sessions: &web::Data<Arc<Mutex<HashMap<Stri
 }
 
 pub fn is_user_online(ws_sessions: &web::Data<Arc<Mutex<HashMap<String, actix_ws::Session>>>>, handle: &str) -> bool {
-    let arc_clone = Arc::clone(ws_sessions.get_ref());
+    let arc_clone = ws_sessions.get_ref();
     let locked = arc_clone.lock();
                     
     match locked {

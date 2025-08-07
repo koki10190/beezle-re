@@ -9,6 +9,7 @@ import RightSide from "../LoggedIn/RightSide";
 import "../LoggedIn.css";
 import "../../assets/main.css";
 import React from "react";
+import { Helmet } from "react-helmet";
 
 function Home() {
     useEffect(() => {
@@ -16,6 +17,9 @@ function Home() {
     }, []);
     return (
         <>
+            <Helmet>
+                <title>Beezle: RE | Right Now</title>
+            </Helmet>
             <div className="sides-container">
                 <LeftSide />
                 <MiddleSide />

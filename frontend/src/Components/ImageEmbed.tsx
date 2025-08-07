@@ -22,7 +22,7 @@ function ImageEmbed({ url }: { url: string }) {
     // useEffect(() => {
     // }, []);
     return (
-        <div style={{ width: size.width, height: size.height, backgroundImage: `url(${url})` }} className="post-image-embed">
+        <div style={{ width: size.width, marginTop: "10px", height: size.height, backgroundImage: `url(${url})` }} className="post-image-embed">
             <a href={url} download={`image.${url.split(".")[url.split(".").length - 1]}`} target="_blank" className="post-image-embed-button">
                 <i className="fa-solid fa-download"></i>
             </a>

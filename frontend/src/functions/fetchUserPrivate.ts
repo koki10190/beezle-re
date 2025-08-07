@@ -10,7 +10,7 @@ async function fetchUserPrivate(access_token?: string): Promise<UserPrivate | nu
     const token = access_token ?? localStorage.getItem("access_token");
     if (!token) return null;
 
-    if (USER_PRIVATE) return USER_PRIVATE;
+    if (USER_PRIVATE && !access_token) return USER_PRIVATE;
 
     const res = await axios.get(`${api_uri}/api/user/private`, {
         headers: {

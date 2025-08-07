@@ -26,7 +26,7 @@ function ShopBox({
     self_user: UserPrivate;
     title: string;
     price: number;
-    call_on_purchase: () => void;
+    call_on_purchase: () => Promise<boolean>;
     _disabled: boolean;
     display?: boolean;
     level_required?: boolean;
@@ -40,6 +40,13 @@ function ShopBox({
         }
     }, [levelBox, level_needed]);
 
+    const Purchase = async () => {
+        if (await call_on_purchase()) {
+            _disabled = true;
+        }
+        _disabled = false;
+    };
+
     return (
         <>
             {display ? (
@@ -52,16 +59,16 @@ function ShopBox({
                         <i className="fa-solid fa-coins" /> Costs {price.toLocaleString("en-US")}
                     </p>
                     {level_required ? (
-                        <p>
+                        <p style={{ marginTop: "-15px" }}>
                             Level Required:{" "}
-                            <span className="level-box" ref={levelBox}>
+                            <span style={{ fontFamily: "Open Sans, sans-serif" }} className="level-box" ref={levelBox}>
                                 {level_needed}
                             </span>
                         </p>
                     ) : (
                         ""
                     )}
-                    <button disabled={_disabled} onClick={call_on_purchase} className="button-field fixed-100">
+                    <button disabled={_disabled} onClick={Purchase} className="button-field fixed-100">
                         {_disabled ? "Already Bought" : "Buy"}
                     </button>
                 </div>

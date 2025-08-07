@@ -32,7 +32,7 @@ function MiddleSide() {
 
     useEffect(() => {
         (async () => {
-            let notifs = (GetUserPrivate()?.notifications as Array<NotificationData>) ?? [];
+            let notifs = ((await fetchUserPrivate())?.notifications as Array<NotificationData>) ?? [];
 
             notifs.forEach((notif: NotificationData) => {
                 (async () => {

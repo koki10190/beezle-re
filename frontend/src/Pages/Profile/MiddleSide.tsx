@@ -5,7 +5,7 @@ import { api_uri } from "../../links";
 import { checkToken } from "../../functions/checkToken";
 import React from "react";
 import { fetchUserPrivate, GetUserPrivate } from "../../functions/fetchUserPrivate";
-import { UserPrivate, UserPublic } from "../../types/User";
+import { ProfileImage, UserPrivate, UserPublic } from "../../types/User";
 import "./Profile.css";
 import { fetchUserPublic } from "../../functions/fetchUserPublic";
 import { BadgesToJSX } from "../../functions/badgesToJSX";
@@ -32,6 +32,8 @@ import GetFullAuth from "../../functions/GetFullAuth";
 import { STEAM_ICON_URL } from "../../types/steam/steam_urls";
 import CStatus from "../../functions/StatusToClass";
 import { FetchPost } from "../../functions/FetchPost";
+import { Helmet } from "react-helmet";
+import { RGBToHex } from "../../functions/RGBToHex";
 
 function Loading() {
     return (
@@ -68,6 +70,11 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
     const [notifCooldown, setNotifCooldown] = useState(setTimeout(() => {}, 0));
     const [blocked, setBlocked] = useState(false);
     const [blockBtn, setBlockedBtn] = useState(false);
+    const [profileImage, setProfileImage] = useState<ProfileImage | null>({
+        size: "contain",
+        image: "https://i.imgur.com/nEdlnNh.gif",
+        repeat: false,
+    });
     const mousePos = useMousePos();
 
     const OnMentionHovered = async (mention: string) => {
@@ -169,9 +176,11 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
             setLastfmData(data.error ? null : data);
 
             const res_user = await axios.get(`${api_uri}/api/lastfm/get_user?username=${user.connections.lastfm.username}`, GetFullAuth());
-
+            console.log(res_user.data);
             setLastfmUserData(res_user.data?.error ? null : res_user.data);
-        } catch (e) {}
+        } catch (e) {
+            console.log(e);
+        }
     };
 
     const BlockUser = async () => {
@@ -260,6 +269,8 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
             }
 
             setSteamData(Object.keys(user?.steam_data ?? {}).length > 0 ? user.steam_data[Object.keys(user.steam_data)[0]].data : null);
+            const steam_ps_res = await axios.get(`${api_uri}/api/connections/steam_get?steam_id=${user.connections.steam.id}`, GetFullAuth());
+            if (steam_ps_res.data) setSteamUserData(steam_ps_res.data as Steam.PlayerSummary);
 
             FetchLastfmData();
             FetchSpotifyData();
@@ -276,11 +287,26 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
 
     return (
         <>
+            <Helmet>
+                <meta name="theme-color" content={user?.customization?.profile_gradient?.color1 ?? "#ff8e3d"} data-react-helmet="true"></meta>
+                <title>Beezle: RE | @{user?.handle}'s Profile</title>
+                <meta property="og:image" content={user.avatar} data-react-helmet="true" />
+                <link rel="icon" type="image/svg+xml" href={user.avatar} />
+            </Helmet>
             {mention_hover ? <MentionHover user={mention_hover} mousePos={mousePos} /> : ""}
             <div
-                style={{
-                    background: bgGradient,
-                }}
+                style={
+                    profileImage
+                        ? {
+                              background: `url(${profileImage.image})`,
+                              backgroundPosition: "center",
+                              backgroundSize: `${profileImage.image}`,
+                              backgroundRepeat: `${true ? "repeat" : "no-repeat"}`,
+                          }
+                        : {
+                              background: bgGradient,
+                          }
+                }
                 onScroll={handleScroll}
                 className="page-sides side-middle"
             >
@@ -578,7 +604,7 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                             {user.milestones.map((milestone, index) => {
                                 return (
                                     <div className="about_me">
-                                        <TrophyShowcase type={TROPHIES[milestone]} user={user} />
+                                        <TrophyShowcase key={index} type={TROPHIES[milestone]} user={user} />
                                     </div>
                                 );
                             })}
@@ -743,8 +769,16 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                             Followers <span>{followersCount}</span>
                         </a>
                     </div>
-                    <div style={{ marginBottom: "30px" }}></div>
+                    {/* <div style={{ marginBottom: "30px" }}></div> */}
                     {/* <Divider /> */}
+                    <hr
+                        style={{
+                            width: "calc(100% + 40px)",
+                            marginLeft: "-20px",
+                            borderTop: "1px solid rgba(255, 255,255, 0.4)",
+                        }}
+                        className="divider"
+                    ></hr>
                     {pinnedPost ? (
                         <PostBox
                             override_gradient={
@@ -793,11 +827,10 @@ function MiddleSide({ handle }: { handle: string }) {
     useEffect(() => {
         (async () => {
             if (localStorage.getItem("access_token")) {
-                setSelfUser(GetUserPrivate());
+                setSelfUser(await fetchUserPrivate());
             }
             const fetch_user = await fetchUserPublic(handle, true);
             setUser(fetch_user);
-            console.log(fetch_user);
 
             if (!fetch_user) window.location.href = "/not-found";
         })();
