@@ -24,7 +24,7 @@ function LeftSide() {
                     :RE
                 </span>
             </h1>
-            <h2 style={{ marginTop: "-20px", color: "rgba(255,255,255,0.2)" }}>Alpha v1.9</h2>
+            <h2 style={{ marginTop: "-20px", color: "rgba(255,255,255,0.2)" }}>Alpha v2.0</h2>
             <div
                 style={{
                     fontFamily: "Open Sans, sans-serif",
