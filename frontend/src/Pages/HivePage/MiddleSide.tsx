@@ -177,13 +177,30 @@ function MiddleSide() {
                 ) : (
                     ""
                 )}
-                <button
-                    style={{ marginTop: "10px", marginBottom: "-5px" }}
-                    onClick={JoinOrLeave}
-                    className={`button-field ${isMember ? "button-field-red" : "button-field-green"}`}
-                >
-                    {isMember ? "Leave Hive" : "Join Hive"}
-                </button>
+                {hive?.owner !== self?.handle ? (
+                    <button
+                        style={{ marginTop: "10px" }}
+                        onClick={JoinOrLeave}
+                        className={`button-field ${isMember ? "button-field-red" : "button-field-green"}`}
+                    >
+                        {isMember ? "Leave Hive" : "Join Hive"}
+                    </button>
+                ) : (
+                    ""
+                )}
+
+                {hive?.owner === self?.handle || hive?.moderators?.findIndex((x) => x === self?.handle) > -1 ? (
+                    <button
+                        style={{ marginTop: "10px", marginBottom: "-5px" }}
+                        onClick={() => navigate(`/hives/dashboard/${hive.hive_id}`)}
+                        className="button-field button-field-blurple"
+                    >
+                        <i className="fa-solid fa-shield-halved" /> Dashboard
+                    </button>
+                ) : (
+                    ""
+                )}
+
                 <p>
                     Members: <b>{memberCount}</b>
                 </p>
