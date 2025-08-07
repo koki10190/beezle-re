@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { UIEvent, useEffect, useState } from "react";
 import { checkToken } from "../../functions/checkToken";
 
 import Divider from "../../Components/Divider";
@@ -16,11 +16,15 @@ import { api_uri } from "../../links";
 import { toast } from "react-toastify";
 import GetAuthToken from "../../functions/GetAuthHeader";
 
+const INDEX_MOVER = 15;
 function MiddleSide() {
     const [Notifs, setNotifs] = useState<Array<NotificationData>>([]);
+    const [cached, setCached] = useState<Array<NotificationData>>([]);
+    const [notifIndex, setNotifIndex] = useState(0);
 
     const ClearNotifs = async () => {
         setNotifs([]);
+        setCached([]);
         const res = (await axios.patch(`${api_uri}/api/user/clear_notifs`, {}, { headers: GetAuthToken() })).data as {
             error: string | null;
             changed: boolean;
@@ -40,12 +44,44 @@ function MiddleSide() {
                 })();
             });
             notifs.reverse();
-
             setNotifs(notifs);
+            setCached((old) => {
+                const _new = [...old];
+                if (notifs.length <= 0) return _new;
+                for (let i = 0; i < INDEX_MOVER && i < notifs.length; i++) {
+                    let pusher = notifs[i];
+                    pusher.react_key_prop_id = Math.random().toString();
+                    _new.push(pusher);
+                }
+                setNotifIndex(notifIndex + INDEX_MOVER);
+                return _new;
+            });
         })();
     }, []);
+
+    const handleScroll = async (event: UIEvent<HTMLDivElement>) => {
+        const element = event.target! as HTMLDivElement;
+        console.log(!(element.scrollHeight - element.scrollTop === element.clientHeight));
+        if (!(element.scrollHeight - element.scrollTop === element.clientHeight)) return;
+
+        // detected bottom
+        setCached((old) => {
+            const _new = [...old];
+            if (notifIndex >= Notifs.length || Notifs.length <= 0) return _new;
+            for (let i = notifIndex; i < notifIndex + INDEX_MOVER && i < Notifs.length; i++) {
+                let pusher = Notifs[i];
+                pusher.react_key_prop_id = Math.random().toString();
+                _new.push(pusher);
+            }
+            setNotifIndex(notifIndex + INDEX_MOVER);
+            return _new;
+        });
+
+        // setPosts(old => [...old, ...allPosts.splice(postOffset, postOffset + 5)]);
+    };
+
     return (
-        <div className="page-sides side-middle home-middle">
+        <div onScroll={handleScroll} className="page-sides side-middle home-middle">
             <h1>
                 <i className="fa-solid fa-bookmark"></i> Notifications
             </h1>
@@ -54,9 +90,12 @@ function MiddleSide() {
                 <i className="fa-solid fa-broom-wide"></i> Clear Notifications
             </a>
             <Divider />
-            {Notifs.map((notif: NotificationData) => {
-                return <NotifBox key={notif.react_key_prop_id} notif={notif} />;
-            })}
+            {cached
+                ? cached.map((notif: NotificationData) => {
+                      console.log(notif);
+                      return <NotifBox notif={notif} />;
+                  })
+                : ""}
         </div>
     );
 }

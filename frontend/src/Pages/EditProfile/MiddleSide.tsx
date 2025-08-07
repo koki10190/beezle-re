@@ -5,7 +5,7 @@ import { api_uri } from "../../links";
 import { checkToken } from "../../functions/checkToken";
 import React from "react";
 import { fetchUserPrivate, GetUserPrivate } from "../../functions/fetchUserPrivate";
-import { UserPrivate, UserPublic } from "../../types/User";
+import { ProfileImage, ProfileImageSize, UserPrivate, UserPublic } from "../../types/User";
 import "./EditProfile.css";
 import { fetchUserPublic } from "../../functions/fetchUserPublic";
 import { BadgesToJSX } from "../../functions/badgesToJSX";
@@ -56,6 +56,20 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
     const bannerDiv = useRef<HTMLDivElement>(null);
     const buttonRef = useRef<HTMLButtonElement>(null);
 
+    const [bgEnabled, setBgEnabled] = useState(user.customization?.profile_image?.enabled ?? false);
+    const [bgRepeat, setBgRepeat] = useState(user.customization?.profile_image?.repeat ?? false);
+    const [bgSize, setBgSize] = useState<ProfileImageSize>("");
+
+    const [bgImgData, setBgImgData] = useState<ProfileImage>(
+        user.customization?.profile_image ?? {
+            bought: false,
+            enabled: false,
+            repeat: false,
+            size: "",
+            image: "",
+        },
+    );
+
     // Connections
     const [steamInventory, setSteamInventory] = useState<Steam.InventoryJSON>();
 
@@ -82,44 +96,12 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
         ref.style.display = "none";
     };
 
-    const Buy = async (buy_what: BuyWhat) => {
-        let res = null;
-        switch (buy_what) {
-            case BuyWhat.PROFILE_GRADIENT: {
-                res = await axios.post(
-                    `${api_uri}/api/user/buy/profile_gradient`,
-                    {},
-                    {
-                        headers: GetAuthToken(),
-                    },
-                );
-                break;
-            }
-            case BuyWhat.NAME_COLOR: {
-                res = await axios.post(
-                    `${api_uri}/api/user/buy/name_color`,
-                    {},
-                    {
-                        headers: GetAuthToken(),
-                    },
-                );
-                break;
-            }
-        }
-
-        if (res.data.bought) {
-            toast.success("Successfully bought the item!");
-            window.location.reload();
-        } else {
-            toast.error(res.data.error);
-        }
-    };
-
     const SaveChanges = (e: any) => {
         e.preventDefault();
         const form = e.target as HTMLFormElement;
         let avatar: string | null = null;
         let banner: string | null = null;
+        let bgImage: string | null = null;
         let __ProfileBgImage: string | null = null;
         console.log(g1);
         console.log(g2);
@@ -131,6 +113,11 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
                 avatar = ((await UploadToImgur(avatarInput.current!)) as any).data.link;
             if (bannerInput.current!.files && bannerInput.current!.files.length > 0)
                 banner = ((await UploadToImgur(bannerInput.current!)) as any).data.link;
+
+            if (bgImageInput.current) {
+                if (bgImageInput.current!.files && bgImageInput.current!.files.length > 0)
+                    bgImage = ((await UploadToImgur(bgImageInput.current!)) as any).data.link;
+            }
 
             // if (profileBgImg !== "") {
             //     __ProfileBgImage = ((await UploadToImgur(profileBgImgInput.current!)) as any).data.link;
@@ -149,6 +136,12 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
                 avatar_shape: avatarShape,
                 status,
                 profile_postbox_img: __ProfileBgImage ? __ProfileBgImage : "",
+                profile_image: {
+                    image: bgImage ?? bgImgData.image,
+                    repeat: bgImgData.repeat,
+                    enabled: bgImgData.enabled,
+                    size: bgImgData.size,
+                },
             };
             console.log(data);
             const m_data = (
@@ -370,7 +363,9 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
                         />
                         <div
                             ref={bgImageDiv}
-                            // style={{ marginBottom: "10px" }}
+                            style={{
+                                backgroundImage: `url(${user.customization.profile_image?.image})`,
+                            }}
                             onClick={() => bgImageInput.current!.click()}
                             className="edit-background-image"
                         >
@@ -378,7 +373,13 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
                         </div>
                         <p style={{ fontFamily: "Open Sans", display: "inline" }}>Enabled</p>
                         <input
-                            defaultChecked={user.customization?.profile_image.enabled}
+                            defaultChecked={bgImgData.enabled}
+                            onChange={() =>
+                                setBgImgData((old) => {
+                                    old.enabled = !old.enabled;
+                                    return old;
+                                })
+                            }
                             style={{ marginLeft: "10px", display: "inline" }}
                             className="input-checkbox"
                             type="checkbox"
@@ -386,20 +387,36 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
                         <br />
                         <p style={{ fontFamily: "Open Sans", display: "inline" }}>Repeat</p>
                         <input
-                            defaultChecked={user.customization?.profile_image.repeat}
+                            defaultChecked={bgImgData.repeat}
+                            onChange={() =>
+                                setBgImgData((old) => {
+                                    old.repeat = !old.repeat;
+                                    return old;
+                                })
+                            }
                             style={{ marginLeft: "10px", display: "inline" }}
                             className="input-checkbox"
                             type="checkbox"
                         />
                         <p style={{ marginTop: "0px" }}>Size Option</p>
-                        <select defaultValue={"none"} style={{ marginTop: "-10px", width: "100%" }} className="input-field">
-                            <option selected={user.customization.profile_image.size === ""} value="">
+                        <select
+                            onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                                setBgImgData((old) => {
+                                    old.size = e.target.value as ProfileImageSize;
+                                    return old;
+                                });
+                            }}
+                            defaultValue={"none"}
+                            style={{ marginTop: "-10px", width: "100%" }}
+                            className="input-field"
+                        >
+                            <option selected={bgImgData.size === ""} value="">
                                 None
                             </option>
-                            <option selected={user.customization.profile_image.size === "cover"} value="cover">
+                            <option selected={bgImgData.size === "cover"} value="cover">
                                 Cover
                             </option>
-                            <option selected={user.customization.profile_image.size === "contain"} value="contain">
+                            <option selected={bgImgData.size === "contain"} value="contain">
                                 Contain
                             </option>
                         </select>

@@ -70,11 +70,7 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
     const [notifCooldown, setNotifCooldown] = useState(setTimeout(() => {}, 0));
     const [blocked, setBlocked] = useState(false);
     const [blockBtn, setBlockedBtn] = useState(false);
-    const [profileImage, setProfileImage] = useState<ProfileImage | null>({
-        size: "contain",
-        image: "https://i.imgur.com/nEdlnNh.gif",
-        repeat: false,
-    });
+    const [profileImage, setProfileImage] = useState<ProfileImage | null>(user.customization?.profile_image ?? null);
     const mousePos = useMousePos();
 
     const OnMentionHovered = async (mention: string) => {
@@ -296,12 +292,12 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
             {mention_hover ? <MentionHover user={mention_hover} mousePos={mousePos} /> : ""}
             <div
                 style={
-                    profileImage
+                    profileImage?.enabled
                         ? {
                               background: `url(${profileImage.image})`,
                               backgroundPosition: "center",
-                              backgroundSize: `${profileImage.image}`,
-                              backgroundRepeat: `${true ? "repeat" : "no-repeat"}`,
+                              backgroundSize: `${profileImage.size}`,
+                              backgroundRepeat: `${profileImage.repeat ? "repeat" : "no-repeat"}`,
                           }
                         : {
                               background: bgGradient,

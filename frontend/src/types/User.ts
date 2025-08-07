@@ -12,12 +12,13 @@ enum BadgeType {
     CONTRIBUTOR,
 }
 
+type ProfileImageSize = "contain" | "cover" | "";
 interface ProfileImage {
     bought: boolean;
     image: string;
     repeat: boolean;
     enabled: boolean;
-    size: "contain" | "cover" | "";
+    size: ProfileImageSize;
 }
 
 interface UserCustomization {
@@ -117,4 +118,4 @@ interface UserPrivate extends UserPublic {
 }
 
 export { BadgeType };
-export type { UserPrivate, UserPublic, UserCustomization, ProfileImage };
+export type { UserPrivate, UserPublic, UserCustomization, ProfileImage, ProfileImageSize };

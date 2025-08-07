@@ -125,7 +125,7 @@ pub async fn route(
                     )
                     .await;
 
-                    ws_send_notification(&ws_sessions, &data.claims.handle).await;
+                    ws_send_notification(&ws_sessions, &handle).await;
                 }
             }
 

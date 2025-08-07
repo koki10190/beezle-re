@@ -10,8 +10,16 @@ use actix_web::{get, http::StatusCode, patch, post, web, App, HttpRequest, HttpR
 use crate::{
     beezle::{self, auth::get_token},
     mongoose::{self, structures::user},
-    poison::LockResultExt,
+    poison::LockResultExt, routes::api::post::edit,
 };
+
+#[derive(Deserialize)]
+struct ProfileImage {
+    image: String,
+    repeat: bool,
+    enabled: bool,
+    size: String,
+}
 
 #[derive(Deserialize)]
 struct GetUserQuery {
@@ -26,7 +34,7 @@ struct GetUserQuery {
     name_color2: String,
     avatar_shape: i64,
     status: String,
-    profile_postbox_img: String,
+    profile_image: Option<ProfileImage>,
 }
 
 #[patch("/api/profile/edit")]
@@ -124,17 +132,44 @@ pub async fn route(
                 square_avatar_bought = square_avatar_bought_bson.unwrap().as_bool().unwrap();
             }
 
-            let profile_postbox_img_bought_bson = unwrapped
+            let profile_img_bought_bson = unwrapped
                 .get("customization")
                 .unwrap()
                 .as_document()
                 .unwrap()
-                .get("profile_postbox_img_bought");
+                .get("profile_image");
 
-            let mut profile_postbox_img_bought = false;
-            if profile_postbox_img_bought_bson.is_some() {
-                profile_postbox_img_bought =
-                    profile_postbox_img_bought_bson.unwrap().as_bool().unwrap();
+            if let Some(profimg) = profile_img_bought_bson {
+                let bought = profimg.as_document().unwrap().get("bought").unwrap().as_bool().unwrap();
+
+                if let Some(edit_img) = &body.profile_image {
+                    if !regex.is_match(&edit_img.image) {
+                        return HttpResponse::Ok().json(doc! {"error": "Only Imgur links are allowed for safety reasons! You dirty ass fucking hacker, eat shit faggot"});
+                    }
+
+                    if bought {
+                        mongoose::update_document(
+                            &client,
+                            "beezle",
+                            "Users",
+                            doc! {
+                                "handle": &token_data.handle,
+                            },
+                            doc! {
+                                "$set": {
+                                    "customization.profile_image": {
+                                        "bought": true,
+                                        "repeat": &edit_img.repeat,
+                                        "size": &edit_img.size,
+                                        "enabled": &edit_img.enabled,
+                                        "image": &edit_img.image,
+                                    }
+                                }
+                            },
+                        )
+                        .await;
+                    }
+                }
             }
 
             mongoose::update_document(
@@ -225,23 +260,6 @@ pub async fn route(
                     doc! {
                         "$set": {
                             "customization.square_avatar": body.avatar_shape
-                        }
-                    },
-                )
-                .await;
-            }
-
-            if profile_postbox_img_bought {
-                mongoose::update_document(
-                    &client,
-                    "beezle",
-                    "Users",
-                    doc! {
-                        "handle": &token_data.handle,
-                    },
-                    doc! {
-                        "$set": {
-                            "customization.profile_postbox_img_bought": body.avatar_shape
                         }
                     },
                 )

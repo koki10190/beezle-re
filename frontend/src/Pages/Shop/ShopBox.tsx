@@ -34,6 +34,7 @@ function ShopBox({
     children?: ReactNode;
 }) {
     const levelBox = useRef<HTMLSpanElement>(null);
+    const [disabled, setDisabled] = useState(_disabled);
     useEffect(() => {
         if (levelBox.current) {
             SetLevelColorByValue(level_needed, levelBox.current!);
@@ -41,10 +42,7 @@ function ShopBox({
     }, [levelBox, level_needed]);
 
     const Purchase = async () => {
-        if (await call_on_purchase()) {
-            _disabled = true;
-        }
-        _disabled = false;
+        setDisabled(await call_on_purchase());
     };
 
     return (
@@ -68,8 +66,8 @@ function ShopBox({
                     ) : (
                         ""
                     )}
-                    <button disabled={_disabled} onClick={Purchase} className="button-field fixed-100">
-                        {_disabled ? "Already Bought" : "Buy"}
+                    <button disabled={disabled} onClick={Purchase} className="button-field fixed-100">
+                        {disabled ? "Already Bought" : "Buy"}
                     </button>
                 </div>
             ) : (
