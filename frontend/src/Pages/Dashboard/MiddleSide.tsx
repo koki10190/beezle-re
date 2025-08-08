@@ -62,9 +62,9 @@ function RightSide({ setPage }: { setPage: any }) {
         const middle = document.querySelector(".side-middle") as HTMLDivElement;
         const right = document.querySelector(".side-right") as HTMLDivElement;
 
-        middle.style.display = isExpanded ? "block" : "none";
-        right.style.display = isExpanded ? "none" : "flex";
-        right.style.width = isExpanded ? "25%" : "100%";
+        // middle.style.display = isExpanded ? "block" : "none";
+        // right.style.display = isExpanded ? "none" : "flex";
+        // right.style.width = isExpanded ? "25%" : "100%";
 
         setExpanded(!isExpanded);
     };
@@ -88,12 +88,55 @@ function RightSide({ setPage }: { setPage: any }) {
 
     return (
         <>
-            <div className="page-sides side-right">
-                <DashboardButton onClick={() => setPage(Pages.REPORTS)} iconClass="fa-solid fa-flag" text="Reports" style={undefined} />
-                <DashboardButton onClick={() => setPage(Pages.BAN_USER)} iconClass="fa-solid fa-hammer-crash" text="Ban User" style={undefined} />
-                <DashboardButton onClick={() => setPage(Pages.DELETE_POST)} iconClass="fa-solid fa-trash" text="Delete Post" style={undefined} />
+            <div
+                style={
+                    window_width < 1100
+                        ? {
+                              display: "flex",
+                              backgroundColor: "rgba(0,0,0,0.7)",
+                              position: "absolute",
+                              width: "100%",
+                              borderLeft: "none",
+                              opacity: !isExpanded ? "0" : "1",
+                              transition: "all .2s",
+                              visibility: !isExpanded ? "hidden" : "visible",
+                          }
+                        : {}
+                }
+                className="page-sides side-right"
+            >
                 <DashboardButton
-                    onClick={() => setPage(Pages.VERIFY_USER)}
+                    onClick={() => {
+                        setExpanded(false);
+                        setPage(Pages.REPORTS);
+                    }}
+                    iconClass="fa-solid fa-flag"
+                    text="Reports"
+                    style={undefined}
+                />
+                <DashboardButton
+                    onClick={() => {
+                        setExpanded(false);
+                        setPage(Pages.BAN_USER);
+                    }}
+                    iconClass="fa-solid fa-hammer-crash"
+                    text="Ban User"
+                    style={undefined}
+                />
+                <DashboardButton
+                    onClick={() => {
+                        setExpanded(false);
+                        setPage(Pages.DELETE_POST);
+                    }}
+                    iconClass="fa-solid fa-trash"
+                    text="Delete Post"
+                    style={undefined}
+                />
+                <DashboardButton
+                    onClick={() => {
+                        setExpanded(false);
+                        setPage(Pages.VERIFY_USER);
+                    }}
                     iconClass="fa-solid fa-badge-check"
                     text="Verify User"
                     style={undefined}

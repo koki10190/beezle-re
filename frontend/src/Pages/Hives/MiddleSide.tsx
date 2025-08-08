@@ -18,6 +18,7 @@ import HiveBox from "./HiveBox";
 enum HivePages {
     SEARCH,
     JOINED,
+    EXPLORE,
 }
 
 function MiddleSide() {
@@ -26,8 +27,9 @@ function MiddleSide() {
     const [search, setSearch] = useState("");
     const [hives, setHives] = useState<Array<BeezleHives.Hive>>([]);
     const [joinedHives, setJoinedHives] = useState<Array<BeezleHives.Hive>>([]);
+    const [exploreHives, setExploreHives] = useState<Array<BeezleHives.Hive>>([]);
+    const [exploreOffset, setExploreOffset] = useState(0);
     const [page, setPage] = useState<HivePages>(HivePages.SEARCH);
-    const [postOffset, setPostOffset] = useState(0);
 
     const Search = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -47,14 +49,75 @@ function MiddleSide() {
         setHives(res.data.hives);
     };
 
+    const handleScroll = async (event: UIEvent<HTMLDivElement>) => {
+        const element = event.target! as HTMLDivElement;
+        if (!(element.scrollHeight - element.scrollTop === element.clientHeight)) return;
+
+        // detected bottom
+
+        const res = await axios.get(`${api_uri}/api/hives/get/joined_hives`, {
+            params: {
+                offset: exploreOffset,
+            },
+        });
+        setJoinedHives(res.data.hives);
+        setExploreOffset(res.data.offset);
+    };
+
     const JoinedHives = async () => {
         if (joinedHives.length > 0) return;
+
         const res = await axios.get(`${api_uri}/api/hives/get/joined_hives`, GetFullAuth());
         setJoinedHives(res.data.hives);
     };
 
+    const ExploreHives = async () => {
+        const res = await axios.get(`${api_uri}/api/hives/explore`, {
+            params: {
+                offset: 0,
+            },
+            headers: GetAuthToken(),
+        });
+        setExploreHives(res.data.hives);
+        setExploreOffset(res.data.offset);
+    };
+
+    const PageToMap = ({ page }: { page: HivePages }) => {
+        switch (page) {
+            case HivePages.JOINED: {
+                return joinedHives.map((hive, index) => {
+                    return <HiveBox hive={hive} joined={true} key={hive.hive_id} />;
+                });
+            }
+            case HivePages.SEARCH: {
+                return hives.map((hive, index) => {
+                    return <HiveBox hive={hive} key={hive.hive_id} />;
+                });
+            }
+            case HivePages.EXPLORE: {
+                return exploreHives.map((hive, index) => {
+                    return <HiveBox hive={hive} key={hive.hive_id} />;
+                });
+            }
+        }
+    };
+
+    const PageToText = () => {
+        switch (page) {
+            case HivePages.JOINED: {
+                return "Joined Hives";
+            }
+            case HivePages.SEARCH: {
+                return "Searched Hives";
+            }
+            case HivePages.EXPLORE: {
+                return "Discover Hives";
+            }
+        }
+    };
+
     return (
-        <div className="page-sides side-middle home-middle">
+        <div onScroll={page === HivePages.EXPLORE ? handleScroll : () => {}} className="page-sides side-middle home-middle">
             <h1>
                 <i className="fa-solid fa-bee"></i> Hives
             </h1>
@@ -90,25 +153,31 @@ function MiddleSide() {
                         Create one yourself and be the bee queen!
                     </a>
                 </p>
-                <button
-                    style={{ display: "inline-block", marginRight: "10px" }}
-                    type="button"
-                    onClick={() => setPage(HivePages.SEARCH)}
-                    className="button-field button-field-blurple"
-                >
-                    <i className="fa-solid fa-bee"></i> Search Hives
-                </button>
-                <button
-                    style={{ display: "inline-block", marginRight: "10px" }}
-                    type="button"
-                    onClick={() => {
-                        setPage(HivePages.JOINED);
-                        JoinedHives();
-                    }}
-                    className="button-field button-field-blue"
-                >
-                    <i className="fa-solid fa-bee"></i> See Joined Hives
-                </button>
+                <div className="hive-button-section">
+                    <button type="button" onClick={() => setPage(HivePages.SEARCH)} className="button-field button-field-gray">
+                        <i className="fa-solid fa-bee"></i> Search Hives
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => {
+                            setPage(HivePages.JOINED);
+                            JoinedHives();
+                        }}
+                        className="button-field button-field-gray"
+                    >
+                        <i className="fa-solid fa-bee"></i> Joined Hives
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => {
+                            setPage(HivePages.EXPLORE);
+                            ExploreHives();
+                        }}
+                        className="button-field button-field-gray"
+                    >
+                        <i className="fa-solid fa-sparkles"></i> Discover Hives
+                    </button>
+                </div>
             </form>
             <hr
                 style={{
@@ -118,14 +187,8 @@ function MiddleSide() {
                 }}
                 className="divider"
             ></hr>
-            <p>{page === HivePages.SEARCH ? "Searched Hives:" : "Joined Hives:"}</p>
-            {page === HivePages.SEARCH
-                ? hives.map((hive, index) => {
-                      return <HiveBox hive={hive} key={hive.hive_id} />;
-                  })
-                : joinedHives.map((hive, index) => {
-                      return <HiveBox hive={hive} joined={true} key={hive.hive_id} />;
-                  })}
+            <p>{PageToText()}:</p>
+            <PageToMap page={page} />
         </div>
     );
 }

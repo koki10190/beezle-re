@@ -58,6 +58,11 @@
     gap: 10px;
     margin-bottom: 10px;
 }
+.hive-button-section {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+}
 
 .hive-page-post-selector {
     width: 100%;

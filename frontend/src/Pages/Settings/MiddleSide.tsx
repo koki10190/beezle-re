@@ -70,9 +70,9 @@ function RightSide({ setPage }: { setPage: any }) {
         const middle = document.querySelector(".side-middle") as HTMLDivElement;
         const right = document.querySelector(".side-right") as HTMLDivElement;
 
-        middle.style.display = isExpanded ? "block" : "none";
-        right.style.display = isExpanded ? "none" : "flex";
-        right.style.width = isExpanded ? "25%" : "100%";
+        // middle.style.display = isExpanded ? "block" : "none";
+        // right.style.display = isExpanded ? "none" : "flex";
+        // right.style.width = isExpanded ? "25%" : "100%";
 
         setExpanded(!isExpanded);
     };
@@ -83,7 +83,7 @@ function RightSide({ setPage }: { setPage: any }) {
                 let right = document.querySelector(".side-right") as HTMLDivElement;
                 middle.style.display = null;
                 middle.style.width = null;
-                right.removeAttribute("style");
+                // right.removeAttribute("style");
 
                 setExpanded(false);
             }
@@ -120,18 +120,77 @@ function RightSide({ setPage }: { setPage: any }) {
                     </button>
                 </div>
             </div>
-            <div className="page-sides side-right">
-                <SettingsButton onClick={() => setPage(Pages.DETAILS)} iconClass="fa-solid fa-id-badge" text="Details" style={undefined} />
-                <SettingsButton onClick={() => setPage(Pages.API)} iconClass="fa-solid fa-square-code" text="API" style={undefined} />
-                <SettingsButton onClick={() => setPage(Pages.REPORT)} iconClass="fa-solid fa-flag" text="Report" style={undefined} />
+            <div
+                style={
+                    window_width < 1100
+                        ? {
+                              display: "flex",
+                              backgroundColor: "rgba(0,0,0,0.7)",
+                              position: "absolute",
+                              width: "100%",
+                              borderLeft: "none",
+                              opacity: !isExpanded ? "0" : "1",
+                              transition: "all .2s",
+                              visibility: !isExpanded ? "hidden" : "visible",
+                          }
+                        : {}
+                }
+                className="page-sides side-right"
+            >
                 <SettingsButton
-                    onClick={() => setPage(Pages.CONNECTIONS)}
+                    onClick={() => {
+                        setPage(Pages.DETAILS);
+                        setExpanded(false);
+                    }}
+                    iconClass="fa-solid fa-id-badge"
+                    text="Details"
+                    style={undefined}
+                />
+                <SettingsButton
+                    onClick={() => {
+                        setPage(Pages.API);
+                        setExpanded(false);
+                    }}
+                    iconClass="fa-solid fa-square-code"
+                    text="API"
+                    style={undefined}
+                />
+                <SettingsButton
+                    onClick={() => {
+                        setPage(Pages.REPORT);
+                        setExpanded(false);
+                    }}
+                    iconClass="fa-solid fa-flag"
+                    text="Report"
+                    style={undefined}
+                />
+                <SettingsButton
+                    onClick={() => {
+                        setPage(Pages.CONNECTIONS);
+                        setExpanded(false);
+                    }}
                     iconClass="fa-solid fa-address-card"
                     text="Connections"
                     style={undefined}
                 />
-                <SettingsButton onClick={() => setPage(Pages.CUSTOM_EMOJIS)} iconClass="fa-solid fa-icons" text="Custom Emojis" style={undefined} />
-                <SettingsButton onClick={() => setPage(Pages.CHANGE_ACCOUNTS)} iconClass="fa-solid fa-users" text="Accounts" style={undefined} />
+                <SettingsButton
+                    onClick={() => {
+                        setPage(Pages.CUSTOM_EMOJIS);
+                        setExpanded(false);
+                    }}
+                    iconClass="fa-solid fa-icons"
+                    text="Custom Emojis"
+                    style={undefined}
+                />
+                <SettingsButton
+                    onClick={() => {
+                        setPage(Pages.CHANGE_ACCOUNTS);
+                        setExpanded(false);
+                    }}
+                    iconClass="fa-solid fa-users"
+                    text="Accounts"
+                    style={undefined}
+                />
                 {/* <SettingsButton onClick={() => setPage(Pages.POST_PREFERENCES)} iconClass="fa-solid fa-comment" text="Posts" style={undefined} /> */}
                 <SettingsButton redirect="/home" iconClass="fa-solid fa-home" text="Go Back" style={undefined} />
                 <SettingsButton

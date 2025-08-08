@@ -260,6 +260,15 @@ form > a {
     background-color: rgb(32, 32, 32);
 }
 
+.button-field-gray {
+    background-color: rgb(56, 56, 56);
+}
+
+.button-field-gray:hover,
+.button-field-gray:disabled {
+    background-color: rgb(42, 42, 42);
+}
+
 .button-field-blurple {
     background-color: rgb(81, 107, 255);
 }

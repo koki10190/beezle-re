@@ -314,7 +314,7 @@ aside li {
 }
 
 .mention-hover {
-    position: absolute;
+    position: fixed;
     width: fit-content;
     height: fit-content;
     padding: 15px;

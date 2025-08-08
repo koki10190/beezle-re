@@ -38,7 +38,7 @@ function PostTyper({ onSend, replying_to = "", hive_post = null }: { onSend: (da
 
     useEffect(() => {
         (async () => {
-            setSelfUser(GetUserPrivate());
+            setSelfUser(await fetchUserPrivate());
         })();
     }, []);
 

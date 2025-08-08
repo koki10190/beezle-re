@@ -20,7 +20,8 @@ function NotifPost({ post_data }: { post_data: Post }) {
 
     useEffect(() => {
         (async () => {
-            setUser(await fetchUserPublic(post_data.handle));
+            const us = await fetchUserPublic(post_data.handle);
+            setUser((us as any).error ? null : us);
         })();
     }, []);
 
@@ -58,8 +59,8 @@ function NotifPost({ post_data }: { post_data: Post }) {
                         ) : (
                             ""
                         )}{" "}
-                        {user.activity.trim() !== "" ? (
-                            <span style={{ color: "white" }}>- {sanitize(user.activity.replace(/(.{35})..+/, "$1…"), { allowedTags: [] })}</span>
+                        {user?.activity?.trim() !== "" ? (
+                            <span style={{ color: "white" }}>- {sanitize(user?.activity?.replace(/(.{35})..+/, "$1…"), { allowedTags: [] })}</span>
                         ) : (
                             ""
                         )}

@@ -10,7 +10,7 @@ import { FetchPost } from "../../functions/FetchPost";
 import { api_uri } from "../../links";
 import axios from "axios";
 import { fetchUserPublic } from "../../functions/fetchUserPublic";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import "./Post.css";
 import "../../Components/PostBox.css";
 import moment from "moment";
@@ -41,6 +41,7 @@ interface ReactionStruct {
 
 function MiddleSide() {
     const { post_id } = useParams();
+    const navigate = useNavigate();
     const [post, setPost] = useState<Post>();
     const [replies, setReplies] = useState<Array<Post>>([]);
     const [self_user, setSelfUser] = useState<UserPrivate>();
@@ -96,7 +97,7 @@ function MiddleSide() {
             }
 
             if (post_res.error) {
-                window.location.href = "/not-found";
+                navigate("/not-found");
             }
 
             if (post_res.repost) {
@@ -676,7 +677,7 @@ function MiddleSide() {
                     </div>
                 </div>
                 <Divider />
-                <PostTyper replying_to={post ? post.post_id : ""} onSend={OnReplySend} />
+                <PostTyper hive_post={post?.hive_post ?? null} replying_to={post ? post.post_id : ""} onSend={OnReplySend} />
                 <Divider />
                 {self_user
                     ? replies.map((post: Post) => {

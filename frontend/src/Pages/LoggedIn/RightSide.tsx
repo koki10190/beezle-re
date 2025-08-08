@@ -56,9 +56,9 @@ function RightSide() {
         const middle = document.querySelector(".side-middle") as HTMLDivElement;
         const right = document.querySelector(".side-right") as HTMLDivElement;
 
-        middle.style.display = isExpanded ? "block" : "none";
-        right.style.display = isExpanded ? "none" : "flex";
-        right.style.width = isExpanded ? "25%" : "100%";
+        // middle.style.display = isExpanded ? "block" : "none";
+        // right.style.display = isExpanded ? "none" : "flex";
+        // right.style.width = isExpanded ? "25%" : "100%";
 
         setExpanded(!isExpanded);
     };
@@ -98,7 +98,23 @@ function RightSide() {
 
     return (
         <>
-            <div className="page-sides side-right">
+            <div
+                style={
+                    window_width < 1100
+                        ? {
+                              display: "flex",
+                              backgroundColor: "rgba(0,0,0,0.7)",
+                              position: "absolute",
+                              width: "100%",
+                              borderLeft: "none",
+                              opacity: !isExpanded ? "0" : "1",
+                              transition: "all .2s",
+                              visibility: !isExpanded ? "hidden" : "visible",
+                          }
+                        : {}
+                }
+                className="page-sides side-right"
+            >
                 <SettingsButton redirect="/home" iconClass="fa-solid fa-house" text="Home" style={undefined} />
                 <SettingsButton
                     redirect="/notifications"

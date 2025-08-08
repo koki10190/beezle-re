@@ -204,6 +204,7 @@ async fn main() -> std::io::Result<()> {
             .service(routes::api::hives::dashboard_kick::route)
             .service(routes::api::hives::dashboard_moderator::route)
             .service(routes::api::hives::dashboard_post_delete::route)
+            .service(routes::api::hives::explore::route)
             .route("/ws", web::get().to(socket::main_ws))
             .wrap(middleware::Logger::default())
     });
