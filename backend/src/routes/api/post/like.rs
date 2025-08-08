@@ -84,7 +84,7 @@ pub async fn route(
 
                 if post_op != data.claims.handle {
                     mongoose::add_coins(&client, post_op.as_str(), 25).await;                    
-                    mongoose::add_xp(&client, &data.claims.handle.as_str(), 25).await;
+                    mongoose::add_xp(&client, &data.claims.handle.as_str(), 10).await;
                 }
 
                 if post_op != data.claims.handle {
