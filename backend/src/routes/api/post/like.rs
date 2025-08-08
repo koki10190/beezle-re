@@ -78,9 +78,8 @@ pub async fn route(
                     },
                 )
                 .await;
+            
                 mongoose::add_coins(&client, data.claims.handle.as_str(), 20).await;
-                mongoose::add_xp(&client, &data.claims.handle.as_str(), 15).await;
-
                 check_like_milestone(&client, &post_op, post_unwrapped.get("likes").unwrap().as_array().unwrap().len() as i64 + 1).await;
 
                 if post_op != data.claims.handle {

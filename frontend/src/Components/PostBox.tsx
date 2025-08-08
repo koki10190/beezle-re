@@ -284,8 +284,6 @@ function PostBox({
             setReplyCount(post.reply_count ?? 0);
             if (post.is_reply) {
                 const reply_data = await FetchPost(post.replying_to);
-                console.log(post);
-                console.log("REPLYDATA", reply_data, post.replying_to);
                 setReplyingToPost(reply_data.error ? undefined : reply_data);
             }
             setSteamData(user);
@@ -625,7 +623,10 @@ function PostBox({
                     {allow_reply_attribute && !post.repost && replyChainCounter < MAX_REPLY_CHAIN && post.is_reply ? (
                         <>
                             <h1 className="post-replying-to">
-                                <i className="fa-solid fa-reply"></i> {`Replying to @${replyingToPost?.handle ?? "[REDACTED]"}`}
+                                <i className="fa-solid fa-reply"></i>{" "}
+                                {replyingToPost == undefined || (replyingToPost as any).error
+                                    ? "Replying to a deleted post"
+                                    : `Replying to @${replyingToPost.handle}`}
                             </h1>
                         </>
                     ) : (
