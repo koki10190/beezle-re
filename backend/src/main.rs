@@ -205,7 +205,7 @@ async fn main() -> std::io::Result<()> {
             .service(routes::api::hives::dashboard_moderator::route)
             .service(routes::api::hives::dashboard_post_delete::route)
             .route("/ws", web::get().to(socket::main_ws))
-            // .wrap(middleware::Logger::default())
+            .wrap(middleware::Logger::default())
     });
 
     beezle::print("Started HTTP Server");

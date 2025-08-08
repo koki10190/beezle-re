@@ -49,6 +49,7 @@ function MiddleSide() {
     const [isLiked, setLiked] = useState(false);
     const [isReposted, setReposted] = useState(false);
     const [isBookmarked, setBookmarked] = useState(false);
+    const [hive, setHive] = useState<BeezleHives.Hive>();
     const [isPinned, setPinned] = useState(false);
     const [LikeCount, setLikeCount] = useState(0);
     const [RepostCount, setRepostCount] = useState(0);
@@ -78,6 +79,21 @@ function MiddleSide() {
             console.log("foreach");
             const replies_res = await axios.get(`${api_uri}/api/post/get/replies?post_id=${post_id}`, GetFullAuth());
             let post_res = await FetchPost(post_id);
+
+            if (post_res.hive_post) {
+                console.log("HIVE", post_res.hive_post);
+                axios
+                    .get(`${api_uri}/api/hives/get`, {
+                        params: {
+                            handle: post_res.hive_post,
+                        },
+                        headers: GetAuthToken(),
+                    })
+                    .then((res) => {
+                        const hive = res.data.hive as BeezleHives.Hive;
+                        setHive(hive);
+                    });
+            }
 
             if (post_res.error) {
                 window.location.href = "/not-found";
@@ -441,6 +457,20 @@ function MiddleSide() {
                             {post.repost ? (
                                 <h4 onClick={() => (window.location.href = `/profile/${post.handle}`)} className="post-attr">
                                     <i className="fa-solid fa-repeat"></i> Repost by @{post.handle}
+                                </h4>
+                            ) : (
+                                ""
+                            )}
+
+                            {post.hive_post ? (
+                                <h4 onClick={() => (window.location.href = `/hive/${hive?.hive_id}`)} className="post-attr">
+                                    <div
+                                        style={{
+                                            backgroundImage: `url(${hive?.icon})`,
+                                        }}
+                                        className="post-attrib-hive"
+                                    ></div>{" "}
+                                    In Hive "{hive?.name ?? "Not Found"}"
                                 </h4>
                             ) : (
                                 ""

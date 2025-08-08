@@ -167,7 +167,7 @@ function MiddleSide() {
                         <h5>
                             <i className="fa-solid fa-bee" /> Description
                         </h5>
-                        <p>{hive.description}</p>
+                        <p style={{ whiteSpace: "pre-line" }}>{hive.description}</p>
                     </div>
                 </div>
                 {hive.owner === self.handle ? (

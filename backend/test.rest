@@ -7,3 +7,12 @@ Content-Type: application/json
   "email": "w@gmail.com",
   "password": "1234567890"
 }
+
+###
+POST http://localhost:3000/api/user/check_has_notif
+Content-Type: application/json
+Authorization: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJoYW5kbGUiOiJrb2tpIiwidXNlcm5hbWUiOiJrb2tpIiwiZW1haWwiOiJsdWthb2R6ZWxhc2h2aWxpQGdtYWlsLmNvbSIsImhhc2hfcGFzc3dvcmQiOiIkMmIkMTIkMnZoaHRtQW1EQmVjWHdZY2QzOTRmLnVRSlptNTNLWkg2bXMwNmxFUExaT3lJeWhvVFlFcFciLCJleHAiOjI1MjQ2MDgwMDAsImJhZGdlcyI6WzAsMiwzXX0.hXFkGEcd81iRwwDD51HDySngnGaNrnZGFVpgB-pN1Wg
+
+{
+  "handle": "this_camille"
+}

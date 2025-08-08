@@ -22,7 +22,6 @@ pub async fn route(
     body: web::Json<FollowData>,
     client: web::Data<mongodb::Client>,
     req: HttpRequest,
-    ws_sessions: web::Data<Mutex<HashMap<String, actix_ws::Session>>>
 ) -> impl Responder {
     let token_data = decode::<mongoose::structures::user::JwtUser>(
         &get_token(&req).unwrap(),

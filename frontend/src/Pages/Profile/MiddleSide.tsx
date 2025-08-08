@@ -254,6 +254,7 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                         headers: GetAuthToken(),
                     },
                 );
+                console.log(hasNotif);
 
                 setHasNotif(hasNotif.data.has);
                 if (hasNotif.data.error) console.error(hasNotif.data.error);
@@ -409,7 +410,7 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                         hasNotif ? (
                             <button
                                 onClick={SetNotificationForSelf}
-                                style={{ width: "50px", marginTop: "50px" }}
+                                style={{ marginTop: "50px" }}
                                 className="button-field button-field-red profile-edit-button"
                             >
                                 <i className="fa-solid fa-bell-on" />
