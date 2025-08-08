@@ -164,16 +164,15 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
 
     const FetchLastfmData = async () => {
         try {
-            if (!user.connections?.lastfm?.username || !user.connections?.lastfm?.show_scrobbling) return;
+            if (!user.connections?.lastfm?.username) return;
+            const res_user = await axios.get(`${api_uri}/api/lastfm/get_user?username=${user.connections.lastfm.username}`, GetFullAuth());
+            setLastfmUserData(res_user.data?.error ? null : res_user.data);
 
+            if (!user.connections?.lastfm?.show_scrobbling) return;
             const res = await axios.get(`${api_uri}/api/lastfm/now_playing?username=${user.connections.lastfm.username}`, GetFullAuth());
             const data = res.data;
 
             setLastfmData(data.error ? null : data);
-
-            const res_user = await axios.get(`${api_uri}/api/lastfm/get_user?username=${user.connections.lastfm.username}`, GetFullAuth());
-            console.log(res_user.data);
-            setLastfmUserData(res_user.data?.error ? null : res_user.data);
         } catch (e) {
             console.log(e);
         }
@@ -270,6 +269,7 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
             if (steam_ps_res.data) setSteamUserData(steam_ps_res.data as Steam.PlayerSummary);
 
             FetchLastfmData();
+            console.log("ksdagjafkjgajkg");
             FetchSpotifyData();
             setInterval(() => {
                 FetchSpotifyData();
@@ -349,6 +349,16 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                             className={`status-indicator-profile ${
                                 user.handle == self.handle ? CStatus(user?.status_db ?? "offline") : CStatus(user?.status ?? "offline")
                             }`}
+                            style={
+                                AVATAR_SHAPES[user?.customization?.square_avatar]
+                                    ? AVATAR_SHAPES[user?.customization?.square_avatar].name !== "Circle Avatar Shape"
+                                        ? {
+                                              bottom: "-5px",
+                                              right: "-5px",
+                                          }
+                                        : {}
+                                    : {}
+                            }
                         ></div>
                     </div>
                     <p className="username">
@@ -504,6 +514,8 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                                                 },
                                             );
                                         }}
+                                        target="_blank"
+                                        href={`https://discord.com/users/${user.connections.discord.data.discord_id}`}
                                     >
                                         <i className="fa-brands fa-discord"></i> Discord:{" "}
                                         <div

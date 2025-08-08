@@ -18,16 +18,28 @@ function SettingsButton({
     text,
     style,
     options,
+    force_redirect = false,
 }: {
     redirect: string;
     iconClass: string;
     text: string;
     style: any | undefined;
     options?: any | undefined;
+    force_redirect?: boolean;
 }) {
     const navigate = useNavigate();
     return (
-        <a style={style ? style : {}} onClick={() => navigate(redirect, options)} className="settings-button">
+        <a
+            style={style ? style : {}}
+            onClick={() => {
+                if (force_redirect) {
+                    window.location.href = redirect;
+                } else {
+                    navigate(redirect, options);
+                }
+            }}
+            className="settings-button"
+        >
             <i className={iconClass}></i> <span>{text}</span>
         </a>
     );
@@ -55,7 +67,8 @@ function RightSide() {
             if (window.innerWidth > 1100) {
                 let middle = document.querySelector(".side-middle") as HTMLDivElement;
                 let right = document.querySelector(".side-right") as HTMLDivElement;
-                middle.removeAttribute("style");
+                middle.style.display = null;
+                middle.style.width = null;
                 right.removeAttribute("style");
 
                 setExpanded(false);
@@ -90,6 +103,7 @@ function RightSide() {
                 <SettingsButton
                     redirect="/notifications"
                     iconClass="fa-solid fa-bell"
+                    force_redirect={true}
                     text={`Notifs (${notifCount})`}
                     style={{ color: notifColor }}
                 />

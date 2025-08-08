@@ -74,8 +74,8 @@ function RightSide({ setPage }: { setPage: any }) {
             if (window.innerWidth > 1100) {
                 let middle = document.querySelector(".side-middle") as HTMLDivElement;
                 let right = document.querySelector(".side-right") as HTMLDivElement;
-                middle.removeAttribute("style");
-                right.removeAttribute("style");
+                middle.style.display = null;
+                right.style.width = null;
 
                 setExpanded(false);
             }

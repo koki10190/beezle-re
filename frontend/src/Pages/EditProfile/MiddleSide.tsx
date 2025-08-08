@@ -59,6 +59,7 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
     const [bgEnabled, setBgEnabled] = useState(user.customization?.profile_image?.enabled ?? false);
     const [bgRepeat, setBgRepeat] = useState(user.customization?.profile_image?.repeat ?? false);
     const [bgSize, setBgSize] = useState<ProfileImageSize>("");
+    const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
     const [bgImgData, setBgImgData] = useState<ProfileImage>(
         user.customization?.profile_image ?? {
@@ -74,6 +75,11 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
     const [steamInventory, setSteamInventory] = useState<Steam.InventoryJSON>();
 
     useEffect(() => {
+        const onResize = () => {
+            setWindowWidth(window.innerWidth);
+        };
+        window.addEventListener("resize", onResize);
+
         (async () => {
             if (!user.connections?.steam?.id) return;
             // const steam_inventory_res = await axios.get(`${api_uri}/api/connections/steam_get_inventory`, {
@@ -406,7 +412,7 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
                                     return old;
                                 });
                             }}
-                            defaultValue={"none"}
+                            defaultValue={bgImgData?.size ?? "none"}
                             style={{ marginTop: "-10px", width: "100%" }}
                             className="input-field"
                         >
@@ -490,6 +496,7 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
             <button ref={buttonRef} type="submit" className="button-field fixed-100">
                 Save Changes
             </button>
+            {windowWidth < 1100 ? <div style={{ marginBottom: "150px" }}></div> : ""}
         </form>
     );
 }
