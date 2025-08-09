@@ -50,23 +50,6 @@ pub async fn route(
             _document.insert("status", if status {status_string} else {"offline"});
             _document.insert("status_db", status_string);
 
-            let connections = _document.get("connections");
-            match connections {
-                Some(cons) => {
-                    let con_doc = cons.as_document().unwrap();
-                    let steam_con = con_doc.get("steam");
-
-                    if let Some(steam) = steam_con {
-                        let id = steam.as_document().unwrap().get("id").unwrap().as_str().unwrap();
-                        let game_data = get_steam_playing_now(id).await;
-                        if let Ok(game) = game_data {
-                            _document.insert("steam_data", game);
-                        }
-                    }
-                }
-                _ => {}
-            }
-
             HttpResponse::Ok().json(_document)
         },
     }

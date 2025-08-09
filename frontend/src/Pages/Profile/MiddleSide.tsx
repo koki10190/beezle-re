@@ -264,7 +264,14 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                 setPinnedPost(post.error ? null : post);
             }
 
-            setSteamData(Object.keys(user?.steam_data ?? {}).length > 0 ? user.steam_data[Object.keys(user.steam_data)[0]].data : null);
+            if (user?.connections?.steam?.id) {
+                const steam_res = await axios.get(`${api_uri}/api/connections/steam_get_game?steam_id=${user?.connections?.steam?.id}`, {
+                    headers: GetAuthToken(),
+                });
+                const steam_data = steam_res.data;
+                if (steam_data) setSteamData(steam_data[Object.keys(steam_data)[0]].data);
+            }
+            // setSteamData(Object.keys(user?.steam_data ?? {}).length > 0 ? user.steam_data[Object.keys(user.steam_data)[0]].data : null);
             const steam_ps_res = await axios.get(`${api_uri}/api/connections/steam_get?steam_id=${user.connections.steam.id}`, GetFullAuth());
             if (steam_ps_res.data) setSteamUserData(steam_ps_res.data as Steam.PlayerSummary);
 
@@ -477,7 +484,7 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                         <p className="profile-container-header">Joined At</p>
                         <p className="about_me">{joinDate}</p>
                     </div>
-                    {user.activity.replace(/ /g, "") != "" ? (
+                    {user?.activity?.replace(/ /g, "") != "" ? (
                         <div
                             style={{
                                 background: gradient,

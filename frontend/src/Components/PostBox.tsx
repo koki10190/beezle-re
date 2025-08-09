@@ -286,14 +286,14 @@ function PostBox({
                 const reply_data = await FetchPost(post.replying_to);
                 setReplyingToPost(reply_data.error ? undefined : reply_data);
             }
-            setSteamData(user);
-            // if (user?.connections?.steam?.id) {
-            //     const steam_res = await axios.get(`${api_uri}/api/connections/steam_get_game?steam_id=${user?.connections?.steam?.id}`, {
-            //         headers: GetAuthToken(),
-            //     });
-            //     const steam_data = steam_res.data;
-            //     if (steam_data) setSteamData(steam_data[Object.keys(steam_data)[0]].data);
-            // }
+            // setSteamData(user);
+            if (user?.connections?.steam?.id) {
+                const steam_res = await axios.get(`${api_uri}/api/connections/steam_get_game?steam_id=${user?.connections?.steam?.id}`, {
+                    headers: GetAuthToken(),
+                });
+                const steam_data = steam_res.data;
+                if (steam_data) setSteamData(steam_data[Object.keys(steam_data)[0]].data);
+            }
 
             setSteamData(Object.keys(user?.steam_data ?? {}).length > 0 ? user.steam_data[Object.keys(user.steam_data)[0]].data : null);
 

@@ -118,7 +118,7 @@ function FollowBox({ handle, self_user }: FollowBoxData) {
                         ""
                     )}{" "}
                     {user?.activity.replace(/ /g, "") !== "" && user ? (
-                        <span style={{ color: "white" }}>- {sanitize(user.activity.replace(/(.{35})..+/, "$1…"), { allowedTags: [] })}</span>
+                        <span style={{ color: "white" }}>- {sanitize(user?.activity?.replace(/(.{35})..+/, "$1…"), { allowedTags: [] })}</span>
                     ) : (
                         ""
                     )}
