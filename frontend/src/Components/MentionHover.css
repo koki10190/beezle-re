@@ -1,0 +1,52 @@
+.mention-pfp {
+    background-color: black;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    width: 50px;
+    height: 50px;
+}
+
+.mention-hover {
+    position: fixed;
+    width: fit-content;
+    height: fit-content;
+    padding: 15px;
+    border-radius: 5px;
+    background-color: #101010;
+    border: 1px solid black;
+    z-index: 1;
+}
+
+.mention-hover .pfp {
+    background-color: white;
+    width: 50px;
+    height: 50px;
+    border-radius: 100%;
+    margin: 0;
+}
+
+.mention-hover .mention-hover-user-details {
+    margin: 0;
+    margin-top: -45px;
+    margin-left: 60px;
+}
+
+.mention-hover-user-details .mention-username {
+    margin: 0;
+    font-size: 20px;
+    display: block;
+}
+
+.mention-hover-user-details .mention-handle {
+    margin: 0;
+    font-size: 14px;
+    display: block;
+    color: #ffffffa0;
+}
+
+.mention-hover .mention-about-me {
+    margin-top: 20px;
+    white-space: pre-line;
+    margin-bottom: -15px;
+}

@@ -145,7 +145,7 @@ function APICalls() {
                                 emoji_id: "string",
                             }}
                             method="POST"
-                            path="/api/user/uplolad_emoji"
+                            path="/api/user/upload_emoji"
                             desc={"Upload a custom emoji, costs 500 of your coins"}
                         />
                     </APICategory>
@@ -375,7 +375,6 @@ function APICalls() {
                         <APICall
                             response={{
                                 hashtags: "Array<typeof Hashtag> (Check GitHub)",
-                                offset: "number (your offset + 5)",
                             }}
                             payload={null}
                             method="GET"

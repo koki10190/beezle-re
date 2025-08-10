@@ -30,6 +30,8 @@ import ShadeColor from "../../functions/ShadeColor";
 import GetAuthToken from "../../functions/GetAuthHeader";
 import GetFullAuth from "../../functions/GetFullAuth";
 import CStatus from "../../functions/StatusToClass";
+import RightClickMenu from "../../Components/Menus/RightClickMenu";
+import useMousePos from "../../hooks/useMousePos";
 
 interface ReactionsInter {
     [key: string]: PostReaction[];
@@ -55,6 +57,7 @@ function MiddleSide() {
     const [LikeCount, setLikeCount] = useState(0);
     const [RepostCount, setRepostCount] = useState(0);
     const [bgGradient, setBgGradient] = useState("linear-gradient(#000000, #000000)");
+    const [menuOpened, setMenuOpened] = useState(false);
 
     const [isLikeHovered, setLikeHovered] = useState(false);
     const [isRepostHovered, setRepostHovered] = useState(false);
@@ -72,6 +75,8 @@ function MiddleSide() {
     const ReactionInteraction = () => {
         setReactionOpened(!reactionOpened);
     };
+
+    const mousePos = useMousePos();
 
     useEffect(() => {
         (async () => {
@@ -611,22 +616,37 @@ function MiddleSide() {
                         <a onClick={ReactionInteraction} className="post-inter-orange">
                             <i className="fa-solid fa-face-awesome"></i>{" "}
                         </a>
-                        <a onClick={BookmarkInteraction} style={isBookmarked ? { color: "rgb(60, 193, 255)" } : {}} className="post-inter-blue">
-                            <i className=" fa-solid fa-bookmark"></i>
-                        </a>
-                        <a onClick={PinInteraction} style={isPinned ? { color: "rgb(60, 193, 255)" } : {}} className="post-inter-blue">
-                            <i className=" fa-solid fa-thumbtack"></i>
+
+                        <a onClick={() => setMenuOpened((old) => !old)} className="post-inter">
+                            <i className="fa-solid fa-ellipsis"></i>
                         </a>
 
-                        {self_user?.handle == post?.handle && !post?.repost ? (
-                            <>
-                                <a onClick={EditInteraction} className="post-inter">
-                                    <i className=" fa-solid fa-pen-to-square"></i>
-                                </a>
-                                <a onClick={DeleteInteraction} className="post-inter-red">
-                                    <i className=" fa-solid fa-trash"></i>
-                                </a>
-                            </>
+                        {menuOpened ? (
+                            <RightClickMenu
+                                onClickAnywhere={() => setTimeout(() => setMenuOpened(false), 100)}
+                                mouse_pos={mousePos}
+                                icon={<i className="fa-solid fa-envelope" />}
+                                name="Post Interactions"
+                            >
+                                {self_user.handle === post.handle && !post.repost ? (
+                                    <>
+                                        <button onClick={EditInteraction} className="rcm-button">
+                                            <i className="fa-solid fa-pen-to-square" /> Edit Post
+                                        </button>
+                                        <button onClick={DeleteInteraction} className="rcm-button post-inter-red">
+                                            <i className=" fa-solid fa-trash"></i> Delete Post
+                                        </button>
+                                    </>
+                                ) : (
+                                    ""
+                                )}
+                                <button onClick={PinInteraction} className="rcm-button post-inter-blue">
+                                    <i className="fa-solid fa-thumbtack" /> {isPinned ? "Unpin Post" : "Pin Post"}
+                                </button>
+                                <button onClick={BookmarkInteraction} className="rcm-button post-inter-blue">
+                                    <i className="fa-solid fa-bookmark" /> {isBookmarked ? "Unbookmark" : "Bookmark"}
+                                </button>
+                            </RightClickMenu>
                         ) : (
                             ""
                         )}

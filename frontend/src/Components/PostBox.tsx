@@ -32,6 +32,7 @@ import GetFullAuth from "../functions/GetFullAuth";
 import CStatus from "../functions/StatusToClass";
 import { useQuery } from "react-query";
 import { FetchPost } from "../functions/FetchPost";
+import RightClickMenu from "./Menus/RightClickMenu";
 
 interface PostBoxData {
     post: Post;
@@ -83,6 +84,8 @@ function PostBox({
     const [isLiked, setLiked] = useState(false);
     const [isReposted, setReposted] = useState(false);
     const [isBookmarked, setBookmarked] = useState(false);
+    const [isPinned, setPinned] = useState(self_user?.pinned_post === post?.post_id);
+    const [menuOpened, setMenuOpened] = useState(false);
     const [LikeCount, setLikeCount] = useState(post.likes?.length ?? 0);
     const [RepostCount, setRepostCount] = useState(post.reposts?.length ?? 0);
     const [ReplyCount, setReplyCount] = useState(0);
@@ -295,7 +298,7 @@ function PostBox({
                 if (steam_data) setSteamData(steam_data[Object.keys(steam_data)[0]].data);
             }
 
-            setSteamData(Object.keys(user?.steam_data ?? {}).length > 0 ? user.steam_data[Object.keys(user.steam_data)[0]].data : null);
+            // setSteamData(Object.keys(user?.steam_data ?? {}).length > 0 ? user.steam_data[Object.keys(user.steam_data)[0]].data : null);
 
             // Set Reactions
             // const react_data = (await axios.get(`${api_uri}/api/post/get/reacts?post_id=${post.post_id}`, GetFullAuth())).data as ReactionsData;
@@ -528,9 +531,38 @@ function PostBox({
         if (reply_box) window.location.reload();
     };
 
+    const PinInteraction = async () => {
+        if (isPinned) {
+            await axios.post(
+                `${api_uri}/api/post/pin`,
+                {
+                    post_id: post!.post_id,
+                    remove_pin: true,
+                },
+                {
+                    headers: GetAuthToken(),
+                },
+            );
+            setPinned(false);
+            return;
+        }
+
+        const res = await axios.post(
+            `${api_uri}/api/post/pin`,
+            {
+                post_id: post!.post_id,
+                remove_pin: false,
+            },
+            {
+                headers: GetAuthToken(),
+            },
+        );
+
+        setPinned(true);
+    };
+
     return (
         <>
-            {mention_hover ? <MentionHover user={mention_hover} mousePos={mousePos} /> : ""}
             <div
                 style={
                     !box
@@ -545,6 +577,8 @@ function PostBox({
                 }
                 className={"post-box" + className}
             >
+                {mention_hover ? <MentionHover user={mention_hover} mousePos={mousePos} /> : ""}
+
                 {allow_reply_attribute &&
                 !post.repost &&
                 post?.is_reply &&
@@ -780,22 +814,38 @@ function PostBox({
                         <a onClick={ReactionInteraction} className="post-inter-orange">
                             <i className="fa-solid fa-face-awesome"></i>{" "}
                         </a>
-                        <a onClick={BookmarkInteraction} style={isBookmarked ? { color: "rgb(60, 193, 255)" } : {}} className="post-inter-blue">
-                            <i className=" fa-solid fa-bookmark"></i>
-                        </a>
-
-                        {self_user.handle == post.handle && !post.repost ? (
-                            <>
-                                <a onClick={EditInteraction} className="post-inter">
-                                    <i className=" fa-solid fa-pen-to-square"></i>
-                                </a>
-                                <a onClick={DeleteInteraction} className="post-inter-red">
-                                    <i className=" fa-solid fa-trash"></i>
-                                </a>
-                            </>
+                        {menuOpened ? (
+                            <RightClickMenu
+                                onClickAnywhere={() => setTimeout(() => setMenuOpened(false), 100)}
+                                mouse_pos={mousePos}
+                                icon={<i className="fa-solid fa-envelope" />}
+                                name="Post Interactions"
+                            >
+                                {self_user.handle === post.handle && !post.repost ? (
+                                    <>
+                                        <button onClick={EditInteraction} className="rcm-button">
+                                            <i className="fa-solid fa-pen-to-square" /> Edit Post
+                                        </button>
+                                        <button onClick={DeleteInteraction} className="rcm-button post-inter-red">
+                                            <i className=" fa-solid fa-trash"></i> Delete Post
+                                        </button>
+                                    </>
+                                ) : (
+                                    ""
+                                )}
+                                <button onClick={PinInteraction} className="rcm-button post-inter-blue">
+                                    <i className="fa-solid fa-thumbtack" /> {isPinned ? "Unpin Post" : "Pin Post"}
+                                </button>
+                                <button onClick={BookmarkInteraction} className="rcm-button post-inter-blue">
+                                    <i className="fa-solid fa-bookmark" /> {isBookmarked ? "Unbookmark" : "Bookmark"}
+                                </button>
+                            </RightClickMenu>
                         ) : (
                             ""
                         )}
+                        <a onClick={() => setMenuOpened((old) => !old)} className="post-inter">
+                            <i className=" fa-solid fa-ellipsis"></i>
+                        </a>
                     </div>
                 ) : (
                     ""

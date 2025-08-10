@@ -2,6 +2,7 @@ import parseURLs from "../functions/parseURLs";
 import { AVATAR_SHAPES, AvaterShape } from "../types/cosmetics/AvatarShapes";
 import { UserPublic } from "../types/User";
 import RepToIcon from "./RepToIcon";
+import "./MentionHover.css";
 
 function MentionHover({ user, mousePos }: { user: UserPublic; mousePos: { x: number; y: number } }) {
     return (
@@ -28,11 +29,11 @@ function MentionHover({ user, mousePos }: { user: UserPublic; mousePos: { x: num
                                 : "100%"
                             : "100%",
                 }}
-                className="pfp"
+                className="mention-pfp"
             ></div>
             <div className="mention-hover-user-details">
-                <p className="username">{user?.username ?? "Username"}</p>
-                <p className="handle">
+                <p className="mention-username">{user?.username ?? "Username"}</p>
+                <p className="mention-handle">
                     @{user?.handle ?? "handle"} <RepToIcon reputation={user?.reputation ?? 100} />{" "}
                     {true ? <span style={{ color: "white" }}> {user?.activity ? `- ${user.activity}` : ""}</span> : ""}
                 </p>

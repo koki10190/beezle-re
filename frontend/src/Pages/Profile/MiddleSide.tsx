@@ -270,10 +270,10 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                 });
                 const steam_data = steam_res.data;
                 if (steam_data) setSteamData(steam_data[Object.keys(steam_data)[0]].data);
+                const steam_ps_res = await axios.get(`${api_uri}/api/connections/steam_get?steam_id=${user.connections.steam.id}`, GetFullAuth());
+                if (steam_ps_res.data) setSteamUserData(steam_ps_res.data as Steam.PlayerSummary);
             }
             // setSteamData(Object.keys(user?.steam_data ?? {}).length > 0 ? user.steam_data[Object.keys(user.steam_data)[0]].data : null);
-            const steam_ps_res = await axios.get(`${api_uri}/api/connections/steam_get?steam_id=${user.connections.steam.id}`, GetFullAuth());
-            if (steam_ps_res.data) setSteamUserData(steam_ps_res.data as Steam.PlayerSummary);
 
             FetchLastfmData();
             console.log("ksdagjafkjgajkg");
@@ -590,14 +590,14 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                                         <i className="fa-brands fa-spotify"></i> Spotify:{" "}
                                         <div
                                             style={{
-                                                backgroundImage: `url(${user.connections.spotify.images[0].url})`,
+                                                backgroundImage: `url(${user?.connections?.spotify?.images[0]?.url})`,
                                                 verticalAlign: "middle",
                                                 width: "20px",
                                                 height: "20px",
                                             }}
                                             className="connections-pfp"
                                         ></div>{" "}
-                                        {user.connections.spotify.display_name}
+                                        {user?.connections?.spotify?.display_name}
                                     </a>
                                 ) : (
                                     ""
@@ -692,14 +692,14 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                     ) : (
                         ""
                     )}
-                    {spotifyData && spotifyData?.is_playing ? (
+                    {spotifyData && spotifyData?.is_playing && !(spotifyData as any).error ? (
                         <div
                             style={{
                                 background: gradient,
                                 cursor: "pointer",
                             }}
                             className="profile-container steam-container"
-                            onClick={() => window.open(`${spotifyData.item.external_urls.spotify}`)}
+                            onClick={() => window.open(`${spotifyData?.item.external_urls?.spotify}`)}
                         >
                             <p style={{ marginBottom: "5px" }} className="profile-container-header">
                                 <i className="fa-brands fa-spotify" /> Listening To Music
@@ -710,17 +710,17 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                                         className="spotify-game-header"
                                         style={{
                                             backgroundImage: `url(\"${
-                                                (spotifyData.item as Spotify.TrackObjectFull).album.images[0]?.url ??
+                                                (spotifyData?.item as Spotify.TrackObjectFull).album.images[0]?.url ??
                                                 "https://i.imgur.com/xSPEBeI.png"
                                             }\")`,
                                         }}
                                     ></div>
                                     <div className="spotify-game-name">
-                                        <p>{spotifyData.item.name}</p>
+                                        <p>{spotifyData?.item?.name}</p>
                                         <p className="steam-game-author">
                                             By{" "}
-                                            {(spotifyData.item as Spotify.TrackObjectFull).artists.map((artist, i) => {
-                                                if (i === (spotifyData.item as Spotify.TrackObjectFull).artists.length - 1) {
+                                            {(spotifyData?.item as Spotify.TrackObjectFull).artists.map((artist, i) => {
+                                                if (i === (spotifyData?.item as Spotify.TrackObjectFull).artists.length - 1) {
                                                     return artist.name.replace(/(.{16})..+/, "$1…");
                                                 } else {
                                                     return artist.name.replace(/(.{16})..+/, "$1…") + ", ";
@@ -730,9 +730,9 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                                     </div>
                                 </div>
                                 <ProgressBar
-                                    completed={spotifyData.progress_ms}
-                                    maxCompleted={spotifyData.item.duration_ms}
-                                    customLabel={msToMinutesAndSeconds(spotifyData.progress_ms)}
+                                    completed={spotifyData?.progress_ms}
+                                    maxCompleted={spotifyData?.item?.duration_ms}
+                                    customLabel={msToMinutesAndSeconds(spotifyData?.progress_ms)}
                                     className="spotify-progress-bar"
                                     barContainerClassName="spotify-pb-bar"
                                     bgColor={bgGradient}

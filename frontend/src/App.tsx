@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, redirect } from "react-router-dom";
+import React from "react";
 import Home from "./Home/Home";
 import LoggedIn_Home from "./Pages/LoggedIn/Home";
 import Bookmarks_Home from "./Pages/Bookmarks/Home";
@@ -16,30 +17,31 @@ import Following_Home from "./Pages/Following/Home";
 import Search_Home from "./Pages/Search/Home";
 import FollowingHome_Home from "./Pages/Home/Home";
 import Shop_Home from "./Pages/Shop/Home";
-import { api_uri } from "./links";
-import { useEffect, useState } from "react";
-import { fetchUserPrivate, GetUserPrivate } from "./functions/fetchUserPrivate";
-import Verify from "./Verify/Verify";
-import VerifyPass from "./Verify/VerifyPass";
-import Steam from "./Redirects/Steam";
-import { Slide, toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import NotFound from "./Pages/404/NotFound";
-import SpotifyAuth from "./Pages/Auth/SpotifyAuth";
-import { socket } from "./ws/socket";
-import Hashtag_Home from "./Pages/Hashtag/Hashtag_Home";
-import MostUsedTags_Home from "./Pages/MostUsedTags/MostUsedTags_Home";
-import DiscordAuth from "./Pages/Auth/DiscordAuth";
-import LastfmAuth from "./Pages/Auth/LastfmAuth";
-import APICalls from "./Pages/APICalls/APICalls";
-import { SERVER_ONLINE, ServerDownMessage } from "./functions/CheckServerStatus";
-import { QueryClient, QueryClientProvider, useQuery } from "react-query";
-import { UserPrivate } from "./types/User";
 import Hives_Home from "./Pages/Hives/Home";
 import HivesCreate_Home from "./Pages/HivesCreate/Home";
 import HivePage_Home from "./Pages/HivePage/Home";
 import EditHive_Home from "./Pages/EditHive/Home";
 import HiveDashboard_Home from "./Pages/HiveDashboard/Home";
+import Hashtag_Home from "./Pages/Hashtag/Hashtag_Home";
+import MostUsedTags_Home from "./Pages/MostUsedTags/MostUsedTags_Home";
+import DiscordAuth from "./Pages/Auth/DiscordAuth";
+import LastfmAuth from "./Pages/Auth/LastfmAuth";
+import APICalls from "./Pages/APICalls/APICalls";
+import NotFound from "./Pages/404/NotFound";
+import SpotifyAuth from "./Pages/Auth/SpotifyAuth";
+import Verify from "./Verify/Verify";
+import VerifyPass from "./Verify/VerifyPass";
+import Steam from "./Redirects/Steam";
+
+import { api_uri } from "./links";
+import { useEffect, useState } from "react";
+import { fetchUserPrivate, GetUserPrivate } from "./functions/fetchUserPrivate";
+import { Slide, toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { socket } from "./ws/socket";
+import { SERVER_ONLINE, ServerDownMessage } from "./functions/CheckServerStatus";
+import { QueryClient, QueryClientProvider, useQuery } from "react-query";
+import { UserPrivate } from "./types/User";
 
 enum UserStatus {
     ONLINE,
@@ -57,36 +59,6 @@ const query_client = new QueryClient();
 
 function App() {
     const [user, setUser] = useState<UserPrivate>();
-    socket.webSocket.onopen = async () => {
-        console.log("Open");
-        let _ = setInterval(async () => {
-            console.log("Intervalling Socket Connection..");
-            const user = await fetchUserPrivate();
-            if (!user) return;
-            localStorage.setItem("user_handle", user.handle);
-
-            socket.send("connect", {
-                handle: user.handle,
-            });
-
-            socket.send("ping", {
-                handle: user.handle,
-            });
-            console.log("Connected, sent a ping");
-
-            clearInterval(_);
-        }, 100);
-    };
-
-    socket.listen("pong", () => {
-        // console.log("Got a pong, sending a ping");
-        setTimeout(() => socket.send("ping", { handle: localStorage.getItem("user_handle") }), 5000);
-    });
-
-    socket.listen("ping", () => {
-        // console.log("Got a ping, sending a pong");
-        setTimeout(() => socket.send("pong", {}), 5000);
-    });
 
     socket.listen("from_other", (data: { message: string }) => {
         // console.log("ALERT! DATA GOT", data);

@@ -1,6 +1,7 @@
 import { toast } from "react-toastify";
 import { ws_uri } from "../links";
 import { SERVER_ONLINE, ServerDownMessage, SetServerStatus } from "../functions/CheckServerStatus";
+import { fetchUserPrivate } from "../functions/fetchUserPrivate";
 
 type ChannelCallback = (data: object) => void;
 
@@ -17,8 +18,15 @@ class Channel {
 class BeezleSocket {
     webSocket: WebSocket;
     channels: Map<string, Channel>;
+    interval: NodeJS.Timeout;
 
     constructor() {
+        this.Init();
+    }
+
+    public Init() {
+        clearInterval(this.interval);
+
         this.channels = new Map();
         this.webSocket = new WebSocket(ws_uri);
 
@@ -32,15 +40,54 @@ class BeezleSocket {
             }
         };
 
+        this.webSocket.onopen = async () => {
+            let _ = setInterval(async () => {
+                const user = await fetchUserPrivate();
+                if (!user) return;
+                localStorage.setItem("user_handle", user.handle);
+
+                socket.send("connect", {
+                    handle: user.handle,
+                });
+
+                socket.send("ping", {
+                    handle: user.handle,
+                });
+                console.log("Connected, sent a ping");
+                clearInterval(_);
+                console.log("Intervalling Socket Connection..");
+
+                this.interval = setInterval(() => {
+                    socket.send("connect", {
+                        handle: user.handle,
+                    });
+                }, 5000);
+            }, 100);
+        };
+
         this.webSocket.onclose = () => {
             SetServerStatus(false);
             ServerDownMessage();
             if (window.location.pathname != "/") {
                 setTimeout(() => {
-                    // window.location.pathname = "/";
+                    this.Init();
                 }, 1000);
             }
         };
+
+        this.webSocket.onerror = (err) => {
+            toast.error(`Web Socket threw an error: ${err}`);
+        };
+
+        this.listen("pong", () => {
+            // console.log("Got a pong, sending a ping");
+            setTimeout(() => this.send("ping", { handle: localStorage.getItem("user_handle") }), 5000);
+        });
+
+        this.listen("ping", () => {
+            // console.log("Got a ping, sending a pong");
+            setTimeout(() => this.send("pong", {}), 5000);
+        });
     }
 
     public send(channel: string, data: object) {
