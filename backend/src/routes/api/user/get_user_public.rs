@@ -39,13 +39,26 @@ pub async fn route(
             _document.remove("email");
             _document.remove("hash_password");
             _document.remove("notifications");
+            _document.remove("bookmarks");
             
             let connections = _document.get_mut("connections");
 
-            _document.remove("connections.spotify.access_token");
-            _document.remove("connections.spotify.refresh_token");
-            _document.remove("connections.discord.access_token");
-            _document.remove("connections.discord.refresh_token");
+            if let Some(con) = connections {
+                let doc = con.as_document_mut().expect("Moron");
+                let empty_doc = doc! {};
+
+                let discord = doc.get_mut("discord");
+                if let Some(d) = discord {
+                    d.as_document_mut().expect("no doc").remove("access_token");
+                    d.as_document_mut().expect("no doc").remove("refresh_token");
+                }
+
+                let spotify = doc.get_mut("spotify");
+                if let Some(d) = spotify {
+                    d.as_document_mut().expect("no doc").remove("access_token");
+                    d.as_document_mut().expect("no doc").remove("refresh_token");
+                }
+            }
 
             let status = is_user_online(&ws_sessions, &body.handle);
             let cloned = _document.clone();
