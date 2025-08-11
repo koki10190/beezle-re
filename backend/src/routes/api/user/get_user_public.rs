@@ -1,4 +1,4 @@
-use bson::{doc, Array, Document};
+use bson::{de::Error, doc, Array, Document};
 use jsonwebtoken::{decode, DecodingKey, EncodingKey, Header, Validation};
 use mail_send::mail_auth::flate2::Status;
 use serde::Deserialize;
@@ -37,9 +37,16 @@ pub async fn route(
         None => HttpResponse::Ok().json(doc! {"error": "Not Found!"}),
         Some(mut _document) => {
             _document.remove("email");
-            _document.remove("password");
+            _document.remove("hash_password");
             _document.remove("notifications");
             
+            let connections = _document.get_mut("connections");
+
+            _document.remove("connections.spotify.access_token");
+            _document.remove("connections.spotify.refresh_token");
+            _document.remove("connections.discord.access_token");
+            _document.remove("connections.discord.refresh_token");
+
             let status = is_user_online(&ws_sessions, &body.handle);
             let cloned = _document.clone();
             let status_string = cloned.get("status").unwrap_or(&bson::Bson::Null).as_str().unwrap_or("online");

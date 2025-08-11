@@ -152,3 +152,5 @@ certificate_tutorial.txt
 .gitignore
 index.js
 logcertfile
+*.rest
+./*.rest
