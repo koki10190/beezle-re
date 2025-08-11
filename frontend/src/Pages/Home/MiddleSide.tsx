@@ -12,6 +12,8 @@ import { Post } from "../../types/Post";
 import { RefreshPosts } from "../../functions/RefreshPosts";
 import GetFullAuth from "../../functions/GetFullAuth";
 import { toast } from "react-toastify";
+import { EnumToPageAPI, EnumToPageName, PostPageEnum } from "../../types/PageEnum";
+import GetAuthToken from "../../functions/GetAuthHeader";
 
 function MiddleSide() {
     const data: {
@@ -29,6 +31,52 @@ function MiddleSide() {
     const [posts, setPosts] = useState<Array<Post>>([]);
     const [self_user, setSelfUser] = useState<UserPrivate>();
     const [postOffset, setPostOffset] = useState(0);
+    const [page, setPage] = useState<PostPageEnum>(PostPageEnum.Home);
+    const [pageURI, setPageURI] = useState(EnumToPageAPI(PostPageEnum.Home));
+    const [pageText, setPageText] = useState(EnumToPageName(PostPageEnum.Home));
+    const [loading, setLoading] = useState(false);
+
+    const FetchPosts = async (offset: number, user: UserPrivate) => {
+        if (!user) return;
+        let body = {
+            offset,
+            filter_users: user.following,
+        };
+
+        if (page !== PostPageEnum.Home) delete body.filter_users;
+
+        if (offset < 1) {
+            setLoading(true);
+            setPosts([]);
+        }
+
+        try {
+            const posts = (await axios.post(`${api_uri}${pageURI}`, body, GetFullAuth())).data;
+            setPosts((old) => {
+                if (offset > 0) return [...old, ...posts.posts];
+
+                return posts.posts;
+            });
+            setPostOffset(posts.offset);
+        } catch (e) {
+            console.log(e);
+            const posts = (
+                await axios.get(`${api_uri}${pageURI}`, {
+                    params: body,
+                    headers: GetAuthToken(),
+                })
+            ).data;
+            setPosts((old) => {
+                if (offset > 0) return [...old, ...posts.posts];
+
+                return posts.posts;
+            });
+            console.log(posts);
+            setPostOffset(posts.offset);
+        }
+
+        setLoading(false);
+    };
 
     const handleScroll = async (event: UIEvent<HTMLDivElement>) => {
         const element = event.target! as HTMLDivElement;
@@ -38,18 +86,7 @@ function MiddleSide() {
 
         console.log("at bottom!");
         if (self_user?.is_bot) return console.error("Bot accounts cannot use the site.");
-        const posts = (
-            await axios.post(
-                `${api_uri}/api/post/get/following`,
-                {
-                    offset: postOffset,
-                    filter_users: self_user.following,
-                },
-                GetFullAuth(),
-            )
-        ).data;
-        setPosts((old) => [...old, ...posts.posts]);
-        setPostOffset(posts.offset);
+        FetchPosts(postOffset, self_user);
     };
 
     useEffect(() => {
@@ -57,21 +94,20 @@ function MiddleSide() {
             const m_user = (await fetchUserPrivate()) as UserPrivate;
             setSelfUser(m_user);
             if (m_user.is_bot) return toast.error("Bot accounts cannot use the site!");
-            const posts = (
-                await axios.post(
-                    `${api_uri}/api/post/get/following`,
-                    {
-                        offset: postOffset,
-                        filter_users: m_user.following,
-                    },
-                    GetFullAuth(),
-                )
-            ).data;
-            console.log("FOL", posts);
-            setPosts(posts.posts);
-            setPostOffset(posts.offset);
+            FetchPosts(0, m_user);
         })();
     }, []);
+
+    useEffect(() => {
+        const uri = EnumToPageAPI(page);
+        console.log(uri);
+        setPageURI(uri);
+        setPageText(EnumToPageName(page));
+    }, [page]);
+
+    useEffect(() => {
+        FetchPosts(0, self_user);
+    }, [pageURI]);
 
     const OnTyperSend = (data: Post) => {
         setPosts((old) => [data, ...old]);
@@ -79,23 +115,48 @@ function MiddleSide() {
 
     return (
         <div onScroll={handleScroll} className="page-sides side-middle home-middle">
-            <div className="hive-page-post-seperators">
-                <div className="hive-page-post-selector">
+            <PostTyper onSend={OnTyperSend} />
+            <Divider full_page={true} />
+            <div className="hive-page-post-seperators grid-template-3">
+                <div
+                    onClick={() => {
+                        setPage(PostPageEnum.Home);
+                    }}
+                    className="hive-page-post-selector"
+                >
+                    <p>
+                        <i className="fa-solid fa-home" /> Home
+                    </p>
+                </div>
+                <div
+                    onClick={() => {
+                        setPage(PostPageEnum.RightNow);
+                    }}
+                    className="hive-page-post-selector"
+                >
                     <p>
                         <i className="fa-solid fa-sparkles" /> Right Now
                     </p>
                 </div>
-                <div className="hive-page-post-selector">
+                <div
+                    onClick={() => {
+                        setPage(PostPageEnum.Explore);
+                    }}
+                    className="hive-page-post-selector"
+                >
                     <p>
                         <i className="fa-solid fa-globe" /> Explore
                     </p>
                 </div>
             </div>
-            <Divider full_page={true} />
-            <PostTyper onSend={OnTyperSend} />
-            <Divider full_page={true} />
-            <p>You're viewing Home</p>
+            <p>
+                You're viewing {pageText} -{" "}
+                <span onClick={() => FetchPosts(0, self_user)} className="text-btn">
+                    <i className="fa-solid fa-repeat" /> Reload Posts
+                </span>
+            </p>
             {self_user?.is_bot ? <p>Bot Accounts are not allowed to use the site.</p> : ""}
+            {loading ? "Loading..." : ""}
             {self_user
                 ? posts.map((post: Post) => {
                       return <PostBox allow_reply_attribute={true} setPosts={setPosts} self_user={self_user} key={post.post_id} post={post} />;

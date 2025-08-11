@@ -76,7 +76,8 @@ class BeezleSocket {
         };
 
         this.webSocket.onerror = (err) => {
-            toast.error(`Web Socket threw an error: ${err}`);
+            toast.error(`Web Socket threw an error, check the console.`);
+            console.error(err);
         };
 
         this.listen("pong", () => {

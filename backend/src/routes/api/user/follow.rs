@@ -89,11 +89,11 @@ pub async fn route(
 
                 ws_send_notification(&ws_sessions, &handle).await;
 
-                mongoose::add_coins(&client, token_data.handle.as_str(), 20).await;
-                mongoose::add_xp(&client, token_data.handle.as_str(), 20).await;
+                mongoose::add_coins(&client, token_data.handle.as_str(), 5).await;
+                mongoose::add_xp(&client, token_data.handle.as_str(), 5).await;
 
-                mongoose::add_coins(&client, body.handle.as_str(), 25).await;
-                mongoose::add_xp(&client, body.handle.as_str(), 25).await;
+                mongoose::add_coins(&client, body.handle.as_str(), 10).await;
+                mongoose::add_xp(&client, body.handle.as_str(), 5).await;
                 
                 check_follow_milestone(&client, &body.handle, uw_doc.get("followers").unwrap().as_array().unwrap().len() as i64 + 1).await;
             } else {
@@ -129,11 +129,11 @@ pub async fn route(
                 )
                 .await;
 
-                mongoose::add_coins(&client, token_data.handle.as_str(), -20).await;
-                mongoose::add_xp(&client, token_data.handle.as_str(), -20).await;
+                mongoose::add_coins(&client, token_data.handle.as_str(), -5).await;
+                mongoose::add_xp(&client, token_data.handle.as_str(), -5).await;
 
-                mongoose::add_coins(&client, body.handle.as_str(), -25).await;
-                mongoose::add_xp(&client, body.handle.as_str(), -25).await;
+                mongoose::add_coins(&client, body.handle.as_str(), -10).await;
+                mongoose::add_xp(&client, body.handle.as_str(), -5).await;
             }
 
             HttpResponse::Ok().json(doc!{})

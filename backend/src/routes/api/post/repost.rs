@@ -85,7 +85,8 @@ pub async fn route(
                 )
                 .await;
 
-                mongoose::add_coins(&client, data.claims.handle.as_str(), -25).await;
+                mongoose::add_coins(&client, data.claims.handle.as_str(), -5).await;
+                mongoose::add_xp(&client, &data.claims.handle, -2).await;
             } else {
                 if let Some(_) = post_doc_repost_check {
                     return HttpResponse::BadRequest().json(doc!{"error": "Post is already reposted!"});
@@ -153,8 +154,8 @@ pub async fn route(
                 let document = serialized_post_doc.as_document().unwrap();
 
                 mongoose::insert_document(&client, "beezle", "Posts", document.clone()).await;
-                mongoose::add_coins(&client, data.claims.handle.as_str(), 25).await;
-                mongoose::add_xp(&client, &data.claims.handle, 15).await;
+                mongoose::add_coins(&client, data.claims.handle.as_str(), 5).await;
+                mongoose::add_xp(&client, &data.claims.handle, 2).await;
                 check_repost_milestone(&client, &original_post_doc.get("handle").unwrap().as_str().unwrap(), post_doc.get("reposts").unwrap().as_array().unwrap().len() as i64 + 1).await;
             }
 

@@ -61,9 +61,9 @@ pub async fn route(
                 )
                 .await;
 
-                mongoose::add_coins(&client, data.claims.handle.as_str(), -20).await;
+                mongoose::add_coins(&client, data.claims.handle.as_str(), -25).await;
                 if post_op != data.claims.handle {
-                    mongoose::add_coins(&client, post_op.as_str(), -25).await;                    
+                    mongoose::add_xp(&client, &data.claims.handle.as_str(), -2).await;               
                 }
             } else {
                 mongoose::update_document(
@@ -79,12 +79,11 @@ pub async fn route(
                 )
                 .await;
             
-                mongoose::add_coins(&client, data.claims.handle.as_str(), 20).await;
                 check_like_milestone(&client, &post_op, post_unwrapped.get("likes").unwrap().as_array().unwrap().len() as i64 + 1).await;
 
                 if post_op != data.claims.handle {
                     mongoose::add_coins(&client, post_op.as_str(), 25).await;                    
-                    mongoose::add_xp(&client, &data.claims.handle.as_str(), 10).await;
+                    mongoose::add_xp(&client, &data.claims.handle.as_str(), 2).await;
                 }
 
                 if post_op != data.claims.handle {

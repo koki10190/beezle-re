@@ -36,7 +36,7 @@ function MiddleSide() {
 
     useEffect(() => {
         (async () => {
-            let notifs = ((await fetchUserPrivate())?.notifications as Array<NotificationData>) ?? [];
+            let notifs = ((await fetchUserPrivate(localStorage.getItem("access_token")))?.notifications as Array<NotificationData>) ?? [];
 
             notifs.forEach((notif: NotificationData) => {
                 (async () => {

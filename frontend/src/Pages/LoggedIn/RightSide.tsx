@@ -51,7 +51,6 @@ function RightSide() {
     const [window_width, setWindowWidth] = useState(window.innerWidth);
     const [notifCount, setNotifCount] = useState(0);
     const [notifColor, setNotifColor] = useState("#ffffff");
-    const navigate = useNavigate();
 
     const ExpandRightSide = () => {
         const middle = document.querySelector(".side-middle") as HTMLDivElement;
@@ -142,7 +141,7 @@ function RightSide() {
                     ""
                 )}
 
-                <a onClick={() => navigate(`/profile/${self_user?.handle}`)} className="settings-button">
+                <a href={`/profile/${self_user?.handle}`} className="settings-button">
                     <div
                         style={{
                             backgroundImage: `url(${self_user?.avatar})`,

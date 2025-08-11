@@ -94,6 +94,17 @@ body {
     align-items: flex-end;
 }
 
+.text-btn {
+    color: rgba(255, 255, 255, 0.6);
+    font-weight: bold;
+    cursor: pointer;
+    transition: ease-in-out 150ms;
+}
+
+.text-btn:hover {
+    color: white;
+}
+
 @media only screen and (max-width: 1460px) {
     .page-sides.side-right .settings-button {
         font-size: 25px;
