@@ -149,15 +149,15 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
 
     const FetchSpotifyData = async () => {
         try {
-            if (!user.connections?.spotify?.access_token) return;
+            if (!user.connections?.spotify?.id) return;
 
             const res = await axios.get(`${api_uri}/api/connections/spotify/status?handle=${user.handle}`, { headers: GetAuthToken() });
             const data = res.data;
 
-            if (data.error) {
-                await axios.patch(`${api_uri}/api/connections/spotify/refresh_token?handle=${user.handle}`);
-                return;
-            }
+            // if (data.error) {
+            //     await axios.patch(`${api_uri}/api/connections/spotify/refresh_token?handle=${user.handle}`);
+            //     return;
+            // }
 
             setSpotifyData(data);
         } catch (e) {}
@@ -224,7 +224,7 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
 
     useEffect(() => {
         GetAllMentions();
-
+        let activity_interval = null;
         (async () => {
             const isBlocked = await axios.get(`${api_uri}/api/user/is_blocked`, {
                 params: {
@@ -279,11 +279,15 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
             FetchLastfmData();
             console.log("ksdagjafkjgajkg");
             FetchSpotifyData();
-            setInterval(() => {
+            activity_interval = setInterval(() => {
                 FetchSpotifyData();
                 FetchLastfmData();
             }, 4000);
         })();
+
+        return () => {
+            clearInterval(activity_interval);
+        };
     }, []);
 
     useEffect(() => {

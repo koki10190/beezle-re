@@ -9,10 +9,6 @@ import { SERVER_ONLINE } from "./CheckServerStatus";
 async function checkToken() {
     const token = localStorage.getItem("access_token");
     if (!token) window.location.href = "/";
-
-    if (!SERVER_ONLINE) {
-        toast.error("Oops! Seems like the servers are down.");
-    }
 }
 
 export { checkToken };

@@ -24,7 +24,7 @@ class BeezleSocket {
         this.Init();
     }
 
-    public Init() {
+    public Init(msg = true, success = false) {
         clearInterval(this.interval);
 
         this.channels = new Map();
@@ -45,6 +45,11 @@ class BeezleSocket {
                 const user = await fetchUserPrivate();
                 if (!user) return;
                 localStorage.setItem("user_handle", user.handle);
+
+                if (success) {
+                    toast.success("Connection regained!");
+                    msg = true;
+                }
 
                 socket.send("connect", {
                     handle: user.handle,
@@ -67,16 +72,16 @@ class BeezleSocket {
 
         this.webSocket.onclose = () => {
             SetServerStatus(false);
-            ServerDownMessage();
+            if (msg) ServerDownMessage();
             if (window.location.pathname != "/") {
                 setTimeout(() => {
-                    this.Init();
+                    this.Init(false, true);
                 }, 1000);
             }
         };
 
         this.webSocket.onerror = (err) => {
-            toast.error(`Web Socket threw an error, check the console.`);
+            if (msg) toast.error(`Web Socket threw an error, check the console.`);
             console.error(err);
         };
 

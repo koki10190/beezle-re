@@ -20,8 +20,8 @@ interface Props {
 function Connections({ user }: Props) {
     const [password, setPassword] = useState("");
     const [steam_connected, setSteamConnected] = useState(user.connections?.steam?.id ? true : false);
-    const [spotify_connected, setSpotifyConnected] = useState(user.connections?.spotify?.access_token ? true : false);
-    const [discord_connected, setDiscordConnected] = useState(user.connections?.discord?.access_token ? true : false);
+    const [spotify_connected, setSpotifyConnected] = useState(user.connections?.spotify?.id ? true : false);
+    const [discord_connected, setDiscordConnected] = useState(user.connections?.discord?.data?.discord_id ? true : false);
     const [lastfm_connected, setLastfmConnected] = useState(user.connections?.lastfm?.username ? true : false);
     const [show_scrobbling, setShowScrobbling] = useState(user.connections?.lastfm?.show_scrobbling);
     const lastfm_username = useRef<HTMLInputElement>();

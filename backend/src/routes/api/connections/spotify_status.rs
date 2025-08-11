@@ -20,7 +20,7 @@ use actix_web::{
 use crate::{
     beezle::{self, auth::verify_token, crypt::{base64_encode, decrypt, encrypt}},
     mongoose::{self, structures::user},
-    poison::LockResultExt,
+    poison::LockResultExt, routes::api::connections::spotify_refresh_token::refresh_token,
 };
 
 #[derive(Deserialize)]
@@ -88,6 +88,7 @@ pub async fn route(
             if data.get("error").is_none() {
                 Ok(HttpResponse::Ok().json(data))
             } else {
+                refresh_token(&client, body.handle.clone()).await;
                 Ok(HttpResponse::Ok().json(doc!{"error": "Access token is expired."}))
             }
         }

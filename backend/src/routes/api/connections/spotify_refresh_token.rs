@@ -34,14 +34,18 @@ pub async fn route(
     body: web::Query<QueryData>,
     client: web::Data<Client>,
 ) -> actix_web::Result<HttpResponse> {
-    let reqwest_client = reqwest::Client::new();
 
+    Ok(HttpResponse::Ok().body("This API Endpoint is inactive now. Token Refreshing is handled manually."))
+}
+
+pub async fn refresh_token(client: &Client, handle: String) -> String {
+    let reqwest_client = reqwest::Client::new();
     let client_id = env::var("SPOTIFY_CLIENT_ID").unwrap();
     let client_secret = env::var("SPOTIFY_CLIENT_SECRET").unwrap();
     let pass = env::var("ENCRYPT_PASSWORD").unwrap();
 
     let user = mongoose::get_document(&client, "beezle", "Users", doc!{
-        "handle": &body.handle
+        "handle": &handle
     }).await.unwrap();
 
     let users_refresh_token = user.get("connections")
@@ -83,23 +87,21 @@ pub async fn route(
     beezle::print(format!("{:?}", response).as_str());
 
     let encrypted_access_token = encrypt(response.get("access_token").unwrap().as_str().unwrap(), &pass).unwrap();
-
+    let acc_tok = base64_encode(encrypted_access_token);
     mongoose::update_document(
         &client,
         "beezle",
         "Users",
         doc! {
-            "handle": &body.handle
+            "handle": &handle
         },
         doc! {
             "$set": {
-                "connections.spotify.access_token": base64_encode(encrypted_access_token),
+                "connections.spotify.access_token": &acc_tok,
             }
         },
     )
     .await;
 
-    beezle::print("Saved tokens!");
-
-    Ok(HttpResponse::Ok().body("Access Token has been refreshed"))
+    acc_tok.clone()
 }

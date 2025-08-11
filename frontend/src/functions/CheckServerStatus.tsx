@@ -13,7 +13,7 @@ function SetServerStatus(is_on: boolean) {
 }
 
 function ServerDownMessage() {
-    toast.error("Servers are down! Please come back later.", {
+    toast.error("Lost connection to the web socket! Retrying..", {
         icon: <i style={{ color: "#ff5050" }} className="fa-solid fa-heart-crack"></i>,
     });
 }
