@@ -51,6 +51,7 @@ function RightSide() {
     const [window_width, setWindowWidth] = useState(window.innerWidth);
     const [notifCount, setNotifCount] = useState(0);
     const [notifColor, setNotifColor] = useState("#ffffff");
+    const navigate = useNavigate();
 
     const ExpandRightSide = () => {
         const middle = document.querySelector(".side-middle") as HTMLDivElement;
@@ -119,7 +120,7 @@ function RightSide() {
                 <SettingsButton
                     redirect="/notifications"
                     iconClass="fa-solid fa-bell"
-                    force_redirect={true}
+                    force_redirect={false}
                     text={`Notifs (${notifCount})`}
                     style={{ color: notifColor }}
                 />
@@ -141,7 +142,7 @@ function RightSide() {
                     ""
                 )}
 
-                <a href={`/profile/${self_user?.handle}`} className="settings-button">
+                <a onClick={() => navigate(`/profile/${self_user?.handle}`)} className="settings-button">
                     <div
                         style={{
                             backgroundImage: `url(${self_user?.avatar})`,

@@ -14,10 +14,10 @@ function HivePage_Home() {
     useEffect(() => {
         checkToken();
     }, []);
-
+    const { handle } = useParams();
     return (
         <>
-            <div className="sides-container">
+            <div key={"hives-" + handle} className="sides-container">
                 <LeftSide />
                 <MiddleSide />
                 <RightSide />

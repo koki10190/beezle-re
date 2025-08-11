@@ -1,6 +1,6 @@
 import axios from "axios";
 import { FormEvent, LegacyRef, useEffect, useRef, useState, UIEvent } from "react";
-import { BrowserRouter, Routes, Route, redirect } from "react-router-dom";
+import { BrowserRouter, Routes, Route, redirect, useNavigate } from "react-router-dom";
 import "./PostBox.css";
 import moment from "moment";
 import { UserPrivate, UserPublic } from "../types/User";
@@ -32,6 +32,7 @@ function FollowBox({ handle, self_user }: FollowBoxData) {
     const [isFollowing, setFollowing] = useState(false);
     const [bgGradient, setBgGradient] = useState("");
     const [normalGradient, setNormalGradient] = useState("");
+    const navigate = useNavigate();
 
     useEffect(() => {
         (async () => {
@@ -128,7 +129,7 @@ function FollowBox({ handle, self_user }: FollowBoxData) {
                         whiteSpace: "pre-line",
                     }}
                     dangerouslySetInnerHTML={{
-                        __html: parseURLs(user?.about_me ?? "Hello! I'm new here.", user, false),
+                        __html: parseURLs(user?.about_me ?? "Hello! I'm new here.", user, false, "", navigate),
                     }}
                 ></p>
                 {user.handle !== self_user.handle ? (

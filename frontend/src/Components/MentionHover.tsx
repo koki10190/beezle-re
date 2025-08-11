@@ -3,8 +3,10 @@ import { AVATAR_SHAPES, AvaterShape } from "../types/cosmetics/AvatarShapes";
 import { UserPublic } from "../types/User";
 import RepToIcon from "./RepToIcon";
 import "./MentionHover.css";
+import { useNavigate } from "react-router-dom";
 
 function MentionHover({ user, mousePos }: { user: UserPublic; mousePos: { x: number; y: number } }) {
+    const navigate = useNavigate();
     return (
         <div
             style={{
@@ -50,7 +52,7 @@ function MentionHover({ user, mousePos }: { user: UserPublic; mousePos: { x: num
                 </p>
                 <p
                     dangerouslySetInnerHTML={{
-                        __html: parseURLs(user?.about_me ?? "Hello! I'm new here.", user, false),
+                        __html: parseURLs(user?.about_me ?? "Hello! I'm new here.", user, false, "", navigate),
                     }}
                 ></p>
             </div>

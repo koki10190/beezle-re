@@ -18,7 +18,7 @@ function VerifyPass() {
 
     return (
         <>
-            <div className="centered">
+            <div key={auth_id} className="centered">
                 {" "}
                 <h1>{msg}</h1>
             </div>

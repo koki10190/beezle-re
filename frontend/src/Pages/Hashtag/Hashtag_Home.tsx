@@ -22,7 +22,7 @@ function Hashtag_Home() {
             <Helmet>
                 <title>Beezle: RE | Posts with #{hashtag}</title>
             </Helmet>
-            <div className="sides-container">
+            <div key={"hashtag-" + hashtag} className="sides-container">
                 <LeftSide />
                 <MiddleSide />
                 <RightSide />

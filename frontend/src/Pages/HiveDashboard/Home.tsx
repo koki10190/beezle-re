@@ -14,11 +14,11 @@ function HiveDashboard_Home() {
     useEffect(() => {
         checkToken();
     }, []);
-    let { handle } = useParams();
+    let { hive_id } = useParams();
 
     return (
         <>
-            <div className="sides-container">
+            <div key={"hivedash-" + hive_id} className="sides-container">
                 <LeftSide />
                 <MiddleSide />
                 <RightSide />

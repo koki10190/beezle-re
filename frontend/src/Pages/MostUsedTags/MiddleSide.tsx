@@ -1,6 +1,6 @@
 import axios, { all } from "axios";
 import { FormEvent, useEffect, useRef, useState, UIEvent } from "react";
-import { BrowserRouter, Routes, Route, redirect, useParams } from "react-router-dom";
+import { BrowserRouter, Routes, Route, redirect, useParams, useNavigate } from "react-router-dom";
 import { api_uri } from "../../links";
 import { checkToken } from "../../functions/checkToken";
 import PostTyper from "../../Components/PostTyper";
@@ -74,6 +74,7 @@ function MiddleSide() {
     // const [self_user, setSelfUser] = useState<UserPrivate | null>(null);
     const [hashtags, setHashtags] = useState<HashtagCounter[]>([]);
     const [postOffset, setPostOffset] = useState(0);
+    const navigate = useNavigate();
 
     useEffect(() => {
         (async () => {
@@ -93,14 +94,11 @@ function MiddleSide() {
                 : hashtags.map((tag, index) => (
                       <div>
                           <GetTrophyGlows index={index} />
-                          <div
-                              onClick={() => (window.location.href = "/hashtag/" + tag._id)}
-                              className={`${GetTrophyClassName(index)} most-used-hashtag-box`}
-                          >
+                          <div onClick={() => navigate("/hashtag/" + tag._id)} className={`${GetTrophyClassName(index)} most-used-hashtag-box`}>
                               <h1>
                                   <GetTrophy index={index} /> {(index + 1).toString() + IndexSuffix(index)} Place
                               </h1>
-                              <a className="mention" href={`/hashtag/${tag._id}`}>
+                              <a className="mention" onClick={() => navigate(`/hashtag/${tag._id}`)}>
                                   #{tag._id}
                               </a>{" "}
                               - Used <b>{tag.count.toLocaleString("en-US")}</b> {tag.count === 1 ? "time" : "times"}

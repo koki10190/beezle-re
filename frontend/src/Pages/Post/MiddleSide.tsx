@@ -18,7 +18,7 @@ import { BadgesToJSX } from "../../functions/badgesToJSX";
 import FlipNumbers from "react-flip-numbers";
 import millify from "millify";
 import PostTyper from "../../Components/PostTyper";
-import parseURLs from "../../functions/parseURLs";
+import parseURLs, { ExtractBeezlePostFromLinks, ExtractHivesFromLinks } from "../../functions/parseURLs";
 import { Helmet } from "react-helmet";
 import Username from "../../Components/Username";
 import EmojiPicker, { EmojiClickData, EmojiStyle, Theme } from "emoji-picker-react";
@@ -32,6 +32,7 @@ import GetFullAuth from "../../functions/GetFullAuth";
 import CStatus from "../../functions/StatusToClass";
 import RightClickMenu from "../../Components/Menus/RightClickMenu";
 import useMousePos from "../../hooks/useMousePos";
+import HiveBox from "../Hives/HiveBox";
 
 interface ReactionsInter {
     [key: string]: PostReaction[];
@@ -71,6 +72,25 @@ function MiddleSide() {
         reactions: {},
     });
     const [reactionOpened, setReactionOpened] = useState(false);
+    const [quotePosts, setQuotePosts] = useState<Array<Post>>([]);
+    const [quoteHives, setQuoteHives] = useState<Array<BeezleHives.Hive>>([]);
+    const SetQuoteHives = async (content) => {
+        const hives = await ExtractHivesFromLinks(content);
+        console.log(hives);
+        setQuoteHives((old) => {
+            if (hives.length > 0) return [hives[0]];
+            return [];
+        });
+    };
+
+    const SetQuotePosts = async (content) => {
+        const posts = await ExtractBeezlePostFromLinks(content);
+
+        setQuotePosts((old) => {
+            if (posts.length > 0) return [posts[0]];
+            return [];
+        });
+    };
 
     const ReactionInteraction = () => {
         setReactionOpened(!reactionOpened);
@@ -125,6 +145,8 @@ function MiddleSide() {
             setEditContent(post_res.content);
             setFinalContent(post_res.content);
             setPostEdited(post_res.edited);
+            SetQuotePosts(post_res.content);
+            SetQuoteHives(post_res.content);
 
             // setPost((old) => {
             //     setReactions({
@@ -137,11 +159,10 @@ function MiddleSide() {
                 setReplyingToPost(await FetchPost(post_res.replying_to));
             }
 
-            // const react_data = (await axios.get(`${api_uri}/api/post/get/reacts?post_id=${post_res.post_id}`, GetFullAuth()))
-            //     .data as ReactionsData;
+            const react_data = (await axios.get(`${api_uri}/api/post/get/reacts?post_id=${post_res.post_id}`, GetFullAuth())).data as ReactionsData;
 
             const local_reactions: ReactionStruct = { reactions: {} };
-            post.post_reactions.forEach((reaction) => {
+            react_data.reacts.forEach((reaction) => {
                 if (!local_reactions.reactions[reaction.emoji]) local_reactions.reactions[reaction.emoji] = [];
 
                 local_reactions.reactions[reaction.emoji].push(reaction);
@@ -324,6 +345,9 @@ function MiddleSide() {
             setFinalContent(editContent);
         }
 
+        SetQuotePosts(editContent);
+        SetQuoteHives(editContent);
+
         setPostEdited(true);
     };
 
@@ -450,6 +474,13 @@ function MiddleSide() {
         // textarea.current!.value += emojiData.isCustom ? `<:${emojiData.emoji}:> ` : emojiData.emoji;
     };
 
+    if (!post)
+        return (
+            <div className="page-sides side-middle home-middle">
+                <h1>Loading Post...</h1>
+            </div>
+        );
+
     return (
         <>
             <Helmet>
@@ -461,7 +492,7 @@ function MiddleSide() {
                     {post && post_user ? (
                         <>
                             {post.repost ? (
-                                <h4 onClick={() => (window.location.href = `/profile/${post.handle}`)} className="post-attr">
+                                <h4 onClick={() => navigate(`/profile/${post.handle}`)} className="post-attr">
                                     <i className="fa-solid fa-repeat"></i> Repost by @{post.handle}
                                 </h4>
                             ) : (
@@ -469,7 +500,7 @@ function MiddleSide() {
                             )}
 
                             {post.hive_post ? (
-                                <h4 onClick={() => (window.location.href = `/hive/${hive?.hive_id}`)} className="post-attr">
+                                <h4 onClick={() => navigate(`/hive/${hive?.hive_id}`)} className="post-attr">
                                     <div
                                         style={{
                                             backgroundImage: `url(${hive?.icon})`,
@@ -491,10 +522,7 @@ function MiddleSide() {
                             )}
 
                             {post.is_reply && replyingToPost ? (
-                                <h4
-                                    onClick={() => (window.location.href = replyingToPost?.content ? `/post/${post.replying_to}` : `/`)}
-                                    className="post-attr"
-                                >
+                                <h4 onClick={() => navigate(replyingToPost?.content ? `/post/${post.replying_to}` : `/`)} className="post-attr">
                                     <i className="fa-solid fa-comment"></i> Replying to{" "}
                                     {replyingToPost?.content ? TrimToDots(replyingToPost.content, 100) : "[REDACTED]"}
                                 </h4>
@@ -505,7 +533,7 @@ function MiddleSide() {
                     ) : (
                         ""
                     )}
-                    <div style={{ cursor: "pointer" }} onClick={() => (window.location.href = `/profile/${post_user?.handle}`)}>
+                    <div style={{ cursor: "pointer" }} onClick={() => navigate(`/profile/${post_user?.handle}`)}>
                         <div className="avatar-container">
                             <div
                                 style={{
@@ -575,10 +603,38 @@ function MiddleSide() {
                                 whiteSpace: "pre-line",
                             }}
                             dangerouslySetInnerHTML={{
-                                __html: parseURLs(finalContent, post_user),
+                                __html: parseURLs(finalContent, post_user, true, "", navigate),
                             }}
                             className="content"
                         ></p>
+                    )}
+                    {quotePosts.length > 0 && self_user ? (
+                        quotePosts.map((post) => {
+                            return (
+                                <PostBox
+                                    className="quote-post"
+                                    reply_box={true}
+                                    box={false}
+                                    removeBackground={true}
+                                    delete_post_on_bookmark_remove={false}
+                                    setPosts={(e) => {}}
+                                    self_user={self_user}
+                                    key={post.post_id}
+                                    post={post}
+                                    allow_reply_attribute={false}
+                                    reply_chain_counter={0}
+                                />
+                            );
+                        })
+                    ) : (
+                        <></>
+                    )}
+                    {quoteHives.length > 0 && self_user ? (
+                        quoteHives.map((hive) => {
+                            return <HiveBox hive={hive} key={hive.hive_id} />;
+                        })
+                    ) : (
+                        <></>
                     )}
                     <div className="post-interaction-btn">
                         <a style={isReposted ? { color: "rgb(60, 255, 86)" } : {}} onClick={RepostInteraction} className="post-inter post-inter-lime">

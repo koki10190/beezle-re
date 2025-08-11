@@ -12,6 +12,7 @@ import { fetchUserPublic } from "../../../functions/fetchUserPublic";
 import "./Reports.css";
 import { toast } from "react-toastify";
 import GetAuthToken from "../../../functions/GetAuthHeader";
+import { useNavigate } from "react-router-dom";
 
 interface Props {
     user: UserPrivate;
@@ -19,6 +20,7 @@ interface Props {
 
 function ReportBox({ report, setReports }: { report: ReportType; setReports: any }) {
     const [reporter, setReporter] = useState<UserPublic | null>();
+    const navigate = useNavigate();
 
     useEffect(() => {
         (async () => {
@@ -54,7 +56,7 @@ function ReportBox({ report, setReports }: { report: ReportType; setReports: any
                 {reporter ? (
                     <div className="reporter">
                         <h2 style={{ marginBottom: "10px" }}>Reporter:</h2>
-                        <div onClick={() => (window.location.href = `/profile/${reporter.handle}`)} className="reporter-content">
+                        <div onClick={() => navigate(`/profile/${reporter.handle}`)} className="reporter-content">
                             <div style={{ backgroundImage: `url(${reporter.avatar})` }} className="report-pfp"></div>
                             <p className="report-handle">
                                 @{reporter.handle} - {reporter.activity}

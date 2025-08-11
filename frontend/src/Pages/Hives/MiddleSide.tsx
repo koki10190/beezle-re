@@ -55,13 +55,27 @@ function MiddleSide() {
 
         // detected bottom
 
-        const res = await axios.get(`${api_uri}/api/hives/get/joined_hives`, {
+        const res = await axios.get(`${api_uri}/api/hives/${PageToAPI(page)}`, {
             params: {
                 offset: exploreOffset,
             },
+            headers: GetAuthToken(),
         });
-        setJoinedHives(res.data.hives);
         setExploreOffset(res.data.offset);
+        switch (page) {
+            case HivePages.JOINED: {
+                setJoinedHives(res.data.hives);
+                break;
+            }
+            case HivePages.EXPLORE: {
+                setExploreHives((old) => [...old, ...res.data.hives]);
+                break;
+            }
+            case HivePages.SEARCH: {
+                setHives(res.data.hives);
+                break;
+            }
+        }
     };
 
     const JoinedHives = async () => {
@@ -80,6 +94,20 @@ function MiddleSide() {
         });
         setExploreHives(res.data.hives);
         setExploreOffset(res.data.offset);
+    };
+
+    const PageToAPI = (page: number) => {
+        switch (page) {
+            case HivePages.JOINED: {
+                return "get/joined_hives";
+            }
+            case HivePages.SEARCH: {
+                return "search";
+            }
+            case HivePages.EXPLORE: {
+                return "explore";
+            }
+        }
     };
 
     const PageToMap = ({ page }: { page: HivePages }) => {

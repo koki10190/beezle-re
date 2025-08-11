@@ -1,6 +1,6 @@
 import axios from "axios";
 import { FormEvent, useEffect, useRef, useState, UIEvent } from "react";
-import { BrowserRouter, Routes, Route, redirect } from "react-router-dom";
+import { BrowserRouter, Routes, Route, redirect, useNavigate } from "react-router-dom";
 import { api_uri } from "../../links";
 import { checkToken } from "../../functions/checkToken";
 import React from "react";
@@ -72,6 +72,7 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
     const [blockBtn, setBlockedBtn] = useState(false);
     const [profileImage, setProfileImage] = useState<ProfileImage | null>(user.customization?.profile_image ?? null);
     const mousePos = useMousePos();
+    const navigate = useNavigate();
 
     const OnMentionHovered = async (mention: string) => {
         const data = await fetchUserPublic(mention.replace("@", ""));
@@ -467,7 +468,7 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                             <p className="profile-container-header">About Me</p>
                             <p
                                 dangerouslySetInnerHTML={{
-                                    __html: parseURLs(user.about_me, user, false, user.handle),
+                                    __html: parseURLs(user.about_me, user, false, user.handle, navigate),
                                 }}
                                 className="about_me"
                             ></p>

@@ -14,11 +14,11 @@ function EditHive_Home() {
     useEffect(() => {
         checkToken();
     }, []);
-    let { handle } = useParams();
+    const { hive_id } = useParams();
 
     return (
         <>
-            <div className="sides-container">
+            <div key={"hiveedit-" + hive_id} className="sides-container">
                 <LeftSide />
                 <MiddleSide />
                 <RightSide />

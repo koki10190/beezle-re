@@ -14,7 +14,7 @@ import ReactDOMServer from "react-dom/server";
 import ImageEmbed from "./ImageEmbed";
 import VideoEmbed from "./VideoEmbed";
 import sanitize from "sanitize-html";
-import parseURLs from "../functions/parseURLs";
+import parseURLs, { ExtractBeezlePostFromLinks, ExtractHivesFromLinks } from "../functions/parseURLs";
 import RepToIcon from "./RepToIcon";
 import Username from "./Username";
 import ShadeColor from "../functions/ShadeColor";
@@ -33,6 +33,7 @@ import CStatus from "../functions/StatusToClass";
 import { useQuery } from "react-query";
 import { FetchPost } from "../functions/FetchPost";
 import RightClickMenu from "./Menus/RightClickMenu";
+import HiveBox from "../Pages/Hives/HiveBox";
 
 interface PostBoxData {
     post: Post;
@@ -47,6 +48,7 @@ interface PostBoxData {
     reply_box?: boolean;
     reply_chain_counter?: number;
     ignore_hive_attrib?: boolean;
+    removeBackground?: boolean;
 }
 
 interface ReactionsInter {
@@ -73,6 +75,7 @@ function PostBox({
     reply_box = false,
     reply_chain_counter = 0,
     ignore_hive_attrib = false,
+    removeBackground = false,
 }: PostBoxData) {
     const navigate = useNavigate();
     const [MAX_REPLY_CHAIN, setMaxReplyChain] = useState(
@@ -94,6 +97,8 @@ function PostBox({
     const [isLikeHovered, setLikeHovered] = useState(false);
     const [isRepostHovered, setRepostHovered] = useState(false);
     const [replyingToPost, setReplyingToPost] = useState<Post>();
+    const [quotePosts, setQuotePosts] = useState<Array<Post>>([]);
+    const [quoteHives, setQuoteHives] = useState<Array<BeezleHives.Hive>>([]);
 
     const [bgGradient, setBgGradient] = useState("");
     const [steamData, setSteamData] = useState<any | null>(null);
@@ -224,6 +229,23 @@ function PostBox({
         // textarea.current!.value += emojiData.isCustom ? `<:${emojiData.emoji}:> ` : emojiData.emoji;
     };
 
+    const SetQuotePosts = async (content) => {
+        const posts = await ExtractBeezlePostFromLinks(content);
+
+        setQuotePosts((old) => {
+            if (posts.length > 0) return [posts[0]];
+            return [];
+        });
+    };
+
+    const SetQuoteHives = async (content) => {
+        const hives = await ExtractHivesFromLinks(content);
+        setQuoteHives((old) => {
+            if (hives.length > 0) return [hives[0]];
+            return [];
+        });
+    };
+
     useEffect(() => {
         GetAllMentions();
 
@@ -245,7 +267,6 @@ function PostBox({
             }
 
             if (post.hive_post) {
-                console.log("HIVE", post.hive_post);
                 axios
                     .get(`${api_uri}/api/hives/get`, {
                         params: {
@@ -312,6 +333,9 @@ function PostBox({
             setReactions((old) => {
                 return local_reactions;
             });
+
+            SetQuotePosts(finalContent);
+            SetQuoteHives(finalContent);
         })();
     }, []);
 
@@ -341,7 +365,8 @@ function PostBox({
     }, [replyingToPost, user]);
 
     const ReplyInteraction = async () => {
-        window.location.href = `/post/${post.post_id}`;
+        // window.location.href = `/post/${post.post_id}`;
+        navigate(`/post/${post.post_id}`);
     };
 
     const LikeInteraction = async () => {
@@ -501,7 +526,8 @@ function PostBox({
             toast.success("Post Edited");
             setFinalContent(editContent);
         }
-
+        SetQuotePosts(editContent);
+        SetQuoteHives(editContent);
         setPostEdited(true);
     };
 
@@ -565,17 +591,17 @@ function PostBox({
         <>
             <div
                 style={
-                    !box
+                    !box && className === ""
                         ? {
                               padding: "0",
                               background: "transparent",
                               backgroundColor: "transparent",
                           }
                         : {
-                              background: bgGradient,
+                              background: removeBackground ? null : bgGradient,
                           }
                 }
-                className={"post-box" + className}
+                className={"post-box " + className}
             >
                 {mention_hover ? <MentionHover user={mention_hover} mousePos={mousePos} /> : ""}
 
@@ -588,7 +614,7 @@ function PostBox({
                     <PostBox
                         reply_box={true}
                         box={false}
-                        delete_post_on_bookmark_remove={true}
+                        delete_post_on_bookmark_remove={false}
                         setPosts={setPosts}
                         self_user={self_user}
                         key={replyingToPost.post_id}
@@ -621,14 +647,14 @@ function PostBox({
                 )}
                 <div className="post-attributes">
                     {post.repost ? (
-                        <h4 onClick={() => (window.location.href = `/profile/${post.handle}`)} className="post-attr">
+                        <h4 onClick={() => navigate(`/profile/${post.handle}`)} className="post-attr">
                             <i className="fa-solid fa-repeat"></i> Repost by @{post.handle}
                         </h4>
                     ) : (
                         ""
                     )}
                     {post.hive_post && !ignore_hive_attrib ? (
-                        <h4 onClick={() => (window.location.href = `/hive/${hive?.hive_id}`)} className="post-attr">
+                        <h4 onClick={() => navigate(`/hive/${hive?.hive_id}`)} className="post-attr">
                             <div
                                 style={{
                                     backgroundImage: `url(${hive?.icon})`,
@@ -696,7 +722,7 @@ function PostBox({
                     ></div>
                     <div className={`status-indicator ${CStatus(user?.status ?? "offline")}`}></div>
                 </div>
-                <div onClick={() => (window.location.href = `/profile/${user ? user.handle : ""}`)} className="user-detail">
+                <div onClick={() => navigate(`/profile/${user ? user.handle : ""}`)} className="user-detail">
                     <p className="username-post">
                         {user ? <Username user={user} /> : ""}{" "}
                         <BadgesToJSX is_bot={user?.is_bot} badges={user ? user.badges : []} className="profile-badge profile-badge-shadow" />
@@ -754,15 +780,45 @@ function PostBox({
                         </button>
                     </>
                 ) : (
-                    <div
-                        style={{
-                            whiteSpace: "pre-line",
-                        }}
-                        dangerouslySetInnerHTML={{
-                            __html: parseURLs(finalContent, user, true, post.post_id),
-                        }}
-                        className="content"
-                    ></div>
+                    <>
+                        <div
+                            style={{
+                                whiteSpace: "pre-line",
+                            }}
+                            dangerouslySetInnerHTML={{
+                                __html: parseURLs(finalContent, user, true, post.post_id, navigate),
+                            }}
+                            className="content"
+                        ></div>
+                        {quotePosts.length > 0 ? (
+                            quotePosts.map((post) => {
+                                return (
+                                    <PostBox
+                                        className="quote-post"
+                                        reply_box={true}
+                                        box={false}
+                                        removeBackground={true}
+                                        delete_post_on_bookmark_remove={false}
+                                        setPosts={setPosts}
+                                        self_user={self_user}
+                                        key={post.post_id}
+                                        post={post}
+                                        allow_reply_attribute={false}
+                                        reply_chain_counter={0}
+                                    />
+                                );
+                            })
+                        ) : (
+                            <></>
+                        )}
+                        {quoteHives.length > 0 && self_user ? (
+                            quoteHives.map((hive) => {
+                                return <HiveBox hive={hive} key={hive.hive_id} />;
+                            })
+                        ) : (
+                            <></>
+                        )}
+                    </>
                 )}
                 {user ? (
                     <div className="post-interaction-btn">

@@ -10,6 +10,8 @@ import BeezleEmoji from "../Components/Emoji";
 import { UserPublic } from "../types/User";
 import "./ParseURLs.css";
 import { Links, marked } from "marked";
+import { Post } from "../types/Post";
+import FetchHive from "./FetchHive";
 
 function MentionHover({ handle }: { handle: string }) {
     return (
@@ -36,7 +38,15 @@ render.paragraph = function ({ tokens }) {
     return joined;
 };
 
-function parseURLs(content: string, self_user: UserPublic, embed = true, post_id = ""): string {
+function parseURLs(
+    content: string,
+    self_user: UserPublic,
+    embed = true,
+    post_id = "",
+    navigate = (_: string) => {
+        window.location.href = _;
+    },
+): string {
     if (!content) return "";
     let htmlToEmbed = "";
     content = sanitize(marked.parse(content, { renderer: render, breaks: false }) as string);
@@ -115,34 +125,25 @@ function parseURLs(content: string, self_user: UserPublic, embed = true, post_id
             });
         }
     }
-
-    // {
-    //     const matches = content.match(/\bhttp?:\/\/10\.106\.31\.90:5173\S+/gi);
-    //     console.log(matches);
-    //     if (matches) {
-    //         matches.forEach(async match => {
-    //             const self_user = await fetchUserPublic();
-    //             const post_id = match.split("/post/")[1];
-    //             const post = await FetchPost(post_id);
-    //             console.log("POST_QUOTE:", post);
-    //             htmlToEmbed += ReactDOMServer.renderToStaticMarkup(
-    //                 <PostBox self_user={self_user} post={post} setPosts={null} />
-    //             );
-    //             console.log("TOEMBED", htmlToEmbed);
-    //         });
-    //     }
-    // }
-
     let final = sanitize(content)
         .replace(
             /@([a-z\d_\.-]+)/gi,
             ReactDOMServer.renderToStaticMarkup(
-                <a id={"mention-hover-$1-" + post_id} className="mention" href={"/profile/$1"}>
+                <a id={"mention-hover-$1-" + post_id} className="mention" href="/profile/$1">
                     @{"$1"}
                 </a>,
             ),
         )
-        .replace(/#([A-Za-z0-9]+)/gi, `<a class="mention" href="/hashtag/$1">#$1</a>`);
+        .replace(
+            /#([A-Za-z0-9]+)/gi,
+            ReactDOMServer.renderToStaticMarkup(
+                <a className="mention" href={"/hashtag/$1"}>
+                    #{"$1"}
+                </a>,
+            ),
+        );
+
+    //`<a class="mention" href="/hashtag/$1">#$1</a>`);
 
     final = final.replace(/&lt;/g, "<");
     final = final.replace(/&gt;/g, ">");
@@ -179,4 +180,35 @@ function parseURLs(content: string, self_user: UserPublic, embed = true, post_id
     return final.trimStart().trimEnd() + (final.replace(/ /g, "") !== "" ? "<br/>" : "") + htmlToEmbed;
 }
 
+async function ExtractBeezlePostFromLinks(content: string): Promise<Array<Post>> {
+    const posts: Array<Post> = [];
+    let regex = /https:\/\/beezle\.lol\/post\/[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}/gi;
+    const matches = content.match(regex) ?? [];
+    for (const link of matches) {
+        const uuid = link.replace("https://beezle.lol/post/", "");
+        const post = await FetchPost(uuid);
+
+        if (!post) continue;
+
+        posts.push(post);
+    }
+    return posts;
+}
+
+async function ExtractHivesFromLinks(content: string): Promise<Array<BeezleHives.Hive>> {
+    const hives: Array<BeezleHives.Hive> = [];
+    let regex = /https:\/\/beezle\.lol\/hive\/[a-zA-Z0-9_.-]*/gi;
+    const matches = content.match(regex) ?? [];
+    for (const hive_id of matches) {
+        const uuid = hive_id.replace("https://beezle.lol/hive/", "");
+        const hive = await FetchHive(uuid);
+
+        if (!hive) continue;
+
+        hives.push(hive);
+    }
+    return hives;
+}
+
 export default parseURLs;
+export { ExtractBeezlePostFromLinks, ExtractHivesFromLinks };

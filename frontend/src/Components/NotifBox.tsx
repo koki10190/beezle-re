@@ -14,9 +14,11 @@ import { AVATAR_SHAPES, AvaterShape } from "../types/cosmetics/AvatarShapes";
 import { TROPHIES } from "../types/showcase/Trophy";
 import GetFullAuth from "../functions/GetFullAuth";
 import { FetchPost } from "../functions/FetchPost";
+import { useNavigate } from "react-router-dom";
 
 function NotifPost({ post_data }: { post_data: Post }) {
     const [user, setUser] = useState<UserPublic>();
+    const navigate = useNavigate();
 
     useEffect(() => {
         (async () => {
@@ -71,7 +73,7 @@ function NotifPost({ post_data }: { post_data: Post }) {
                         whiteSpace: "pre-line",
                     }}
                     dangerouslySetInnerHTML={{
-                        __html: parseURLs(post_data.content, user),
+                        __html: parseURLs(post_data.content, user, true, "", navigate),
                     }}
                     className="post-content"
                 ></p>
@@ -84,6 +86,7 @@ function NotifBox({ notif }: { notif: NotificationData }) {
     const [user, setUser] = useState<UserPublic | null>();
     const [isPost, setIsPost] = useState(false);
     const [post_data, setPostData] = useState<Post>();
+    const navigate = useNavigate();
 
     useEffect(() => {
         (async () => {
@@ -121,11 +124,11 @@ function NotifBox({ notif }: { notif: NotificationData }) {
         <div
             onClick={() => {
                 if ((notif as any).post_id) {
-                    window.location.href = `/post/${notif.post_id}`;
+                    navigate(`/post/${notif.post_id}`);
                     setIsPost(true);
                 }
                 if ((notif as any).handle) {
-                    window.location.href = `/profile/${(notif as any).handle}`;
+                    navigate(`/profile/${(notif as any).handle}`);
                 }
             }}
             className="notif"
@@ -151,7 +154,7 @@ function NotifBox({ notif }: { notif: NotificationData }) {
                         <span
                             onClick={(e: any) => {
                                 e.stopPropagation();
-                                window.location.href = `/profile/${user.handle}`;
+                                navigate(`/profile/${user.handle}`);
                             }}
                             className="notif-handle"
                         >

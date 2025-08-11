@@ -79,8 +79,21 @@ function MiddleSide() {
 
     return (
         <div onScroll={handleScroll} className="page-sides side-middle home-middle">
+            <div className="hive-page-post-seperators">
+                <div className="hive-page-post-selector">
+                    <p>
+                        <i className="fa-solid fa-sparkles" /> Right Now
+                    </p>
+                </div>
+                <div className="hive-page-post-selector">
+                    <p>
+                        <i className="fa-solid fa-globe" /> Explore
+                    </p>
+                </div>
+            </div>
+            <Divider full_page={true} />
             <PostTyper onSend={OnTyperSend} />
-            <Divider />
+            <Divider full_page={true} />
             <p>You're viewing Home</p>
             {self_user?.is_bot ? <p>Bot Accounts are not allowed to use the site.</p> : ""}
             {self_user

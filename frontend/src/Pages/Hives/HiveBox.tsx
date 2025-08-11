@@ -1,9 +1,11 @@
+import { useNavigate } from "react-router-dom";
 import "./HiveBox.css";
 
 function HiveBox({ hive, joined = false }: { hive: BeezleHives.Hive; joined?: boolean }) {
+    const navigate = useNavigate();
     return (
         <>
-            <div onClick={() => (window.location.href = "/hive/" + hive.hive_id)} className="hive-box">
+            <div onClick={() => navigate("/hive/" + hive.hive_id)} className="hive-box">
                 {joined ? (
                     <h3
                         style={{
@@ -43,7 +45,7 @@ function HiveBox({ hive, joined = false }: { hive: BeezleHives.Hive; joined?: bo
                         marginTop: "10px",
                     }}
                     className="button-field"
-                    onClick={() => (window.location.href = "/hive/" + hive.hive_id)}
+                    onClick={() => navigate("/hive/" + hive.hive_id)}
                 >
                     See Hive
                 </button>

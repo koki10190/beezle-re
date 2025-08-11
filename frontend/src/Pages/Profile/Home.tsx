@@ -18,7 +18,7 @@ function Home() {
 
     return (
         <>
-            <div className="sides-container">
+            <div key={"profile-" + handle} className="sides-container">
                 <LeftSide />
                 <MiddleSide handle={handle.replace(/@/g, "") as string} />
                 <RightSide />
