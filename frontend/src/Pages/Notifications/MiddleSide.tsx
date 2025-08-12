@@ -15,12 +15,14 @@ import axios from "axios";
 import { api_uri } from "../../links";
 import { toast } from "react-toastify";
 import GetAuthToken from "../../functions/GetAuthHeader";
+import Preloader from "../../Components/Preloader";
 
 const INDEX_MOVER = 15;
 function MiddleSide() {
     const [Notifs, setNotifs] = useState<Array<NotificationData>>([]);
     const [cached, setCached] = useState<Array<NotificationData>>([]);
     const [notifIndex, setNotifIndex] = useState(0);
+    const [loading, setLoading] = useState(false);
 
     const ClearNotifs = async () => {
         setNotifs([]);
@@ -36,6 +38,7 @@ function MiddleSide() {
 
     useEffect(() => {
         (async () => {
+            setLoading(true);
             let notifs = ((await fetchUserPrivate(localStorage.getItem("access_token")))?.notifications as Array<NotificationData>) ?? [];
 
             notifs.forEach((notif: NotificationData) => {
@@ -56,6 +59,7 @@ function MiddleSide() {
                 setNotifIndex(notifIndex + INDEX_MOVER);
                 return _new;
             });
+            setLoading(false);
         })();
     }, []);
 
@@ -63,6 +67,7 @@ function MiddleSide() {
         const element = event.target! as HTMLDivElement;
         console.log(!(element.scrollHeight - element.scrollTop === element.clientHeight));
         if (!(element.scrollHeight - element.scrollTop === element.clientHeight)) return;
+        setLoading(true);
 
         // detected bottom
         setCached((old) => {
@@ -74,6 +79,7 @@ function MiddleSide() {
                 _new.push(pusher);
             }
             setNotifIndex(notifIndex + INDEX_MOVER);
+            setLoading(false);
             return _new;
         });
 
@@ -96,6 +102,7 @@ function MiddleSide() {
                       return <NotifBox notif={notif} />;
                   })
                 : ""}
+            {loading ? <Preloader /> : ""}
         </div>
     );
 }

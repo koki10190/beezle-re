@@ -14,6 +14,7 @@ import { Post } from "../../types/Post";
 import { RefreshPosts } from "../../functions/RefreshPosts";
 import GetPostPrefsStringQuery from "../../functions/GetPostPrefsStringQuery";
 import GetFullAuth from "../../functions/GetFullAuth";
+import Preloader from "../../Components/Preloader";
 
 function MiddleSide() {
     const data: {
@@ -31,6 +32,7 @@ function MiddleSide() {
     const [posts, setPosts] = useState<Array<Post>>([]);
     const [offset, setOffset] = useState(0);
     const [self_user, setSelfUser] = useState<UserPrivate>();
+    const [loading, setLoading] = useState(false);
 
     const handleScroll = async (event: UIEvent<HTMLDivElement>) => {
         const element = event.target! as HTMLDivElement;
@@ -41,21 +43,25 @@ function MiddleSide() {
         console.log("at bottom!");
 
         if (self_user?.is_bot) return console.error("Bot accounts cannot use the site.");
+        setLoading(true);
         const data = (await axios.get(`${api_uri}/api/post/get/explore?offset=${offset}&${GetPostPrefsStringQuery()}`, GetFullAuth())).data;
 
         setPosts((old) => [...old, ...(data.posts as Array<Post>)]);
 
         setOffset(data.offset as number);
+        setLoading(false);
         // setAllPosts(old => {})
     };
 
     useEffect(() => {
         (async () => {
+            setLoading(true);
             const data = (await axios.get(`${api_uri}/api/post/get/explore?offset=${offset}&${GetPostPrefsStringQuery()}`, GetFullAuth())).data;
             setPosts(data.posts as Array<Post>);
             setOffset(data.offset as number);
             console.log("EXPLORE:", data);
             setSelfUser((await fetchUserPrivate()) as UserPrivate);
+            setLoading(false);
         })();
     }, []);
 
@@ -75,6 +81,7 @@ function MiddleSide() {
                       return <PostBox allow_reply_attribute={true} setPosts={setPosts} self_user={self_user} key={post.post_id} post={post} />;
                   })
                 : ""}
+            {loading ? <Preloader /> : ""}
         </div>
     );
 }

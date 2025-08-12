@@ -69,6 +69,7 @@
 .post-attr {
     cursor: pointer;
     transition: color ease-in-out 150ms;
+    color: rgba(255, 255, 255, 0.5);
 }
 
 .post-attr:hover {

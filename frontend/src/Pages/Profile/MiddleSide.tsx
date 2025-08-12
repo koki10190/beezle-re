@@ -34,6 +34,7 @@ import CStatus from "../../functions/StatusToClass";
 import { FetchPost } from "../../functions/FetchPost";
 import { Helmet } from "react-helmet";
 import { RGBToHex } from "../../functions/RGBToHex";
+import Preloader from "../../Components/Preloader";
 
 function Loading() {
     return (
@@ -71,6 +72,7 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
     const [blocked, setBlocked] = useState(false);
     const [blockBtn, setBlockedBtn] = useState(false);
     const [profileImage, setProfileImage] = useState<ProfileImage | null>(user.customization?.profile_image ?? null);
+    const [loading, setLoading] = useState(false);
     const mousePos = useMousePos();
     const navigate = useNavigate();
 
@@ -139,10 +141,12 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
 
         // detected bottom
 
+        setLoading(true);
         const _posts = (await axios.get(`${api_uri}/api/post/get/profile?handle=${user.handle}&offset=${postOffset}`, GetFullAuth())).data;
         setPosts((old) => [...old, ..._posts.posts]);
         setPostOffset(_posts.offset);
         setBlocked(_posts.blocked ?? false);
+        setLoading(false);
 
         // setPosts(old => [...old, ...allPosts.splice(postOffset, postOffset + 5)]);
     };
@@ -239,10 +243,12 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
             const date = new Date(parseInt(user.creation_date.$date.$numberLong));
             setJoinDate(`${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`);
 
+            setLoading(true);
             const posts = (await axios.get(`${api_uri}/api/post/get/profile?handle=${user.handle}&offset=${postOffset}`, GetFullAuth())).data;
             setPosts(posts.posts);
             setPostOffset(posts.offset);
             setBlocked(posts.blocked ?? false);
+            setLoading(false);
 
             if (user.handle !== self.handle) {
                 const hasNotif = await axios.post(
@@ -835,6 +841,7 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                             />
                         );
                     })}
+                    {loading ? <Preloader /> : ""}
                 </div>
             </div>
         </>

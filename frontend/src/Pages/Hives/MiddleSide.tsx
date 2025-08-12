@@ -14,6 +14,7 @@ import GetFullAuth from "../../functions/GetFullAuth";
 import { toast } from "react-toastify";
 import GetAuthToken from "../../functions/GetAuthHeader";
 import HiveBox from "./HiveBox";
+import Preloader from "../../Components/Preloader";
 
 enum HivePages {
     SEARCH,
@@ -30,6 +31,7 @@ function MiddleSide() {
     const [exploreHives, setExploreHives] = useState<Array<BeezleHives.Hive>>([]);
     const [exploreOffset, setExploreOffset] = useState(0);
     const [page, setPage] = useState<HivePages>(HivePages.SEARCH);
+    const [loading, setLoading] = useState(false);
 
     const Search = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -54,7 +56,7 @@ function MiddleSide() {
         if (!(element.scrollHeight - element.scrollTop === element.clientHeight)) return;
 
         // detected bottom
-
+        setLoading(true);
         const res = await axios.get(`${api_uri}/api/hives/${PageToAPI(page)}`, {
             params: {
                 offset: exploreOffset,
@@ -76,16 +78,19 @@ function MiddleSide() {
                 break;
             }
         }
+        setLoading(false);
     };
 
     const JoinedHives = async () => {
         if (joinedHives.length > 0) return;
-
+        setLoading(true);
         const res = await axios.get(`${api_uri}/api/hives/get/joined_hives`, GetFullAuth());
         setJoinedHives(res.data.hives);
+        setLoading(false);
     };
 
     const ExploreHives = async () => {
+        setLoading(true);
         const res = await axios.get(`${api_uri}/api/hives/explore`, {
             params: {
                 offset: 0,
@@ -94,6 +99,7 @@ function MiddleSide() {
         });
         setExploreHives(res.data.hives);
         setExploreOffset(res.data.offset);
+        setLoading(false);
     };
 
     const PageToAPI = (page: number) => {
@@ -217,6 +223,7 @@ function MiddleSide() {
             ></hr>
             <p>{PageToText()}:</p>
             <PageToMap page={page} />
+            {loading ? <Preloader /> : ""}
         </div>
     );
 }

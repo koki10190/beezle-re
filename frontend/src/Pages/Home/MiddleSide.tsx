@@ -14,6 +14,7 @@ import GetFullAuth from "../../functions/GetFullAuth";
 import { toast } from "react-toastify";
 import { EnumToPageAPI, EnumToPageName, PostPageEnum } from "../../types/PageEnum";
 import GetAuthToken from "../../functions/GetAuthHeader";
+import Preloader from "../../Components/Preloader";
 
 function MiddleSide() {
     const data: {
@@ -35,6 +36,7 @@ function MiddleSide() {
     const [pageURI, setPageURI] = useState(EnumToPageAPI(PostPageEnum.Home));
     const [pageText, setPageText] = useState(EnumToPageName(PostPageEnum.Home));
     const [loading, setLoading] = useState(false);
+    const [fetchingPosts, setFetchingPosts] = useState(false);
 
     const FetchPosts = async (offset: number, user: UserPrivate) => {
         if (!user) return;
@@ -85,8 +87,10 @@ function MiddleSide() {
         // detected bottom
 
         console.log("at bottom!");
+        setLoading(true);
         if (self_user?.is_bot) return console.error("Bot accounts cannot use the site.");
         FetchPosts(postOffset, self_user);
+        setLoading(false);
     };
 
     useEffect(() => {
@@ -156,12 +160,12 @@ function MiddleSide() {
                 </span>
             </p>
             {self_user?.is_bot ? <p>Bot Accounts are not allowed to use the site.</p> : ""}
-            {loading ? "Loading..." : ""}
             {self_user
                 ? posts.map((post: Post) => {
                       return <PostBox allow_reply_attribute={true} setPosts={setPosts} self_user={self_user} key={post.post_id} post={post} />;
                   })
                 : ""}
+            {loading ? <Preloader /> : ""}
         </div>
     );
 }

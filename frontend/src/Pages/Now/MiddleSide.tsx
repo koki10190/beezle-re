@@ -13,6 +13,7 @@ import { RefreshPosts } from "../../functions/RefreshPosts";
 import GetPostPrefsStringQuery from "../../functions/GetPostPrefsStringQuery";
 import GetFullAuth from "../../functions/GetFullAuth";
 import { toast } from "react-toastify";
+import Preloader from "../../Components/Preloader";
 
 function MiddleSide() {
     const data: {
@@ -30,6 +31,7 @@ function MiddleSide() {
     const [posts, setPosts] = useState<Array<Post>>([]);
     const [self_user, setSelfUser] = useState<UserPrivate>();
     const [postOffset, setPostOffset] = useState(0);
+    const [loading, setLoading] = useState(false);
 
     const handleScroll = async (event: UIEvent<HTMLDivElement>) => {
         const element = event.target! as HTMLDivElement;
@@ -39,14 +41,17 @@ function MiddleSide() {
 
         console.log("at bottom!");
         if (self_user?.is_bot) return console.error("Bot Accounts are not allowed to use the site.");
+        setLoading(true);
         const posts = (await axios.get(`${api_uri}/api/post/get/now?offset=${postOffset}&${GetPostPrefsStringQuery()}`, GetFullAuth())).data;
 
         setPosts((old) => [...old, ...posts.posts]);
         setPostOffset(posts.offset);
+        setLoading(false);
     };
 
     useEffect(() => {
         (async () => {
+            setLoading(true);
             const m_user = await fetchUserPrivate();
             setSelfUser(m_user);
             if (m_user?.is_bot) return console.error("Bot Accounts are not allowed to use the site.");
@@ -54,6 +59,7 @@ function MiddleSide() {
 
             setPosts(posts.posts);
             setPostOffset(posts.offset);
+            setLoading(false);
         })();
     }, []);
 
@@ -73,6 +79,7 @@ function MiddleSide() {
                       return <PostBox allow_reply_attribute={true} setPosts={setPosts} self_user={self_user} key={post.post_id} post={post} />;
                   })
                 : ""}
+            {loading ? <Preloader /> : ""}
         </div>
     );
 }

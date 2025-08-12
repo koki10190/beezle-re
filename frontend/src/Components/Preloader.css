@@ -1,0 +1,20 @@
+.centered-loading-bar {
+    width: 100%;
+    min-height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.centered-loading-bar-gif {
+    width: 50px;
+    height: 50px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    background-color: rgb(255, 144, 70);
+    -webkit-mask-image: url(/6-dots-scale-middle.svg);
+    mask-image: url(/6-dots-scale-middle.svg);
+    mask-repeat: no-repeat;
+    mask-size: cover;
+}

@@ -15,6 +15,7 @@ import { toast } from "react-toastify";
 import GetAuthToken from "../../functions/GetAuthHeader";
 import "./MiddleSide.css";
 import FollowBox from "../../Components/FollowBox";
+import Preloader from "../../Components/Preloader";
 
 const POST_SELECTION = {
     RightNow: "/api/hives/posts/now",
@@ -32,8 +33,10 @@ function MiddleSide() {
     const [isMember, setIsMember] = useState(false);
     const [postOffset, setPostOffset] = useState(0);
     const [postUri, setPostUri] = useState(POST_SELECTION.RightNow);
+    const [loading, setLoading] = useState(false);
 
     const FetchAndSet = async (hive: BeezleHives.Hive, postOffset: number, override: boolean = false) => {
+        setLoading(true);
         const posts = (
             await axios.get(`${api_uri}${postUri}`, {
                 params: {
@@ -49,6 +52,7 @@ function MiddleSide() {
             return override ? posts.posts : [...old, ...posts.posts];
         });
         setPostOffset(posts.offset);
+        setLoading(false);
     };
 
     const handleScroll = async (event: UIEvent<HTMLDivElement>) => {
@@ -56,7 +60,6 @@ function MiddleSide() {
         if (!(element.scrollHeight - element.scrollTop === element.clientHeight)) return;
 
         // detected bottom
-
         console.log("at bottom!");
         if (self?.is_bot) return console.error("Bot Accounts are not allowed to use the site.");
         await FetchAndSet(hive, postOffset);
@@ -139,7 +142,7 @@ function MiddleSide() {
         );
 
     return (
-        <div className="page-sides side-middle home-middle">
+        <div onScroll={handleScroll} className="page-sides side-middle home-middle">
             <div
                 style={{
                     backgroundImage: `url(${hive.banner})`,
@@ -258,6 +261,7 @@ function MiddleSide() {
                       })
                     : ""}
             </div>
+            {loading ? <Preloader /> : ""}
         </div>
     );
 }

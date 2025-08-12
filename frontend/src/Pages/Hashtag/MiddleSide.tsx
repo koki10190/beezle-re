@@ -11,6 +11,7 @@ import { UserPrivate, UserPublic } from "../../types/User";
 import { Post } from "../../types/Post";
 import { RefreshPosts } from "../../functions/RefreshPosts";
 import GetFullAuth from "../../functions/GetFullAuth";
+import Preloader from "../../Components/Preloader";
 
 function MiddleSide() {
     const { hashtag } = useParams();
@@ -18,6 +19,7 @@ function MiddleSide() {
     const [posts, setPosts] = useState<Array<Post>>([]);
     const [self_user, setSelfUser] = useState<UserPrivate>();
     const [postOffset, setPostOffset] = useState(0);
+    const [loading, setLoading] = useState(false);
 
     const handleScroll = async (event: UIEvent<HTMLDivElement>) => {
         const element = event.target! as HTMLDivElement;
@@ -25,19 +27,23 @@ function MiddleSide() {
 
         // detected bottom
 
+        setLoading(true);
         console.log("at bottom!");
         const posts = (await axios.get(`${api_uri}/api/post/hashtag/get?offset=${postOffset}&hashtag=${hashtag}`, GetFullAuth())).data;
         setPosts((old) => [...old, ...posts.posts]);
         setPostOffset(posts.offset);
+        setLoading(false);
     };
 
     useEffect(() => {
         (async () => {
             const m_user = (await fetchUserPrivate()) as UserPrivate;
             setSelfUser(m_user);
+            setLoading(true);
             const posts = (await axios.get(`${api_uri}/api/post/hashtag/get?offset=${postOffset}&hashtag=${hashtag}`, GetFullAuth())).data;
             setPosts(posts.posts);
             setPostOffset(posts.offset);
+            setLoading(false);
         })();
     }, []);
 
@@ -59,6 +65,7 @@ function MiddleSide() {
                           return <PostBox allow_reply_attribute={true} setPosts={setPosts} self_user={self_user} key={post.post_id} post={post} />;
                       })
                 : ""}
+            {loading ? <Preloader /> : ""}
         </div>
     );
 }

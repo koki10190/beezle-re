@@ -46,6 +46,7 @@ function SettingsButton({
 }
 
 function RightSide() {
+    const navigate = useNavigate();
     const [self_user, setSelfUser] = useState<UserPrivate | null>(null);
     const [isExpanded, setExpanded] = useState(false);
     const [window_width, setWindowWidth] = useState(window.innerWidth);
@@ -141,7 +142,7 @@ function RightSide() {
                     ""
                 )}
 
-                <a href={`/profile/${self_user?.handle}`} className="settings-button">
+                <a onClick={() => navigate(`/profile/${self_user?.handle}`)} className="settings-button">
                     <div
                         style={{
                             backgroundImage: `url(${self_user?.avatar})`,

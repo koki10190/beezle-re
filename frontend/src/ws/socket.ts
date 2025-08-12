@@ -55,9 +55,6 @@ class BeezleSocket {
                     handle: user.handle,
                 });
 
-                socket.send("ping", {
-                    handle: user.handle,
-                });
                 console.log("Connected, sent a ping");
                 clearInterval(_);
                 console.log("Intervalling Socket Connection..");
@@ -81,19 +78,19 @@ class BeezleSocket {
         };
 
         this.webSocket.onerror = (err) => {
-            if (msg) toast.error(`Web Socket threw an error, check the console.`);
-            console.error(err);
+            // if (msg) toast.error(`Web Socket threw an error, check the console.`);
+            console.error("WS THREW AN ERROR:", err);
         };
 
-        this.listen("pong", () => {
-            // console.log("Got a pong, sending a ping");
-            setTimeout(() => this.send("ping", { handle: localStorage.getItem("user_handle") }), 5000);
-        });
+        // this.listen("pong", () => {
+        //     // console.log("Got a pong, sending a ping");
+        //     setTimeout(() => this.send("ping", { handle: localStorage.getItem("user_handle") }), 5000);
+        // });
 
-        this.listen("ping", () => {
-            // console.log("Got a ping, sending a pong");
-            setTimeout(() => this.send("pong", {}), 5000);
-        });
+        // this.listen("ping", () => {
+        //     // console.log("Got a ping, sending a pong");
+        //     setTimeout(() => this.send("pong", {}), 5000);
+        // });
     }
 
     public send(channel: string, data: object) {

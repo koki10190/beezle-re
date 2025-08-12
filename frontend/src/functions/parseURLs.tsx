@@ -49,7 +49,9 @@ function parseURLs(
 ): string {
     if (!content) return "";
     let htmlToEmbed = "";
-    content = sanitize(marked.parse(content, { renderer: render, breaks: false }) as string);
+    content = content.startsWith("{MARKDOWN}")
+        ? sanitize(marked.parse(content.replace(/\{MARKDOWN\}/, ""), { renderer: render, breaks: false }) as string)
+        : sanitize(content);
     // console.log(content);
     if (embed) {
         const matched = content.match(/\bhttps?:\/\/media\.tenor\.com\S+/gi);
