@@ -91,11 +91,11 @@ pub async fn send_socket_to_user(ws_sessions: &web::Data<Arc<Mutex<HashMap<Strin
 }
 
 
-pub async fn ws_send_notification(ws_sessions: &web::Data<Arc<Mutex<HashMap<String, actix_ws::Session>>>>, handle: &str) {
-    let data = doc! {
+pub async fn ws_send_notification(ws_sessions: &web::Data<Arc<Mutex<HashMap<String, actix_ws::Session>>>>, handle: &str, data: Option<Document>) {
+    let empty = doc! {
     };
 
-    send_socket_to_user(&ws_sessions, handle, "update_notification_counter", data).await;
+    send_socket_to_user(&ws_sessions, handle, "update_notification_counter", if data.is_some() {data.unwrap()} else {empty}).await;
 }
 
 pub fn is_user_online(ws_sessions: &web::Data<Arc<Mutex<HashMap<String, actix_ws::Session>>>>, handle: &str) -> bool {

@@ -93,7 +93,11 @@ pub async fn route(
                     )
                     .await;
 
-                    ws_send_notification(&ws_sessions, &handle).await;
+                    ws_send_notification(&ws_sessions, &handle, Some(doc!{
+                        "caller": &data.claims.handle,
+                        "post_id": &__post_id,
+                        "message": "replied to your post!"
+                    })).await;
                 }
             }
 
@@ -127,7 +131,11 @@ pub async fn route(
                     )
                     .await;
 
-                    ws_send_notification(&ws_sessions, &handle).await;
+                    ws_send_notification(&ws_sessions, &handle, Some(doc!{
+                        "caller": &data.claims.handle,
+                        "post_id": &__post_id,
+                        "message": "mentioned you!"
+                    })).await;
                 }
             }
 
@@ -183,7 +191,11 @@ pub async fn route(
                     },
                 ).await;
 
-                ws_send_notification(&ws_sessions, &send_to).await;
+                ws_send_notification(&ws_sessions, &send_to, Some(doc! {
+                    "caller": &data.claims.handle,
+                    "post_id": &__post_id,
+                    "message": "added a new post!"
+                })).await;
             }
 
             mongoose::insert_document(&client, "beezle", "Posts", document.clone()).await;

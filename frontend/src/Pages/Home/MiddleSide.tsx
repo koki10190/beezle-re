@@ -47,8 +47,8 @@ function MiddleSide() {
 
         if (page !== PostPageEnum.Home) delete body.filter_users;
 
+        setLoading(true);
         if (offset < 1) {
-            setLoading(true);
             setPosts([]);
         }
 
@@ -87,10 +87,9 @@ function MiddleSide() {
         // detected bottom
 
         console.log("at bottom!");
-        setLoading(true);
+        console.log("DRFOKDASGKFLASDFKGL");
         if (self_user?.is_bot) return console.error("Bot accounts cannot use the site.");
         FetchPosts(postOffset, self_user);
-        setLoading(false);
     };
 
     useEffect(() => {

@@ -87,7 +87,11 @@ pub async fn route(
                 )
                 .await;
 
-                ws_send_notification(&ws_sessions, &handle).await;
+                ws_send_notification(&ws_sessions, &handle, Some(doc!{
+                    "caller": &token_data.handle,
+                    "handle": &token_data.handle,
+                    "message": "followed you!"
+                })).await;
 
                 mongoose::add_coins(&client, token_data.handle.as_str(), 5).await;
                 mongoose::add_xp(&client, token_data.handle.as_str(), 5).await;

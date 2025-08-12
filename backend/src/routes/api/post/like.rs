@@ -106,7 +106,11 @@ pub async fn route(
                     )
                     .await;
 
-                    ws_send_notification(&ws_sessions, &post_op).await;
+                    ws_send_notification(&ws_sessions, &post_op, Some(doc! {
+                        "caller": &data.claims.handle,
+                        "post_id": &body.post_id,
+                        "message": "liked your message!"
+                    })).await;
                 }
             }
 
