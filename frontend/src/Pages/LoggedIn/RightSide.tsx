@@ -91,7 +91,7 @@ function RightSide() {
         })();
 
         socket.listen("update_notification_counter", (data) => {
-            console.log("Notification Received!");
+            console.log("Notification Received:", data);
             setNotifCount((old) => ++old);
             setNotifColor("rgb(255, 144, 70)");
         });

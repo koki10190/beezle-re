@@ -15,7 +15,9 @@ pub struct Hive {
     pub owner: String,
     #[serde(with = "chrono_datetime_as_bson_datetime")]
     pub creation_date: chrono::DateTime<chrono::Utc>,
-    pub moderators: Option<Array>
+    pub moderators: Option<Array>,
+    pub level: i64,
+    pub coins: i64
 }
 
 
