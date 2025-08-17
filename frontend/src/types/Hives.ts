@@ -21,5 +21,10 @@ declare namespace BeezleHives {
                 $numberLong: string;
             };
         };
+        levels: {
+            xp: number;
+            level: number;
+        };
+        coins: number;
     }
 }

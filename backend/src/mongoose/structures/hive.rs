@@ -3,6 +3,12 @@ use mongodb::bson::oid::ObjectId;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug)]
+pub struct HiveLevels {
+    pub level: i64,
+    pub xp: i64,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
 pub struct Hive {
     #[serde(rename = "_id", skip_serializing_if = "Option::is_none")]
     pub id: Option<ObjectId>,
@@ -16,10 +22,9 @@ pub struct Hive {
     #[serde(with = "chrono_datetime_as_bson_datetime")]
     pub creation_date: chrono::DateTime<chrono::Utc>,
     pub moderators: Option<Array>,
-    pub level: i64,
-    pub coins: i64
+    pub levels: HiveLevels,
+    pub coins: i64,
 }
-
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct HiveMember {

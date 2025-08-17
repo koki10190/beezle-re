@@ -64,7 +64,7 @@ pub async fn route(
         owner: token_data.claims.handle.clone(),
         creation_date: chrono::Utc::now(),
         moderators: vec![].into(),
-        level: 0,
+        levels: mongoose::structures::hive::HiveLevels { level: 0, xp: 0 },
         coins: 0
     };
 

@@ -28,3 +28,5 @@ pub use coins::add_coins;
 pub use coins::get_coins;
 
 pub mod milestones;
+
+pub mod hives;

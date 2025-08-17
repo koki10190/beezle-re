@@ -16,6 +16,8 @@ import GetAuthToken from "../../functions/GetAuthHeader";
 import "./MiddleSide.css";
 import FollowBox from "../../Components/FollowBox";
 import Preloader from "../../Components/Preloader";
+import SetLevelColorByValue from "../../functions/SetLevelColorByValue";
+import GetLevelGradient from "../../functions/GetLevelGradient";
 
 const POST_SELECTION = {
     RightNow: "/api/hives/posts/now",
@@ -26,6 +28,7 @@ function MiddleSide() {
     const navigate = useNavigate();
     const { handle } = useParams();
 
+    const levelBox = useRef<HTMLSpanElement>(null);
     const [hive, setHive] = useState<BeezleHives.Hive>();
     const [memberCount, setMemberCount] = useState(0);
     const [posts, setPosts] = useState<Array<Post>>([]);
@@ -74,6 +77,9 @@ function MiddleSide() {
         });
 
         setHive(res.data.hive);
+        if (levelBox.current) {
+            SetLevelColorByValue(res.data.hive.level, levelBox.current!);
+        }
         setMemberCount(res.data.members);
 
         const res2 = await axios.get(`${api_uri}/api/hives/is_member`, {
@@ -159,6 +165,33 @@ function MiddleSide() {
             <h2 className="hive-page-username">{hive.name}</h2>
             <p className="hive-page-handle">@{hive.handle}</p>
             <div className="hive-page-sections">
+                <div style={{ fontSize: "1.17em", fontFamily: "Open Sans, sans-serif" }}>
+                    <p>
+                        Level{" "}
+                        <span
+                            style={{
+                                background: GetLevelGradient(hive?.levels?.level ?? 0),
+                                borderRadius: hive?.levels?.level >= 100 ? "5px" : "100px",
+                            }}
+                            className="level-box"
+                            ref={levelBox}
+                        >
+                            {hive.levels?.level}
+                        </span>
+                        <span style={{ color: "rgba(255,255,255,0.6)" }}>
+                            {" - XP "}{" "}
+                            {hive?.levels
+                                ? hive?.levels?.xp
+                                    ? hive?.levels?.xp.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                                    : 0
+                                : (0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                            /1,000
+                        </span>
+                    </p>
+                    <p style={{ marginTop: "-10px" }}>
+                        <i style={{ color: "rgb(255, 208, 108)" }} className="fa-solid fa-coins"></i> {hive?.coins?.toLocaleString("en-US") ?? 0}
+                    </p>
+                </div>
                 <div>
                     <h4 className="bee-queen-h5">
                         <i className="fa-solid fa-crown" /> Bee Queen (Owner)
