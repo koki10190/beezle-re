@@ -8,7 +8,7 @@ use actix_web::{get, post, web, App, HttpRequest, HttpResponse, HttpServer, Resp
 
 use crate::{
     beezle::{self, auth::get_token, user_exists, ws_send_notification},
-    mongoose::{self, add_coins, add_xp, structures::hashtag::Hashtag},
+    mongoose::{self, add_coins, add_xp, hives::{self, get_hive}, structures::hashtag::Hashtag},
     poison::LockResultExt,
 };
 
@@ -52,6 +52,11 @@ pub async fn route(
                 reactions: doc! {}.into(),
                 hive_post: body.hive_post.clone()
             };
+
+            if let Some(hive_id) = &body.hive_post {
+                hives::add_coins(&client, &hive_id, 5).await;
+                hives::add_xp(&client, &hive_id, 1).await;
+            }
 
             // do notifications
 

@@ -1,4 +1,4 @@
-use bson::{doc, Document};
+use bson::{doc, Bson, Document};
 use jsonwebtoken::{decode, DecodingKey, EncodingKey, Header, Validation};
 use mail_send::mail_auth::flate2::Status;
 use serde::Deserialize;
@@ -8,7 +8,7 @@ use actix_web::{delete, get, http::StatusCode, post, web, App, HttpRequest, Http
 
 use crate::{
     beezle::{self, auth::get_token},
-    mongoose::{self, structures::user},
+    mongoose::{self, hives::{self, get_hive}, structures::{post::Post, user}},
     poison::LockResultExt,
 };
 
@@ -32,6 +32,24 @@ pub async fn route(
     match token {
         Ok(_) => {
             let data = token.unwrap();
+
+            let post = mongoose::get_document(&client, "beezle", "Posts", doc!{
+                "post_id": &body.post_id
+            }).await;
+
+            if let Some(post_doc) = post {
+                let post: Post = bson::from_bson(Bson::Document(post_doc)).unwrap();
+                
+                if post.hive_post.is_some() {
+                    let hive_id = post.hive_post.unwrap();
+                    let hive = get_hive(&client, &hive_id).await;
+
+                    if let Some(hive) = hive {
+                        hives::add_coins(&client, &hive_id, -5).await;
+                        hives::add_xp(&client, &hive_id, -1).await;
+                    }
+                }
+            }
 
             mongoose::delete_document(
                 &client,

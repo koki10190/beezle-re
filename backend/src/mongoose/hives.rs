@@ -1,9 +1,9 @@
 extern crate mongodb;
-use bson::doc;
+use bson::{doc, raw::Error, Bson};
 use mongodb::bson::Document;
 use mongodb::Client;
 
-use crate::beezle;
+use crate::{beezle, mongoose::structures::{hive::HiveLevels, Hive}};
 
 use super::{get_document, structures::user::UserLevels, update_document};
 
@@ -21,7 +21,7 @@ pub async fn add_coins(client: &Client, hive_id: &str, coins_to_add: i64) {
     update_document(
         client,
         "beezle",
-        "Users",
+        "Hives",
         doc! {
             "$or": [
                 doc! {
@@ -55,7 +55,7 @@ pub async fn add_xp(client: &Client, hive_id: &str, xp_to_add: i64) {
     update_document(
         client,
         "beezle",
-        "Users",
+        "Hives",
         doc! {
             "$or": [
                 doc! {
@@ -99,7 +99,7 @@ pub async fn add_xp(client: &Client, hive_id: &str, xp_to_add: i64) {
     .unwrap();
 
     let string_repr = serde_json::to_string(hive.get("levels").unwrap()).unwrap();
-    let mut levels: UserLevels = serde_json::from_str(&string_repr).unwrap();
+    let mut levels: HiveLevels = serde_json::from_str(&string_repr).unwrap();
 
     if levels.xp >= 1000 {
         levels.xp = 0;
@@ -110,7 +110,7 @@ pub async fn add_xp(client: &Client, hive_id: &str, xp_to_add: i64) {
     update_document(
         client,
         "beezle",
-        "Users",
+        "Hives",
         doc! {
             "$or": [
                 doc! {
@@ -134,4 +134,98 @@ pub async fn add_xp(client: &Client, hive_id: &str, xp_to_add: i64) {
         },
     )
     .await;
+}
+
+pub async fn get_level(client: &Client, hive_id: &str) -> i64 {
+    let hive = get_document(
+        client,
+        "beezle",
+        "Hives",
+        doc! {
+            "$or": [
+                doc! {
+                    "handle":  mongodb::bson::Regex {
+                        pattern: hive_id.replace("@", "").to_string(),
+                        options: "i".to_string()
+                    }
+                },
+                doc! {
+                    "hive_id": &hive_id
+                },
+            ]
+        },
+    )
+    .await
+    .unwrap();
+
+    hive.get("levels")
+        .unwrap()
+        .as_document()
+        .unwrap()
+        .get("level")
+        .unwrap()
+        .as_i64()
+        .unwrap()
+}
+
+pub async fn get_coins(client: &Client, hive_id: &str) -> i64 {
+    let hive = get_document(
+        client,
+        "beezle",
+        "Hives",
+        doc! {
+            "$or": [
+                doc! {
+                    "handle":  mongodb::bson::Regex {
+                        pattern: hive_id.replace("@", "").to_string(),
+                        options: "i".to_string()
+                    }
+                },
+                doc! {
+                    "hive_id": &hive_id
+                },
+            ]
+        },
+    )
+    .await
+    .unwrap();
+
+    hive.get("coins")
+        .unwrap()
+        .as_i64()
+        .unwrap()
+}
+
+pub async fn get_hive(client: &Client, hive_id: &str) -> Option<Hive> {
+    let doc = get_document(
+        client,
+        "beezle",
+        "Hives",
+        doc! {
+            "$or": [
+                doc! {
+                    "handle":  mongodb::bson::Regex {
+                        pattern: hive_id.replace("@", "").to_string(),
+                        options: "i".to_string()
+                    }
+                },
+                doc! {
+                    "hive_id": &hive_id
+                },
+            ]
+        },
+    )
+    .await;
+    
+    match doc {
+        Some(unwrapped) => {
+            let hive: Result<Hive, bson::de::Error> = bson::from_bson(Bson::Document(unwrapped));
+            match hive {
+                Ok(h) => Some(h),
+                Err(_) => None
+            }
+        },
+        None => None
+    }
+
 }
