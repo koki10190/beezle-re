@@ -579,7 +579,8 @@ function MiddleSide() {
                                     .replace("days", "d")
                                     .replace("day", "1d")
                                     .replace("months", " months")
-                                    .replace("ayear", "1 year")}
+                                    .replace("ayear", "1 year")
+                                    .replace("years", "y")}
                             </span>
                         </p>
                     </div>

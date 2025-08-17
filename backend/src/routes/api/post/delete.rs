@@ -49,6 +49,17 @@ pub async fn route(
                         hives::add_xp(&client, &hive_id, -1).await;
                     }
                 }
+
+                if post.poll_id.is_some() {
+                    let polid = post.poll_id.unwrap();
+                    mongoose::delete_document(&client, "beezle", "Polls", doc!{
+                        "poll_id": &polid
+                    }).await;
+
+                    mongoose::delete_many_document(&client, "beezle", "PollVoters", doc!{
+                        "poll_id": &polid
+                    }).await;
+                }
             }
 
             mongoose::delete_document(

@@ -76,7 +76,8 @@ pub async fn route(client: web::Data<mongodb::Client>, req: HttpRequest, body: w
                 "reposts": 1,
                 "repost": 1,
                 "likes": 1,
-                "replying_to": 1
+                "replying_to": 1,
+                "poll_id": 1
             }
         }
     ], options).await.unwrap();

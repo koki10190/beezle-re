@@ -10,6 +10,7 @@
 .mention-hover {
     position: fixed;
     width: fit-content;
+    max-width: 350px;
     height: fit-content;
     padding: 15px;
     border-radius: 5px;

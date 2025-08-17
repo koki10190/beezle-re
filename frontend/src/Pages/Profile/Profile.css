@@ -413,6 +413,33 @@ body {
     row-gap: 5px;
 }
 
+.profile-page-seperators {
+    width: 100%;
+    /* background-color: green; */
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.profile-page-selector {
+    width: 100%;
+    cursor: pointer;
+    height: 100%;
+    /* background-color: red; */
+    background-color: rgba(255, 255, 255, 0.31);
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    transition: ease-in-out 150ms background-color;
+}
+
+.profile-page-selector:hover {
+    background-color: rgba(180, 180, 180, 0.31);
+}
+
 @media screen and (max-width: 1000px) {
     .steam-inventory-container {
         grid-template-columns: repeat(4, 1fr);

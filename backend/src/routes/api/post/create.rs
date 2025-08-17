@@ -1,23 +1,31 @@
-use bson::{doc, uuid, Document};
+use bson::{doc, uuid, Array, Document};
 use jsonwebtoken::{decode, DecodingKey, EncodingKey, Header, Validation};
 use regex::Regex;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use std::{collections::HashMap, env, sync::{Arc, Mutex}};
 
 use actix_web::{get, post, web, App, HttpRequest, HttpResponse, HttpServer, Responder};
 
 use crate::{
     beezle::{self, auth::get_token, user_exists, ws_send_notification},
-    mongoose::{self, add_coins, add_xp, hives::{self, get_hive}, structures::hashtag::Hashtag},
+    mongoose::{self, add_coins, add_xp, hives::{self, get_hive}, structures::{hashtag::Hashtag, poll::Poll}},
     poison::LockResultExt,
 };
+
+#[derive(Deserialize, Serialize)]
+struct PollInfo {
+    options: Array,
+    title: String,
+    expiry_s: i64 
+}
 
 #[derive(Deserialize)]
 struct TokenInfo {
     content: String,
     replying_to: String,
     is_reply: bool,
-    hive_post: Option<String>
+    hive_post: Option<String>,
+    poll: Option<PollInfo>
 }
 
 #[post("/api/post/create")]
@@ -37,7 +45,8 @@ pub async fn route(
         Ok(_) => {
             let data = token.unwrap();
             let __post_id = uuid::Uuid::new().to_string();
-            let struct_post_doc = mongoose::structures::post::Post {
+            let poll_id  = uuid::Uuid::new().to_string();
+            let mut struct_post_doc = mongoose::structures::post::Post {
                 id: None,
                 handle: data.claims.handle.to_string(),
                 content: body.content.to_string(),
@@ -46,18 +55,40 @@ pub async fn route(
                 likes: vec![],
                 reposts: vec![],
                 post_id: __post_id.to_string(),
-                edited: false,
-                replying_to: body.replying_to.to_string(),
+                edited: false,      replying_to: body.replying_to.to_string(),
                 is_reply: body.is_reply,
                 reactions: doc! {}.into(),
-                hive_post: body.hive_post.clone()
+                hive_post: body.hive_post.clone(),
+                poll_id: None
             };
+
+            if let Some(poll) = &body.poll {
+
+                if poll.expiry_s > 5 && poll.options.len() <= 5 {
+                    struct_post_doc.poll_id = Some(poll_id.clone());
+
+                    let _poll = Poll { 
+                        id: None,
+                        poll_id: poll_id.clone(),
+                        title: poll.title.clone(),
+                        options: poll.options.clone(),
+                        post_id: __post_id.clone(),
+                        expiry_date: chrono::Utc::now() + chrono::Duration::seconds(poll.expiry_s),
+                        over: false
+                    };
+
+                    let serialized_doc = mongodb::bson::to_bson(&_poll).unwrap();
+                    let document = serialized_doc.as_document().unwrap();
+                    mongoose::insert_document(&client, "beezle", "Polls", document.clone()).await;
+                }
+            }
 
             if let Some(hive_id) = &body.hive_post {
                 hives::add_coins(&client, &hive_id, 5).await;
                 hives::add_xp(&client, &hive_id, 1).await;
             }
 
+          
             // do notifications
 
             if body.is_reply {

@@ -3,7 +3,8 @@ use futures::TryStreamExt;
 use jsonwebtoken::{decode, DecodingKey, EncodingKey, Header, Validation};
 use mail_send::mail_auth::flate2::Status;
 use mongodb::options::{AggregateOptions, Collation, FindOptions};
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
+use serde_repr::*;
 use std::env;
 
 use actix_web::{get, http::StatusCode, post, web, App, HttpRequest, HttpResponse, HttpServer, Responder};
@@ -14,10 +15,19 @@ use crate::{
     poison::LockResultExt,
 };
 
+#[derive(Deserialize_repr, Serialize_repr)]
+#[repr(u8)]
+enum ProfileFetchMode {
+    NEWEST = 0,
+    OLDEST = 1,
+    MEDIA = 2
+}
+
 #[derive(Deserialize)]
 struct ProfileQuery {
     handle: String,
     offset: i64,
+    mode: ProfileFetchMode
 }
 
 #[get("/api/post/get/profile")]
@@ -56,49 +66,72 @@ pub async fn route(
     let collation = Collation::builder().locale("en_US").numeric_ordering(true).build();
     let options = AggregateOptions::builder().collation(collation).build();
 
+    let mut aggregation: Vec<Document> = vec![
+        doc! {
+            "$match": {
+                "handle": &body.handle
+            }
+        },
+        doc! {
+            "$skip": &body.offset
+        },
+        doc! {
+            "$limit": POST_OFFSET
+        },
+        doc! {
+            "$lookup": doc! {
+                "from": "Reactions",
+                "localField": "post_id",
+                "foreignField": "post_id",
+                "as": "post_reactions"
+            }
+        },
+        doc! {
+            "$lookup": doc! {
+                "from": "Posts",
+                "localField": "post_id",
+                "foreignField": "replying_to",
+                "as": "reply_posts"
+            }
+        },
+        doc! {
+            "$addFields": doc! {
+                "reply_count": doc! {
+                    "$size": "$reply_posts"
+                }
+            }
+        },
+    ];
+
+    // /\bhttps?:\/\/i\.imgur\.com\S+/gi
+    match body.mode {
+        ProfileFetchMode::MEDIA=> {
+            aggregation.push(doc!{
+                "$match": {
+                    "content": mongodb::bson::Regex {
+                        pattern: r"\bhttps?:\/\/i\.imgur\.com\S+".to_string(),
+                        options: "i".to_string()
+                    }
+                }
+            });
+            aggregation.push(doc!{
+                "$match": {
+                    "repost": false
+                }
+            });
+            aggregation.push(doc!{"$sort":doc!{"creation_date": -1}});
+        }
+        ProfileFetchMode::NEWEST => {
+            aggregation.push(doc!{"$sort":doc!{"creation_date": -1}});
+        },
+        ProfileFetchMode::OLDEST => {
+            aggregation.push(doc!{"$sort":doc!{"creation_date": 1}});
+        },
+    }
+
     let cursor = coll
         .aggregate(
-            [
-                doc! {
-                    "$match": {
-                        "handle": &body.handle
-                    }
-                },
-                doc! {
-                    "$sort": doc! {
-                        "creation_date": -1
-                    }
-                },
-                doc! {
-                    "$skip": &body.offset
-                },
-                doc! {
-                    "$limit": POST_OFFSET
-                },
-                doc! {
-                    "$lookup": doc! {
-                        "from": "Reactions",
-                        "localField": "post_id",
-                        "foreignField": "post_id",
-                        "as": "post_reactions"
-                    }
-                },
-                doc! {
-                    "$lookup": doc! {
-                        "from": "Posts",
-                        "localField": "post_id",
-                        "foreignField": "replying_to",
-                        "as": "reply_posts"
-                    }
-                },
-                doc! {
-                    "$addFields": doc! {
-                        "reply_count": doc! {
-                            "$size": "$reply_posts"
-                        }
-                    }
-                },
-            ],
+            aggregation.into_iter(),
             options
         )
         .await

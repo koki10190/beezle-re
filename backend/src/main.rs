@@ -116,6 +116,14 @@ async fn main() -> std::io::Result<()> {
             .unwrap(),
     );
 
+    // tokio::spawn(async move {
+    //     loop {
+    //         // Handle polls and such
+    //         let interval = std::time::Duration::from_millis(10000);
+    //         std::thread::sleep(interval);
+    //     }
+    // });
+
     let http_server = HttpServer::new(move || {
         App::new()
             .app_data(web::Data::clone(&mutex_app_data))
@@ -205,6 +213,8 @@ async fn main() -> std::io::Result<()> {
             .service(routes::api::hives::dashboard_moderator::route)
             .service(routes::api::hives::dashboard_post_delete::route)
             .service(routes::api::hives::explore::route)
+            .service(routes::api::polls::get::route)
+            .service(routes::api::polls::vote::route)
             .route("/ws", web::get().to(socket::main_ws))
             .wrap(middleware::Logger::default())
     });

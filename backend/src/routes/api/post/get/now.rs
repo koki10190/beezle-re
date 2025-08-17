@@ -142,6 +142,7 @@ pub async fn route(client: web::Data<mongodb::Client>, req: HttpRequest, body: w
                 "likes": 1,
                 "reply_count": 1,
                 "hive_post": 1,
+                "poll_id": 1,
                 "replying_to": 1
             }
         }

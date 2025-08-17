@@ -18,6 +18,10 @@ import PostTyperVideoEmbed from "./PostTyperVideoEmbed";
 import PostTyperImageEmbed from "./PostTyperImageEmbed";
 import GetAuthToken from "../functions/GetAuthHeader";
 import { toast } from "react-toastify";
+import FullPopup from "./Popups/FullPopup";
+import { TIME_OPTIONS } from "../types/TIMEDATA";
+import Divider from "./Divider";
+import Poll from "./Poll";
 
 interface FileType {
     file: File;
@@ -29,12 +33,33 @@ function PostTyper({ onSend, replying_to = "", hive_post = null }: { onSend: (da
     const [canCreate, setCanCreate] = useState(true);
     const [isEmojiPickerOpened, setEmojiPickerOpened] = useState(false);
     const [isTenorOpened, setTenorOpened] = useState(false);
+    const [isPollOpened, setPollOpened] = useState(false);
     const [files, setFiles] = useState([] as Array<FileType>);
     const fileRef = useRef<HTMLInputElement>(null);
     const filesToUploadRef = useRef<HTMLDivElement>(null);
     const sendButtonRef = useRef<HTMLButtonElement>(null);
     const charCounter = useRef<HTMLParagraphElement>(null);
     const [self_user, setSelfUser] = useState<UserPrivate>();
+    const [pollData, setPollData] = useState<{
+        title: string;
+        temp_option_holder: string;
+        options: Array<string>;
+        days: number;
+        hours: number;
+        minutes: number;
+    }>({
+        title: "",
+        temp_option_holder: "",
+        options: [],
+        days: 0,
+        hours: 0,
+        minutes: 0,
+    });
+    const [poll, setPoll] = useState<{
+        options: Array<string>;
+        title: string;
+        expiry_s: number;
+    }>(null);
 
     useEffect(() => {
         (async () => {
@@ -73,7 +98,7 @@ function PostTyper({ onSend, replying_to = "", hive_post = null }: { onSend: (da
             // if (textarea.current.value.replace(/ /g, '') == '') return;
             sendButtonRef.current!.disabled = true;
             sendButtonRef.current!.innerText = "Posting...";
-
+            console.log(poll);
             const res = await axios.post(
                 `${api_uri}/api/post/create`,
                 {
@@ -81,6 +106,7 @@ function PostTyper({ onSend, replying_to = "", hive_post = null }: { onSend: (da
                     replying_to,
                     is_reply: replying_to !== "",
                     hive_post,
+                    poll,
                 },
                 {
                     headers: GetAuthToken(),
@@ -88,11 +114,14 @@ function PostTyper({ onSend, replying_to = "", hive_post = null }: { onSend: (da
             );
 
             console.log(res.data);
+            res.data.post_reactions = [];
+            res.data.reply_count = 0;
             onSend(res.data as Post);
             setCanCreate(false);
             textarea.current.value = "";
 
             setFiles([]);
+            setPoll(null);
 
             sendButtonRef.current!.disabled = false;
             sendButtonRef.current!.innerText = "Send";
@@ -142,6 +171,55 @@ function PostTyper({ onSend, replying_to = "", hive_post = null }: { onSend: (da
         }
     };
 
+    const AddOption = () => {
+        setPollData((old) => {
+            if (old.options.length >= 5) return old;
+            // if (old.options.findIndex((x) => x === old.temp_option_holder) > -1) return old;
+            const _new = { ...old };
+            _new.options.push(_new.temp_option_holder);
+            _new.temp_option_holder = "";
+            return _new;
+        });
+    };
+
+    const CreatePoll = () => {
+        console.log(pollData);
+        let seconds = pollData.days * 86400;
+        seconds += pollData.hours * 3600;
+        seconds += pollData.minutes * 60;
+        console.log(seconds, "S");
+        if (pollData.title.length < 1) {
+            toast.error("Cannot have an empty title!");
+            return;
+        }
+
+        if (pollData.options.length < 1) {
+            toast.error("A poll must have atleast one option!");
+            return;
+        }
+
+        if (seconds < 5) {
+            toast.error("Invalid time!");
+            return;
+        }
+
+        toast.success("Success!");
+        setPoll({
+            options: pollData.options,
+            title: pollData.title,
+            expiry_s: seconds,
+        });
+    };
+
+    const RemoveOption = (index: number) => {
+        setPollData((old) => {
+            const _new = { ...old };
+
+            _new.options.splice(index, 1);
+            return _new;
+        });
+    };
+
     return (
         <div>
             <textarea
@@ -171,6 +249,18 @@ function PostTyper({ onSend, replying_to = "", hive_post = null }: { onSend: (da
                     ),
                 )}
             </div>
+            {poll ? (
+                <div>
+                    <h2>
+                        Poll will be uploaded -{" "}
+                        <span onClick={() => setPoll(null)} className="poll-remover">
+                            REMOVE
+                        </span>
+                    </h2>
+                </div>
+            ) : (
+                ""
+            )}
             <div className="post-typer-buttons">
                 <a onClick={() => fileRef.current!.click()} className="post-typer-button">
                     <i className="fa-solid fa-image" />
@@ -193,6 +283,14 @@ function PostTyper({ onSend, replying_to = "", hive_post = null }: { onSend: (da
                     className="post-typer-button"
                 >
                     <i className="fa-solid fa-gif" />
+                </a>
+                <a
+                    onClick={() => {
+                        setPollOpened(!isPollOpened);
+                    }}
+                    className="post-typer-button"
+                >
+                    <i className="fa-solid fa-poll-people" />
                 </a>
                 <button ref={sendButtonRef} onClick={CreatePost} className="post-typer-button button-field post-typer-sender">
                     Send
@@ -219,6 +317,145 @@ function PostTyper({ onSend, replying_to = "", hive_post = null }: { onSend: (da
                     tenorApiKey={tenor_api_key}
                     theme={Theme.DARK}
                 />
+            ) : (
+                ""
+            )}
+
+            {isPollOpened ? (
+                <FullPopup>
+                    <h1 style={{ marginTop: "10px", marginBottom: "5px" }}>
+                        <i className="fa-solid fa-square-poll-vertical"></i> Poll Creator
+                    </h1>
+                    <label htmlFor="cpoll-title">Poll Title</label>
+                    <input
+                        onChange={(v) => {
+                            setPollData((old) => {
+                                const _new = { ...old };
+                                _new.title = v.target.value;
+                                return _new;
+                            });
+                        }}
+                        value={pollData.title}
+                        id="cpoll-title"
+                        className="input-field w100"
+                        placeholder="Which one is better..."
+                    />
+                    <div className="cpoll-date">
+                        <select
+                            onChange={(v) => {
+                                setPollData((old) => {
+                                    const _new = { ...old };
+                                    _new.days = parseInt(v.target.value);
+                                    return _new;
+                                });
+                            }}
+                            className="input-field"
+                        >
+                            <option value="" disabled selected>
+                                Days
+                            </option>
+                            {TIME_OPTIONS.days.map((day) => (
+                                <option selected={day === pollData.days && day != 0} value={day}>
+                                    {day}
+                                </option>
+                            ))}
+                        </select>
+                        <select
+                            onChange={(v) => {
+                                setPollData((old) => {
+                                    const _new = { ...old };
+                                    _new.hours = parseInt(v.target.value);
+                                    return _new;
+                                });
+                            }}
+                            className="input-field"
+                        >
+                            <option value="" disabled selected>
+                                Hours
+                            </option>
+                            {TIME_OPTIONS.hours.map((v) => (
+                                <option selected={v === pollData.hours && v != 0} value={v}>
+                                    {v}
+                                </option>
+                            ))}
+                        </select>
+                        <select
+                            onChange={(v) => {
+                                setPollData((old) => {
+                                    const _new = { ...old };
+                                    _new.minutes = parseInt(v.target.value);
+                                    return _new;
+                                });
+                            }}
+                            className="input-field"
+                        >
+                            <option value="" disabled selected>
+                                Minutes
+                            </option>
+                            {TIME_OPTIONS.minutes.map((v) => (
+                                <option selected={v === pollData.minutes && v != 0} value={v}>
+                                    {v}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                    <hr
+                        style={{
+                            width: "calc(100% + 20px)",
+                            marginLeft: "-10px",
+                            borderTop: "1px solid rgba(255, 255,255, 0.4)",
+                        }}
+                        className="divider"
+                    ></hr>
+                    <h3 style={{ marginTop: "10px", marginBottom: "10px" }}>
+                        <i className="fa-solid fa-bars-progress"></i> Poll Options
+                    </h3>
+                    <label htmlFor="cpoll-option-title">Option</label>
+                    <input
+                        onChange={(v) => {
+                            setPollData((old) => {
+                                const _new = { ...old };
+                                _new.temp_option_holder = v.target.value;
+                                return _new;
+                            });
+                        }}
+                        value={pollData.temp_option_holder}
+                        id="cpoll-option-title"
+                        className="input-field w100"
+                        placeholder="Bees are better"
+                    />
+                    <button onClick={AddOption} className="button-field button-field-blurple">
+                        Add Option
+                    </button>
+                    <div>
+                        {pollData.options.map((option, i) => {
+                            return (
+                                <div className="cpoll-option">
+                                    <p className="cpoll-option-text">{option}</p>
+                                    <button onClick={() => RemoveOption(i)} className="button-field button-field-red">
+                                        <i className="fa-solid fa-delete-left"></i>
+                                    </button>
+                                </div>
+                            );
+                        })}
+                    </div>
+                    <hr
+                        style={{
+                            width: "calc(100% + 20px)",
+                            marginLeft: "-10px",
+                            borderTop: "1px solid rgba(255, 255,255, 0.4)",
+                        }}
+                        className="divider"
+                    ></hr>
+                    <div className="cpoll-decider-grid">
+                        <button onClick={CreatePoll} className="button-field button-field-green">
+                            Create
+                        </button>
+                        <button onClick={() => setPollOpened(false)} className="button-field button-field-red">
+                            Close
+                        </button>
+                    </div>
+                </FullPopup>
             ) : (
                 ""
             )}

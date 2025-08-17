@@ -46,3 +46,7 @@ hr {
     margin: 1em 0;
     padding: 0;
 }
+
+.toasty {
+    z-index: 450545;
+}

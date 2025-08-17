@@ -369,3 +369,68 @@ aside li {
     background: rgba(255, 255, 255, 0.11);
     margin-bottom: 15px;
 }
+
+.post-poll {
+    width: 100%;
+    height: fit-content;
+    min-height: 50px;
+    background-color: rgba(0, 0, 0, 0.6);
+    margin-bottom: 10px;
+    box-sizing: border-box;
+    padding: 15px;
+    border-radius: 5px;
+}
+
+.post-poll .post-poll-title {
+    padding: 0;
+    margin: 0;
+}
+
+.post-poll-options-disabled {
+    pointer-events: none;
+}
+
+.post-poll-option {
+    width: 100%;
+    border-radius: 5px;
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+    text-align: left;
+    padding: 15px;
+    margin-top: 10px;
+    margin-bottom: 0;
+    border: 2px solid transparent;
+    transition: ease-in-out 150ms;
+}
+
+.post-poll-option:hover {
+    border: 2px solid rgb(27, 164, 255);
+}
+
+.post-poll-option .option-votes {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.post-poll-footer {
+    padding: 0;
+    margin: 0;
+
+    margin-top: 15px;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.poll-over {
+    border: 2px solid rgb(159, 99, 255);
+    pointer-events: none;
+}
+
+.poll-selected {
+    border: 2px solid orange;
+}
+
+.poll-winner {
+    border: 2px solid lime;
+}
+.poll-winner:hover {
+    border: 2px solid lime;
+}

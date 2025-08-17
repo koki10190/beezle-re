@@ -15,6 +15,7 @@ import { toast } from "react-toastify";
 import { EnumToPageAPI, EnumToPageName, PostPageEnum } from "../../types/PageEnum";
 import GetAuthToken from "../../functions/GetAuthHeader";
 import Preloader from "../../Components/Preloader";
+import FullPopup from "../../Components/Popups/FullPopup";
 
 function MiddleSide() {
     const data: {
@@ -113,6 +114,7 @@ function MiddleSide() {
     }, [pageURI]);
 
     const OnTyperSend = (data: Post) => {
+        console.log(data);
         setPosts((old) => [data, ...old]);
     };
 

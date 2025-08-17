@@ -13,6 +13,7 @@ interface Post {
     edited: boolean;
     replying_to: string;
     is_reply: boolean;
+    poll_id: string;
     post_reactions: Array<PostReaction>;
     reply_count: number;
     hive_post?: string | null;

@@ -10,3 +10,4 @@ pub mod blocked_user;
 pub use blocked_user::BlockedUser;
 pub mod hive;
 pub use hive::Hive;
+pub mod poll;

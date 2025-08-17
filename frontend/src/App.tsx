@@ -84,7 +84,11 @@ function App() {
                 draggable
                 pauseOnHover
                 theme="dark"
+                className="toasty"
                 transition={Slide}
+                style={{
+                    zIndex: 1000000,
+                }}
             />
             <BrowserRouter>
                 <Routes>

@@ -10,6 +10,7 @@ actix-web = { version = "4", features = ["openssl"] }
 openssl = { version = "0.10", features = ["v110"] }
 dotenv = "0.15.0"
 serde = { version = "1.0.196", features = ["derive"] }
+serde_repr = "0.1"
 colored = "2.1.0"
 mongodb = "2.3.1"
 serde_json = "1.0.113"

@@ -179,6 +179,10 @@ form > a {
     transition: ease-in-out 150ms;
 }
 
+.w100 {
+    width: 100%;
+}
+
 .input-field:hover {
     border: 1px solid rgba(255, 138, 71, 0.368);
 }

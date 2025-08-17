@@ -17,3 +17,4 @@ pub mod verify_pass;
 pub mod lastfm;
 pub mod file;
 pub mod hives;
+pub mod polls;

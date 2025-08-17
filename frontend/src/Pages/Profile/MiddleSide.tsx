@@ -36,6 +36,23 @@ import { Helmet } from "react-helmet";
 import { RGBToHex } from "../../functions/RGBToHex";
 import Preloader from "../../Components/Preloader";
 
+enum ProfileFetchMode {
+    NEWEST,
+    OLDEST,
+    MEDIA,
+}
+
+function PageModeToString(m) {
+    switch (m) {
+        case ProfileFetchMode.NEWEST:
+            return "Newest";
+        case ProfileFetchMode.OLDEST:
+            return "Oldest";
+        case ProfileFetchMode.MEDIA:
+            return "Media";
+    }
+}
+
 function Loading() {
     return (
         <div className="page-sides side-middle">
@@ -134,21 +151,36 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
     const [allPosts, setAllPosts] = useState<Array<Post>>([]);
     const [posts, setPosts] = useState<Array<Post>>([]);
     const [postOffset, setPostOffset] = useState(0);
+    const [postMode, setPostMode] = useState(ProfileFetchMode.NEWEST);
 
     const handleScroll = async (event: UIEvent<HTMLDivElement>) => {
         const element = event.target! as HTMLDivElement;
         if (!(element.scrollHeight - element.scrollTop === element.clientHeight)) return;
 
         // detected bottom
-
-        setLoading(true);
-        const _posts = (await axios.get(`${api_uri}/api/post/get/profile?handle=${user.handle}&offset=${postOffset}`, GetFullAuth())).data;
-        setPosts((old) => [...old, ..._posts.posts]);
-        setPostOffset(_posts.offset);
-        setBlocked(_posts.blocked ?? false);
-        setLoading(false);
+        console.log(postOffset, "PO");
+        FetchPosts(postOffset, postMode);
 
         // setPosts(old => [...old, ...allPosts.splice(postOffset, postOffset + 5)]);
+    };
+
+    const FetchPosts = async (offset: number, mode: ProfileFetchMode) => {
+        setLoading(true);
+        const posts = (
+            await axios.get(`${api_uri}/api/post/get/profile`, {
+                params: {
+                    handle: user.handle,
+                    offset,
+                    mode,
+                },
+                headers: GetAuthToken(),
+            })
+        ).data;
+
+        setPosts((old) => (offset === 0 ? posts.posts : [...old, ...posts.posts]));
+        setPostOffset(posts.offset);
+        setBlocked(posts.blocked ?? false);
+        setLoading(false);
     };
 
     const FetchSpotifyData = async () => {
@@ -243,12 +275,7 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
             const date = new Date(parseInt(user.creation_date.$date.$numberLong));
             setJoinDate(`${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`);
 
-            setLoading(true);
-            const posts = (await axios.get(`${api_uri}/api/post/get/profile?handle=${user.handle}&offset=${postOffset}`, GetFullAuth())).data;
-            setPosts(posts.posts);
-            setPostOffset(posts.offset);
-            setBlocked(posts.blocked ?? false);
-            setLoading(false);
+            FetchPosts(0, postMode);
 
             if (user.handle !== self.handle) {
                 const hasNotif = await axios.post(
@@ -806,7 +833,43 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                         }}
                         className="divider"
                     ></hr>
-                    {pinnedPost ? (
+                    <div className="profile-page-seperators">
+                        <div
+                            onClick={() => {
+                                setPostMode(ProfileFetchMode.NEWEST);
+                                FetchPosts(0, ProfileFetchMode.NEWEST);
+                            }}
+                            className="profile-page-selector"
+                        >
+                            <p>
+                                <i className="fa-solid fa-sparkles" /> Newest
+                            </p>
+                        </div>
+                        <div
+                            onClick={() => {
+                                setPostMode(ProfileFetchMode.OLDEST);
+                                FetchPosts(0, ProfileFetchMode.OLDEST);
+                            }}
+                            className="profile-page-selector"
+                        >
+                            <p>
+                                <i className="fa-solid fa-scroll-old"></i> Oldest
+                            </p>
+                        </div>
+                        <div
+                            onClick={() => {
+                                setPostMode(ProfileFetchMode.MEDIA);
+                                FetchPosts(0, ProfileFetchMode.MEDIA);
+                            }}
+                            className="profile-page-selector"
+                        >
+                            <p>
+                                <i className="fa-solid fa-photo-film"></i> Media
+                            </p>
+                        </div>
+                    </div>
+                    <p>You're vieweing: {PageModeToString(postMode)}</p>
+                    {pinnedPost && postMode === ProfileFetchMode.NEWEST ? (
                         <PostBox
                             override_gradient={
                                 user.customization.profile_gradient_bought && user.customization.profile_gradient
@@ -822,6 +885,7 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                     ) : (
                         ""
                     )}
+
                     {posts.map((post: Post) => {
                         return (
                             <PostBox

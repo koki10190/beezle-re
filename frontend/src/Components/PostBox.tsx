@@ -34,6 +34,7 @@ import { useQuery } from "react-query";
 import { FetchPost } from "../functions/FetchPost";
 import RightClickMenu from "./Menus/RightClickMenu";
 import HiveBox from "../Pages/Hives/HiveBox";
+import Poll from "./Poll";
 
 interface PostBoxData {
     post: Post;
@@ -104,6 +105,7 @@ function PostBox({
     const [steamData, setSteamData] = useState<any | null>(null);
 
     const [hive, setHive] = useState<BeezleHives.Hive>();
+    const [poll, setPoll] = useState<BeezlePolls.Poll>();
 
     const [reactions, setReactions] = useState<ReactionStruct>({
         reactions: {},
@@ -278,6 +280,25 @@ function PostBox({
                         const hive = res.data.hive as BeezleHives.Hive;
 
                         setHive(hive);
+                    });
+            }
+
+            if (post.poll_id) {
+                axios
+                    .get(`${api_uri}/api/polls/get`, {
+                        params: {
+                            poll_id: post.poll_id,
+                        },
+                        headers: GetAuthToken(),
+                    })
+                    .then((res) => {
+                        if (res.data.error) {
+                            console.error("POLL FETCH FAILED:", res.data.error);
+                            return;
+                        }
+                        const poll = res.data as BeezlePolls.Poll;
+                        console.log("POLL:", poll);
+                        setPoll(poll);
                     });
             }
 
@@ -764,6 +785,7 @@ function PostBox({
                                   .replace("months", " months")
                                   .replace("amonth", "1 month")
                                   .replace("ayear", "1 year")
+                                  .replace("years", "y")
                             : "0"}
                     </p>
                 </div>
@@ -818,6 +840,7 @@ function PostBox({
                         ) : (
                             <></>
                         )}
+                        {poll ? <Poll poll={poll} self_user={self_user} /> : ""}
                     </>
                 )}
                 {user ? (
