@@ -72,35 +72,7 @@ pub async fn route(
                 "handle": &body.handle
             }
         },
-        doc! {
-            "$skip": &body.offset
-        },
-        doc! {
-            "$limit": POST_OFFSET
-        },
-        doc! {
-            "$lookup": doc! {
-                "from": "Reactions",
-                "localField": "post_id",
-                "foreignField": "post_id",
-                "as": "post_reactions"
-            }
-        },
-        doc! {
-            "$lookup": doc! {
-                "from": "Posts",
-                "localField": "post_id",
-                "foreignField": "replying_to",
-                "as": "reply_posts"
-            }
-        },
-        doc! {
-            "$addFields": doc! {
-                "reply_count": doc! {
-                    "$size": "$reply_posts"
-                }
-            }
-        },
+        
     ];
 
     // /\bhttps?:\/\/i\.imgur\.com\S+/gi
@@ -128,6 +100,39 @@ pub async fn route(
             aggregation.push(doc!{"$sort":doc!{"creation_date": 1}});
         },
     }
+
+    let mut extra_aggr = vec![doc! {
+            "$skip": &body.offset
+        },
+        doc! {
+            "$limit": POST_OFFSET
+        },
+        doc! {
+            "$lookup": doc! {
+                "from": "Reactions",
+                "localField": "post_id",
+                "foreignField": "post_id",
+                "as": "post_reactions"
+            }
+        },
+        doc! {
+            "$lookup": doc! {
+                "from": "Posts",
+                "localField": "post_id",
+                "foreignField": "replying_to",
+                "as": "reply_posts"
+            }
+        },
+        doc! {
+            "$addFields": doc! {
+                "reply_count": doc! {
+                    "$size": "$reply_posts"
+                }
+            }
+        }];
+
+        aggregation.append(&mut extra_aggr);
+
 
     let cursor = coll
         .aggregate(

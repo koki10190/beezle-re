@@ -33,6 +33,7 @@ import CStatus from "../../functions/StatusToClass";
 import RightClickMenu from "../../Components/Menus/RightClickMenu";
 import useMousePos from "../../hooks/useMousePos";
 import HiveBox from "../Hives/HiveBox";
+import Poll from "../../Components/Poll";
 
 interface ReactionsInter {
     [key: string]: PostReaction[];
@@ -54,6 +55,7 @@ function MiddleSide() {
     const [isReposted, setReposted] = useState(false);
     const [isBookmarked, setBookmarked] = useState(false);
     const [hive, setHive] = useState<BeezleHives.Hive>();
+    const [poll, setPoll] = useState<BeezlePolls.Poll>();
     const [isPinned, setPinned] = useState(false);
     const [LikeCount, setLikeCount] = useState(0);
     const [RepostCount, setRepostCount] = useState(0);
@@ -118,6 +120,25 @@ function MiddleSide() {
                     .then((res) => {
                         const hive = res.data.hive as BeezleHives.Hive;
                         setHive(hive);
+                    });
+            }
+
+            if (post_res.poll_id) {
+                axios
+                    .get(`${api_uri}/api/polls/get`, {
+                        params: {
+                            poll_id: post_res.poll_id,
+                        },
+                        headers: GetAuthToken(),
+                    })
+                    .then((res) => {
+                        if (res.data.error) {
+                            console.error("POLL FETCH FAILED:", res.data.error);
+                            return;
+                        }
+                        const poll = res.data as BeezlePolls.Poll;
+                        console.log("POLL:", poll);
+                        setPoll(poll);
                     });
             }
 
@@ -637,6 +658,7 @@ function MiddleSide() {
                     ) : (
                         <></>
                     )}
+                    {poll && self_user ? <Poll poll={poll} self_user={self_user} /> : ""}
                     <div className="post-interaction-btn">
                         <a style={isReposted ? { color: "rgb(60, 255, 86)" } : {}} onClick={RepostInteraction} className="post-inter post-inter-lime">
                             <i className=" fa-solid fa-repeat"></i>{" "}
