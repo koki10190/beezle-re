@@ -11,6 +11,7 @@ function Username({ user }: { user: UserPublic }) {
                 New.background = `linear-gradient(45deg, ${user.customization.name_color.color1}, ${user.customization.name_color.color2})`;
                 New.backgroundClip = "text";
                 New.WebkitTextFillColor = "transparent";
+                New.fontFamily = user.customization?.display_name?.font?.bought ? user.customization?.display_name?.font?.font_family : "gordin";
 
                 // New.color = `rgb(${user.customization.name_color.r}, ${user.customization.name_color.g}, ${user.customization.name_color.b})`;
                 return New;

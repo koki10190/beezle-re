@@ -840,7 +840,15 @@ function PostBox({
                         ) : (
                             <></>
                         )}
-                        {poll ? <Poll poll={poll} self_user={self_user} /> : ""}
+                        {poll ? (
+                            <Poll
+                                bg={override_gradient || user?.customization?.profile_gradient?.color1 ? bgGradient : null}
+                                poll={poll}
+                                self_user={self_user}
+                            />
+                        ) : (
+                            ""
+                        )}
                     </>
                 )}
                 {user ? (

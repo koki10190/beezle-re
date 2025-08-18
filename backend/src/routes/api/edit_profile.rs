@@ -22,6 +22,11 @@ struct ProfileImage {
 }
 
 #[derive(Deserialize)]
+struct DisplayName {
+    font_family: String
+}
+
+#[derive(Deserialize)]
 struct GetUserQuery {
     username: String,
     avatar: String,
@@ -35,6 +40,7 @@ struct GetUserQuery {
     avatar_shape: i64,
     status: String,
     profile_image: Option<ProfileImage>,
+    display_name: Option<DisplayName>
 }
 
 #[patch("/api/profile/edit")]
@@ -164,6 +170,44 @@ pub async fn route(
                                         "enabled": &edit_img.enabled,
                                         "image": &edit_img.image,
                                     }
+                                }
+                            },
+                        )
+                        .await;
+                    }
+                }
+            }
+
+            let profile_img_bought_bson = unwrapped
+                .get("customization")
+                .unwrap()
+                .as_document()
+                .unwrap()
+                .get("display_name");
+
+            if let Some(display_name) = profile_img_bought_bson {
+                let fnt = display_name.as_document().unwrap().get("font").unwrap().as_document();
+
+                if let Some(font) = &fnt {
+                    let bought = font.get("bought").unwrap().as_bool().unwrap_or(false);
+
+                    
+                    if bought && body.display_name.is_some() {
+                        mongoose::update_document(
+                            &client,
+                            "beezle",
+                            "Users",
+                            doc! {
+                                "handle": &token_data.handle,
+                            },
+                            doc! {
+                                "$set": {
+                                    "customization.display_name": {
+                                        "font": {
+                                            "bought": true,
+                                            "font_family": &body.display_name.as_ref().unwrap().font_family,
+                                        },
+                                    },
                                 }
                             },
                         )

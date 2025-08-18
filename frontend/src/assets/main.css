@@ -16,6 +16,45 @@
     font-weight: bold;
 }
 
+/* NAME FONTS */
+@font-face {
+    font-family: BloodType;
+    src: url(/name_fonts/blood-type.otf);
+}
+@font-face {
+    font-family: ComicSans;
+    src: url(/name_fonts/ComicSans.ttf);
+}
+@font-face {
+    font-family: Paws;
+    src: url(/name_fonts/paws.otf);
+}
+@font-face {
+    font-family: PickySide;
+    src: url(/name_fonts/PickySide.otf);
+}
+@font-face {
+    font-family: TF2;
+    src: url(/name_fonts/tf2build.ttf);
+}
+@font-face {
+    font-family: GothTitan;
+    src: url(/name_fonts/GothTitan.ttf);
+}
+@font-face {
+    font-family: SuperPixel;
+    src: url(/name_fonts/SuperPixel.ttf);
+}
+@font-face {
+    font-family: Doom2016;
+    src: url(/name_fonts/Doom2016.ttf);
+}
+@font-face {
+    font-family: CuteNotes;
+    src: url(/name_fonts/CuteNotes.ttf);
+}
+/* NAME FONTS */
+
 button {
     cursor: pointer;
 }

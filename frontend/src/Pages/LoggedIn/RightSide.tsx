@@ -159,7 +159,15 @@ function RightSide() {
                         }}
                         className="pfp"
                     ></div>{" "}
-                    Profile
+                    <span
+                        style={{
+                            fontFamily: self_user?.customization?.display_name?.font?.bought
+                                ? self_user?.customization?.display_name?.font?.font_family
+                                : "gordin",
+                        }}
+                    >
+                        Profile
+                    </span>
                 </a>
 
                 <SettingsButton redirect="/logout" style={{ color: "red" }} iconClass="fa-solid fa-right-from-bracket" text="Log out" />

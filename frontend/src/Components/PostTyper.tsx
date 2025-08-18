@@ -22,6 +22,8 @@ import FullPopup from "./Popups/FullPopup";
 import { TIME_OPTIONS } from "../types/TIMEDATA";
 import Divider from "./Divider";
 import Poll from "./Poll";
+import Twemoji from "react-twemoji";
+import ReactEmojiTextArea from "@nikaera/react-emoji-textarea";
 
 interface FileType {
     file: File;
@@ -220,6 +222,11 @@ function PostTyper({ onSend, replying_to = "", hive_post = null }: { onSend: (da
         });
     };
 
+    useEffect(() => {
+        textarea.current.className = "post-typer textarea-field-sizing";
+        textarea.current.parentElement.style.width = "100%";
+    }, [textarea.current]);
+
     return (
         <div>
             <textarea
@@ -228,7 +235,7 @@ function PostTyper({ onSend, replying_to = "", hive_post = null }: { onSend: (da
                 maxLength={300}
                 ref={textarea}
                 placeholder="Press here to type."
-                className="post-typer"
+                className="post-typer noto-emoji-google"
             ></textarea>
             <div ref={filesToUploadRef} className="files-to-upload">
                 {files.map((file, index) =>
@@ -303,7 +310,8 @@ function PostTyper({ onSend, replying_to = "", hive_post = null }: { onSend: (da
                     }}
                     customEmojis={self_user?.customization?.emojis ? self_user?.customization?.emojis : []}
                     theme={Theme.DARK}
-                    emojiStyle={EmojiStyle.NATIVE}
+                    emojiStyle={EmojiStyle.TWITTER}
+                    emojiVersion=""
                     className="post-typer-emoji-picker"
                 />
             ) : (

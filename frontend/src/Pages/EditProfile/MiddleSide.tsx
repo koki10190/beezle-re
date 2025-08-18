@@ -5,7 +5,7 @@ import { api_uri } from "../../links";
 import { checkToken } from "../../functions/checkToken";
 import React from "react";
 import { fetchUserPrivate, GetUserPrivate } from "../../functions/fetchUserPrivate";
-import { ProfileImage, ProfileImageSize, UserPrivate, UserPublic } from "../../types/User";
+import { DisplayNameFont, ProfileImage, ProfileImageSize, UserPrivate, UserPublic } from "../../types/User";
 import "./EditProfile.css";
 import { fetchUserPublic } from "../../functions/fetchUserPublic";
 import { BadgesToJSX } from "../../functions/badgesToJSX";
@@ -38,6 +38,7 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
     const [username, setUsername] = useState<string>(user.username);
     const [about_me, setAboutMe] = useState<string>(user.about_me);
     const [activity, setActivity] = useState<string>(user.activity);
+    const [fontFamily, setFontFamily] = useState("Paws");
     const [status, setStatus] = useState<string>(user.status_db ?? "online");
     const [avatarShape, setAvatarShape] = useState<AvaterShape>(user.customization?.square_avatar ?? AvaterShape.SquareAvatarShape);
     const [profileBgImg, setProfileBgImage] = useState(user.customization?.profile_postbox_img_bought ? user.customization.profile_postbox_img : "");
@@ -69,6 +70,10 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
             size: "",
             image: "",
         },
+    );
+
+    const [fontData, setFontData] = useState<DisplayNameFont>(
+        user.customization?.display_name?.font.bought ? user.customization?.display_name?.font?.font_family : DisplayNameFont.Gordin,
     );
 
     // Connections
@@ -148,6 +153,9 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
                     enabled: bgImgData.enabled,
                     size: bgImgData.size,
                 },
+                display_name: {
+                    font_family: fontData,
+                },
             };
             console.log(data);
             const m_data = (
@@ -221,9 +229,11 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
             <input
                 style={{
                     marginTop: "-110px",
+                    fontFamily: fontData,
                 }}
                 className="username input-field username-edit"
                 value={username}
+                placeholder="ILoveBees123"
                 onChange={(e) => setUsername(e.target.value)}
             />
             <div style={{ marginTop: "82px" }}>
@@ -412,7 +422,6 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
                                     return old;
                                 });
                             }}
-                            defaultValue={bgImgData?.size ?? "none"}
                             style={{ marginTop: "-10px", width: "100%" }}
                             className="input-field"
                         >
@@ -424,6 +433,53 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
                             </option>
                             <option selected={bgImgData.size === "contain"} value="contain">
                                 Contain
+                            </option>
+                        </select>
+                    </div>
+                ) : (
+                    ""
+                )}
+                {user?.customization?.display_name?.font?.bought ? (
+                    <div className="profile-container-nom">
+                        <p className="profile-container-header">
+                            <i className="fa-solid fa-book-font"></i> Display Name Font
+                        </p>
+                        <div style={{ marginTop: "30px" }} />
+                        <select
+                            onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                                console.log(e.target.value);
+                                setFontData(e.target.value as DisplayNameFont);
+                            }}
+                            defaultValue={fontData ?? "gordin"}
+                            style={{ marginTop: "-10px", width: "100%", fontFamily: fontData }}
+                            className="input-field"
+                        >
+                            <option selected={fontData === "gordin"} style={{ fontFamily: "gordin" }} value="gordin">
+                                Default (Gordin)
+                            </option>
+                            <option selected={fontData === "BloodType"} style={{ fontFamily: "BloodType" }} value="BloodType">
+                                Blood Type
+                            </option>
+                            <option selected={fontData === "ComicSans"} style={{ fontFamily: "ComicSans" }} value="ComicSans">
+                                Comic Sans
+                            </option>
+                            <option selected={fontData === "Paws"} style={{ fontFamily: "Paws" }} value="Paws">
+                                Paws
+                            </option>
+                            <option selected={fontData === "PickySide"} style={{ fontFamily: "PickySide" }} value="PickySide">
+                                Picky Side
+                            </option>
+                            <option selected={fontData === "TF2"} style={{ fontFamily: "TF2" }} value="TF2">
+                                TF2
+                            </option>
+                            <option selected={fontData === "SuperPixel"} style={{ fontFamily: "SuperPixel" }} value="SuperPixel">
+                                Super Pixel
+                            </option>
+                            <option selected={fontData === "Doom2016"} style={{ fontFamily: "Doom2016" }} value="Doom2016">
+                                Doom
+                            </option>
+                            <option selected={fontData === "CuteNotes"} style={{ fontFamily: "CuteNotes" }} value="CuteNotes">
+                                Cute Notes
                             </option>
                         </select>
                     </div>
@@ -507,7 +563,7 @@ function MiddleSide() {
     useEffect(() => {
         (async () => {
             if (localStorage.getItem("access_token")) {
-                setSelfUser(await fetchUserPrivate());
+                setSelfUser(await fetchUserPrivate(localStorage.getItem("access_token")));
             }
         })();
     }, []);

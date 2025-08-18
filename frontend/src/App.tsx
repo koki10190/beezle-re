@@ -42,6 +42,7 @@ import { socket } from "./ws/socket";
 import { SERVER_ONLINE, ServerDownMessage } from "./functions/CheckServerStatus";
 import { QueryClient, QueryClientProvider, useQuery } from "react-query";
 import { UserPrivate, UserPublic } from "./types/User";
+import Twemoji from "react-twemoji";
 
 enum UserStatus {
     ONLINE,

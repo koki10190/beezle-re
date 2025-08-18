@@ -12,6 +12,7 @@ import "./ParseURLs.css";
 import { Links, marked } from "marked";
 import { Post } from "../types/Post";
 import FetchHive from "./FetchHive";
+import twemoji from "twemoji";
 
 function MentionHover({ handle }: { handle: string }) {
     return (
@@ -179,7 +180,7 @@ function parseURLs(
     }
 
     // console.log("FINAL", final + (final.replace(/ /g, "") !== "" ? "<br/>" : "") + htmlToEmbed);
-    return final.trimStart().trimEnd() + (final.replace(/ /g, "") !== "" ? "<br/>" : "") + htmlToEmbed;
+    return twemoji.parse(final.trimStart().trimEnd()) + (final.replace(/ /g, "") !== "" ? "<br/>" : "") + htmlToEmbed;
 }
 
 async function ExtractBeezlePostFromLinks(content: string): Promise<Array<Post>> {

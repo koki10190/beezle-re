@@ -3,3 +3,4 @@ pub mod profile_gradient;
 pub mod profile_postbox_img;
 pub mod avatar;
 pub mod profile_background_image;
+pub mod display_name_font;

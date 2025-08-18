@@ -451,7 +451,7 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                     {user.handle === self?.handle ? (
                         <button
                             style={{ background: gradient }}
-                            onClick={() => (window.location.href = "/edit/profile")}
+                            onClick={() => navigate("/edit/profile")}
                             className="button-field profile-edit-button"
                         >
                             Edit Profile

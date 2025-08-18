@@ -401,6 +401,23 @@ aside li {
     margin-bottom: 0;
     border: 2px solid transparent;
     transition: ease-in-out 150ms;
+    position: relative;
+    z-index: 1;
+}
+
+.full-bar {
+    position: absolute;
+    background: rgb(173, 97, 74);
+    box-sizing: border-box;
+    top: 0;
+    left: 0;
+    border-radius: 5px;
+    height: 100%;
+    z-index: -1;
+}
+
+.poll-text {
+    /* z-index: 100; */
 }
 
 .post-poll-option:hover {

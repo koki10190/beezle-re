@@ -13,9 +13,10 @@ interface Props {
     selected?: string;
     over?: boolean;
     self_user: UserPrivate;
+    bg?: string;
 }
 
-function Poll({ poll, winner, selected, over, self_user }: Props) {
+function Poll({ poll, winner, selected, over, self_user, bg }: Props) {
     const [sWinner, setWinner] = useState(winner ?? "");
     const [sSelected, setSelected] = useState(selected ?? "");
     const [sOver, setOver] = useState(over ?? false);
@@ -41,16 +42,30 @@ function Poll({ poll, winner, selected, over, self_user }: Props) {
         }
 
         const voteMap = new Map();
+        let highest = "";
+        let highest_num = 0;
         for (let i = 0; i < poll.voters.length; i++) {
             const voter = poll.voters[i];
             const got = voteMap.get(voter.value);
+
             if (got) {
+                if (got + 1 > highest_num) {
+                    highest_num = got + 1;
+                    highest = voter.value;
+                }
+
                 voteMap.set(voter.value, got + 1);
                 continue;
             }
 
+            if (1 > highest_num) {
+                highest_num = 1;
+                highest = voter.value;
+            }
             voteMap.set(voter.value, 1);
         }
+
+        setWinner(highest);
         setVoteCounters(voteMap);
 
         return () => {
@@ -95,7 +110,22 @@ function Poll({ poll, winner, selected, over, self_user }: Props) {
                                 sSelected === option ? "poll-selected" : ""
                             } `}
                         >
-                            {option} <span className="option-votes">- {voteCounters.get(option) ?? 0} Votes</span>
+                            <div
+                                style={{
+                                    width: `${((voteCounters.get(option) ?? 0) / (poll.voters.length <= 0 ? 1 : poll.voters.length)) * 100}%`,
+                                    background: bg ? bg : "",
+                                }}
+                                className="full-bar"
+                            ></div>
+                            <span className="poll-text">
+                                {option}{" "}
+                                <span className="option-votes">
+                                    - {voteCounters.get(option) ?? 0} Votes |{" "}
+                                    {Math.round(((voteCounters.get(option) ?? 0) / (poll.voters.length <= 0 ? 1 : poll.voters.length)) * 100 * 100) /
+                                        100}
+                                    %
+                                </span>
+                            </span>
                         </button>
                     );
                 })}

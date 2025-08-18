@@ -25,6 +25,7 @@ enum BuyWhat {
     NAME_COLOR,
     AVATAR_SHAPE,
     PROFILE_BACKGROUND_IMAGE,
+    DISPLAY_NAME_FONT,
 }
 
 async function Buy(buy_what: BuyWhat, arg: number = 0, setSelfUser: React.Dispatch<React.SetStateAction<UserPrivate>> = () => {}) {
@@ -82,6 +83,16 @@ async function Buy(buy_what: BuyWhat, arg: number = 0, setSelfUser: React.Dispat
         case BuyWhat.PROFILE_BACKGROUND_IMAGE: {
             res = await axios.post(
                 `${api_uri}/api/user/buy/profile_background_image`,
+                {},
+                {
+                    headers: GetAuthToken(),
+                },
+            );
+            break;
+        }
+        case BuyWhat.DISPLAY_NAME_FONT: {
+            res = await axios.post(
+                `${api_uri}/api/user/buy/display_name_font`,
                 {},
                 {
                     headers: GetAuthToken(),
@@ -170,6 +181,15 @@ function MiddleSide() {
                         _disabled={self_user?.customization?.profile_image?.bought}
                         level_required={true}
                         level_needed={20}
+                    />
+                    <ShopBox
+                        title="Display Name Font"
+                        price={50000}
+                        call_on_purchase={() => Buy(BuyWhat.DISPLAY_NAME_FONT)}
+                        self_user={self_user}
+                        _disabled={self_user?.customization?.display_name?.font?.bought}
+                        level_required={true}
+                        level_needed={50}
                     />
 
                     {AVATAR_SHAPES.map((shape, index) => {

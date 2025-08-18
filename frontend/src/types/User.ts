@@ -12,6 +12,19 @@ enum BadgeType {
     CONTRIBUTOR,
 }
 
+enum DisplayNameFont {
+    Gordin = "gordin",
+    BloodType = "BloodType",
+    ComicSans = "ComicSans",
+    Paws = "Paws",
+    PickySide = "PickySide",
+    TF2 = "TF2",
+    GothTitan = "20px GothTitan",
+    SuperPixel = "SuperPixel",
+    Doom2016 = "Doom2016",
+    CuteNotes = "CuteNotes",
+}
+
 type ProfileImageSize = "contain" | "cover" | "";
 interface ProfileImage {
     bought: boolean;
@@ -42,6 +55,12 @@ interface UserCustomization {
     owned_shapes: AvaterShape[];
 
     profile_image: ProfileImage;
+    display_name: {
+        font: {
+            bought: boolean;
+            font_family: DisplayNameFont;
+        };
+    };
 }
 
 interface UserConnections {
@@ -118,5 +137,5 @@ interface UserPrivate extends UserPublic {
     bookmarks: Array<string>;
 }
 
-export { BadgeType };
+export { BadgeType, DisplayNameFont };
 export type { UserPrivate, UserPublic, UserCustomization, ProfileImage, ProfileImageSize };
