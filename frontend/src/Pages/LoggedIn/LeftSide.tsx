@@ -62,6 +62,13 @@ function LeftSide() {
                     <i className="fa-brands fa-youtube"></i>
                 </button>
             </div>
+            <p>
+                If you can please consider donating on{" "}
+                <a href="https://ko-fi.com/koki1019" target="_blank" className="mention">
+                    ko-fi
+                </a>{" "}
+                to keep beezle hosted 24/7!
+            </p>
             <div className="who-to-follow">
                 <h2>Who to follow:</h2>
                 {self_user ? (
