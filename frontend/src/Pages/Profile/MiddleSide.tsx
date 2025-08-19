@@ -24,7 +24,7 @@ import parseURLs from "../../functions/parseURLs";
 import useMousePos from "../../hooks/useMousePos";
 import RepToIcon from "../../Components/RepToIcon";
 import MentionHover from "../../Components/MentionHover";
-import { AVATAR_SHAPES, AvaterShape } from "../../types/cosmetics/AvatarShapes";
+import { AVATAR_SHAPES, AvatarShape } from "../../types/cosmetics/AvatarShapes";
 import TrophyShowcase from "./TrophyShowcase";
 import { TROPHIES, Trophy } from "../../types/showcase/Trophy";
 import GetAuthToken from "../../functions/GetAuthHeader";

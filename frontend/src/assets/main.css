@@ -19,7 +19,7 @@
 /* NAME FONTS */
 @font-face {
     font-family: BloodType;
-    src: url(/name_fonts/blood-type.otf);
+    src: url(/name_fonts/BloodType.ttf);
 }
 @font-face {
     font-family: ComicSans;
@@ -27,11 +27,11 @@
 }
 @font-face {
     font-family: Paws;
-    src: url(/name_fonts/paws.otf);
+    src: url(/name_fonts/paws.ttf);
 }
 @font-face {
     font-family: PickySide;
-    src: url(/name_fonts/PickySide.otf);
+    src: url(/name_fonts/PickySide.ttf);
 }
 @font-face {
     font-family: TF2;
@@ -52,6 +52,34 @@
 @font-face {
     font-family: CuteNotes;
     src: url(/name_fonts/CuteNotes.ttf);
+}
+@font-face {
+    font-family: Minecraft;
+    src: url(/name_fonts/Minecraft.ttf);
+}
+@font-face {
+    font-family: JetBrainsMono;
+    src: url(/name_fonts/JetBrainsMono.ttf);
+}
+@font-face {
+    font-family: Undertale;
+    src: url(/name_fonts/Undertale.ttf);
+}
+@font-face {
+    font-family: Mario64;
+    src: url(/name_fonts/Mario64.ttf);
+}
+@font-face {
+    font-family: CounterStrike;
+    src: url(/name_fonts/CounterStrike.ttf);
+}
+@font-face {
+    font-family: Napblow;
+    src: url(/name_fonts/Napblow.ttf);
+}
+@font-face {
+    font-family: QuietBrokenVoice;
+    src: url(/name_fonts/QuietBrokenVoice.ttf);
 }
 /* NAME FONTS */
 

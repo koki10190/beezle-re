@@ -23,6 +23,7 @@ function Poll({ poll, winner, selected, over, self_user, bg }: Props) {
     const [date, setDate] = useState(moment(new Date(parseInt(poll.expiry_date.$date.$numberLong))).utc());
     const [dateStr, setDateStr] = useState("1 minute");
     const [voteCounters, setVoteCounters] = useState<Map<string, number>>(new Map());
+    const [totalVotes, setTotalVotes] = useState(poll.voters.length);
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -65,13 +66,28 @@ function Poll({ poll, winner, selected, over, self_user, bg }: Props) {
             voteMap.set(voter.value, 1);
         }
 
-        setWinner(highest);
         setVoteCounters(voteMap);
 
         return () => {
             clearInterval(interval);
         };
     }, []);
+
+    useEffect(() => {
+        if (sOver) {
+            let highest = "";
+            let highest_num = 0;
+            for (let i = 0; i < poll.voters.length; i++) {
+                const voter = poll.voters[i];
+                if (1 > highest_num) {
+                    highest_num = 1;
+                    highest = voter.value;
+                }
+            }
+
+            setWinner(highest);
+        }
+    }, [sOver]);
 
     const Vote = async (value) => {
         try {
@@ -91,6 +107,7 @@ function Poll({ poll, winner, selected, over, self_user, bg }: Props) {
 
             setSelected(value);
             setVoteCounters(new Map(voteCounters).set(value, voteCounters.get(value) ? voteCounters.get(value) + 1 : 1));
+            setTotalVotes((old) => old + 1);
         } catch (e) {
             console.log(e);
             toast.error(e);
@@ -112,7 +129,7 @@ function Poll({ poll, winner, selected, over, self_user, bg }: Props) {
                         >
                             <div
                                 style={{
-                                    width: `${((voteCounters.get(option) ?? 0) / (poll.voters.length <= 0 ? 1 : poll.voters.length)) * 100}%`,
+                                    width: `${((voteCounters.get(option) ?? 0) / (totalVotes <= 0 ? 1 : totalVotes)) * 100}%`,
                                     background: bg ? bg : "",
                                 }}
                                 className="full-bar"
@@ -121,9 +138,7 @@ function Poll({ poll, winner, selected, over, self_user, bg }: Props) {
                                 {option}{" "}
                                 <span className="option-votes">
                                     - {voteCounters.get(option) ?? 0} Votes |{" "}
-                                    {Math.round(((voteCounters.get(option) ?? 0) / (poll.voters.length <= 0 ? 1 : poll.voters.length)) * 100 * 100) /
-                                        100}
-                                    %
+                                    {Math.round(((voteCounters.get(option) ?? 0) / (totalVotes <= 0 ? 1 : totalVotes)) * 100 * 100) / 100}%
                                 </span>
                             </span>
                         </button>
@@ -131,7 +146,7 @@ function Poll({ poll, winner, selected, over, self_user, bg }: Props) {
                 })}
             </div>
             <p className="post-poll-footer">
-                {sOver ? "Poll Finished" : `Ends in: ${dateStr}`} | {poll.voters.length} Total Votes
+                {sOver ? "Poll Finished" : `Ends in: ${dateStr}`} | {totalVotes} Total Votes
             </p>
         </div>
     );

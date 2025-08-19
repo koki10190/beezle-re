@@ -92,7 +92,7 @@ const AVATAR_SHAPES: Array<AvatarShapeType> = [
     },
 ];
 
-enum AvaterShape {
+enum AvatarShape {
     CircleAvatarShape,
     HexagonAvatarShape,
     SquareAvatarShape,
@@ -109,4 +109,4 @@ enum AvaterShape {
     StarAvatarShape,
 }
 
-export { AvaterShape, AVATAR_SHAPES };
+export { AvatarShape, AVATAR_SHAPES };

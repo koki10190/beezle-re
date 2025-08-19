@@ -414,6 +414,7 @@ aside li {
     border-radius: 5px;
     height: 100%;
     z-index: -1;
+    transition: width ease-in-out 150ms;
 }
 
 .poll-text {

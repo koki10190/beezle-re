@@ -1,6 +1,6 @@
 import { CustomEmoji } from "emoji-picker-react/dist/config/customEmojiConfig";
 import { NotificationData } from "./Notification";
-import { AvaterShape } from "./cosmetics/AvatarShapes";
+import { AvatarShape } from "./cosmetics/AvatarShapes";
 import { Trophy, TrophyType } from "./showcase/Trophy";
 
 enum BadgeType {
@@ -19,10 +19,18 @@ enum DisplayNameFont {
     Paws = "Paws",
     PickySide = "PickySide",
     TF2 = "TF2",
-    GothTitan = "20px GothTitan",
+    GothTitan = "GothTitan",
     SuperPixel = "SuperPixel",
     Doom2016 = "Doom2016",
     CuteNotes = "CuteNotes",
+    Minecraft = "Minecraft",
+    JetBrainsMono = "JetBrainsMono",
+    Undertale = "Undertale",
+    Mario64 = "Mario64",
+    VGA = "vga-font",
+    CounterStrike = "CounterStrike",
+    Napblow = "Napblow",
+    QuietBrokenVoice = "QuietBrokenVoice",
 }
 
 type ProfileImageSize = "contain" | "cover" | "";
@@ -52,7 +60,7 @@ interface UserCustomization {
     profile_postbox_img_bought: boolean;
 
     emojis: Array<CustomEmoji>;
-    owned_shapes: AvaterShape[];
+    owned_shapes: AvatarShape[];
 
     profile_image: ProfileImage;
     display_name: {

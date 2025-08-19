@@ -16,7 +16,7 @@ import axios from "axios";
 import { api_uri } from "../../links";
 import { toast } from "react-toastify";
 import shop_music from "./sans.mp3";
-import { AVATAR_SHAPES, AvaterShape } from "../../types/cosmetics/AvatarShapes";
+import { AVATAR_SHAPES, AvatarShape } from "../../types/cosmetics/AvatarShapes";
 import GetAuthToken from "../../functions/GetAuthHeader";
 
 enum BuyWhat {
@@ -193,7 +193,7 @@ function MiddleSide() {
                     />
 
                     {AVATAR_SHAPES.map((shape, index) => {
-                        if (index === AvaterShape.CircleAvatarShape) return <></>;
+                        if (index === AvatarShape.CircleAvatarShape) return <></>;
                         return (
                             <ShopBox
                                 title={shape.name}

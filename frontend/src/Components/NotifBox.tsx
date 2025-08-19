@@ -10,7 +10,7 @@ import Divider from "./Divider";
 import sanitize from "sanitize-html";
 import RepToIcon from "./RepToIcon";
 import parseURLs from "../functions/parseURLs";
-import { AVATAR_SHAPES, AvaterShape } from "../types/cosmetics/AvatarShapes";
+import { AVATAR_SHAPES, AvatarShape } from "../types/cosmetics/AvatarShapes";
 import { TROPHIES } from "../types/showcase/Trophy";
 import GetFullAuth from "../functions/GetFullAuth";
 import { FetchPost } from "../functions/FetchPost";
@@ -39,7 +39,7 @@ function NotifPost({ post_data }: { post_data: Post }) {
                         backgroundImage: `url(${user.avatar})`,
                         clipPath: AVATAR_SHAPES[user?.customization?.square_avatar]
                             ? AVATAR_SHAPES[user?.customization?.square_avatar].style
-                            : AVATAR_SHAPES[AvaterShape.CircleAvatarShape].style,
+                            : AVATAR_SHAPES[AvatarShape.CircleAvatarShape].style,
                         borderRadius:
                             AVATAR_SHAPES[user?.customization?.square_avatar]?.name !== "Circle Avatar Shape"
                                 ? user?.customization?.square_avatar

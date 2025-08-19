@@ -36,7 +36,7 @@ const TROPHIES: Array<TrophyType> = [
     {
         name: "10k Likes",
         requirement: "likes",
-        requirement_need: 1000,
+        requirement_need: 10000,
         icon: "fa-solid fa-star",
         color: "rgb(70, 119, 255)",
         description: "Get 10,000 likes on one of your posts!",
@@ -70,7 +70,7 @@ const TROPHIES: Array<TrophyType> = [
     {
         name: "10k Followers",
         requirement: "follows",
-        requirement_need: 1000,
+        requirement_need: 10000,
         icon: "fa-solid fa-crown",
         color: "rgb(70, 119, 255)",
         description: "Get 10,000 people to follow your account!",
@@ -99,15 +99,15 @@ const TROPHIES: Array<TrophyType> = [
         requirement_need: 1000,
         icon: "fa-solid fa-trophy",
         color: "rgb(255, 55, 55)",
-        description: "Get 1,10 reposts on one of your posts!",
+        description: "Get 1,000 reposts on one of your posts!",
     },
     {
         name: "10k Reposts",
         requirement: "reposts",
-        requirement_need: 1000,
+        requirement_need: 10000,
         icon: "fa-solid fa-trophy-star",
         color: "rgb(70, 119, 255)",
-        description: "Get 10,10 reposts on one of your posts!",
+        description: "Get 10,000 reposts on one of your posts!",
     },
 ];
 

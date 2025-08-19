@@ -12,7 +12,7 @@ import { BadgesToJSX } from "../../functions/badgesToJSX";
 import UploadToImgur from "../../functions/UploadToImgur";
 import { toast } from "react-toastify";
 import EmojiPicker, { EmojiClickData, EmojiStyle, Theme } from "emoji-picker-react";
-import { AVATAR_SHAPES, AvaterShape } from "../../types/cosmetics/AvatarShapes";
+import { AVATAR_SHAPES, AvatarShape } from "../../types/cosmetics/AvatarShapes";
 import GetAuthToken from "../../functions/GetAuthHeader";
 import { STEAM_ICON_URL } from "../../types/steam/steam_urls";
 import GetFullAuth from "../../functions/GetFullAuth";
@@ -40,7 +40,7 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
     const [activity, setActivity] = useState<string>(user.activity);
     const [fontFamily, setFontFamily] = useState("Paws");
     const [status, setStatus] = useState<string>(user.status_db ?? "online");
-    const [avatarShape, setAvatarShape] = useState<AvaterShape>(user.customization?.square_avatar ?? AvaterShape.SquareAvatarShape);
+    const [avatarShape, setAvatarShape] = useState<AvatarShape>(user.customization?.square_avatar ?? AvatarShape.SquareAvatarShape);
     const [profileBgImg, setProfileBgImage] = useState(user.customization?.profile_postbox_img_bought ? user.customization.profile_postbox_img : "");
     const [g1, setG1] = useState<string>(user.customization?.profile_gradient ? user.customization.profile_gradient.color1 : "#000000");
     const [g2, setG2] = useState<string>(user.customization?.profile_gradient ? user.customization.profile_gradient.color2 : "#000000");
@@ -346,7 +346,7 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
                     <br></br>
                     <select
                         onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-                            setAvatarShape(parseInt(e.target.value) as AvaterShape);
+                            setAvatarShape(parseInt(e.target.value) as AvatarShape);
                         }}
                         style={{ width: "100%" }}
                         className="input-field"
@@ -480,6 +480,30 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
                             </option>
                             <option selected={fontData === "CuteNotes"} style={{ fontFamily: "CuteNotes" }} value="CuteNotes">
                                 Cute Notes
+                            </option>
+                            <option selected={fontData === "Minecraft"} style={{ fontFamily: "Minecraft" }} value="Minecraft">
+                                Minecraft
+                            </option>
+                            <option selected={fontData === "JetBrainsMono"} style={{ fontFamily: "JetBrainsMono" }} value="JetBrainsMono">
+                                JetBrains Mono
+                            </option>
+                            <option selected={fontData === "Undertale"} style={{ fontFamily: "Undertale" }} value="Undertale">
+                                Undertale
+                            </option>
+                            <option selected={fontData === "Mario64"} style={{ fontFamily: "Mario64" }} value="Mario64">
+                                Mario 64
+                            </option>
+                            <option selected={fontData === "vga-font"} style={{ fontFamily: "vga-font" }} value="vga-font">
+                                VGA
+                            </option>
+                            <option selected={fontData === "CounterStrike"} style={{ fontFamily: "CounterStrike" }} value="CounterStrike">
+                                Counter Strike
+                            </option>
+                            <option selected={fontData === "Napblow"} style={{ fontFamily: "Napblow" }} value="Napblow">
+                                Napblow
+                            </option>
+                            <option selected={fontData === "QuietBrokenVoice"} style={{ fontFamily: "QuietBrokenVoice" }} value="QuietBrokenVoice">
+                                Quiet Broken Voice
                             </option>
                         </select>
                     </div>

@@ -18,7 +18,7 @@ import parseURLs from "../functions/parseURLs";
 import RepToIcon from "./RepToIcon";
 import Username from "./Username";
 import ShadeColor from "../functions/ShadeColor";
-import { AVATAR_SHAPES, AvaterShape } from "../types/cosmetics/AvatarShapes";
+import { AVATAR_SHAPES, AvatarShape } from "../types/cosmetics/AvatarShapes";
 import GetAuthToken from "../functions/GetAuthHeader";
 import CStatus from "../functions/StatusToClass";
 
@@ -88,7 +88,7 @@ function FollowBox({ handle, self_user }: FollowBoxData) {
                             backgroundImage: `url(${user ? user.avatar : ""})`,
                             clipPath: AVATAR_SHAPES[user?.customization?.square_avatar]
                                 ? AVATAR_SHAPES[user?.customization?.square_avatar].style
-                                : AVATAR_SHAPES[AvaterShape.CircleAvatarShape].style,
+                                : AVATAR_SHAPES[AvatarShape.CircleAvatarShape].style,
                             borderRadius:
                                 AVATAR_SHAPES[user?.customization?.square_avatar]?.name !== "Circle Avatar Shape"
                                     ? user?.customization?.square_avatar
