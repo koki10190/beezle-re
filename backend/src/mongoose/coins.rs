@@ -7,7 +7,7 @@ use crate::beezle;
 
 use super::{get_document, structures::user::UserLevels, update_document};
 
-pub const GOLD_RUSH: bool = true;
+pub const GOLD_RUSH: bool = false;
 pub const GOLD_RUSH_MULTIPLYER: i64 = 2;
 
 pub async fn add_coins(client: &Client, handle: &str, coins_to_add: i64) {

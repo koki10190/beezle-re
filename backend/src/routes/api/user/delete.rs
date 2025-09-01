@@ -21,7 +21,6 @@ struct GetUserQuery {
 
 #[delete("/api/user/delete")]
 pub async fn route(
-    body: web::Json<GetUserQuery>,
     req: HttpRequest,
     client: web::Data<mongodb::Client>,
 ) -> impl Responder {

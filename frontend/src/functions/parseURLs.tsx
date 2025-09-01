@@ -127,6 +127,25 @@ function parseURLs(
                 );
             });
         }
+
+        if (
+            content.match(
+                /(https?:\/\/open.spotify.com\/(track|user|artist|album)\/[a-zA-Z0-9]+(\/playlist\/[a-zA-Z0-9]+|)|spotify:(track|user|artist|album):[a-zA-Z0-9]+(:playlist:[a-zA-Z0-9]+|))/gi,
+            )
+        ) {
+            const matches = content.match(
+                /(https?:\/\/open.spotify.com\/(track|user|artist|album)\/[a-zA-Z0-9]+(\/playlist\/[a-zA-Z0-9]+|)|spotify:(track|user|artist|album):[a-zA-Z0-9]+(:playlist:[a-zA-Z0-9]+|))/gi,
+            );
+            let i = 0;
+            matches?.forEach((match) => {
+                if (i > 3) return;
+                const track_id = match.replace(/(https?:\/\/open.spotify.com\/(track|user|artist|album))/gi, "");
+                const type = GetSpotifyLinkType(match);
+                htmlToEmbed += `<iframe style="width: 100%; height: fit-content; border:none; margin-bottom: -75px; margin-top: 5px" src="https://open.spotify.com/embed/${type}/${track_id}"></iframe>`;
+                // https://open.spotify.com/embed/track/0ycChASwBZkWJDgF3tOfvb?utm_source=discord&utm_medium=desktop
+                i++;
+            });
+        }
     }
     let final = sanitize(content)
         .replace(
@@ -183,6 +202,23 @@ function parseURLs(
     return twemoji.parse(final.trimStart().trimEnd()) + (final.replace(/ /g, "") !== "" ? "<br/>" : "") + htmlToEmbed;
 }
 
+enum SpotifyLinkType {
+    NONE = "none",
+    TRACK = "track",
+    ALBUM = "album",
+    PLAYLIST = "playlist",
+    ARTIST = "artist",
+    USER = "user",
+}
+function GetSpotifyLinkType(url: string) {
+    if (url.includes("track")) return SpotifyLinkType.TRACK;
+    if (url.includes("album")) return SpotifyLinkType.ALBUM;
+    if (url.includes("user")) return SpotifyLinkType.USER;
+    if (url.includes("artist")) return SpotifyLinkType.ARTIST;
+    if (url.includes("playlist")) return SpotifyLinkType.PLAYLIST;
+    return SpotifyLinkType.NONE;
+}
+
 async function ExtractBeezlePostFromLinks(content: string): Promise<Array<Post>> {
     const posts: Array<Post> = [];
     let regex = /https:\/\/beezle\.lol\/post\/[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}/gi;
@@ -198,6 +234,7 @@ async function ExtractBeezlePostFromLinks(content: string): Promise<Array<Post>>
     return posts;
 }
 
+// TODO: HIVE CUSTOMIZATION
 async function ExtractHivesFromLinks(content: string): Promise<Array<BeezleHives.Hive>> {
     const hives: Array<BeezleHives.Hive> = [];
     let regex = /https:\/\/beezle\.lol\/hive\/[a-zA-Z0-9_.-]*/gi;
