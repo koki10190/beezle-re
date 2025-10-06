@@ -207,8 +207,8 @@ function Loaded({ self_user, handle }: { self_user: UserPrivate; handle?: string
         });
 
         const _peer = new Peer(self_user.handle, {
-            host: server_uri,
-            port: 3002,
+            host: server_uri + "/calling",
+            port: 3001,
         });
         setPeer(_peer);
         HandleCallReceives(_peer);

@@ -43,6 +43,7 @@ function DmPageAddFriend({ setOptions }: { setOptions: React.Dispatch<React.SetS
         const option: BeezleDM.DmOption = {
             is_group: false,
             user_handle: value,
+            selection_id: "",
         };
 
         setOptions((old) => [...old, option]);

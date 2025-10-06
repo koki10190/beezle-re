@@ -8,9 +8,19 @@ import mongoose from "mongoose";
 import MessageDM from "./schema/MessageDM";
 import { randomUUID } from "crypto";
 import jwt from "jsonwebtoken";
+import { ExpressPeerServer, PeerServer } from "peer";
+import fs from "fs";
 
 const app = express();
-const server = http.createServer(app);
+const ssl_options = {
+    key: process.env["USE_SSL"] === "yes" ? fs.readFileSync("../priv.key").toString() : "",
+    cert: process.env["USE_SSL"] === "yes" ? fs.readFileSync("../cert.crt").toString() : "",
+};
+
+const server = http.createServer(ssl_options as any, app);
+const peerServer = ExpressPeerServer(server);
+app.use("/calling", peerServer);
+
 const io = new Server(server, {
     cors: {
         origin: "*",
@@ -28,10 +38,6 @@ app.use(
         origin: true,
     }),
 );
-
-app.get("/", (req, res) => {
-    res.send("DM Server");
-});
 
 const sockets: Array<{ socket: Socket; id: string; handle: string }> = [];
 
