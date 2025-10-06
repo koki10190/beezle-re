@@ -41,8 +41,8 @@ app.use(
     }),
 );
 
-app.get("/", (res, req) => {
-    res.body("DM Server");
+app.get("/", (req, res) => {
+    res.send("DM Server");
 });
 
 const sockets: Array<{ socket: Socket; id: string; handle: string }> = [];
@@ -74,7 +74,6 @@ io.on("connection", (socket) => {
 
     socket.on("message", async (msg: any, self_user: any, to: string) => {
         const user = sockets.find((x) => x.handle === to);
-        console.log(sockets);
 
         const id = randomUUID();
         const db_msg = await MessageDM.create({
@@ -84,6 +83,7 @@ io.on("connection", (socket) => {
             msg_id: id,
             channel: `${to};${msg.author}`,
         });
+        console.log("Received a message from", msg.author, "to", to, "userfind:", user);
         if (!user) return;
         msg.msg_id = id;
         user.socket.emit("message-receive", msg);
