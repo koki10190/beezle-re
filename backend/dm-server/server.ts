@@ -45,7 +45,7 @@ app.get("/", (req, res) => {
     res.send("DM Server");
 });
 
-const sockets: Array<{ socket: Socket; id: string; handle: string }> = [];
+const sockets: Map<string, { socket: Socket; id: string; handle: string }> = new Map();
 
 io.on("connection", (socket) => {
     console.log("a user has connected");
@@ -53,9 +53,11 @@ io.on("connection", (socket) => {
     socket.on("disconnect", () => {
         console.log("User Disconnected " + socket.id);
 
-        const skt = sockets.findIndex((x) => x.id === socket?.id);
-        if (skt > -1) {
-            sockets.splice(skt, 1);
+        for (const socket_entry of sockets) {
+            if (socket_entry[1].id === socket.id) {
+                sockets.delete(socket_entry[1].handle);
+                break;
+            }
         }
     });
 
@@ -63,7 +65,7 @@ io.on("connection", (socket) => {
         try {
             const decoded = jwt.verify(token, process.env["TOKEN_SECRET"] as string) as jwt.JwtPayload;
             console.log("BEEZLE Connection:", decoded.handle);
-            sockets.push({ socket, id: socket.id, handle: decoded.handle });
+            sockets.set(decoded.handle, { socket, id: socket.id, handle: decoded.handle });
         } catch (err) {
             console.error(err);
             console.log("Invalid token dooodoo");
@@ -73,7 +75,7 @@ io.on("connection", (socket) => {
     });
 
     socket.on("message", async (msg: any, self_user: any, to: string) => {
-        const user = sockets.find((x) => x.handle === to);
+        const user = sockets.get(to);
 
         const id = randomUUID();
         const db_msg = await MessageDM.create({
