@@ -211,7 +211,7 @@ function Loaded({ self_user, handle }: { self_user: UserPrivate; handle?: string
             host: server_uri,
             path: "/calling",
             secure: true,
-            port: 3001,
+            port: 443,
         });
         setPeer(_peer);
         HandleCallReceives(_peer);

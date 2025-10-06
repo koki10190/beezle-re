@@ -1,5 +1,5 @@
 import { io } from "socket.io-client";
 import { dm_uri } from "../links";
 
-const dmSocket = io("https://server.beezle.lol", { port: 3001, secure: true, transports: ["websocket"] });
+const dmSocket = io("wss://server.beezle.lol", { port: 443, secure: true });
 export default dmSocket;
