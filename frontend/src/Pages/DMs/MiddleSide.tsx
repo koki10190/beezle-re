@@ -159,6 +159,7 @@ function Loaded({ self_user, handle }: { self_user: UserPrivate; handle?: string
     const [calling, setCalling] = useState(false);
     const [peerCall, setPeerCall] = useState<MediaConnection>(null);
     const [ringtoneState, setRingtone] = useState<HTMLAudioElement>(null);
+    const [streamFeed, setStreamFeed] = useState<MediaStream>();
 
     // Add Friend
     const [homePageEnum, setHomePageEnum] = useState(HomePageType.Home);
@@ -364,6 +365,7 @@ function Loaded({ self_user, handle }: { self_user: UserPrivate; handle?: string
                 ringtoneAudio.loop = true;
                 ringtoneAudio.play();
                 setRingtone(ringtoneAudio);
+                setStreamFeed(stream);
 
                 setCalling(true);
                 setBeingCalled(false);
@@ -410,33 +412,22 @@ function Loaded({ self_user, handle }: { self_user: UserPrivate; handle?: string
                 });
 
                 // If they don't pick up or they hang up
-                call.on("close", async () => {
+                const __Close = async () => {
                     console.log("They closed the call :(");
                     call.close();
                     setCalling(false);
                     setBeingCalled(false);
                     setPickedUp(false);
+                    setStreamFeed(null);
                     setPeerCall(null);
                     setUsersInCall([]);
                     ringtoneAudio.pause();
                     ringtoneAudio.remove();
 
                     videoFeed.remove();
-                });
-
-                call.on("error", async (err) => {
-                    console.error(err);
-                    call.close();
-                    setCalling(false);
-                    setBeingCalled(false);
-                    setPickedUp(false);
-                    setPeerCall(null);
-                    setUsersInCall([]);
-                    ringtoneAudio.pause();
-                    ringtoneAudio.remove();
-
-                    videoFeed.remove();
-                });
+                };
+                call.on("close", __Close);
+                call.on("error", __Close);
 
                 call.on("willCloseOnRemote", async () => {
                     console.log("REMOTE CLOSE");
@@ -451,6 +442,7 @@ function Loaded({ self_user, handle }: { self_user: UserPrivate; handle?: string
                 audio: true,
             })
             .then((stream) => {
+                setStreamFeed(stream);
                 peerCall.answer(stream);
             });
     };
@@ -458,6 +450,7 @@ function Loaded({ self_user, handle }: { self_user: UserPrivate; handle?: string
     const DeclineCall = async () => {
         if (peerCall) {
             peerCall.close();
+            setStreamFeed(null);
             console.log("CALL CLOSED");
         }
         setCalling(false);
@@ -469,6 +462,12 @@ function Loaded({ self_user, handle }: { self_user: UserPrivate; handle?: string
             ringtoneState.remove();
         }
     };
+
+    // Call Settings
+    useEffect(() => {
+        if (!streamFeed) return;
+        streamFeed.getAudioTracks()[0].enabled = !callSettings.muted;
+    }, [callSettings]);
 
     return (
         <>

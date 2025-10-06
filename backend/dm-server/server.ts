@@ -46,6 +46,7 @@ app.get("/", (req, res) => {
 });
 
 const sockets: Map<string, { socket: Socket; id: string; handle: string }> = new Map();
+const sockets_handle: Map<string, { socket: Socket; id: string; handle: string }> = new Map();
 
 io.on("connection", (socket) => {
     console.log("a user has connected");
@@ -53,19 +54,15 @@ io.on("connection", (socket) => {
     socket.on("disconnect", () => {
         console.log("User Disconnected " + socket.id);
 
-        for (const socket_entry of sockets) {
-            if (socket_entry[1].id === socket.id) {
-                sockets.delete(socket_entry[1].handle);
-                break;
-            }
-        }
+        sockets.delete(socket.id);
     });
 
     socket.on("beezle-connect", (token) => {
         try {
             const decoded = jwt.verify(token, process.env["TOKEN_SECRET"] as string) as jwt.JwtPayload;
             console.log("BEEZLE Connection:", decoded.handle);
-            sockets.set(decoded.handle, { socket, id: socket.id, handle: decoded.handle });
+            sockets.set(socket.id, { socket, id: socket.id, handle: decoded.handle });
+            sockets_handle.set(decoded.handle, { socket, id: socket.id, handle: decoded.handle });
         } catch (err) {
             console.error(err);
             console.log("Invalid token dooodoo");
