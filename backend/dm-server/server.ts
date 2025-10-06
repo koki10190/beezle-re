@@ -83,9 +83,10 @@ io.on("connection", (socket) => {
             msg_id: id,
             channel: `${to};${msg.author}`,
         });
-        console.log("Received a message from", msg.author, "to", to, "userfind:", user);
+        console.log("Received a message from", msg.author, "to", to, "userfind:", user ? "true" : "false");
         if (!user) return;
         msg.msg_id = id;
+        console.log("emitting....");
         user.socket.emit("message-receive", msg);
     });
 });
