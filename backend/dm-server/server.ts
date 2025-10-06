@@ -26,8 +26,6 @@ const io = new Server(server, {
         origin: "*",
         methods: ["GET", "POST"],
     },
-    serveClient: true,
-    transports: ["websocket"],
 });
 
 const db = mongoose.connect(process.env["MONGO_URI"] as string).then(() => console.log("Connected to MongoDB"));
