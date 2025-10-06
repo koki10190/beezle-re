@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 dotenv.config();
 import express from "express";
-import http from "http";
+import https from "https";
 import { Server, Socket } from "socket.io";
 import cors from "cors";
 import mongoose from "mongoose";
@@ -17,7 +17,7 @@ const ssl_options = {
     cert: process.env["USE_SSL"] === "yes" ? fs.readFileSync("../cert.crt").toString() : "",
 };
 
-const server = http.createServer(ssl_options as any, app);
+const server = https.createServer(ssl_options as any, app);
 const peerServer = ExpressPeerServer(server);
 app.use("/calling", peerServer);
 
