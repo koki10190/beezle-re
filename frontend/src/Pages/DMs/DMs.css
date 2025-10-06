@@ -26,9 +26,11 @@
     /* z-index: -1; */
 }
 
-.dm-data-side-select-error {
+.dm-data-side-not-selected {
     padding: 15px;
     width: 100%;
+    height: 100%;
+    box-sizing: border-box;
 }
 
 .dm-data {

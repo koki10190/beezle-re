@@ -39,6 +39,10 @@ app.use(
     }),
 );
 
+app.get("/", (res, req) => {
+    res.body("DM Server");
+});
+
 const sockets: Array<{ socket: Socket; id: string; handle: string }> = [];
 
 io.on("connection", (socket) => {

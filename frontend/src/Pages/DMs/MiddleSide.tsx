@@ -158,6 +158,7 @@ function Loaded({ self_user, handle }: { self_user: UserPrivate; handle?: string
 
     const [calling, setCalling] = useState(false);
     const [peerCall, setPeerCall] = useState<MediaConnection>(null);
+    const [ringtoneState, setRingtone] = useState<HTMLAudioElement>(null);
 
     // Add Friend
     const [homePageEnum, setHomePageEnum] = useState(HomePageType.Home);
@@ -207,7 +208,9 @@ function Loaded({ self_user, handle }: { self_user: UserPrivate; handle?: string
         });
 
         const _peer = new Peer(self_user.handle, {
-            host: server_uri + "/calling",
+            host: server_uri,
+            path: "/calling",
+            secure: true,
             port: 3001,
         });
         setPeer(_peer);
@@ -222,7 +225,9 @@ function Loaded({ self_user, handle }: { self_user: UserPrivate; handle?: string
         // We're being called
         peer.on("call", async (call) => {
             const ringtoneAudio = new Audio(ringtone);
+            ringtoneAudio.loop = true;
             ringtoneAudio.play();
+            setRingtone(ringtoneAudio);
             console.log("Incoming CALL!", call);
             setCalling(true);
             setPickedUp(false);
@@ -356,7 +361,9 @@ function Loaded({ self_user, handle }: { self_user: UserPrivate; handle?: string
             })
             .then((stream) => {
                 const ringtoneAudio = new Audio(ringtone);
+                ringtoneAudio.loop = true;
                 ringtoneAudio.play();
+                setRingtone(ringtoneAudio);
 
                 setCalling(true);
                 setBeingCalled(false);
@@ -430,7 +437,15 @@ function Loaded({ self_user, handle }: { self_user: UserPrivate; handle?: string
     };
 
     const DeclineCall = async () => {
-        peerCall.close();
+        if (peerCall) peerCall.close();
+        setCalling(false);
+        setBeingCalled(false);
+        setPickedUp(false);
+        setPeerCall(null);
+        if (ringtoneState) {
+            ringtoneState.pause();
+            ringtoneState.remove();
+        }
     };
 
     return (
@@ -478,176 +493,168 @@ function Loaded({ self_user, handle }: { self_user: UserPrivate; handle?: string
                     </div>
                 </div>
             </div>
-            {_selected ? (
-                <div className="dm-data-side">
-                    <div style={{ display: !calling ? "none" : "flex" }} className="dm-call-panel">
-                        <div className="dm-call-panel-users">
-                            {usersInCall.map((user) => {
-                                return <CallUser user={user.user} beingCalled={user.beingCalled} pickedUp={user.pickedUp} />;
-                            })}
-                        </div>
-                        <div className="dm-call-bottom-panel">
-                            {PickedUp ? (
-                                <>
-                                    <button
-                                        onClick={() =>
-                                            setCallSettings((old) => {
-                                                const _new = { ...old };
-                                                _new.muted = !_new.muted;
-                                                return _new;
-                                            })
-                                        }
-                                        className={"dm-call-button " + (callSettings.muted ? "bg-red" : "bg-var")}
-                                    >
-                                        <i className={"fa-solid fa-microphone" + (callSettings.muted ? "-slash" : "")}></i>
-                                    </button>
-                                    <button onClick={DeclineCall} className={`dm-call-button bg-red`}>
-                                        <i className={`fa-solid fa-phone-hangup`}></i>
-                                    </button>
-                                </>
-                            ) : (
-                                <>
-                                    <button onClick={AnswerCall} className={`dm-call-button bg-green`}>
-                                        <i className={`fa-solid fa-phone`}></i>
-                                    </button>
-                                    <button onClick={DeclineCall} className={`dm-call-button bg-red`}>
-                                        <i className={`fa-solid fa-phone-hangup`}></i>
-                                    </button>
-                                </>
-                            )}
-                        </div>
-                    </div>
 
-                    <div className="dm-info-panel">
-                        <div
-                            style={{
-                                backgroundImage: `url(${selected?.avatar})`,
-                                clipPath: AVATAR_SHAPES[selected?.customization?.square_avatar]
-                                    ? AVATAR_SHAPES[selected?.customization?.square_avatar].style
-                                    : "",
-                                borderRadius:
-                                    AVATAR_SHAPES[selected?.customization?.square_avatar]?.name !== "Circle Avatar Shape"
-                                        ? selected?.customization?.square_avatar
-                                            ? "5px"
-                                            : "100%"
-                                        : "100%",
-                            }}
-                            className="avatar"
-                        ></div>
-                        <p className="handle">@{selected?.handle} - </p>
-                        <div className="info-buttons">
-                            <a onClick={Call} className="info-button">
-                                <i className="fa-solid fa-phone-volume"></i>
-                            </a>
-                            <a className="info-button">
-                                <i className="fa-solid fa-video"></i>
-                            </a>
-                        </div>
-                    </div>
-                    <div ref={dmContentPanel} className="dm-data">
-                        {messages.map((msg) => {
-                            return <Message key={msg.msg_id} msg={msg} self_user={self_user} />;
+            <div className="dm-data-side">
+                <div style={{ display: !calling ? "none" : "flex" }} className="dm-call-panel">
+                    <div className="dm-call-panel-users">
+                        {usersInCall.map((user) => {
+                            return <CallUser user={user.user} beingCalled={user.beingCalled} pickedUp={user.pickedUp} />;
                         })}
                     </div>
-                    <div className="dm-bottom-panel">
-                        <div className="dm-bottom-panel-input">
-                            <div className="dm-textfield">
-                                <div className="dm-textfield-padding">
-                                    {emojiPickerOpen ? (
-                                        <EmojiPicker
-                                            onEmojiClick={(emojiData: EmojiClickData, event: MouseEvent) => {
-                                                textareaRef.current!.value += emojiData.isCustom ? `<:${emojiData.emoji}:> ` : emojiData.emoji;
-                                            }}
-                                            theme={Theme.DARK}
-                                            emojiStyle={EmojiStyle.NATIVE}
-                                            customEmojis={self_user?.customization?.emojis ?? []}
-                                            className="dm-picker"
-                                        />
-                                    ) : (
-                                        ""
-                                    )}
+                    <div className="dm-call-bottom-panel">
+                        {PickedUp ? (
+                            <>
+                                <button
+                                    onClick={() =>
+                                        setCallSettings((old) => {
+                                            const _new = { ...old };
+                                            _new.muted = !_new.muted;
+                                            return _new;
+                                        })
+                                    }
+                                    className={"dm-call-button " + (callSettings.muted ? "bg-red" : "bg-var")}
+                                >
+                                    <i className={"fa-solid fa-microphone" + (callSettings.muted ? "-slash" : "")}></i>
+                                </button>
+                                <button onClick={DeclineCall} className={`dm-call-button bg-red`}>
+                                    <i className={`fa-solid fa-phone-hangup`}></i>
+                                </button>
+                            </>
+                        ) : (
+                            <>
+                                <button onClick={AnswerCall} className={`dm-call-button bg-green`}>
+                                    <i className={`fa-solid fa-phone`}></i>
+                                </button>
+                                <button onClick={DeclineCall} className={`dm-call-button bg-red`}>
+                                    <i className={`fa-solid fa-phone-hangup`}></i>
+                                </button>
+                            </>
+                        )}
+                    </div>
+                </div>
 
-                                    {gifPickerOpen ? (
-                                        <div className="dm-picker-gif">
-                                            <GifPicker
-                                                onGifClick={(gif: TenorImage) => {
-                                                    textareaRef.current!.value += ` ${gif.url}`;
+                {_selected ? (
+                    <>
+                        <div className="dm-info-panel">
+                            <div
+                                style={{
+                                    backgroundImage: `url(${selected?.avatar})`,
+                                    clipPath: AVATAR_SHAPES[selected?.customization?.square_avatar]
+                                        ? AVATAR_SHAPES[selected?.customization?.square_avatar].style
+                                        : "",
+                                    borderRadius:
+                                        AVATAR_SHAPES[selected?.customization?.square_avatar]?.name !== "Circle Avatar Shape"
+                                            ? selected?.customization?.square_avatar
+                                                ? "5px"
+                                                : "100%"
+                                            : "100%",
+                                }}
+                                className="avatar"
+                            ></div>
+                            <p className="handle">@{selected?.handle} - </p>
+                            <div className="info-buttons">
+                                <a onClick={Call} className="info-button">
+                                    <i className="fa-solid fa-phone-volume"></i>
+                                </a>
+                                <a className="info-button">
+                                    <i className="fa-solid fa-video"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div ref={dmContentPanel} className="dm-data">
+                            {messages.map((msg) => {
+                                return <Message key={msg.msg_id} msg={msg} self_user={self_user} />;
+                            })}
+                        </div>
+                        <div className="dm-bottom-panel">
+                            <div className="dm-bottom-panel-input">
+                                <div className="dm-textfield">
+                                    <div className="dm-textfield-padding">
+                                        {emojiPickerOpen ? (
+                                            <EmojiPicker
+                                                onEmojiClick={(emojiData: EmojiClickData, event: MouseEvent) => {
+                                                    textareaRef.current!.value += emojiData.isCustom ? `<:${emojiData.emoji}:> ` : emojiData.emoji;
                                                 }}
-                                                tenorApiKey={tenor_api_key}
                                                 theme={Theme.DARK}
+                                                emojiStyle={EmojiStyle.NATIVE}
+                                                customEmojis={self_user?.customization?.emojis ?? []}
+                                                className="dm-picker"
                                             />
+                                        ) : (
+                                            ""
+                                        )}
+
+                                        {gifPickerOpen ? (
+                                            <div className="dm-picker-gif">
+                                                <GifPicker
+                                                    onGifClick={(gif: TenorImage) => {
+                                                        textareaRef.current!.value += ` ${gif.url}`;
+                                                    }}
+                                                    tenorApiKey={tenor_api_key}
+                                                    theme={Theme.DARK}
+                                                />
+                                            </div>
+                                        ) : (
+                                            ""
+                                        )}
+                                        <textarea
+                                            ref={textareaRef}
+                                            onKeyDown={(e) => {
+                                                if (e.key === "Enter" && !e.shiftKey) {
+                                                    e.preventDefault();
+                                                    SendMessage();
+                                                }
+                                            }}
+                                            style={{ resize: "none" }}
+                                            className="dm-textarea"
+                                            placeholder={`Message ${_selected.username}`}
+                                        />
+                                        <div className="dm-textarea-buttons">
+                                            <a onClick={() => setEmojiPickerOpen((old) => !old)} className="dm-panel-button">
+                                                <i className="fa-solid fa-face-awesome"></i>
+                                            </a>
+                                            <a onClick={() => setGifPickerOpen((old) => !old)} className="dm-panel-button">
+                                                <i className="fa-solid fa-gif"></i>
+                                            </a>
+                                            <a onClick={SendMessage} className="dm-panel-button dm-send-button">
+                                                <i className="fa-solid fa-paper-plane-top"></i>
+                                            </a>
                                         </div>
-                                    ) : (
-                                        ""
-                                    )}
-                                    <textarea
-                                        ref={textareaRef}
-                                        onKeyDown={(e) => {
-                                            if (e.key === "Enter" && !e.shiftKey) {
-                                                e.preventDefault();
-                                                SendMessage();
-                                            }
-                                        }}
-                                        style={{ resize: "none" }}
-                                        className="dm-textarea"
-                                        placeholder={`Message ${_selected.username}`}
-                                    />
-                                    <div className="dm-textarea-buttons">
-                                        <a onClick={() => setEmojiPickerOpen((old) => !old)} className="dm-panel-button">
-                                            <i className="fa-solid fa-face-awesome"></i>
-                                        </a>
-                                        <a onClick={() => setGifPickerOpen((old) => !old)} className="dm-panel-button">
-                                            <i className="fa-solid fa-gif"></i>
-                                        </a>
-                                        <a onClick={SendMessage} className="dm-panel-button dm-send-button">
-                                            <i className="fa-solid fa-paper-plane-top"></i>
-                                        </a>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        {/* <div className="dm-bottom-panel-buttons">
-                            <a onClick={SendMessage} className="dm-panel-button">
-                                <i className="fa-solid fa-paper-plane-top"></i>
-                            </a>
-                            <a className="dm-panel-button">
-                                <i className="fa-solid fa-face-awesome"></i>
-                            </a>
-                            <a className="dm-panel-button">
-                                <i className="fa-solid fa-gif"></i>
-                            </a>
-                        </div> */}
-                    </div>
-                </div>
-            ) : (
-                <div className="dm-data-side-select-error">
-                    <h1>
-                        Welcome to Beezle{" "}
-                        <span
-                            style={{
-                                fontSize: "35px",
-                                marginLeft: "-5px",
-                                marginRight: "5px",
-                            }}
-                            className="re-text"
-                        >
-                            :RE
-                        </span>
-                        DMs!
-                    </h1>
-                    <p style={{ margin: "0" }}>Start buzzing with your friends by adding channels on the left panel & selecting them.</p>
-                    <div className="dm-home-button-container">
-                        <button onClick={() => setHomePageEnum(HomePageType.AddFriend)} className="button-field">
-                            <i className="fa-solid fa-user-plus"></i> Add Friend
-                        </button>
-                        <button onClick={() => setHomePageEnum(HomePageType.CreateGC)} className="button-field">
-                            <i className="fa-solid fa-users"></i> Create a Group Chat
-                        </button>
-                    </div>
+                    </>
+                ) : (
+                    <div className="dm-data-side-not-selected">
+                        <h1>
+                            Welcome to Beezle{" "}
+                            <span
+                                style={{
+                                    fontSize: "35px",
+                                    marginLeft: "-5px",
+                                    marginRight: "5px",
+                                }}
+                                className="re-text"
+                            >
+                                :RE
+                            </span>
+                            DMs!
+                        </h1>
+                        <p style={{ margin: "0" }}>Start buzzing with your friends by adding channels on the left panel & selecting them.</p>
+                        <div className="dm-home-button-container">
+                            <button onClick={() => setHomePageEnum(HomePageType.AddFriend)} className="button-field">
+                                <i className="fa-solid fa-user-plus"></i> Add Friend
+                            </button>
+                            <button onClick={() => setHomePageEnum(HomePageType.CreateGC)} className="button-field">
+                                <i className="fa-solid fa-users"></i> Create a Group Chat
+                            </button>
+                        </div>
 
-                    <DmHomePageDisplay page={homePageEnum} setOptions={setDmSelections} />
-                </div>
-            )}
+                        <DmHomePageDisplay page={homePageEnum} setOptions={setDmSelections} />
+                    </div>
+                )}
+            </div>
 
             {!userListOpen ? (
                 <a onClick={() => setUserListOpen((old) => !old)} className="open-close-dms2">
