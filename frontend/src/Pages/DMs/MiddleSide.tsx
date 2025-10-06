@@ -500,6 +500,7 @@ function Loaded({ self_user, handle }: { self_user: UserPrivate; handle?: string
                                     <DmUserBox
                                         dm_option={option}
                                         self_user={self_user}
+                                        key={option.user_handle ?? option.group_id}
                                         setSelection={setDmSelections}
                                         onClick={async () => {
                                             if (!option.is_group) {
