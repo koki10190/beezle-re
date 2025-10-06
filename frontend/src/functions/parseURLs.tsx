@@ -199,7 +199,7 @@ function parseURLs(
     }
 
     // console.log("FINAL", final + (final.replace(/ /g, "") !== "" ? "<br/>" : "") + htmlToEmbed);
-    return twemoji.parse(final.trimStart().trimEnd()) + (final.replace(/ /g, "") !== "" ? "<br/>" : "") + htmlToEmbed;
+    return final.trimStart().trimEnd() + (final.replace(/ /g, "") !== "" ? "<br/>" : "") + htmlToEmbed;
 }
 
 enum SpotifyLinkType {

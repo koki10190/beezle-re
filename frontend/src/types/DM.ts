@@ -1,12 +1,5 @@
-import { UserPublic } from "./User";
+import { io } from "socket.io-client";
+import { dm_uri } from "../links";
 
-interface DMData {
-    _id: string;
-    from: UserPublic;
-    to: UserPublic;
-    content: string;
-    date: Date;
-    edited: boolean;
-}
-
-export type { DMData };
+const dmSocket = io(dm_uri);
+export default dmSocket;

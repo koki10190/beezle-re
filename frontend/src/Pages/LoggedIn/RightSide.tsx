@@ -8,7 +8,6 @@ import { BadgeType, UserPrivate } from "../../types/User";
 import { fetchUserPrivate, GetUserPrivate } from "../../functions/fetchUserPrivate";
 import { NotificationData } from "../../types/Notification";
 
-import { DMData } from "../../types/DM";
 import { socket } from "../../ws/socket";
 import { AVATAR_SHAPES } from "../../types/cosmetics/AvatarShapes";
 
@@ -45,7 +44,7 @@ function SettingsButton({
     );
 }
 
-function RightSide() {
+function RightSide({ forceExpansion }: { forceExpansion?: boolean }) {
     const navigate = useNavigate();
     const [self_user, setSelfUser] = useState<UserPrivate | null>(null);
     const [isExpanded, setExpanded] = useState(false);
@@ -93,7 +92,7 @@ function RightSide() {
         socket.listen("update_notification_counter", (data) => {
             console.log("Notification Received:", data);
             setNotifCount((old) => ++old);
-            setNotifColor("rgb(255, 144, 70)");
+            setNotifColor("rgb(var(--orange))");
         });
     }, []);
 
@@ -101,7 +100,7 @@ function RightSide() {
         <>
             <div
                 style={
-                    window_width < 1100
+                    window_width < 1100 || forceExpansion
                         ? {
                               display: "flex",
                               backgroundColor: "rgba(0,0,0,0.7)",
@@ -172,7 +171,7 @@ function RightSide() {
 
                 <SettingsButton redirect="/logout" style={{ color: "red" }} iconClass="fa-solid fa-right-from-bracket" text="Log out" />
             </div>
-            {window_width < 1100 ? (
+            {window_width < 1100 || forceExpansion ? (
                 <a onClick={ExpandRightSide} className="open-panel-button">
                     <i className="fa-solid fa-left-to-line"></i>
                 </a>

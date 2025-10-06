@@ -20,6 +20,8 @@ import { toast } from "react-toastify";
 import ChangeAccounts from "./Pages/ChangeAccounts";
 import PostPreferences from "./Pages/PostPreferences";
 import GetAuthToken from "../../functions/GetAuthHeader";
+import DisplayCustomization from "./Pages/Customize";
+import { useNavigate } from "react-router-dom";
 
 function SettingsButton({
     redirect = "",
@@ -57,9 +59,11 @@ enum Pages {
     CUSTOM_EMOJIS,
     CHANGE_ACCOUNTS,
     POST_PREFERENCES,
+    CUSTOMIZE,
 }
 
 function RightSide({ setPage }: { setPage: any }) {
+    const navigate = useNavigate();
     const [self_user, setSelfUser] = useState<UserPrivate | null>(null);
     const [isExpanded, setExpanded] = useState(false);
     const [window_width, setWindowWidth] = useState(window.innerWidth);
@@ -184,6 +188,15 @@ function RightSide({ setPage }: { setPage: any }) {
                 />
                 <SettingsButton
                     onClick={() => {
+                        setPage(Pages.CUSTOMIZE);
+                        setExpanded(false);
+                    }}
+                    iconClass="fa-solid fa-paint-roller"
+                    text="Customize"
+                    style={undefined}
+                />
+                <SettingsButton
+                    onClick={() => {
                         setPage(Pages.CHANGE_ACCOUNTS);
                         setExpanded(false);
                     }}
@@ -192,7 +205,14 @@ function RightSide({ setPage }: { setPage: any }) {
                     style={undefined}
                 />
                 {/* <SettingsButton onClick={() => setPage(Pages.POST_PREFERENCES)} iconClass="fa-solid fa-comment" text="Posts" style={undefined} /> */}
-                <SettingsButton redirect="/home" iconClass="fa-solid fa-home" text="Go Back" style={undefined} />
+                <SettingsButton
+                    onClick={() => {
+                        navigate("/home");
+                    }}
+                    iconClass="fa-solid fa-home"
+                    text="Go Back"
+                    style={undefined}
+                />
                 <SettingsButton
                     iconClass="fa-solid fa-trash"
                     text="Delete Account"
@@ -240,6 +260,8 @@ function MiddleSide() {
                               return <ChangeAccounts user={self_user} />;
                           case Pages.POST_PREFERENCES:
                               return <PostPreferences user={self_user} />;
+                          case Pages.CUSTOMIZE:
+                              return <DisplayCustomization user={self_user} />;
                       }
                   })()
                 : ""}

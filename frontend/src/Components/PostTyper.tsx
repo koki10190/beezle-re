@@ -310,7 +310,7 @@ function PostTyper({ onSend, replying_to = "", hive_post = null }: { onSend: (da
                     }}
                     customEmojis={self_user?.customization?.emojis ? self_user?.customization?.emojis : []}
                     theme={Theme.DARK}
-                    emojiStyle={EmojiStyle.TWITTER}
+                    emojiStyle={EmojiStyle.GOOGLE}
                     emojiVersion=""
                     className="post-typer-emoji-picker"
                 />

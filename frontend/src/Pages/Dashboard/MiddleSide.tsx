@@ -15,6 +15,7 @@ import Report from "./Pages/Reports";
 import BanUser from "./Pages/BanUser";
 import DeletePost from "./Pages/DeletePost";
 import VerifyUser from "./Pages/VerifyUser";
+import { useNavigate } from "react-router-dom";
 
 function DashboardButton({
     redirect = "",
@@ -52,6 +53,7 @@ enum Pages {
 }
 
 function RightSide({ setPage }: { setPage: any }) {
+    const navigate = useNavigate();
     const [self_user, setSelfUser] = useState<UserPrivate | null>(null);
     const [isExpanded, setExpanded] = useState(false);
     const [window_width, setWindowWidth] = useState(window.innerWidth);
@@ -141,7 +143,14 @@ function RightSide({ setPage }: { setPage: any }) {
                     text="Verify User"
                     style={undefined}
                 />
-                <DashboardButton redirect="/home" iconClass="fa-solid fa-home" text="Go Back" style={undefined} />
+                <DashboardButton
+                    onClick={() => {
+                        navigate("/home");
+                    }}
+                    iconClass="fa-solid fa-home"
+                    text="Go Back"
+                    style={undefined}
+                />
             </div>
             {window_width < 1100 ? (
                 <a onClick={ExpandRightSide} className="open-panel-button">

@@ -216,6 +216,11 @@ async fn main() -> std::io::Result<()> {
             .service(routes::api::hives::explore::route)
             .service(routes::api::polls::get::route)
             .service(routes::api::polls::vote::route)
+            .service(routes::api::reset_password::route)
+            .service(routes::api::dms::get_messages::route)
+            .service(routes::api::dms::get_selections::route)
+            .service(routes::api::dms::create_selection::route)
+            .service(routes::api::dms::delete_selection::route)
             .route("/ws", web::get().to(socket::main_ws))
             .wrap(middleware::Logger::default())
     });

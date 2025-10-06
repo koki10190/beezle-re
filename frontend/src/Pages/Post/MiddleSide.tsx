@@ -373,15 +373,12 @@ function MiddleSide() {
     };
 
     const DeleteInteraction = async () => {
-        const res = await axios.post(
-            `${api_uri}/api/post/delete`,
-            {
+        const res = await axios.delete(`${api_uri}/api/post/delete`, {
+            headers: GetAuthToken(),
+            params: {
                 post_id: post!.post_id,
             },
-            {
-                headers: GetAuthToken(),
-            },
-        );
+        });
 
         if (res.data.error) {
             toast.error(res.data.error);

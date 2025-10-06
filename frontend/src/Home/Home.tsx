@@ -80,7 +80,7 @@ function Home() {
                     {isRegister ? (
                         <RegisterForm setRegister={setRegister} isRegister={isRegister} />
                     ) : (
-                        <LoginForm setRegister={setRegister} isRegister={isRegister} />
+                        <LoginForm setRegister={setRegister} isRegister={isRegister}></LoginForm>
                     )}
                     <p>
                         Once you login/register you're agreeing with our{" "}

@@ -45,9 +45,9 @@
 }
 
 .hive-edit-banner:hover {
-    border: 1px solid rgba(255, 138, 71, 1);
+    border: 1px solid rgba(var(--orange), 1);
 }
 
 .hive-edit-icon:hover {
-    border: 1px solid rgba(255, 138, 71, 1);
+    border: 1px solid rgba(var(--orange), 1);
 }

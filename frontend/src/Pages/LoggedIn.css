@@ -30,7 +30,7 @@ body {
 
 .side-right {
     width: 25%;
-    border-left: 1px solid rgba(255, 170, 90, 0.3);
+    border-left: 1px solid rgba(var(--orange), 0.3);
 }
 
 .side-left {

@@ -12,7 +12,7 @@
 }
 
 .notif-pfp:hover {
-    border: 1px solid rgb(255, 193, 152);
+    border: 1px solid rgb(var(--orange));
 }
 
 .notif p {
@@ -40,7 +40,7 @@
 }
 
 .notif:hover {
-    border: 1px solid rgb(255, 161, 99);
+    border: 1px solid rgb(var(--orange));
 }
 
 .notif-handle {

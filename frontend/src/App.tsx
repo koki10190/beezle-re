@@ -43,6 +43,8 @@ import { SERVER_ONLINE, ServerDownMessage } from "./functions/CheckServerStatus"
 import { QueryClient, QueryClientProvider, useQuery } from "react-query";
 import { UserPrivate, UserPublic } from "./types/User";
 import Twemoji from "react-twemoji";
+import { SetSavedCSSProperties } from "./functions/cssFuncs";
+import DMs_Home from "./Pages/DMs/Home";
 
 enum UserStatus {
     ONLINE,
@@ -70,6 +72,7 @@ function App() {
         (async () => {
             setPrivateUser(await fetchUserPrivate());
         })();
+        SetSavedCSSProperties();
     }, []);
 
     return (
@@ -127,6 +130,8 @@ function App() {
                     <Route path="/discord_auth" element={<DiscordAuth />} />
                     <Route path="/spotify-auth" element={<SpotifyAuth />} />
                     <Route path="/lastfm_auth" element={<LastfmAuth />} />
+                    <Route path="/dms" element={<DMs_Home />} />
+                    <Route path="/dms/:handle" element={<DMs_Home />} />
                     <Route path="/not-found" element={<NotFound />} />
                     <Route path="/:handle" element={<Profile_Home />} />
                     <Route path="*" element={<NotFound />} />

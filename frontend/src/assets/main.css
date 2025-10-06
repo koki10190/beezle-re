@@ -1,5 +1,17 @@
 @import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;500&display=swap");
 
+/* Customization Variables */
+:root {
+    --orange: 255, 139, 71;
+    --post-color: 173, 97, 74;
+    --profile-color: 255, 143, 98;
+
+    /* Body Gradient */
+    --body-gradient1: 0, 0, 0;
+    --body-gradient2: 0, 0, 0;
+    --body-gradient-deg: 45deg;
+}
+
 @font-face {
     font-family: vga-font;
     src: url(/vga.ttf);
@@ -88,8 +100,12 @@ button {
 }
 
 body {
-    background: black;
+    /* background: black; */
+    background: -webkit-linear-gradient(var(--body-gradient-deg), rgb(var(--body-gradient1)), rgb(var(--body-gradient2)));
+    height: 100vh;
     color: white;
+    margin: none;
+    padding: none;
 }
 
 input,
@@ -100,11 +116,6 @@ button {
     display: block;
     font-size: 18px;
     margin-bottom: 10px;
-}
-
-body {
-    margin: none;
-    padding: none;
 }
 
 body,
@@ -251,11 +262,11 @@ form > a {
 }
 
 .input-field:hover {
-    border: 1px solid rgba(255, 138, 71, 0.368);
+    border: 1px solid rgba(var(--orange), 0.368);
 }
 
 .input-field:focus {
-    border: 1px solid rgb(255, 139, 71);
+    border: 1px solid rgb(var(--orange));
 }
 
 .input-checkbox[type="checkbox"] {
@@ -291,7 +302,7 @@ form > a {
 
 .button-field {
     cursor: pointer;
-    background-color: rgb(255, 144, 70);
+    background-color: rgb(var(--orange));
     color: white;
     box-sizing: border-box;
     padding: 10px;
@@ -312,11 +323,13 @@ form > a {
 }
 
 .button-field:disabled {
-    background: rgb(182, 105, 53);
+    /* background: rgb(182, 105, 53); */
+    filter: brightness(0.75);
 }
 
 .button-field:hover {
-    background: rgb(212, 121, 59);
+    filter: brightness(0.8);
+    /* background: rgba(var(--orange), 0.8); */
 }
 
 .button-field.shadow {
@@ -389,7 +402,7 @@ form > a {
 }
 
 .instead-anchor {
-    color: rgba(255, 255, 255, 0.3);
+    color: rgba(255, 255, 255, 0.5);
     cursor: pointer;
 }
 

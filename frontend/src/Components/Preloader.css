@@ -12,7 +12,7 @@
     background-repeat: no-repeat;
     background-position: center;
     background-size: cover;
-    background-color: rgb(255, 144, 70);
+    background-color: rgb(var(--orange));
     -webkit-mask-image: url(/6-dots-scale-middle.svg);
     mask-image: url(/6-dots-scale-middle.svg);
     mask-repeat: no-repeat;

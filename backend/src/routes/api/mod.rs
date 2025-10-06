@@ -18,3 +18,5 @@ pub mod lastfm;
 pub mod file;
 pub mod hives;
 pub mod polls;
+pub mod reset_password;
+pub mod dms;

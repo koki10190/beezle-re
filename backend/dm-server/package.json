@@ -1,0 +1,24 @@
+{
+    "name": "dm-server",
+    "version": "1.0.0",
+    "description": "",
+    "license": "ISC",
+    "author": "",
+    "type": "commonjs",
+    "main": "server.ts",
+    "scripts": {
+        "start": "ts-node .",
+        "peer": "peerjs --port 3002"
+    },
+    "dependencies": {
+        "@types/jsonwebtoken": "^9.0.10",
+        "cors": "^2.8.5",
+        "dotenv": "^17.2.3",
+        "express": "^5.1.0",
+        "jsonwebtoken": "^9.0.2",
+        "mongoose": "^8.19.0",
+        "peer": "^1.0.2",
+        "socket.io": "^4.8.1",
+        "typescript": "^5.9.3"
+    }
+}

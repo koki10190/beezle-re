@@ -1,12 +1,7 @@
-:root {
-    --post-color: rgb(231, 129, 98);
-    --post-color-rgb: 231, 129, 98;
-}
-
 .post-box {
     width: 100%;
-    /* background-color: rgb(231, 129, 98); */
-    background-color: rgb(173, 97, 74);
+    background-color: rgb(var(--post-color));
+    /* background-color: rgb(173, 97, 74); */
     /* background-color: black;
     border: solid 2px rgb(231, 129, 98); */
 

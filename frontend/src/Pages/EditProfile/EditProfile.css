@@ -39,5 +39,5 @@
 }
 
 .edit-background-image:hover {
-    border: 1px solid rgba(255, 138, 71, 0.368);
+    border: 1px solid rgba(var(--orange), 0.368);
 }

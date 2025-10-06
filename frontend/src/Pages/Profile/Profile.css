@@ -18,7 +18,7 @@ body {
 
 .side-left {
     width: 25%;
-    border-right: 1px solid rgba(255, 170, 90, 0.3);
+    border-right: 1px solid rgba(var(--orange), 0.3);
 }
 
 .side-middle {
@@ -28,7 +28,7 @@ body {
 
 .side-right {
     width: 25%;
-    border-left: 1px solid rgba(255, 170, 90, 0.3);
+    border-left: 1px solid rgba(var(--orange), 0.3);
 }
 
 .profile .banner {
@@ -81,7 +81,7 @@ body {
 .profile .profile-container {
     width: 100%;
     height: fit-content;
-    background-color: rgba(255, 143, 98, 0.8);
+    background-color: rgba(var(--profile-color), 0.8);
     box-sizing: border-box;
     padding: 5px;
     padding-left: 20px;

@@ -29,13 +29,14 @@ textarea {
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-    background: #ff950b;
+    background: rgb(var(--orange));
     border-radius: 10px;
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-    background: #ff950bc2;
+    /* background: #ff950bc2; */
+    background: rgba(var(--orange), 0.76);
 }
 
 hr {
