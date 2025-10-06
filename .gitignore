@@ -154,3 +154,5 @@ index.js
 logcertfile
 *.rest
 ./*.rest
+*/priv.key
+*/cert.crt

@@ -13,7 +13,7 @@
         "type": "git",
         "url": "git+https://github.com/koki10190/beezle-re.git"
     },
-    "author": "koki10190 | Zekticezy",
+    "author": "koki10190",
     "license": "ISC",
     "bugs": {
         "url": "https://github.com/koki10190/beezle-re/issues"

@@ -411,6 +411,7 @@ function Loaded({ self_user, handle }: { self_user: UserPrivate; handle?: string
 
                 // If they don't pick up or they hang up
                 call.on("close", async () => {
+                    console.log("They closed the call :(");
                     call.close();
                     setCalling(false);
                     setBeingCalled(false);
@@ -421,6 +422,24 @@ function Loaded({ self_user, handle }: { self_user: UserPrivate; handle?: string
                     ringtoneAudio.remove();
 
                     videoFeed.remove();
+                });
+
+                call.on("error", async (err) => {
+                    console.error(err);
+                    call.close();
+                    setCalling(false);
+                    setBeingCalled(false);
+                    setPickedUp(false);
+                    setPeerCall(null);
+                    setUsersInCall([]);
+                    ringtoneAudio.pause();
+                    ringtoneAudio.remove();
+
+                    videoFeed.remove();
+                });
+
+                call.on("willCloseOnRemote", async () => {
+                    console.log("REMOTE CLOSE");
                 });
             });
     };
@@ -437,7 +456,10 @@ function Loaded({ self_user, handle }: { self_user: UserPrivate; handle?: string
     };
 
     const DeclineCall = async () => {
-        if (peerCall) peerCall.close();
+        if (peerCall) {
+            peerCall.close();
+            console.log("CALL CLOSED");
+        }
         setCalling(false);
         setBeingCalled(false);
         setPickedUp(false);

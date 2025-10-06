@@ -33,6 +33,7 @@ const db = mongoose.connect(process.env["MONGO_URI"] as string).then(() => conso
 server.listen(process.env["PORT"], () => console.log("DM Server On"));
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 app.use(
     cors({
         origin: true,
