@@ -121,11 +121,11 @@ io.on("connection", (socket) => {
         });
         console.log(db_msg, db_msg.collection.name);
         console.log("Received a message from", msg.author, "to", to, "userfind:", user ? "true" : "false");
-        socket.emit("message-receive", msg);
+        socket.emit("message-receive", db_msg);
         if (!user) return;
         msg.msg_id = id;
         console.log("emitting....");
-        user.socket.emit("message-receive", msg);
+        user.socket.emit("message-receive", db_msg);
     });
 
     // Handle Calls
