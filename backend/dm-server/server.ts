@@ -50,6 +50,20 @@ app.get("/", (req, res) => {
     res.send("DM Server");
 });
 
+app.get("/message/:id", async (req, res) => {
+    const { id } = req.params;
+    const token = req.headers.authorization;
+    if (!token) res.status(404).send("no auth header");
+    const decoded = jwt.verify(token!, process.env["TOKEN_SECRET"] as string) as jwt.JwtPayload;
+
+    const msg = await MessageDM.findOne({
+        channel: { $regex: `(${decoded.handle};|;${decoded.handle})` },
+        msg_id: id,
+    });
+
+    return res.json(msg);
+});
+
 const sockets: Map<string, { socket: Socket; id: string; handle: string }> = new Map();
 const sockets_handle: Map<string, { socket: Socket; id: string; handle: string }> = new Map();
 

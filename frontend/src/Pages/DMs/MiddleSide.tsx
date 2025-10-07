@@ -25,6 +25,14 @@ import DmPageAddFriend from "./Components/DmPageAddFriend";
 import DmPageCreateGC from "./Components/DmPageCreateGC";
 import ringtone from "./ringtone.mp3";
 import chatNotif from "./chat-notif.mp3";
+import GetAuthToken from "../../functions/GetAuthHeader";
+
+function truncate(input: string, length: number) {
+    if (input.length > length) {
+        return input.substring(0, length) + "...";
+    }
+    return input;
+}
 
 function Message({
     msg,
@@ -44,10 +52,22 @@ function Message({
     const [editing, setEditing] = useState(false);
     const [editedContent, setEditedContent] = useState(msg.content);
     const [content, setContent] = useState(msg.content);
+    const [replyingTo, setReplyingTo] = useState<BeezleDM.Message>(null);
 
     useEffect(() => {
         (async () => {
             setUser(await fetchUserPublic(msg.author));
+
+            if (msg.replying_to) {
+                const reply_msg = await axios.get(`https://${server_uri}/message`, {
+                    params: { id: msg.replying_to },
+                    headers: GetAuthToken(),
+                });
+
+                if (reply_msg.data) {
+                    setReplyingTo(reply_msg.data);
+                }
+            }
         })();
     }, []);
 
@@ -74,6 +94,11 @@ function Message({
             {msg.edited ? (
                 <a className="dm-attrib">
                     <i className="fa-solid fa-pencil" /> Edited
+                </a>
+            ) : null}
+            {replyingTo ? (
+                <a className="dm-attrib">
+                    <i className="fa-solid fa-reply" /> Replying to {truncate(replyingTo.content, 24)}
                 </a>
             ) : null}
             <div className="dm-msg-author">
@@ -371,6 +396,10 @@ function Loaded({ self_user, handle, setDisableIcon }: { self_user: UserPrivate;
                     </div>,
                     {
                         progressClassName: "var-color",
+                        onClick: async (ev) => {
+                            selected = user;
+                            setSelected(user);
+                        },
                     },
                 );
                 const audio = new Audio(chatNotif);
