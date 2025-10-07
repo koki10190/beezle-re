@@ -10,7 +10,13 @@ import { fetchUserPrivate } from "../../../functions/fetchUserPrivate";
 import { api_uri } from "../../../links";
 import GetFullAuth from "../../../functions/GetFullAuth";
 
-function DmPageAddFriend({ setOptions }: { setOptions: React.Dispatch<React.SetStateAction<BeezleDM.DmOption[]>> }) {
+function DmPageAddFriend({
+    setOptions,
+    options,
+}: {
+    setOptions: React.Dispatch<React.SetStateAction<BeezleDM.DmOption[]>>;
+    options: BeezleDM.DmOption[];
+}) {
     const inputRef = useRef<HTMLInputElement>();
     const [self_user, setSelfUser] = useState<UserPrivate | null>(null);
 
@@ -37,6 +43,11 @@ function DmPageAddFriend({ setOptions }: { setOptions: React.Dispatch<React.SetS
         console.log(user);
         if (!user.following.find((x) => x === self_user?.handle)) {
             toast.error(`Cannot add ${user.username} as a friend, you're not mutuals with them!`);
+            return;
+        }
+
+        if (options.findIndex((x) => (x.user_handle && x.user_handle === value) || (x.group_id && x.group_id === value)) > -1) {
+            toast.error(`You already have them added!`);
             return;
         }
 

@@ -4,7 +4,13 @@ import ReactDOMServer from "react-dom/server";
 import React, { useEffect, useRef, useState, UIEvent, forwardRef } from "react";
 import Divider from "../../../Components/Divider";
 
-function DmPageCreateGC({ setOptions }: { setOptions: React.Dispatch<React.SetStateAction<BeezleDM.DmOption[]>> }) {
+function DmPageCreateGC({
+    setOptions,
+    options,
+}: {
+    setOptions: React.Dispatch<React.SetStateAction<BeezleDM.DmOption[]>>;
+    options: BeezleDM.DmOption[];
+}) {
     return (
         <form>
             <Divider />

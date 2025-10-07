@@ -256,12 +256,20 @@ async function GetDeviceConstraints() {
     return { video: cams.length > 0, audio: mics.length > 0 };
 }
 
-function DmHomePageDisplay({ page, setOptions }: { page: HomePageType; setOptions: React.Dispatch<React.SetStateAction<BeezleDM.DmOption[]>> }) {
+function DmHomePageDisplay({
+    page,
+    setOptions,
+    options,
+}: {
+    page: HomePageType;
+    setOptions: React.Dispatch<React.SetStateAction<BeezleDM.DmOption[]>>;
+    options: BeezleDM.DmOption[];
+}) {
     switch (page) {
         case HomePageType.AddFriend:
-            return <DmPageAddFriend setOptions={setOptions} />;
+            return <DmPageAddFriend setOptions={setOptions} options={options} />;
         case HomePageType.CreateGC:
-            return <DmPageCreateGC setOptions={setOptions} />;
+            return <DmPageCreateGC setOptions={setOptions} options={options} />;
         default:
             <></>;
     }
@@ -498,6 +506,7 @@ function Loaded({ self_user, handle, setDisableIcon }: { self_user: UserPrivate;
         // We're being called
         peer.on("call", async (call) => {
             const ringtoneAudio = new Audio(ringtone);
+            document.body.appendChild(ringtoneAudio);
             ringtoneAudio.loop = true;
             ringtoneAudio.play();
             setRingtone(ringtoneAudio);
@@ -508,6 +517,35 @@ function Loaded({ self_user, handle, setDisableIcon }: { self_user: UserPrivate;
             setPeerCall(call);
 
             const caller = await fetchUserPublic(call.peer);
+            if (caller) {
+                toast(
+                    <div className="dm-toast-icon">
+                        <div
+                            style={{
+                                backgroundImage: `url(${caller.avatar})`,
+                                clipPath: AVATAR_SHAPES[caller.customization?.square_avatar]
+                                    ? AVATAR_SHAPES[caller.customization?.square_avatar].style
+                                    : "",
+                                borderRadius:
+                                    AVATAR_SHAPES[caller.customization?.square_avatar]?.name !== "Circle Avatar Shape"
+                                        ? caller.customization?.square_avatar
+                                            ? "5px"
+                                            : "100%"
+                                        : "100%",
+                            }}
+                            className="dm-toast-avatar"
+                        ></div>{" "}
+                        <b>@{caller.handle}</b> is calling you!
+                    </div>,
+                    {
+                        progressClassName: "var-color",
+                        onClick: async (ev) => {
+                            selected = caller;
+                            setSelected(caller);
+                        },
+                    },
+                );
+            }
 
             setUsersInCall((old) => [
                 {
@@ -687,6 +725,7 @@ function Loaded({ self_user, handle, setDisableIcon }: { self_user: UserPrivate;
             .then((stream) => {
                 stream.getVideoTracks()?.forEach((track) => (track.enabled = false));
                 const ringtoneAudio = new Audio(ringtone);
+                document.body.appendChild(ringtoneAudio);
                 ringtoneAudio.loop = true;
                 ringtoneAudio.play();
                 setRingtone(ringtoneAudio);
@@ -865,25 +904,55 @@ function Loaded({ self_user, handle, setDisableIcon }: { self_user: UserPrivate;
                                     <i className="fa-solid fa-messages"></i> Direct Messages
                                 </h4>
                             </div>
-                            {dmSelections.map((option) => {
-                                return (
-                                    <DmUserBox
-                                        selected={option.user_handle === _selected?.handle}
-                                        dm_option={option}
-                                        self_user={self_user}
-                                        key={option.user_handle ?? option.group_id}
-                                        setSelection={setDmSelections}
-                                        onClick={async () => {
-                                            if (!option.is_group) {
-                                                selected = await fetchUserPublic(option.user_handle);
-                                                setSelected(selected);
-                                            }
-                                        }}
-                                    />
-                                );
-                            })}
+                            <div>
+                                {dmSelections.map((option) => {
+                                    return (
+                                        <DmUserBox
+                                            selected={option.user_handle === _selected?.handle}
+                                            dm_option={option}
+                                            self_user={self_user}
+                                            key={option.user_handle ?? option.group_id}
+                                            setSelection={setDmSelections}
+                                            onClick={async () => {
+                                                if (!option.is_group) {
+                                                    selected = await fetchUserPublic(option.user_handle);
+                                                    setSelected(selected);
+                                                }
+                                            }}
+                                        />
+                                    );
+                                })}
+                            </div>
                             {dmSelections.length < 1 ? "No Options Found :(" : ""}
                         </div>
+                    </div>
+                    <div className="dm-user-list-pad-bottom">
+                        <div
+                            style={{
+                                backgroundImage: `url(${self_user.avatar})`,
+                                clipPath: AVATAR_SHAPES[self_user.customization?.square_avatar]
+                                    ? AVATAR_SHAPES[self_user.customization?.square_avatar].style
+                                    : "",
+                                borderRadius:
+                                    AVATAR_SHAPES[self_user.customization?.square_avatar]?.name !== "Circle Avatar Shape"
+                                        ? self_user.customization?.square_avatar
+                                            ? "5px"
+                                            : "100%"
+                                        : "100%",
+                            }}
+                            className="avatar"
+                        ></div>
+                        <p
+                            style={{
+                                fontFamily: self_user?.customization?.display_name?.font?.bought
+                                    ? self_user?.customization?.display_name?.font?.font_family
+                                    : "gordin",
+                            }}
+                            className="username"
+                        >
+                            {self_user.username}
+                        </p>
+                        <p className="handle">@{self_user.handle}</p>
                     </div>
                 </div>
             </div>
@@ -1078,7 +1147,7 @@ function Loaded({ self_user, handle, setDisableIcon }: { self_user: UserPrivate;
                             </button>
                         </div>
 
-                        <DmHomePageDisplay page={homePageEnum} setOptions={setDmSelections} />
+                        <DmHomePageDisplay page={homePageEnum} setOptions={setDmSelections} options={dmSelections} />
                     </div>
                 )}
             </div>
@@ -1089,7 +1158,9 @@ function Loaded({ self_user, handle, setDisableIcon }: { self_user: UserPrivate;
                         setUserListOpen((old) => {
                             const _new = !old;
 
-                            setDisableIcon(true);
+                            if (window_width <= 1100) {
+                                setDisableIcon(true);
+                            }
                             return _new;
                         })
                     }

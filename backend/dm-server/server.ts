@@ -4,13 +4,14 @@ import express from "express";
 import https from "https";
 import { Server, Socket } from "socket.io";
 import cors from "cors";
-import mongoose from "mongoose";
+import mongoose, { mongo } from "mongoose";
 import MessageDM from "./schema/MessageDM";
 import { randomUUID } from "crypto";
 import jwt from "jsonwebtoken";
 import { ExpressPeerServer, PeerServer } from "peer";
 import fs from "fs";
 
+const UserModel = mongoose.model("User", {} as any, "Users");
 const app = express();
 const ssl_options = {
     key: process.env["USE_SSL"] === "yes" ? fs.readFileSync("../priv.key").toString() : "",
@@ -67,6 +68,19 @@ app.get("/message/:id", async (req, res) => {
     return res.json(msg);
 });
 
+app.get("/status/:handle", async (req, res) => {
+    const { handle } = req.params;
+    console.log(req.params);
+    // const token = req.headers.authorization;
+    // if (!token) res.status(404).send("no auth header");
+    // const decoded = jwt.verify(token!, process.env["TOKEN_SECRET"] as string) as jwt.JwtPayload;
+
+    if (sockets_handle.get(handle)) {
+        const user = await UserModel.findOne({ handle });
+        return res.json(user.get("status").replace('"', ""));
+    } else return res.json({ status: "offline" });
+});
+
 const sockets: Map<string, { socket: Socket; id: string; handle: string }> = new Map();
 const sockets_handle: Map<string, { socket: Socket; id: string; handle: string }> = new Map();
 
@@ -107,11 +121,11 @@ io.on("connection", (socket) => {
         });
         console.log(db_msg, db_msg.collection.name);
         console.log("Received a message from", msg.author, "to", to, "userfind:", user ? "true" : "false");
+        socket.emit("message-receive", msg);
         if (!user) return;
         msg.msg_id = id;
         console.log("emitting....");
         user.socket.emit("message-receive", msg);
-        socket.emit("message-receive", msg);
     });
 
     // Handle Calls
