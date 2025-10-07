@@ -57,7 +57,7 @@ pub async fn route(
                 doc! { "$limit": MESSAGE_FETCH_OFFSET },
                 doc! {
                     "$sort": {
-                        "timestamp": 1
+                        "timestamp": -1
                     }
                 },
             ],
@@ -67,6 +67,7 @@ pub async fn route(
         .unwrap();
 
     let mut vec: Vec<Document> = cursor.try_collect().await.unwrap();
+    vec.reverse();
     
     HttpResponse::Ok().json(doc! {
         "offset": body.offset + MESSAGE_FETCH_OFFSET,
