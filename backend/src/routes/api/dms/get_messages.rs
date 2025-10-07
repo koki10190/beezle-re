@@ -54,7 +54,7 @@ pub async fn route(
                         }
                     }
                 },
-                doc! { "$limit": MESSAGE_FETCH_OFFSET },
+                // doc! { "$limit": MESSAGE_FETCH_OFFSET },
                 doc! {
                     "$sort": {
                         "timestamp": -1
