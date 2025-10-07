@@ -327,14 +327,6 @@ function Loaded({ self_user, handle, setDisableIcon }: { self_user: UserPrivate;
         });
     };
 
-    const HandleDmSocketEvents = async () => {
-        dmSocket.on("message-deleted", (msg_id: string) => DeleteMessage(msg_id));
-        dmSocket.on("message-edited", (msg_id: string, content: string) => {
-            console.log("MESSAGE EDITED");
-            EditMessage(msg_id, content);
-        });
-    };
-
     useEffect(() => {
         (async () => {
             if (handle) {
@@ -352,7 +344,11 @@ function Loaded({ self_user, handle, setDisableIcon }: { self_user: UserPrivate;
             SaveMessage(message, message.author);
         });
 
-        HandleDmSocketEvents();
+        dmSocket.on("message-deleted", (msg_id: string) => DeleteMessage(msg_id));
+        dmSocket.on("message-edited", (msg_id: string, content: string) => {
+            console.log("MESSAGE EDITED", msg_id, content);
+            EditMessage(msg_id, content);
+        });
 
         const _peer = new Peer(self_user.handle, {
             host: server_uri,
@@ -599,7 +595,7 @@ function Loaded({ self_user, handle, setDisableIcon }: { self_user: UserPrivate;
                 audio: constraints.audio,
             })
             .then((stream) => {
-                stream.getVideoTracks()[0].enabled = false;
+                stream.getVideoTracks()?.forEach((track) => (track.enabled = false));
                 const ringtoneAudio = new Audio(ringtone);
                 ringtoneAudio.loop = true;
                 ringtoneAudio.play();
@@ -692,7 +688,7 @@ function Loaded({ self_user, handle, setDisableIcon }: { self_user: UserPrivate;
                 audio: constraints.audio,
             })
             .then((stream) => {
-                stream.getVideoTracks()[0].enabled = false;
+                stream.getVideoTracks()?.forEach((track) => (track.enabled = false));
                 DeleteAllInstances("dm-video-feed-" + self_user.handle);
                 let selfUserDoc = document.getElementById(`dm-call-${self_user.handle}`);
                 let selfFeed = document.createElement("video");

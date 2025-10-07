@@ -133,10 +133,12 @@ io.on("connection", (socket) => {
 
         const channels = doc?.channel.split(";");
         channels?.forEach((user) => {
+            console.log(user);
             if (user === sckt?.handle) return;
 
             const other_sckt = sockets_handle.get(user);
             if (other_sckt) {
+                console.log("emitting message-edited", doc?.msg_id, content);
                 other_sckt.socket.emit("message-edited", doc?.msg_id, content);
             }
         });
