@@ -89,6 +89,7 @@ io.on("connection", (socket) => {
         msg.msg_id = id;
         console.log("emitting....");
         user.socket.emit("message-receive", msg);
+        socket.emit("message-receive", msg);
     });
 
     // Handle Calls

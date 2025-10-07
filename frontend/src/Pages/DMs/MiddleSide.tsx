@@ -50,6 +50,10 @@ function Message({
         })();
     }, []);
 
+    useEffect(() => {
+        setContent(msg.content);
+    }, [msg.content]);
+
     const Delete = () => {
         dmSocket.emit("delete-message", msg.msg_id);
         DeleteMessage(msg.msg_id);
@@ -58,6 +62,7 @@ function Message({
     const Edit_SaveChanges = () => {
         setEditing(false);
         setContent(editedContent);
+        console.log("Saved Changes, emitting", "edit-message", msg.msg_id, editedContent);
         dmSocket.emit("edit-message", msg.msg_id, editedContent);
         msg.edited = true;
         EditMessage(msg.msg_id, editedContent);
@@ -141,6 +146,7 @@ function Message({
             ) : (
                 <>
                     <p
+                        key={"dm-message-content-" + content}
                         dangerouslySetInnerHTML={{
                             __html: parseURLs(content, user, true, Math.random().toString(), navigate),
                         }}
@@ -339,7 +345,7 @@ function Loaded({ self_user, handle, setDisableIcon }: { self_user: UserPrivate;
         })();
 
         dmSocket.on("message-receive", (message: BeezleDM.Message) => {
-            if (selected?.handle === message.author) setMessages((old) => [...old, message]);
+            if (selected?.handle === message.author || self_user.handle === message.author) setMessages((old) => [...old, message]);
 
             SaveMessage(message, message.author);
         });
@@ -517,8 +523,8 @@ function Loaded({ self_user, handle, setDisableIcon }: { self_user: UserPrivate;
             msg_id: Math.random().toString(),
             timestamp: new Date(),
         };
-        setMessages((old) => [...old, msg]);
-        SaveMessage(msg, selected.handle);
+        // setMessages((old) => [...old, msg]);
+        // SaveMessage(msg, selected.handle);
 
         dmContentPanel.current!.scrollTop = dmContentPanel.current!.scrollHeight;
         textareaRef.current!.value = "";
