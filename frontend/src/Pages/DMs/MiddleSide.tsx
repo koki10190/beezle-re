@@ -25,9 +25,24 @@ import DmPageAddFriend from "./Components/DmPageAddFriend";
 import DmPageCreateGC from "./Components/DmPageCreateGC";
 import ringtone from "./ringtone.mp3";
 
-function Message({ msg, self_user }: { msg: BeezleDM.Message; self_user: UserPrivate }) {
+function Message({
+    msg,
+    self_user,
+    EditMessage,
+    DeleteMessage,
+}: {
+    msg: BeezleDM.Message;
+    self_user: UserPrivate;
+    EditMessage: (arg0: string, arg1: string) => void;
+    DeleteMessage: (arg0: string) => void;
+}) {
     const [user, setUser] = useState<UserPublic>();
+    const [parentHovered, setParentHovered] = useState(false);
     const navigate = useNavigate();
+
+    const [editing, setEditing] = useState(false);
+    const [editedContent, setEditedContent] = useState(msg.content);
+    const [content, setContent] = useState(msg.content);
 
     useEffect(() => {
         (async () => {
@@ -35,9 +50,40 @@ function Message({ msg, self_user }: { msg: BeezleDM.Message; self_user: UserPri
         })();
     }, []);
 
+    const Delete = () => {
+        dmSocket.emit("delete-message", msg.msg_id);
+        DeleteMessage(msg.msg_id);
+    };
+
+    const Edit_SaveChanges = () => {
+        setEditing(false);
+        setContent(editedContent);
+        dmSocket.emit("edit-message", msg.msg_id, editedContent);
+        EditMessage(msg.msg_id, editedContent);
+    };
+
     return (
-        <div className="dm-message">
+        <div onMouseEnter={() => setParentHovered(true)} onMouseLeave={() => setParentHovered(false)} className="dm-message">
             <div className="dm-msg-author">
+                {parentHovered ? (
+                    <div className="dm-msg-edit-panel">
+                        <a className="dm-msg-edit-panel-btn">
+                            <i className="fa-solid fa-reply"></i>
+                        </a>
+                        {user.handle === self_user.handle ? (
+                            <>
+                                <a onClick={() => setEditing((old) => !old)} className="dm-msg-edit-panel-btn">
+                                    <i className="fa-solid fa-pencil"></i>
+                                </a>
+                                <a onClick={Delete} className="dm-msg-edit-panel-btn dm-msg-edit-panel-btn-red">
+                                    <i className="fa-solid fa-trash"></i>
+                                </a>
+                            </>
+                        ) : null}
+                    </div>
+                ) : (
+                    ""
+                )}
                 <div
                     style={{
                         backgroundImage: `url(${user?.avatar})`,
@@ -74,12 +120,26 @@ function Message({ msg, self_user }: { msg: BeezleDM.Message; self_user: UserPri
                 </p>
                 <p className="handle">@{user?.handle}</p>
             </div>
-            <p
-                dangerouslySetInnerHTML={{
-                    __html: parseURLs(msg.content, user, true, Math.random().toString(), navigate),
-                }}
-                className="dm-content"
-            ></p>
+            {editing ? (
+                <>
+                    <textarea
+                        placeholder="Edit Post"
+                        value={editedContent}
+                        onChange={(e) => setEditedContent(e.target.value)}
+                        className="input-field"
+                    ></textarea>
+                    <button onClick={Edit_SaveChanges} style={{ marginTop: "10px" }} className="button-field shadow fixed-100">
+                        Save Changes
+                    </button>
+                </>
+            ) : (
+                <p
+                    dangerouslySetInnerHTML={{
+                        __html: parseURLs(content, user, true, Math.random().toString(), navigate),
+                    }}
+                    className="dm-content"
+                ></p>
+            )}
         </div>
     );
 }
@@ -150,7 +210,7 @@ function DmHomePageDisplay({ page, setOptions }: { page: HomePageType; setOption
     }
 }
 
-function Loaded({ self_user, handle }: { self_user: UserPrivate; handle?: string }) {
+function Loaded({ self_user, handle, setDisableIcon }: { self_user: UserPrivate; handle?: string; setDisableIcon: any }) {
     const [peer, setPeer] = useState<Peer>(null);
     const [userListOpen, setUserListOpen] = useState(true);
     const [dmSelections, setDmSelections] = useState<Array<BeezleDM.DmOption>>([]);
@@ -181,6 +241,7 @@ function Loaded({ self_user, handle }: { self_user: UserPrivate; handle?: string
     const [streamFeed, setStreamFeed] = useState<MediaStream>();
     const [streamFeedDoc, setStreamFeedDoc] = useState<HTMLVideoElement>();
     const [streamInterval, setStreamInterval] = useState<NodeJS.Timeout>(null);
+    const [window_width, setWindowWidth] = useState(window.innerWidth);
 
     // Add Friend
     const [homePageEnum, setHomePageEnum] = useState(HomePageType.Home);
@@ -207,6 +268,61 @@ function Loaded({ self_user, handle }: { self_user: UserPrivate; handle?: string
         });
     };
 
+    const DeleteMessage = (msg_id: string) => {
+        setSavedMessages((old) => {
+            const _new = { ...old };
+
+            for (const key of Object.keys(_new)) {
+                const entry = _new[key];
+                const index = entry.findIndex((x) => x.msg_id === msg_id);
+                if (index > -1) {
+                    _new[key].splice(index, 1);
+                }
+            }
+
+            return _new;
+        });
+
+        setMessages((old) => {
+            const _new = [...old];
+            const index = _new.findIndex((x) => x.msg_id === msg_id);
+            if (index > -1) {
+                _new.splice(index, 1);
+            }
+            return _new;
+        });
+    };
+
+    const EditMessage = (msg_id: string, content: string) => {
+        setSavedMessages((old) => {
+            const _new = { ...old };
+
+            for (const key of Object.keys(_new)) {
+                const entry = _new[key];
+                const index = entry.findIndex((x) => x.msg_id === msg_id);
+                if (index > -1) {
+                    _new[key][index].content = content;
+                }
+            }
+
+            return _new;
+        });
+
+        setMessages((old) => {
+            const _new = [...old];
+            const index = _new.findIndex((x) => x.msg_id === msg_id);
+            if (index > -1) {
+                _new[index].content = content;
+            }
+            return _new;
+        });
+    };
+
+    const HandleDmSocketEvents = async () => {
+        dmSocket.on("message-deleted", (msg_id: string) => DeleteMessage(msg_id));
+        dmSocket.on("message-edited", (msg_id: string, content: string) => EditMessage(msg_id, content));
+    };
+
     useEffect(() => {
         (async () => {
             if (handle) {
@@ -224,6 +340,8 @@ function Loaded({ self_user, handle }: { self_user: UserPrivate; handle?: string
             SaveMessage(message, message.author);
         });
 
+        HandleDmSocketEvents();
+
         const _peer = new Peer(self_user.handle, {
             host: server_uri,
             path: "/calling",
@@ -234,8 +352,25 @@ function Loaded({ self_user, handle }: { self_user: UserPrivate; handle?: string
         console.log("PEER", _peer);
         HandleCallReceives(_peer);
 
+        if (window.innerWidth <= 1100 && userListOpen) {
+            setDisableIcon(true);
+        }
+        const onResize = () => {
+            setWindowWidth(window.innerWidth);
+            if (window.innerWidth <= 1100 && userListOpen) {
+                setDisableIcon(true);
+            }
+
+            if (window.innerWidth > 1100) {
+                setDisableIcon(false);
+            }
+        };
+
+        window.addEventListener("resize", onResize);
+
         return () => {
             _peer.disconnect();
+            window.removeEventListener("resize", onResize);
         };
     }, []);
 
@@ -603,7 +738,17 @@ function Loaded({ self_user, handle }: { self_user: UserPrivate; handle?: string
                 <div style={{ display: userListOpen ? "inline-block" : "none" }} className="dms-user-list">
                     <div onScroll={handleScroll} className="dm-user-list">
                         <div className="dm-user-list-pad">
-                            <a onClick={() => setUserListOpen((old) => !old)} className="open-close-dms">
+                            <a
+                                onClick={() => {
+                                    setUserListOpen((old) => {
+                                        const _new = !old;
+
+                                        setDisableIcon(false);
+                                        return _new;
+                                    });
+                                }}
+                                className="open-close-dms"
+                            >
                                 <i className="fa-solid fa-left-to-line"></i>
                             </a>
 
@@ -725,7 +870,15 @@ function Loaded({ self_user, handle }: { self_user: UserPrivate; handle?: string
                         </div>
                         <div ref={dmContentPanel} className="dm-data">
                             {messages.map((msg) => {
-                                return <Message key={msg.msg_id} msg={msg} self_user={self_user} />;
+                                return (
+                                    <Message
+                                        key={msg.msg_id}
+                                        msg={msg}
+                                        self_user={self_user}
+                                        EditMessage={EditMessage}
+                                        DeleteMessage={DeleteMessage}
+                                    />
+                                );
                             })}
                         </div>
                         <div className="dm-bottom-panel">
@@ -819,7 +972,17 @@ function Loaded({ self_user, handle }: { self_user: UserPrivate; handle?: string
             </div>
 
             {!userListOpen ? (
-                <a onClick={() => setUserListOpen((old) => !old)} className="open-close-dms2">
+                <a
+                    onClick={() =>
+                        setUserListOpen((old) => {
+                            const _new = !old;
+
+                            setDisableIcon(true);
+                            return _new;
+                        })
+                    }
+                    className="open-close-dms2"
+                >
                     <i className="fa-solid fa-right-to-line"></i>
                 </a>
             ) : (
@@ -829,7 +992,7 @@ function Loaded({ self_user, handle }: { self_user: UserPrivate; handle?: string
     );
 }
 
-function MiddleSide({ handle }: { handle: string }) {
+function MiddleSide({ handle, setDisableIcon }: { handle: string; setDisableIcon: any }) {
     const [self_user, setSelfUser] = useState<UserPrivate | null>(null);
 
     useEffect(() => {
@@ -840,7 +1003,7 @@ function MiddleSide({ handle }: { handle: string }) {
         })();
     }, []);
 
-    return <>{self_user ? <Loaded handle={handle} self_user={self_user} /> : <h1>Loading...</h1>}</>;
+    return <>{self_user ? <Loaded handle={handle} setDisableIcon={setDisableIcon} self_user={self_user} /> : <h1>Loading...</h1>}</>;
 }
 
 export default MiddleSide;

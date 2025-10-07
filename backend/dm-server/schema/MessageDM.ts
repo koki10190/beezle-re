@@ -5,6 +5,8 @@ const schema = new mongoose.Schema({
     content: { type: String, required: true },
     channel: { type: String, required: true },
     msg_id: { type: String, required: true },
+    replying_to: { type: String, required: false },
+    edited: { type: Boolean, required: false },
     timestamp: { type: Date, required: true },
 });
 

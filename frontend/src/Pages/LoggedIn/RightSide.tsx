@@ -44,7 +44,7 @@ function SettingsButton({
     );
 }
 
-function RightSide({ forceExpansion }: { forceExpansion?: boolean }) {
+function RightSide({ forceExpansion, disableIcon }: { forceExpansion?: boolean; disableIcon?: boolean }) {
     const navigate = useNavigate();
     const [self_user, setSelfUser] = useState<UserPrivate | null>(null);
     const [isExpanded, setExpanded] = useState(false);
@@ -171,7 +171,7 @@ function RightSide({ forceExpansion }: { forceExpansion?: boolean }) {
 
                 <SettingsButton redirect="/logout" style={{ color: "red" }} iconClass="fa-solid fa-right-from-bracket" text="Log out" />
             </div>
-            {window_width < 1100 || forceExpansion ? (
+            {(window_width < 1100 || forceExpansion) && !disableIcon ? (
                 <a onClick={ExpandRightSide} className="open-panel-button">
                     <i className="fa-solid fa-left-to-line"></i>
                 </a>

@@ -11,6 +11,7 @@ import "../../assets/main.css";
 import { Helmet } from "react-helmet";
 
 function DMs_Home() {
+    const [disableIcon, setDisableIcon] = useState(false);
     useEffect(() => {
         checkToken();
     }, []);
@@ -19,8 +20,8 @@ function DMs_Home() {
     return (
         <>
             <div key={"dms-" + handle} className="sides-container">
-                <MiddleSide handle={handle?.replace(/@/g, "") as string} />
-                <RightSide forceExpansion={true} />
+                <MiddleSide setDisableIcon={setDisableIcon} handle={handle?.replace(/@/g, "") as string} />
+                <RightSide forceExpansion={true} disableIcon={disableIcon} />
             </div>
         </>
     );

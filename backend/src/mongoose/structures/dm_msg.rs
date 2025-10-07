@@ -12,6 +12,8 @@ pub struct DmMessage {
     pub content: String,
     pub channel: String,
     pub msg_id: String,
+    pub replying_to: Option<String>,
+    pub edited: Option<bool>,
     #[serde(with = "chrono_datetime_as_bson_datetime")]
     pub timestamp: chrono::DateTime<chrono::Utc>,
 }

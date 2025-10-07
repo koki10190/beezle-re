@@ -80,6 +80,7 @@ io.on("connection", (socket) => {
             content: msg.content,
             timestamp: new Date(),
             msg_id: id,
+            edited: false,
             channel: `${to};${msg.author}`,
         });
         console.log(db_msg, db_msg.collection.name);
@@ -96,5 +97,48 @@ io.on("connection", (socket) => {
         if (!user) return console.log("call-change-settings: No User Found");
 
         user.socket.emit("call-change-settings", settings, sockets.get(socket.id)?.handle);
+    });
+
+    socket.on("delete-message", async (msg_id: string) => {
+        const sckt = sockets.get(socket.id);
+
+        const doc = await MessageDM.findOne({ author: sckt?.handle, msg_id });
+        const deleted_msg = await MessageDM.deleteOne({
+            author: sckt?.handle,
+            msg_id,
+        });
+
+        const channels = doc?.channel.split(";");
+        channels?.forEach((user) => {
+            if (user === sckt?.handle) return;
+
+            const other_sckt = sockets_handle.get(user);
+            if (other_sckt) {
+                other_sckt.socket.emit("message-deleted", msg_id);
+            }
+        });
+    });
+
+    socket.on("edit-message", async (msg_id: string, content: string) => {
+        const sckt = sockets.get(socket.id);
+
+        const doc = await MessageDM.findOne({ author: sckt?.handle, msg_id });
+        const edited_msg = await MessageDM.updateOne(
+            {
+                author: sckt?.handle,
+                msg_id,
+            },
+            { content, edited: true },
+        );
+
+        const channels = doc?.channel.split(";");
+        channels?.forEach((user) => {
+            if (user === sckt?.handle) return;
+
+            const other_sckt = sockets_handle.get(user);
+            if (other_sckt) {
+                other_sckt.socket.emit("message-edited", edited_msg);
+            }
+        });
     });
 });
