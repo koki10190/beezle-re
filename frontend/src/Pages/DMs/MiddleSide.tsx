@@ -103,6 +103,7 @@ const CallUser = forwardRef<HTMLVideoElement, CallUserProps>((props: CallUserPro
                                 : "100%"
                             : "100%",
                 }}
+                id={`dm-call-avatar-${props.user.user?.handle}`}
                 className={`dm-call-user ${props.user.pickedUp ? "" : "calling"}`}
             ></div>
             {/* <video className="dm-video-feed" ref={ref as any}></video> */}
@@ -238,7 +239,11 @@ function Loaded({ self_user, handle }: { self_user: UserPrivate; handle?: string
         };
     }, []);
 
-    const ChangeUserInCall = (handle: string, settings: { muted: boolean; video: boolean }) =>
+    const DeleteAllInstances = (handle: string) => {
+        document.getElementById(`dm-video-feed-${handle}`)?.remove();
+    };
+
+    const ChangeUserInCall = (handle: string, settings: { muted: boolean; video: boolean }) => {
         setUsersInCall((old) => {
             const _new = [...old];
             const index = _new.findIndex((x) => x.user.handle === handle);
@@ -248,6 +253,15 @@ function Loaded({ self_user, handle }: { self_user: UserPrivate; handle?: string
             }
             return _new;
         });
+
+        const feed = document.getElementById(`dm-video-feed-${handle}`);
+        console.log(`dm-video-feed-${handle}`, feed, settings);
+        if (feed) {
+            feed.style.display = settings.video ? "inline-block" : "none";
+            const avatar = document.getElementById(`dm-call-avatar-${handle}`);
+            avatar.style.display = !settings.video ? "inline-block" : "none";
+        }
+    };
 
     const HandleCallReceives = async (peer: Peer) => {
         // We're being called
@@ -281,8 +295,11 @@ function Loaded({ self_user, handle }: { self_user: UserPrivate; handle?: string
                 },
             ]);
 
+            DeleteAllInstances("dm-video-feed-" + call.peer);
             let videoFeed = document.createElement("video");
             videoFeed.className = "dm-video-feed";
+            videoFeed.style.display = "none";
+            videoFeed.id = "dm-video-feed-" + call.peer;
 
             call.on("stream", async (userStream) => OnStreamIncoming(userStream, call, videoFeed, null, ringtoneAudio, self_user.handle));
 
@@ -293,12 +310,15 @@ function Loaded({ self_user, handle }: { self_user: UserPrivate; handle?: string
                 setPickedUp(false);
                 setPeerCall(null);
                 setCallSettings({ muted: false, video: false });
+                setUsersInCall([]);
                 ringtoneAudio.pause();
                 ringtoneAudio.remove();
             });
         });
 
-        dmSocket.on("call-change-settings", (settings: { muted: boolean; video: boolean }, from: string) => ChangeUserInCall(from, settings));
+        dmSocket.on("call-change-settings", (settings: { muted: boolean; video: boolean }, from: string) => {
+            ChangeUserInCall(from, settings);
+        });
     };
 
     const handleScroll = async (event: UIEvent<HTMLDivElement>) => {
@@ -377,6 +397,9 @@ function Loaded({ self_user, handle }: { self_user: UserPrivate; handle?: string
         handle: string,
         PickedUp: boolean = true,
     ) => {
+        setTimeout(() => {
+            dmSocket.emit("call-change-settings", callSettings, call.peer);
+        }, 100);
         setPickedUp(PickedUp);
         let callUserDoc = document.getElementById(`dm-call-${call.peer}`);
         callUserDoc.appendChild(videoFeed);
@@ -425,10 +448,11 @@ function Loaded({ self_user, handle }: { self_user: UserPrivate; handle?: string
 
         navigator.mediaDevices
             .getUserMedia({
-                video: settings.video && constraints.video,
+                video: constraints.video,
                 audio: constraints.audio,
             })
             .then((stream) => {
+                stream.getVideoTracks()[0].enabled = false;
                 const ringtoneAudio = new Audio(ringtone);
                 ringtoneAudio.loop = true;
                 ringtoneAudio.play();
@@ -464,13 +488,20 @@ function Loaded({ self_user, handle }: { self_user: UserPrivate; handle?: string
                 ]);
 
                 // If they pick up
+                DeleteAllInstances("dm-video-feed-" + call.peer);
                 let videoFeed = document.createElement("video");
                 videoFeed.className = "dm-video-feed";
+                videoFeed.style.display = "none";
+                videoFeed.id = "dm-video-feed-" + call.peer;
 
+                DeleteAllInstances("dm-video-feed-" + self_user.handle);
                 let selfFeed = document.createElement("video");
                 selfFeed.className = "dm-video-feed";
+                selfFeed.style.display = "none";
                 selfFeed.srcObject = stream;
                 selfFeed.muted = true;
+                selfFeed.id = "dm-video-feed-" + self_user.handle;
+
                 selfFeed.addEventListener("loadedmetadata", () => {
                     selfFeed.play();
                 });
@@ -515,11 +546,14 @@ function Loaded({ self_user, handle }: { self_user: UserPrivate; handle?: string
             })
             .then((stream) => {
                 stream.getVideoTracks()[0].enabled = false;
+                DeleteAllInstances("dm-video-feed-" + self_user.handle);
                 let selfUserDoc = document.getElementById(`dm-call-${self_user.handle}`);
                 let selfFeed = document.createElement("video");
                 selfFeed.className = "dm-video-feed";
+                selfFeed.style.display = "none";
                 selfFeed.srcObject = stream;
                 selfFeed.muted = true;
+                selfFeed.id = "dm-video-feed-" + self_user.handle;
                 selfUserDoc.appendChild(selfFeed);
                 selfFeed.addEventListener("loadedmetadata", () => {
                     selfFeed.play();
@@ -684,9 +718,9 @@ function Loaded({ self_user, handle }: { self_user: UserPrivate; handle?: string
                                 <a onClick={() => Call({ video: false })} className="info-button">
                                     <i className="fa-solid fa-phone-volume"></i>
                                 </a>
-                                <a onClick={() => Call({ video: true })} className="info-button">
+                                {/* <a onClick={() => Call({ video: true })} className="info-button">
                                     <i className="fa-solid fa-video"></i>
-                                </a>
+                                </a> */}
                             </div>
                         </div>
                         <div ref={dmContentPanel} className="dm-data">

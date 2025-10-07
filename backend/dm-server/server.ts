@@ -82,6 +82,7 @@ io.on("connection", (socket) => {
             msg_id: id,
             channel: `${to};${msg.author}`,
         });
+        console.log(db_msg, db_msg.collection.name);
         console.log("Received a message from", msg.author, "to", to, "userfind:", user ? "true" : "false");
         if (!user) return;
         msg.msg_id = id;

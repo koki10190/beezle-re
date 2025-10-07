@@ -396,7 +396,7 @@
 .dm-video-feed {
     width: 350px;
     height: 200px;
-    background-color: red;
+    background-color: black;
     display: block;
     border-radius: 5px;
 }
@@ -465,12 +465,12 @@
 }
 
 .dm-call-panel-users {
+    flex-wrap: wrap;
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 15px;
     width: 100%;
-    height: 100%;
 }
 
 .dm-home-button-container button {
