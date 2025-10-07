@@ -59,11 +59,17 @@ function Message({
         setEditing(false);
         setContent(editedContent);
         dmSocket.emit("edit-message", msg.msg_id, editedContent);
+        msg.edited = true;
         EditMessage(msg.msg_id, editedContent);
     };
 
     return (
         <div onMouseEnter={() => setParentHovered(true)} onMouseLeave={() => setParentHovered(false)} className="dm-message">
+            {msg.edited ? (
+                <a className="dm-attrib">
+                    <i className="fa-solid fa-pencil" /> Edited
+                </a>
+            ) : null}
             <div className="dm-msg-author">
                 {parentHovered ? (
                     <div className="dm-msg-edit-panel">
@@ -133,12 +139,14 @@ function Message({
                     </button>
                 </>
             ) : (
-                <p
-                    dangerouslySetInnerHTML={{
-                        __html: parseURLs(content, user, true, Math.random().toString(), navigate),
-                    }}
-                    className="dm-content"
-                ></p>
+                <>
+                    <p
+                        dangerouslySetInnerHTML={{
+                            __html: parseURLs(content, user, true, Math.random().toString(), navigate),
+                        }}
+                        className="dm-content"
+                    ></p>
+                </>
             )}
         </div>
     );

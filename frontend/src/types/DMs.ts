@@ -3,6 +3,8 @@ declare namespace BeezleDM {
         content: string;
         author: string;
         timestamp: Date;
+        replying_to?: string;
+        edited?: boolean;
         msg_id: string;
     }
 

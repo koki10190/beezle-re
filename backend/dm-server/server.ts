@@ -137,6 +137,7 @@ io.on("connection", (socket) => {
 
             const other_sckt = sockets_handle.get(user);
             if (other_sckt) {
+                console.log(other_sckt);
                 other_sckt.socket.emit("message-edited", edited_msg);
             }
         });
