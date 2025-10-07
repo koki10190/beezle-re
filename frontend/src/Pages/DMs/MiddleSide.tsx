@@ -85,30 +85,28 @@ function Message({ msg, self_user }: { msg: BeezleDM.Message; self_user: UserPri
 }
 
 interface CallUserProps {
-    user: UserPublic;
-    pickedUp: boolean;
-    beingCalled: boolean;
+    user: BeezleCallUser;
 }
 const CallUser = forwardRef<HTMLVideoElement, CallUserProps>((props: CallUserProps, ref) => {
     return (
-        <>
+        <div id={"dm-call-" + props.user.user?.handle}>
             <div
                 style={{
-                    backgroundImage: `url(${props.user?.avatar})`,
-                    clipPath: AVATAR_SHAPES[props.user?.customization?.square_avatar]
-                        ? AVATAR_SHAPES[props.user?.customization?.square_avatar].style
+                    backgroundImage: `url(${props.user?.user?.avatar})`,
+                    clipPath: AVATAR_SHAPES[props.user?.user?.customization?.square_avatar]
+                        ? AVATAR_SHAPES[props.user?.user?.customization?.square_avatar].style
                         : "",
                     borderRadius:
-                        AVATAR_SHAPES[props.user?.customization?.square_avatar]?.name !== "Circle Avatar Shape"
-                            ? props.user?.customization?.square_avatar
+                        AVATAR_SHAPES[props.user?.user?.customization?.square_avatar]?.name !== "Circle Avatar Shape"
+                            ? props.user?.user?.customization?.square_avatar
                                 ? "5px"
                                 : "100%"
                             : "100%",
                 }}
-                className={`dm-call-user ${props.pickedUp ? "" : "calling"}`}
+                className={`dm-call-user ${props.user.pickedUp ? "" : "calling"}`}
             ></div>
-            <video className="dm-video-feed" ref={ref as any}></video>
-        </>
+            {/* <video className="dm-video-feed" ref={ref as any}></video> */}
+        </div>
     );
 });
 
@@ -118,6 +116,25 @@ enum HomePageType {
     Home,
     AddFriend,
     CreateGC,
+}
+
+interface BeezleCallSettings {
+    video: boolean;
+}
+
+interface BeezleCallUser {
+    user: UserPublic;
+    beingCalled: boolean;
+    pickedUp: boolean;
+    video: boolean;
+}
+
+async function GetDeviceConstraints() {
+    const devices = await navigator.mediaDevices.enumerateDevices();
+
+    const cams = devices.filter((device) => device.kind == "videoinput");
+    const mics = devices.filter((device) => device.kind == "audioinput");
+    return { video: cams.length > 0, audio: mics.length > 0 };
 }
 
 function DmHomePageDisplay({ page, setOptions }: { page: HomePageType; setOptions: React.Dispatch<React.SetStateAction<BeezleDM.DmOption[]>> }) {
@@ -152,7 +169,7 @@ function Loaded({ self_user, handle }: { self_user: UserPrivate; handle?: string
         muted: false,
         video: false,
     });
-    const [usersInCall, setUsersInCall] = useState<Array<{ user: UserPublic; beingCalled: boolean; pickedUp: boolean }>>([]);
+    const [usersInCall, setUsersInCall] = useState<Array<BeezleCallUser>>([]);
     const [BeingCalled, setBeingCalled] = useState(false);
     const [PickedUp, setPickedUp] = useState(false);
 
@@ -197,11 +214,6 @@ function Loaded({ self_user, handle }: { self_user: UserPrivate; handle?: string
             setDmSelections(dmOptions.data as BeezleDM.DmOption[]);
         })();
 
-        dmSocket.on("connect", () => {
-            console.log("Connected to server!");
-            dmSocket.emit("beezle-connect", localStorage.getItem("access_token"));
-        });
-
         dmSocket.on("message-receive", (message: BeezleDM.Message) => {
             if (selected?.handle === message.author) setMessages((old) => [...old, message]);
 
@@ -215,6 +227,7 @@ function Loaded({ self_user, handle }: { self_user: UserPrivate; handle?: string
             port: 443,
         });
         setPeer(_peer);
+        console.log("PEER", _peer);
         HandleCallReceives(_peer);
 
         return () => {
@@ -225,6 +238,7 @@ function Loaded({ self_user, handle }: { self_user: UserPrivate; handle?: string
     const HandleCallReceives = async (peer: Peer) => {
         // We're being called
         peer.on("call", async (call) => {
+            alert("faggot");
             const ringtoneAudio = new Audio(ringtone);
             ringtoneAudio.loop = true;
             ringtoneAudio.play();
@@ -242,33 +256,23 @@ function Loaded({ self_user, handle }: { self_user: UserPrivate; handle?: string
                     user: caller,
                     pickedUp: true,
                     beingCalled: false,
+                    video: false,
                 },
                 {
                     user: self_user,
                     beingCalled: true,
                     pickedUp: false,
+                    video: false,
                 },
             ]);
 
             let videoFeed = document.createElement("video");
-            call.on("stream", async (userStream) => {
-                videoFeed.srcObject = userStream;
-                videoFeed.addEventListener("loadedmetadata", () => {
-                    videoFeed.play();
-                });
+            videoFeed.className = "dm-video-feed";
 
-                setUsersInCall((old) => {
-                    const _new = [...old];
-                    _new[_new.findIndex((x) => x.user.handle === self_user.handle)].pickedUp = true;
-                    _new[_new.findIndex((x) => x.user.handle === self_user.handle)].beingCalled = false;
-                    return _new;
-                });
+            let selfFeed = document.createElement("video");
+            selfFeed.className = "dm-video-feed";
 
-                setPickedUp(true);
-                setBeingCalled(false);
-                ringtoneAudio.pause();
-                ringtoneAudio.remove();
-            });
+            call.on("stream", async (userStream) => OnStreamIncoming(userStream, call, videoFeed, selfFeed, ringtoneAudio, self_user.handle));
 
             call.on("close", () => {
                 videoFeed.remove();
@@ -276,6 +280,7 @@ function Loaded({ self_user, handle }: { self_user: UserPrivate; handle?: string
                 setBeingCalled(false);
                 setPickedUp(false);
                 setPeerCall(null);
+                setCallSettings({ muted: false, video: false });
                 ringtoneAudio.pause();
                 ringtoneAudio.remove();
             });
@@ -349,16 +354,64 @@ function Loaded({ self_user, handle }: { self_user: UserPrivate; handle?: string
         dmContentPanel.current!.scrollTop = dmContentPanel.current!.scrollHeight;
     }, [messages]);
 
-    const Call = async () => {
+    const OnStreamIncoming = (
+        userStream: MediaStream,
+        call: MediaConnection,
+        videoFeed: HTMLVideoElement,
+        selfFeed: HTMLVideoElement,
+        ringtoneAudio: HTMLAudioElement,
+        handle: string,
+        PickedUp: boolean = true,
+    ) => {
+        setPickedUp(PickedUp);
+        let callUserDoc = document.getElementById(`dm-call-${call.peer}`);
+        callUserDoc.appendChild(videoFeed);
+
+        let selfUserDoc = document.getElementById(`dm-call-${self_user.handle}`);
+        selfUserDoc.appendChild(selfFeed);
+
+        setUsersInCall((old) => {
+            const _new = [...old];
+            _new[_new.findIndex((x) => x.user.handle === handle)].pickedUp = true;
+            _new[_new.findIndex((x) => x.user.handle === handle)].beingCalled = false;
+            return _new;
+        });
+
+        // Create a video element & feed the user stream, this way we can get their audio.
+        videoFeed.srcObject = userStream;
+        videoFeed.addEventListener("loadedmetadata", () => {
+            videoFeed.play();
+        });
+
+        selfFeed.srcObject = userStream;
+        selfFeed.addEventListener("loadedmetadata", () => {
+            selfFeed.play();
+        });
+
+        ringtoneAudio.pause();
+        ringtoneAudio.remove();
+    };
+
+    const Call = async (settings: BeezleCallSettings) => {
         if (!selected) {
             toast.error("You can't call nothing, moron.");
             return;
         }
 
+        const constraints = await GetDeviceConstraints();
+
+        if (!constraints.video && settings.video) {
+            toast.error("Couldn't detect any camera devices, calling without video.");
+        }
+
+        if (!constraints.audio) {
+            toast.error("Couldn't detect a microphone, calling without audio.");
+        }
+
         navigator.mediaDevices
             .getUserMedia({
-                video: false,
-                audio: true,
+                video: settings.video && constraints.video,
+                audio: constraints.audio,
             })
             .then((stream) => {
                 const ringtoneAudio = new Audio(ringtone);
@@ -383,33 +436,24 @@ function Loaded({ self_user, handle }: { self_user: UserPrivate; handle?: string
                         user: self_user,
                         beingCalled: false,
                         pickedUp: true,
+                        video: false,
                     },
                     {
                         user: selected,
                         pickedUp: false,
                         beingCalled: true,
+                        video: false,
                     },
                 ]);
 
                 // If they pick up
                 let videoFeed = document.createElement("video");
-                call.on("stream", async (userStream) => {
-                    setUsersInCall((old) => {
-                        const _new = [...old];
-                        _new[_new.findIndex((x) => x.user.handle === selected.handle)].pickedUp = true;
-                        _new[_new.findIndex((x) => x.user.handle === selected.handle)].beingCalled = false;
-                        return _new;
-                    });
+                videoFeed.className = "dm-video-feed";
 
-                    // Create a video element & feed the user stream, this way we can get their audio.
-                    videoFeed.srcObject = userStream;
-                    videoFeed.addEventListener("loadedmetadata", () => {
-                        videoFeed.play();
-                    });
+                let selfFeed = document.createElement("video");
+                selfFeed.className = "dm-video-feed";
 
-                    ringtoneAudio.pause();
-                    ringtoneAudio.remove();
-                });
+                call.on("stream", async (userStream) => OnStreamIncoming(userStream, call, videoFeed, selfFeed, ringtoneAudio, call.peer));
 
                 // If they don't pick up or they hang up
                 const __Close = async () => {
@@ -436,12 +480,14 @@ function Loaded({ self_user, handle }: { self_user: UserPrivate; handle?: string
     };
 
     const AnswerCall = async () => {
+        const constraints = await GetDeviceConstraints();
         navigator.mediaDevices
             .getUserMedia({
-                video: false,
-                audio: true,
+                video: true,
+                audio: constraints.audio,
             })
             .then((stream) => {
+                stream.getVideoTracks()[0].enabled = false;
                 setStreamFeed(stream);
                 peerCall.answer(stream);
             });
@@ -457,6 +503,7 @@ function Loaded({ self_user, handle }: { self_user: UserPrivate; handle?: string
         setBeingCalled(false);
         setPickedUp(false);
         setPeerCall(null);
+        setCallSettings({ muted: false, video: false });
         if (ringtoneState) {
             ringtoneState.pause();
             ringtoneState.remove();
@@ -467,6 +514,7 @@ function Loaded({ self_user, handle }: { self_user: UserPrivate; handle?: string
     useEffect(() => {
         if (!streamFeed) return;
         streamFeed.getAudioTracks()[0].enabled = !callSettings.muted;
+        streamFeed.getVideoTracks()[0].enabled = callSettings.video;
     }, [callSettings]);
 
     return (
@@ -520,12 +568,24 @@ function Loaded({ self_user, handle }: { self_user: UserPrivate; handle?: string
                 <div style={{ display: !calling ? "none" : "flex" }} className="dm-call-panel">
                     <div className="dm-call-panel-users">
                         {usersInCall.map((user) => {
-                            return <CallUser user={user.user} beingCalled={user.beingCalled} pickedUp={user.pickedUp} />;
+                            return <CallUser user={user} />;
                         })}
                     </div>
                     <div className="dm-call-bottom-panel">
                         {PickedUp ? (
                             <>
+                                <button
+                                    onClick={() =>
+                                        setCallSettings((old) => {
+                                            const _new = { ...old };
+                                            _new.video = !_new.video;
+                                            return _new;
+                                        })
+                                    }
+                                    className={"dm-call-button " + (callSettings.video ? "bg-var" : "bg-red")}
+                                >
+                                    <i className={"fa-solid fa-video" + (callSettings.video ? "" : "-slash")}></i>
+                                </button>
                                 <button
                                     onClick={() =>
                                         setCallSettings((old) => {
@@ -575,10 +635,10 @@ function Loaded({ self_user, handle }: { self_user: UserPrivate; handle?: string
                             ></div>
                             <p className="handle">@{selected?.handle} - </p>
                             <div className="info-buttons">
-                                <a onClick={Call} className="info-button">
+                                <a onClick={() => Call({ video: false })} className="info-button">
                                     <i className="fa-solid fa-phone-volume"></i>
                                 </a>
-                                <a className="info-button">
+                                <a onClick={() => Call({ video: true })} className="info-button">
                                     <i className="fa-solid fa-video"></i>
                                 </a>
                             </div>

@@ -72,7 +72,7 @@ io.on("connection", (socket) => {
     });
 
     socket.on("message", async (msg: any, self_user: any, to: string) => {
-        const user = sockets.get(to);
+        const user = sockets_handle.get(to);
 
         const id = randomUUID();
         const db_msg = await MessageDM.create({

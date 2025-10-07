@@ -45,6 +45,7 @@ import { UserPrivate, UserPublic } from "./types/User";
 import Twemoji from "react-twemoji";
 import { SetSavedCSSProperties } from "./functions/cssFuncs";
 import DMs_Home from "./Pages/DMs/Home";
+import dmSocket from "./types/DM";
 
 enum UserStatus {
     ONLINE,
@@ -69,8 +70,19 @@ function App() {
     });
 
     useEffect(() => {
+        dmSocket.on("connect", () => {
+            console.log("[BEEZLE-DMS] Connected to server, sending in local data...");
+            let interval = setInterval(() => {
+                if (localStorage.getItem("access_token")) {
+                    dmSocket.emit("beezle-connect", localStorage.getItem("access_token"));
+                    console.log("[BEEZLE-DMS] Data sent & received");
+                    clearInterval(interval);
+                }
+            }, 100);
+        });
         (async () => {
-            setPrivateUser(await fetchUserPrivate());
+            const privUser = await fetchUserPrivate();
+            setPrivateUser(privUser);
         })();
         SetSavedCSSProperties();
     }, []);

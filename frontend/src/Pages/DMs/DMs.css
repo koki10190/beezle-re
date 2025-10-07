@@ -218,13 +218,13 @@
 }
 
 .dm-textfield {
-    background-color: rgb(20, 20, 20);
+    background-color: rgba(20, 20, 20, 0.5);
     /* background-color: blue; */
     color: white;
     box-sizing: border-box;
     padding: 10px;
     border-radius: 5px;
-    border: 1px solid rgb(20, 20, 20);
+    border: 1px solid rgba(20, 20, 20, 0.5);
     transition: ease-in-out 150ms;
     width: 100%;
     box-sizing: border-box;
@@ -394,9 +394,10 @@
 }
 
 .dm-video-feed {
-    width: 0px;
-    display: none;
-    height: 0px;
+    width: 350px;
+    height: 200px;
+    /* background-color: red; */
+    display: block;
 }
 
 @keyframes callingAnimation {
@@ -422,7 +423,7 @@
     height: 50px;
     box-sizing: border-box;
     padding: 10px;
-    background-color: #101010;
+    background-color: rgba(20, 20, 20, 0.5);
     border-radius: 5px;
     display: flex;
 
