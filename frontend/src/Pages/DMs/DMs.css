@@ -554,3 +554,45 @@
 .var-color {
     background-color: rgb(var(--orange));
 }
+
+.dm-typer-replyer {
+    width: 100%;
+    position: absolute;
+    top: -50px;
+    left: 0;
+    background-color: #101010c0;
+    box-sizing: border-box;
+    padding: 15px;
+    border-radius: 5px;
+    text-align: left;
+    display: flex;
+    align-items: center;
+}
+.dm-typer-replyer p {
+    margin: 0;
+}
+.dm-typer-replyer-buttons {
+    position: absolute;
+    right: 15px;
+    text-align: center;
+    direction: rtl;
+}
+
+.dm-typer-replyer-buttons a {
+    cursor: pointer;
+    color: #ffffffa0;
+    transition: ease-in-out 150ms;
+}
+
+.dm-typer-replyer-buttons a:hover {
+    color: #ff1b1b;
+}
+
+.user-box {
+    border: 2px solid black;
+    box-sizing: border-box;
+}
+
+.user-box-selection {
+    border: 2px solid rgb(255, 255, 255);
+}

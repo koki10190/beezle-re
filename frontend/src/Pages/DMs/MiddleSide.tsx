@@ -39,11 +39,13 @@ function Message({
     self_user,
     EditMessage,
     DeleteMessage,
+    setTyperReplyer,
 }: {
     msg: BeezleDM.Message;
     self_user: UserPrivate;
     EditMessage: (arg0: string, arg1: string) => void;
     DeleteMessage: (arg0: string) => void;
+    setTyperReplyer: any;
 }) {
     const [user, setUser] = useState<UserPublic>();
     const [parentHovered, setParentHovered] = useState(false);
@@ -59,10 +61,9 @@ function Message({
             setUser(await fetchUserPublic(msg.author));
 
             if (msg.replying_to) {
-                const reply_msg = await axios.get(`https://${server_uri}/message/${replyingTo}`, {
+                const reply_msg = await axios.get(`https://${server_uri}/message/${msg.replying_to}`, {
                     headers: GetAuthToken(),
                 });
-                console.log(reply_msg.data);
                 if (reply_msg.data) {
                     setReplyingTo(reply_msg.data);
                 }
@@ -89,24 +90,41 @@ function Message({
     };
 
     return (
-        <div onMouseEnter={() => setParentHovered(true)} onMouseLeave={() => setParentHovered(false)} className="dm-message">
+        <div
+            id={`dm-message-${msg.msg_id}`}
+            onMouseEnter={() => setParentHovered(true)}
+            onMouseLeave={() => setParentHovered(false)}
+            className="dm-message"
+        >
             {msg.edited ? (
                 <a className="dm-attrib">
                     <i className="fa-solid fa-pencil" /> Edited
                 </a>
             ) : null}
             {replyingTo ? (
-                <a className="dm-attrib">
+                <a
+                    onClick={() => {
+                        const e = document.getElementById(`dm-message-${replyingTo.msg_id}`);
+                        e.setAttribute("tabindex", "0");
+                        e.focus();
+                    }}
+                    className="dm-attrib"
+                >
                     <i className="fa-solid fa-reply" /> Replying to {truncate(replyingTo.content, 24)}
                 </a>
             ) : null}
             <div className="dm-msg-author">
                 {parentHovered ? (
                     <div className="dm-msg-edit-panel">
-                        <a className="dm-msg-edit-panel-btn">
+                        <a
+                            onClick={() => {
+                                setTyperReplyer(msg);
+                            }}
+                            className="dm-msg-edit-panel-btn"
+                        >
                             <i className="fa-solid fa-reply"></i>
                         </a>
-                        {user.handle === self_user.handle ? (
+                        {user?.handle === self_user?.handle ? (
                             <>
                                 <a onClick={() => setEditing((old) => !old)} className="dm-msg-edit-panel-btn">
                                     <i className="fa-solid fa-pencil"></i>
@@ -266,6 +284,9 @@ function Loaded({ self_user, handle, setDisableIcon }: { self_user: UserPrivate;
     const [savedMessages, setSavedMessages] = useState<{ [handle: string]: BeezleDM.Message[] }>({});
     const [fetchedMessages, setFetchedMessages] = useState<{ [handle: string]: boolean }>({});
 
+    // Typer
+    const [typerReplier, setTyperReplyer] = useState<BeezleDM.Message>(null);
+
     const [callSettings, setCallSettings] = useState({
         muted: false,
         video: false,
@@ -372,7 +393,7 @@ function Loaded({ self_user, handle, setDisableIcon }: { self_user: UserPrivate;
         dmSocket.on("message-receive", async (message: BeezleDM.Message) => {
             if (selected?.handle === message.author || self_user.handle === message.author) {
                 setMessages((old) => [...old, message]);
-            } else {
+            } else if (self_user.status_db != "dnd") {
                 const user = await fetchUserPublic(message.author);
                 toast(
                     <div className="dm-toast-icon">
@@ -583,14 +604,16 @@ function Loaded({ self_user, handle, setDisableIcon }: { self_user: UserPrivate;
             content,
             msg_id: Math.random().toString(),
             timestamp: new Date(),
+            replying_to: typerReplier ? typerReplier.msg_id : undefined,
         };
         // setMessages((old) => [...old, msg]);
         // SaveMessage(msg, selected.handle);
 
         dmContentPanel.current!.scrollTop = dmContentPanel.current!.scrollHeight;
         textareaRef.current!.value = "";
-
         dmSocket.emit("message", msg, self_user, selected.handle);
+
+        if (typerReplier) setTyperReplyer(null);
     };
 
     useEffect(() => {
@@ -845,6 +868,7 @@ function Loaded({ self_user, handle, setDisableIcon }: { self_user: UserPrivate;
                             {dmSelections.map((option) => {
                                 return (
                                     <DmUserBox
+                                        selected={option.user_handle === _selected?.handle}
                                         dm_option={option}
                                         self_user={self_user}
                                         key={option.user_handle ?? option.group_id}
@@ -949,6 +973,7 @@ function Loaded({ self_user, handle, setDisableIcon }: { self_user: UserPrivate;
                                     <Message
                                         key={msg.msg_id}
                                         msg={msg}
+                                        setTyperReplyer={setTyperReplyer}
                                         self_user={self_user}
                                         EditMessage={EditMessage}
                                         DeleteMessage={DeleteMessage}
@@ -987,6 +1012,18 @@ function Loaded({ self_user, handle, setDisableIcon }: { self_user: UserPrivate;
                                         ) : (
                                             ""
                                         )}
+                                        {typerReplier ? (
+                                            <div className="dm-typer-replyer">
+                                                <p>
+                                                    <i className="fa-solid fa-reply" /> Replying to @{typerReplier.author}
+                                                </p>
+                                                <div className="dm-typer-replyer-buttons">
+                                                    <a onClick={() => setTyperReplyer(null)}>
+                                                        <i className="fa-solid fa-x"></i>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        ) : null}
                                         <textarea
                                             ref={textareaRef}
                                             onKeyDown={(e) => {

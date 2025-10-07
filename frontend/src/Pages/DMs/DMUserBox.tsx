@@ -23,10 +23,11 @@ interface DmUserBoxData {
     dm_option: BeezleDM.DmOption;
     self_user: UserPrivate;
     onClick: any;
+    selected: boolean;
     setSelection: any;
 }
 
-function DmUserBox({ dm_option, self_user, onClick, setSelection }: DmUserBoxData) {
+function DmUserBox({ dm_option, selected, self_user, onClick, setSelection }: DmUserBoxData) {
     const [isFollowing, setFollowing] = useState(false);
     const [bgGradient, setBgGradient] = useState("");
     const [normalGradient, setNormalGradient] = useState("");
@@ -87,7 +88,7 @@ function DmUserBox({ dm_option, self_user, onClick, setSelection }: DmUserBoxDat
                 height: "auto",
                 marginBottom: "",
             }}
-            className="post-box user-box"
+            className={`post-box user-box ${selected ? "user-box-selection" : " "}`}
         >
             <div onClick={onClick} className="user-detail">
                 <a onClick={DeleteSelection} className="dmuserbox-delete">
