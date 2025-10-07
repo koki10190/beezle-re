@@ -310,6 +310,7 @@ function Loaded({ self_user, handle, setDisableIcon }: { self_user: UserPrivate;
                 const index = entry.findIndex((x) => x.msg_id === msg_id);
                 if (index > -1) {
                     _new[key][index].content = content;
+                    _new[key][index].edited = true;
                 }
             }
 
@@ -328,7 +329,10 @@ function Loaded({ self_user, handle, setDisableIcon }: { self_user: UserPrivate;
 
     const HandleDmSocketEvents = async () => {
         dmSocket.on("message-deleted", (msg_id: string) => DeleteMessage(msg_id));
-        dmSocket.on("message-edited", (msg_id: string, content: string) => EditMessage(msg_id, content));
+        dmSocket.on("message-edited", (msg_id: string, content: string) => {
+            console.log("MESSAGE EDITED");
+            EditMessage(msg_id, content);
+        });
     };
 
     useEffect(() => {
