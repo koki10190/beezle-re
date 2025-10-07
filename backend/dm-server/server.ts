@@ -60,6 +60,8 @@ app.get("/message/:id", async (req, res) => {
         channel: { $regex: `(${decoded.handle};|;${decoded.handle})` },
         msg_id: id,
     });
+    console.log(`(${decoded.handle};|;${decoded.handle})`);
+    console.log(msg);
 
     return res.json(msg);
 });

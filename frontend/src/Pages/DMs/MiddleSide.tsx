@@ -59,11 +59,10 @@ function Message({
             setUser(await fetchUserPublic(msg.author));
 
             if (msg.replying_to) {
-                const reply_msg = await axios.get(`https://${server_uri}/message`, {
-                    params: { id: msg.replying_to },
+                const reply_msg = await axios.get(`https://${server_uri}/message/${replyingTo}`, {
                     headers: GetAuthToken(),
                 });
-
+                console.log(reply_msg.data);
                 if (reply_msg.data) {
                     setReplyingTo(reply_msg.data);
                 }
