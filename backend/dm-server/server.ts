@@ -88,4 +88,12 @@ io.on("connection", (socket) => {
         console.log("emitting....");
         user.socket.emit("message-receive", msg);
     });
+
+    // Handle Calls
+    socket.on("call-change-settings", (settings: { video: boolean; muted: boolean }, peer_handle: string) => {
+        const user = sockets_handle.get(peer_handle);
+        if (!user) return console.log("call-change-settings: No User Found");
+
+        user.socket.emit("call-change-settings", settings, sockets.get(socket.id)?.handle);
+    });
 });

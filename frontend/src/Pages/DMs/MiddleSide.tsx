@@ -127,6 +127,7 @@ interface BeezleCallUser {
     beingCalled: boolean;
     pickedUp: boolean;
     video: boolean;
+    muted: boolean;
 }
 
 async function GetDeviceConstraints() {
@@ -177,6 +178,8 @@ function Loaded({ self_user, handle }: { self_user: UserPrivate; handle?: string
     const [peerCall, setPeerCall] = useState<MediaConnection>(null);
     const [ringtoneState, setRingtone] = useState<HTMLAudioElement>(null);
     const [streamFeed, setStreamFeed] = useState<MediaStream>();
+    const [streamFeedDoc, setStreamFeedDoc] = useState<HTMLVideoElement>();
+    const [streamInterval, setStreamInterval] = useState<NodeJS.Timeout>(null);
 
     // Add Friend
     const [homePageEnum, setHomePageEnum] = useState(HomePageType.Home);
@@ -235,10 +238,20 @@ function Loaded({ self_user, handle }: { self_user: UserPrivate; handle?: string
         };
     }, []);
 
+    const ChangeUserInCall = (handle: string, settings: { muted: boolean; video: boolean }) =>
+        setUsersInCall((old) => {
+            const _new = [...old];
+            const index = _new.findIndex((x) => x.user.handle === handle);
+            if (index > -1) {
+                _new[index].video = settings.video;
+                _new[index].muted = settings.muted;
+            }
+            return _new;
+        });
+
     const HandleCallReceives = async (peer: Peer) => {
         // We're being called
         peer.on("call", async (call) => {
-            alert("faggot");
             const ringtoneAudio = new Audio(ringtone);
             ringtoneAudio.loop = true;
             ringtoneAudio.play();
@@ -257,22 +270,21 @@ function Loaded({ self_user, handle }: { self_user: UserPrivate; handle?: string
                     pickedUp: true,
                     beingCalled: false,
                     video: false,
+                    muted: false,
                 },
                 {
                     user: self_user,
                     beingCalled: true,
                     pickedUp: false,
                     video: false,
+                    muted: false,
                 },
             ]);
 
             let videoFeed = document.createElement("video");
             videoFeed.className = "dm-video-feed";
 
-            let selfFeed = document.createElement("video");
-            selfFeed.className = "dm-video-feed";
-
-            call.on("stream", async (userStream) => OnStreamIncoming(userStream, call, videoFeed, selfFeed, ringtoneAudio, self_user.handle));
+            call.on("stream", async (userStream) => OnStreamIncoming(userStream, call, videoFeed, null, ringtoneAudio, self_user.handle));
 
             call.on("close", () => {
                 videoFeed.remove();
@@ -285,6 +297,8 @@ function Loaded({ self_user, handle }: { self_user: UserPrivate; handle?: string
                 ringtoneAudio.remove();
             });
         });
+
+        dmSocket.on("call-change-settings", (settings: { muted: boolean; video: boolean }, from: string) => ChangeUserInCall(from, settings));
     };
 
     const handleScroll = async (event: UIEvent<HTMLDivElement>) => {
@@ -358,7 +372,7 @@ function Loaded({ self_user, handle }: { self_user: UserPrivate; handle?: string
         userStream: MediaStream,
         call: MediaConnection,
         videoFeed: HTMLVideoElement,
-        selfFeed: HTMLVideoElement,
+        selfFeed: HTMLVideoElement | null,
         ringtoneAudio: HTMLAudioElement,
         handle: string,
         PickedUp: boolean = true,
@@ -367,8 +381,14 @@ function Loaded({ self_user, handle }: { self_user: UserPrivate; handle?: string
         let callUserDoc = document.getElementById(`dm-call-${call.peer}`);
         callUserDoc.appendChild(videoFeed);
 
-        let selfUserDoc = document.getElementById(`dm-call-${self_user.handle}`);
-        selfUserDoc.appendChild(selfFeed);
+        if (selfFeed) {
+            let selfUserDoc = document.getElementById(`dm-call-${self_user.handle}`);
+
+            selfUserDoc.appendChild(selfFeed);
+            selfFeed.addEventListener("loadedmetadata", () => {
+                selfFeed.play();
+            });
+        }
 
         setUsersInCall((old) => {
             const _new = [...old];
@@ -381,11 +401,6 @@ function Loaded({ self_user, handle }: { self_user: UserPrivate; handle?: string
         videoFeed.srcObject = userStream;
         videoFeed.addEventListener("loadedmetadata", () => {
             videoFeed.play();
-        });
-
-        selfFeed.srcObject = userStream;
-        selfFeed.addEventListener("loadedmetadata", () => {
-            selfFeed.play();
         });
 
         ringtoneAudio.pause();
@@ -437,12 +452,14 @@ function Loaded({ self_user, handle }: { self_user: UserPrivate; handle?: string
                         beingCalled: false,
                         pickedUp: true,
                         video: false,
+                        muted: false,
                     },
                     {
                         user: selected,
                         pickedUp: false,
                         beingCalled: true,
                         video: false,
+                        muted: false,
                     },
                 ]);
 
@@ -452,8 +469,17 @@ function Loaded({ self_user, handle }: { self_user: UserPrivate; handle?: string
 
                 let selfFeed = document.createElement("video");
                 selfFeed.className = "dm-video-feed";
+                selfFeed.srcObject = stream;
+                selfFeed.muted = true;
+                selfFeed.addEventListener("loadedmetadata", () => {
+                    selfFeed.play();
+                });
 
-                call.on("stream", async (userStream) => OnStreamIncoming(userStream, call, videoFeed, selfFeed, ringtoneAudio, call.peer));
+                call.on("stream", async (userStream) => {
+                    let selfUserDoc = document.getElementById(`dm-call-${self_user.handle}`);
+                    selfUserDoc.appendChild(selfFeed);
+                    OnStreamIncoming(userStream, call, videoFeed, null, ringtoneAudio, call.peer);
+                });
 
                 // If they don't pick up or they hang up
                 const __Close = async () => {
@@ -469,6 +495,7 @@ function Loaded({ self_user, handle }: { self_user: UserPrivate; handle?: string
                     ringtoneAudio.remove();
 
                     videoFeed.remove();
+                    selfFeed.remove();
                 };
                 call.on("close", __Close);
                 call.on("error", __Close);
@@ -483,12 +510,24 @@ function Loaded({ self_user, handle }: { self_user: UserPrivate; handle?: string
         const constraints = await GetDeviceConstraints();
         navigator.mediaDevices
             .getUserMedia({
-                video: true,
+                video: constraints.video,
                 audio: constraints.audio,
             })
             .then((stream) => {
                 stream.getVideoTracks()[0].enabled = false;
+                let selfUserDoc = document.getElementById(`dm-call-${self_user.handle}`);
+                let selfFeed = document.createElement("video");
+                selfFeed.className = "dm-video-feed";
+                selfFeed.srcObject = stream;
+                selfFeed.muted = true;
+                selfUserDoc.appendChild(selfFeed);
+                selfFeed.addEventListener("loadedmetadata", () => {
+                    selfFeed.play();
+                });
+
                 setStreamFeed(stream);
+                setStreamFeedDoc(selfFeed);
+
                 peerCall.answer(stream);
             });
     };
@@ -497,6 +536,8 @@ function Loaded({ self_user, handle }: { self_user: UserPrivate; handle?: string
         if (peerCall) {
             peerCall.close();
             setStreamFeed(null);
+            if (streamFeedDoc) streamFeedDoc.remove();
+            setStreamFeedDoc(null);
             console.log("CALL CLOSED");
         }
         setCalling(false);
@@ -513,8 +554,13 @@ function Loaded({ self_user, handle }: { self_user: UserPrivate; handle?: string
     // Call Settings
     useEffect(() => {
         if (!streamFeed) return;
-        streamFeed.getAudioTracks()[0].enabled = !callSettings.muted;
-        streamFeed.getVideoTracks()[0].enabled = callSettings.video;
+        streamFeed.getVideoTracks()?.forEach((track) => (track.enabled = callSettings.video));
+        streamFeed.getAudioTracks()?.forEach((track) => (track.enabled = !callSettings.muted));
+
+        if (peerCall) {
+            dmSocket.emit("call-change-settings", callSettings, peerCall.peer);
+            ChangeUserInCall(self_user.handle, callSettings);
+        }
     }, [callSettings]);
 
     return (

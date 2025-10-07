@@ -374,7 +374,7 @@
 .dm-call-user {
     width: 75px;
     height: 75px;
-    background-color: red;
+    /* background-color: red; */
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
@@ -396,8 +396,9 @@
 .dm-video-feed {
     width: 350px;
     height: 200px;
-    /* background-color: red; */
+    background-color: red;
     display: block;
+    border-radius: 5px;
 }
 
 @keyframes callingAnimation {
