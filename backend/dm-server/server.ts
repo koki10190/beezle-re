@@ -52,6 +52,7 @@ app.get("/", (req, res) => {
 
 app.get("/message/:id", async (req, res) => {
     const { id } = req.params;
+    console.log(req.params);
     const token = req.headers.authorization;
     if (!token) res.status(404).send("no auth header");
     const decoded = jwt.verify(token!, process.env["TOKEN_SECRET"] as string) as jwt.JwtPayload;
