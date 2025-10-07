@@ -24,6 +24,7 @@ import { toast } from "react-toastify";
 import DmPageAddFriend from "./Components/DmPageAddFriend";
 import DmPageCreateGC from "./Components/DmPageCreateGC";
 import ringtone from "./ringtone.mp3";
+import chatNotif from "./chat-notif.mp3";
 
 function Message({
     msg,
@@ -344,8 +345,40 @@ function Loaded({ self_user, handle, setDisableIcon }: { self_user: UserPrivate;
             setDmSelections(dmOptions.data as BeezleDM.DmOption[]);
         })();
 
-        dmSocket.on("message-receive", (message: BeezleDM.Message) => {
-            if (selected?.handle === message.author || self_user.handle === message.author) setMessages((old) => [...old, message]);
+        dmSocket.on("message-receive", async (message: BeezleDM.Message) => {
+            if (selected?.handle === message.author || self_user.handle === message.author) {
+                setMessages((old) => [...old, message]);
+            } else {
+                const user = await fetchUserPublic(message.author);
+                toast(
+                    <div className="dm-toast-icon">
+                        <div
+                            style={{
+                                backgroundImage: `url(${user.avatar})`,
+                                clipPath: AVATAR_SHAPES[user.customization?.square_avatar]
+                                    ? AVATAR_SHAPES[user.customization?.square_avatar].style
+                                    : "",
+                                borderRadius:
+                                    AVATAR_SHAPES[user.customization?.square_avatar]?.name !== "Circle Avatar Shape"
+                                        ? user.customization?.square_avatar
+                                            ? "5px"
+                                            : "100%"
+                                        : "100%",
+                            }}
+                            className="dm-toast-avatar"
+                        ></div>{" "}
+                        <b>@{message.author}</b>: {message.content}
+                    </div>,
+                    {
+                        progressClassName: "var-color",
+                    },
+                );
+                const audio = new Audio(chatNotif);
+                audio.play();
+                setTimeout(() => {
+                    audio.remove();
+                }, 1100);
+            }
 
             SaveMessage(message, message.author);
         });

@@ -248,6 +248,7 @@
     width: calc(100% - 150px);
     height: 30px;
     background: none;
+    font-size: 16px;
     border: none;
     field-sizing: content;
     border: none;
@@ -536,4 +537,20 @@
 }
 .dm-attrib:hover {
     color: rgba(255, 255, 255, 1);
+}
+
+.dm-toast-avatar {
+    width: 25px;
+    height: 25px;
+    background-color: black;
+    display: inline-block;
+    vertical-align: middle;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    image-rendering: -webkit-optimize-contrast;
+}
+
+.var-color {
+    background-color: rgb(var(--orange));
 }

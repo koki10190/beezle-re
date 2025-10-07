@@ -21,6 +21,11 @@ const server = https.createServer(ssl_options as any, app);
 const peerServer = ExpressPeerServer(server);
 app.use("/calling", peerServer);
 
+process.on("uncaughtException", function (err) {
+    console.error(err);
+    console.log("Node NOT Exiting...");
+});
+
 const io = new Server(server, {
     cors: {
         origin: "*",
