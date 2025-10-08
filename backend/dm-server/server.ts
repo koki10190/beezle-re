@@ -10,6 +10,7 @@ import { randomUUID } from "crypto";
 import jwt from "jsonwebtoken";
 import { ExpressPeerServer, PeerServer } from "peer";
 import fs from "fs";
+import moment from "moment";
 
 const UserModel = mongoose.model("User", {} as any, "Users");
 const app = express();
@@ -114,7 +115,7 @@ io.on("connection", (socket) => {
         const db_msg = await MessageDM.create({
             author: msg.author,
             content: msg.content,
-            timestamp: new Date(Date.now()),
+            timestamp: new Date(moment.utc().format()),
             msg_id: id,
             edited: false,
             replying_to: msg.replying_to ?? undefined,

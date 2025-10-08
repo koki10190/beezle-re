@@ -154,25 +154,7 @@ function Message({
                     className="avatar"
                 ></div>
                 <p className="username">
-                    {user?.username} -{" "}
-                    <span className="dm-timestamp">
-                        {moment(msg.timestamp)
-                            .fromNow(true)
-                            .replace("minutes", "m")
-                            .replace(" ", "")
-                            .replace("hours", "h")
-                            .replace("afew seconds", "1s")
-                            .replace("aminute", "1m")
-                            .replace("ahour", "1h")
-                            .replace("anhour", "1h")
-                            .replace("aday", "1d")
-                            .replace("days", "d")
-                            .replace("day", "1d")
-                            .replace("months", " months")
-                            .replace("amonth", "1 month")
-                            .replace("ayear", "1 year")
-                            .replace("years", "y")}
-                    </span>
+                    {user?.username} - <span className="dm-timestamp">{moment(msg.timestamp).utc(true).fromNow()}</span>
                 </p>
                 <p className="handle">@{user?.handle}</p>
             </div>
