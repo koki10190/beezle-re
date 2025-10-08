@@ -114,7 +114,7 @@ io.on("connection", (socket) => {
         const db_msg = await MessageDM.create({
             author: msg.author,
             content: msg.content,
-            timestamp: new Date(),
+            timestamp: new Date(Date.now()),
             msg_id: id,
             edited: false,
             replying_to: msg.replying_to ?? undefined,

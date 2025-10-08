@@ -26,6 +26,7 @@ import DmPageCreateGC from "./Components/DmPageCreateGC";
 import ringtone from "./ringtone.mp3";
 import chatNotif from "./chat-notif.mp3";
 import GetAuthToken from "../../functions/GetAuthHeader";
+import Username from "../../Components/Username";
 
 function truncate(input: string, length: number) {
     if (input.length > length) {
@@ -105,6 +106,7 @@ function Message({
                 <a
                     onClick={() => {
                         const e = document.getElementById(`dm-message-${replyingTo.msg_id}`);
+                        console.log(e);
                         e.setAttribute("tabindex", "0");
                         e.focus();
                     }}
@@ -951,7 +953,7 @@ function Loaded({ self_user, handle, setDisableIcon }: { self_user: UserPrivate;
                             }}
                             className="username"
                         >
-                            {self_user.username}
+                            <Username user={self_user} />
                         </p>
                         <p className="handle">@{self_user.handle}</p>
                     </div>
