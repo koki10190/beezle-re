@@ -117,6 +117,7 @@ io.on("connection", (socket) => {
             timestamp: new Date(),
             msg_id: id,
             edited: false,
+            replying_to: msg.replying_to ?? undefined,
             channel: `${to};${msg.author}`,
         });
         console.log(db_msg, db_msg.collection.name);

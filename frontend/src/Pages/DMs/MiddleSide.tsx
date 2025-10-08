@@ -637,6 +637,7 @@ function Loaded({ self_user, handle, setDisableIcon }: { self_user: UserPrivate;
 
     const SendMessage = () => {
         const content = textareaRef.current!.value;
+        console.log("TYPER REPLIER", typerReplier);
         const msg: BeezleDM.Message = {
             author: self_user.handle,
             content,
