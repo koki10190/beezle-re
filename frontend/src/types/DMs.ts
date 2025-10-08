@@ -2,7 +2,7 @@ declare namespace BeezleDM {
     interface Message {
         content: string;
         author: string;
-        timestamp: Date;
+        timestamp: number;
         replying_to?: string;
         edited?: boolean;
         msg_id: string;

@@ -626,7 +626,7 @@ function Loaded({ self_user, handle, setDisableIcon }: { self_user: UserPrivate;
             author: self_user.handle,
             content,
             msg_id: Math.random().toString(),
-            timestamp: new Date(),
+            timestamp: moment().utc().unix(),
             replying_to: typerReplier ? typerReplier.msg_id : undefined,
         };
         // setMessages((old) => [...old, msg]);
