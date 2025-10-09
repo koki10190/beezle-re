@@ -473,7 +473,7 @@ function Loaded({ self_user, handle, setDisableIcon }: { self_user: UserPrivate;
                 }, 1100);
             }
 
-            SaveMessage(message, message.author);
+            SaveMessage(message, is_group ? message.channel : message.author);
         });
 
         dmSocket.on("message-deleted", (msg_id: string) => DeleteMessage(msg_id));

@@ -122,19 +122,21 @@ io.on("connection", (socket) => {
 
     socket.on("message", async (msg: any, self_user: any, to: string, is_group?: boolean) => {
         const user = sockets_handle.get(to);
+        const self = sockets.get(socket.id);
+        if (!self) return console.error("Author not connected");
 
         const id = randomUUID();
         const db_msg = await MessageDM.create({
-            author: msg.author,
+            author: self?.handle,
             content: msg.content,
             timestamp: moment().utc(true).unix(),
             msg_id: id,
             edited: false,
             replying_to: msg.replying_to ?? undefined,
-            channel: is_group ? to : `${to};${msg.author}`,
+            channel: is_group ? to : `${to};${self?.handle}`,
         });
         console.log(db_msg, db_msg.collection.name);
-        console.log("Received a message from", msg.author, "to", to, "userfind:", user ? "true" : "false");
+        console.log("Received a message from", self?.handle, "to", to, "userfind:", user ? "true" : "false");
         socket.emit("message-receive", db_msg);
 
         msg.msg_id = id;
@@ -142,6 +144,7 @@ io.on("connection", (socket) => {
             const gc = await GCModel.findOne({ group_id: to });
             if (!gc) return;
             for (const member of gc.members as string[]) {
+                if (member === self?.handle) continue;
                 const user = sockets_handle.get(member);
                 if (user) user.socket.emit("message-receive", db_msg, true);
             }

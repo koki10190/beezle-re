@@ -54,6 +54,7 @@ pub async fn route(
     let followers = token_user.get_array("followers").unwrap();
 
     let mut actual_members: Vec<String> = vec![];
+    actual_members.push(token_data.handle.clone());
 
     for follower in followers {
         let strf = follower.as_str().unwrap();
@@ -61,6 +62,12 @@ pub async fn route(
         for member in &members_arr {
             if strf == member {
                 actual_members.push(member.clone());
+                mongoose::insert_document(&client, "beezle", "DmSelections", doc! {
+                    "is_group": true,
+                    "group_id": &id,
+                    "belongs_to": member,
+                    "selection_id": uuid::Uuid::new()
+                }).await;
             }
         }
     }
