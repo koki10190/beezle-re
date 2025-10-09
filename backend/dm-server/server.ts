@@ -64,15 +64,18 @@ app.get("/", (req, res) => {
     res.send("DM Server");
 });
 
-app.get("/message/:id", async (req, res) => {
-    const { id } = req.params;
+app.get("/message/:id/:group", async (req, res) => {
+    const { id, group } = req.params;
     console.log(req.params);
     const token = req.headers.authorization;
     if (!token) res.status(404).send("no auth header");
     const decoded = jwt.verify(token!, process.env["TOKEN_SECRET"] as string) as jwt.JwtPayload;
 
     const msg = await MessageDM.findOne({
-        channel: { $regex: `(${decoded.handle};|;${decoded.handle})` },
+        channel:
+            group?.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/i)?.length! > 0
+                ? group
+                : { $regex: `(${decoded.handle};|;${decoded.handle})` },
         msg_id: id,
     });
     console.log(`(${decoded.handle};|;${decoded.handle})`, id, await MessageDM.findOne({ msg_id: id }));

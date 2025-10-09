@@ -123,8 +123,7 @@ function RightSide({ forceExpansion, disableIcon }: { forceExpansion?: boolean; 
                     text={`Notifs (${notifCount})`}
                     style={{ color: notifColor }}
                 />
-                <SettingsButton redirect="/explore" iconClass="fa-solid fa-globe" text="Explore" style={undefined} />
-                <SettingsButton redirect="/right-now" iconClass="fa-solid fa-sparkles" text="Right Now" style={undefined} />
+                <SettingsButton redirect="/dms" iconClass="fa-solid fa-messages" text="DMs" style={undefined} />
                 <SettingsButton redirect="/most-used-hashtags" iconClass="fa-solid fa-hashtag" text="Hashtags" style={undefined} />
                 <SettingsButton redirect="/bookmarks" iconClass="fa-solid fa-bookmark" text="Bookmarks" style={undefined} />
                 <SettingsButton redirect="/shop" iconClass="fa-solid fa-shop" text="Shop" style={undefined} />

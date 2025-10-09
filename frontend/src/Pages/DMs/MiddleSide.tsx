@@ -91,9 +91,13 @@ function Message({
             setUser(await fetchUserPublic(msg.author));
 
             if (msg.replying_to) {
-                const reply_msg = await axios.get(`https://${server_uri}/message/${msg.replying_to}`, {
-                    headers: GetAuthToken(),
-                });
+                const reply_msg = await axios.get(
+                    `https://${server_uri}/message/${msg.replying_to}/${msg.channel.includes(";") ? "null" : msg.channel}`,
+                    {
+                        headers: GetAuthToken(),
+                    },
+                );
+                console.log(reply_msg, "are we deadass", msg.replying_to);
                 if (reply_msg.data) {
                     setReplyingTo(reply_msg.data);
                 }
@@ -439,7 +443,8 @@ function Loaded({ self_user, handle, setDisableIcon }: { self_user: UserPrivate;
 
             if (
                 self_user.status_db != "dnd" &&
-                ((is_group && message.channel !== selected?.group_id) || (!is_group && message.author !== selected?.handle))
+                ((is_group && message.channel !== selected?.group_id) || (!is_group && message.author !== selected?.handle)) &&
+                message.author !== self_user?.handle
             ) {
                 const userOrGroup: DmSelection = (
                     is_group ? await fetchGroupChat(message.channel) : await fetchUserPublic(message.author)

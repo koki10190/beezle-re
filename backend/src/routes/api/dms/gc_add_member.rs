@@ -47,17 +47,25 @@ pub async fn route(
                 "owner": &token_data.handle,
                 "group_id": &body.group_id
             }, doc! {
-                "$push": {
+                "$addToSet": {
                     "members": &body.handle,
                 }
             }).await;
 
-            mongoose::insert_document(&client, "beezle", "DmSelections", doc! {
+            let duplicate = mongoose::get_document(&client, "beezle", "DmSelections", doc! {
                 "is_group": true,
                 "group_id": &body.group_id,
                 "belongs_to": &body.handle,
-                "selection_id": uuid::Uuid::new()
             }).await;
+
+            if duplicate.is_none() {
+                mongoose::insert_document(&client, "beezle", "DmSelections", doc! {
+                    "is_group": true,
+                    "group_id": &body.group_id,
+                    "belongs_to": &body.handle,
+                    "selection_id": uuid::Uuid::new()
+                }).await;
+            }
 
             return HttpResponse::Ok().json(doc! {
                 "message": "Member added successfully",
