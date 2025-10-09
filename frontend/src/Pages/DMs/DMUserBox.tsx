@@ -32,6 +32,7 @@ function DmUserBox({ dm_option, selected, self_user, onClick, setSelection }: Dm
     const [bgGradient, setBgGradient] = useState("");
     const [normalGradient, setNormalGradient] = useState("");
     const [user, setUser] = useState<UserPublic>(null);
+    const [group, setGroup] = useState<BeezleDM.GroupChat>(null);
     const navigate = useNavigate();
 
     const DeleteSelection = async () => {
@@ -73,11 +74,17 @@ function DmUserBox({ dm_option, selected, self_user, onClick, setSelection }: Dm
                     )}, ${ShadeColor(user?.customization?.profile_gradient ? user?.customization.profile_gradient.color2 : "rgb(231, 129, 98)", 0)})`,
                 );
                 setFollowing(user?.followers.find((x) => x === self_user.handle) ? true : false);
+            } else if (dm_option.group_id) {
+                let group = await axios.get(`${api_uri}/api/dms/get_gc`, {
+                    params: { group_id: dm_option.group_id },
+                    headers: GetAuthToken(),
+                });
+                if (group.data?.group) setGroup(group.data.group as BeezleDM.GroupChat);
             }
         })();
     }, []);
 
-    if (!user) {
+    if (!user && !group) {
         return <></>;
     }
 
@@ -96,54 +103,72 @@ function DmUserBox({ dm_option, selected, self_user, onClick, setSelection }: Dm
                 </a>
                 <div className="avatar-container">
                     <div
-                        style={{
-                            backgroundImage: `url(${user ? user.avatar : ""})`,
-                            clipPath: AVATAR_SHAPES[user?.customization?.square_avatar]
-                                ? AVATAR_SHAPES[user?.customization?.square_avatar].style
-                                : AVATAR_SHAPES[AvatarShape.CircleAvatarShape].style,
-                            borderRadius:
-                                AVATAR_SHAPES[user?.customization?.square_avatar]?.name !== "Circle Avatar Shape"
-                                    ? user?.customization?.square_avatar
-                                        ? "5px"
-                                        : "100%"
-                                    : "100%",
-                        }}
+                        style={
+                            !dm_option.is_group
+                                ? {
+                                      backgroundImage: `url(${user ? user.avatar : ""})`,
+                                      clipPath: AVATAR_SHAPES[user?.customization?.square_avatar]
+                                          ? AVATAR_SHAPES[user?.customization?.square_avatar].style
+                                          : AVATAR_SHAPES[AvatarShape.CircleAvatarShape].style,
+                                      borderRadius:
+                                          AVATAR_SHAPES[user?.customization?.square_avatar]?.name !== "Circle Avatar Shape"
+                                              ? user?.customization?.square_avatar
+                                                  ? "5px"
+                                                  : "100%"
+                                              : "100%",
+                                  }
+                                : { backgroundImage: `url(${group ? group.avatar : ""})`, borderRadius: "5px" }
+                        }
                         className="pfp-post"
                     ></div>
-                    <div
-                        className={`status-indicator ${
-                            user?.handle == self_user.handle ? CStatus(user?.status_db ?? "offline") : CStatus(user?.status ?? "offline")
-                        }`}
-                    ></div>
-                </div>
-                <p className="username-post">
-                    {user ? <Username user={user} /> : ""}{" "}
-                    <BadgesToJSX is_bot={user?.is_bot} badges={user ? user.badges : []} className="profile-badge profile-badge-shadow" />
-                </p>
-                <p className="handle-post">
-                    @{user ? user.handle : ""}
                     {user ? (
-                        <>
-                            {" "}
-                            <RepToIcon reputation={user.reputation} />
-                        </>
-                    ) : (
-                        ""
-                    )}{" "}
-                </p>
-                <p
-                    style={{
-                        whiteSpace: "pre-line",
-                        margin: "0",
-                        marginTop: "20px",
-                    }}
-                >
-                    {user?.activity.replace(/ /g, "") !== "" && user ? (
-                        <span style={{ color: "white" }}> {sanitize(user?.activity?.replace(/(.{35})..+/, "$1…"), { allowedTags: [] })}</span>
-                    ) : (
-                        ""
-                    )}
-                </p>
+                        <div
+                            className={`status-indicator ${
+                                user?.handle == self_user.handle ? CStatus(user?.status_db ?? "offline") : CStatus(user?.status ?? "offline")
+                            }`}
+                        ></div>
+                    ) : null}
+                </div>
+                {dm_option.is_group ? (
+                    <p className="username-post">{group?.name}</p>
+                ) : (
+                    <p className="username-post">
+                        {user ? <Username user={user} /> : ""}{" "}
+                        <BadgesToJSX is_bot={user?.is_bot} badges={user ? user.badges : []} className="profile-badge profile-badge-shadow" />
+                    </p>
+                )}
+                {dm_option.is_group ? (
+                    <p className="handle-post">{group.members.length} Members</p>
+                ) : (
+                    <p className="handle-post">
+                        @{user ? user.handle : ""}
+                        {user ? (
+                            <>
+                                {" "}
+                                <RepToIcon reputation={user.reputation} />
+                            </>
+                        ) : (
+                            ""
+                        )}{" "}
+                    </p>
+                )}
+                {user ? (
+                    <p
+                        style={{
+                            whiteSpace: "pre-line",
+                            margin: "0",
+                            marginTop: "20px",
+                        }}
+                    >
+                        {user?.activity.replace(/ /g, "") !== "" && user ? (
+                            <span style={{ color: "white" }}> {sanitize(user?.activity?.replace(/(.{35})..+/, "$1…"), { allowedTags: [] })}</span>
+                        ) : (
+                            ""
+                        )}
+                    </p>
+                ) : (
+                    ""
+                )}
             </div>
         </div>
     );

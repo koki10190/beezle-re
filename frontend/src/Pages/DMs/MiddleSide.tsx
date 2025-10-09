@@ -27,12 +27,38 @@ import ringtone from "./ringtone.mp3";
 import chatNotif from "./chat-notif.mp3";
 import GetAuthToken from "../../functions/GetAuthHeader";
 import Username from "../../Components/Username";
+import UploadToImgurVideoByFile from "../../functions/UploadToImgurVideoByFile";
+import { fetchGroupChat } from "../../functions/fetchGroupChat";
 
 function truncate(input: string, length: number) {
     if (input.length > length) {
         return input.substring(0, length) + "...";
     }
     return input;
+}
+
+function TyperEmbed({ isVid, url, onXClick }: { onXClick: any; isVid: boolean; url: string }) {
+    return (
+        <>
+            {isVid ? (
+                <div className="dm-typer-embed">
+                    <video style={{ width: "100%", height: "100%" }} controls>
+                        <source src={url} type="video/mp4" />
+                        <source src={url} type="video/ogg" />
+                    </video>
+                    <a onClick={onXClick} className="dm-typer-embed-button">
+                        <i className="fa-solid fa-x"></i>
+                    </a>
+                </div>
+            ) : (
+                <div style={{ backgroundImage: `url(${url})` }} className="dm-typer-embed">
+                    <a onClick={onXClick} className="dm-typer-embed-button">
+                        <i className="fa-solid fa-x"></i>
+                    </a>
+                </div>
+            )}
+        </>
+    );
 }
 
 function Message({
@@ -154,7 +180,8 @@ function Message({
                     className="avatar"
                 ></div>
                 <p className="username">
-                    {user?.username} - <span className="dm-timestamp">{moment(msg.timestamp).utc(true).fromNow()}</span>
+                    {user?.username}
+                    {/* <span className="dm-timestamp">{moment(new Date(parseInt((msg.timestamp as any).$date.$numberLong))).fromNow()}</span> */}
                 </p>
                 <p className="handle">@{user?.handle}</p>
             </div>
@@ -212,7 +239,9 @@ const CallUser = forwardRef<HTMLVideoElement, CallUserProps>((props: CallUserPro
     );
 });
 
-let selected: UserPublic = null;
+interface DmSelection extends UserPublic, BeezleDM.GroupChat {}
+
+let selected: DmSelection = null;
 
 enum HomePageType {
     Home,
@@ -271,7 +300,7 @@ function Loaded({ self_user, handle, setDisableIcon }: { self_user: UserPrivate;
 
     const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
     const [gifPickerOpen, setGifPickerOpen] = useState(false);
-    const [_selected, setSelected] = useState<UserPublic>();
+    const [_selected, setSelected] = useState<DmSelection>();
 
     const [savedMessages, setSavedMessages] = useState<{ [handle: string]: BeezleDM.Message[] }>({});
     const [fetchedMessages, setFetchedMessages] = useState<{ [handle: string]: boolean }>({});
@@ -294,9 +323,26 @@ function Loaded({ self_user, handle, setDisableIcon }: { self_user: UserPrivate;
     const [streamFeedDoc, setStreamFeedDoc] = useState<HTMLVideoElement>();
     const [streamInterval, setStreamInterval] = useState<NodeJS.Timeout>(null);
     const [window_width, setWindowWidth] = useState(window.innerWidth);
+    const [typerEmbeds, setTyperEmbeds] = useState<Array<{ isVid: boolean; url: string; id: string }>>([]);
+    const fileRef = useRef<HTMLInputElement>();
 
     // Add Friend
     const [homePageEnum, setHomePageEnum] = useState(HomePageType.Home);
+
+    const UploadImage = async () => {
+        toast.info("Uploading image/video...");
+        const files = fileRef.current!.files as FileList;
+        const file = files[0];
+        const ext = files[0].type;
+        const isVid = ext.match(/mp4|wmv/gi) ? true : false;
+        const link = await UploadToImgurVideoByFile(file);
+
+        if (!link || link.error) return toast.error("There was an error uploading the image/video!");
+
+        setTimeout(() => setTyperEmbeds((old) => [...old, { isVid, url: link?.data?.link ?? "", id: Math.random().toString() }]), 150);
+        toast.success("Successfully uploaded!");
+        console.log(link);
+    };
 
     const SaveMessage = (message: BeezleDM.Message, handle: string) => {
         setSavedMessages((old) => {
@@ -374,7 +420,7 @@ function Loaded({ self_user, handle, setDisableIcon }: { self_user: UserPrivate;
     useEffect(() => {
         (async () => {
             if (handle) {
-                selected = await fetchUserPublic(handle);
+                selected = (await fetchUserPublic(handle)) as DmSelection;
                 setSelected(selected);
             }
 
@@ -382,35 +428,41 @@ function Loaded({ self_user, handle, setDisableIcon }: { self_user: UserPrivate;
             setDmSelections(dmOptions.data as BeezleDM.DmOption[]);
         })();
 
-        dmSocket.on("message-receive", async (message: BeezleDM.Message) => {
-            if (selected?.handle === message.author || self_user.handle === message.author) {
+        dmSocket.on("message-receive", async (message: BeezleDM.Message, is_group?: boolean) => {
+            if (selected?.handle === message.author || self_user.handle === message.author || selected?.group_id === message.channel) {
                 setMessages((old) => [...old, message]);
             } else if (self_user.status_db != "dnd") {
-                const user = await fetchUserPublic(message.author);
+                const userOrGroup: DmSelection = (
+                    is_group ? await fetchGroupChat(message.channel) : await fetchUserPublic(message.author)
+                ) as DmSelection;
                 toast(
                     <div className="dm-toast-icon">
                         <div
-                            style={{
-                                backgroundImage: `url(${user.avatar})`,
-                                clipPath: AVATAR_SHAPES[user.customization?.square_avatar]
-                                    ? AVATAR_SHAPES[user.customization?.square_avatar].style
-                                    : "",
-                                borderRadius:
-                                    AVATAR_SHAPES[user.customization?.square_avatar]?.name !== "Circle Avatar Shape"
-                                        ? user.customization?.square_avatar
-                                            ? "5px"
-                                            : "100%"
-                                        : "100%",
-                            }}
+                            style={
+                                is_group
+                                    ? { backgroundImage: `url(${userOrGroup.avatar})`, borderRadius: "5px" }
+                                    : {
+                                          backgroundImage: `url(${userOrGroup.avatar})`,
+                                          clipPath: AVATAR_SHAPES[userOrGroup.customization?.square_avatar]
+                                              ? AVATAR_SHAPES[userOrGroup.customization?.square_avatar].style
+                                              : "",
+                                          borderRadius:
+                                              AVATAR_SHAPES[userOrGroup.customization?.square_avatar]?.name !== "Circle Avatar Shape"
+                                                  ? userOrGroup.customization?.square_avatar
+                                                      ? "5px"
+                                                      : "100%"
+                                                  : "100%",
+                                      }
+                            }
                             className="dm-toast-avatar"
                         ></div>{" "}
-                        <b>@{message.author}</b>: {message.content}
+                        <b>{!is_group ? `@${message.author}` : userOrGroup.name}</b>: {message.content}
                     </div>,
                     {
                         progressClassName: "var-color",
                         onClick: async (ev) => {
-                            selected = user;
-                            setSelected(user);
+                            selected = userOrGroup as DmSelection;
+                            setSelected(userOrGroup as DmSelection);
                         },
                     },
                 );
@@ -524,8 +576,8 @@ function Loaded({ self_user, handle, setDisableIcon }: { self_user: UserPrivate;
                     {
                         progressClassName: "var-color",
                         onClick: async (ev) => {
-                            selected = caller;
-                            setSelected(caller);
+                            selected = caller as DmSelection;
+                            setSelected(caller as DmSelection);
                         },
                     },
                 );
@@ -585,46 +637,50 @@ function Loaded({ self_user, handle, setDisableIcon }: { self_user: UserPrivate;
     };
 
     useEffect(() => {
-        if (!_selected) {
+        if (!(_selected?.group_id ?? _selected?.handle)) {
             setMessages([]);
             return;
         }
 
-        if (!fetchedMessages[_selected?.handle]) {
+        if (!fetchedMessages[_selected.group_id ?? _selected.handle]) {
             axios
                 .post(
                     `${api_uri}/api/dms/get_messages`,
                     {
                         offset: 0,
-                        handle: _selected.handle,
+                        handle: _selected.group_id ?? _selected.handle,
+                        is_group: _selected.group_id ? true : false,
                     },
                     GetFullAuth(),
                 )
                 .then((res) => {
                     const data = res.data;
                     console.log(data);
-                    SaveMessages(data.messages, _selected.handle);
+                    SaveMessages(data.messages, _selected.group_id ?? _selected.handle);
                     console.log("FETCHED", "data");
                     setMessages(data.messages);
 
                     setFetchedMessages((old) => {
                         const _new = { ...old };
-                        _new[_selected.handle] = true;
+                        _new[_selected.group_id ?? _selected.handle] = true;
                         return _new;
                     });
                 });
         } else {
-            console.log(savedMessages[_selected?.handle]);
-            setMessages(savedMessages[_selected?.handle] ?? []);
+            console.log(savedMessages[_selected?.group_id ?? _selected?.handle]);
+            setMessages(savedMessages[_selected?.group_id ?? _selected?.handle] ?? []);
         }
     }, [_selected]);
 
     const SendMessage = () => {
         const content = textareaRef.current!.value;
         console.log("TYPER REPLIER", typerReplier);
+        let links = " ";
+        typerEmbeds.forEach((embed) => (links += embed.url + " "));
+        links.trimEnd();
         const msg: BeezleDM.Message = {
             author: self_user.handle,
-            content,
+            content: content + links,
             msg_id: Math.random().toString(),
             timestamp: moment().utc().unix(),
             replying_to: typerReplier ? typerReplier.msg_id : undefined,
@@ -634,7 +690,8 @@ function Loaded({ self_user, handle, setDisableIcon }: { self_user: UserPrivate;
 
         dmContentPanel.current!.scrollTop = dmContentPanel.current!.scrollHeight;
         textareaRef.current!.value = "";
-        dmSocket.emit("message", msg, self_user, selected.handle);
+        dmSocket.emit("message", msg, self_user, selected?.group_id ?? selected.handle, selected?.group_id ? true : false);
+        setTyperEmbeds([]);
 
         if (typerReplier) setTyperReplyer(null);
     };
@@ -893,14 +950,19 @@ function Loaded({ self_user, handle, setDisableIcon }: { self_user: UserPrivate;
                                 {dmSelections.map((option) => {
                                     return (
                                         <DmUserBox
-                                            selected={option.user_handle === _selected?.handle}
+                                            selected={
+                                                option.is_group ? option.group_id === selected?.group_id : option.user_handle === _selected?.handle
+                                            }
                                             dm_option={option}
                                             self_user={self_user}
                                             key={option.user_handle ?? option.group_id}
                                             setSelection={setDmSelections}
                                             onClick={async () => {
                                                 if (!option.is_group) {
-                                                    selected = await fetchUserPublic(option.user_handle);
+                                                    selected = (await fetchUserPublic(option.user_handle)) as DmSelection;
+                                                    setSelected(selected);
+                                                } else {
+                                                    selected = (await fetchGroupChat(option.group_id)) as DmSelection;
                                                     setSelected(selected);
                                                 }
                                             }}
@@ -1011,14 +1073,24 @@ function Loaded({ self_user, handle, setDisableIcon }: { self_user: UserPrivate;
                                 }}
                                 className="avatar"
                             ></div>
-                            <p className="handle">@{selected?.handle} - </p>
+                            <p className="handle">
+                                {selected?.group_id ? null : "@"}
+                                {selected?.name ?? selected?.handle} -{" "}
+                            </p>
                             <div className="info-buttons">
-                                <a onClick={() => Call({ video: false })} className="info-button">
-                                    <i className="fa-solid fa-phone-volume"></i>
-                                </a>
-                                {/* <a onClick={() => Call({ video: true })} className="info-button">
-                                    <i className="fa-solid fa-video"></i>
-                                </a> */}
+                                {selected?.group_id ? (
+                                    <>
+                                        <a onClick={() => {}} className="info-button">
+                                            <i className="fa-solid fa-users"></i>
+                                        </a>
+                                    </>
+                                ) : (
+                                    <>
+                                        <a onClick={() => Call({ video: false })} className="info-button">
+                                            <i className="fa-solid fa-phone-volume"></i>
+                                        </a>
+                                    </>
+                                )}
                             </div>
                         </div>
                         <div ref={dmContentPanel} className="dm-data">
@@ -1078,6 +1150,24 @@ function Loaded({ self_user, handle, setDisableIcon }: { self_user: UserPrivate;
                                                 </div>
                                             </div>
                                         ) : null}
+                                        {typerEmbeds.length > 0 ? (
+                                            <div className="dm-imagevideo-holder">
+                                                {typerEmbeds.map((embed, index) => (
+                                                    <TyperEmbed
+                                                        key={embed.id}
+                                                        onXClick={() => {
+                                                            setTyperEmbeds((old) => {
+                                                                const _new = [...old];
+                                                                _new.splice(index, 1);
+                                                                return _new;
+                                                            });
+                                                        }}
+                                                        isVid={embed.isVid}
+                                                        url={embed.url}
+                                                    />
+                                                ))}
+                                            </div>
+                                        ) : null}
                                         <textarea
                                             ref={textareaRef}
                                             onKeyDown={(e) => {
@@ -1088,9 +1178,19 @@ function Loaded({ self_user, handle, setDisableIcon }: { self_user: UserPrivate;
                                             }}
                                             style={{ resize: "none" }}
                                             className="dm-textarea"
-                                            placeholder={`Message ${_selected.username}`}
+                                            placeholder={`Message ${_selected.group_id ? _selected.name : _selected.username}`}
                                         />
                                         <div className="dm-textarea-buttons">
+                                            <input
+                                                onChange={UploadImage}
+                                                accept=".jpeg,.gif,.png,.jpg,.mp4"
+                                                ref={fileRef}
+                                                type="file"
+                                                style={{ display: "none" }}
+                                            />{" "}
+                                            <a onClick={() => fileRef.current!.click()} className="dm-panel-button">
+                                                <i className="fa-solid fa-image"></i>
+                                            </a>
                                             <a onClick={() => setEmojiPickerOpen((old) => !old)} className="dm-panel-button">
                                                 <i className="fa-solid fa-face-awesome"></i>
                                             </a>

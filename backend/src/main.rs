@@ -221,6 +221,8 @@ async fn main() -> std::io::Result<()> {
             .service(routes::api::dms::get_selections::route)
             .service(routes::api::dms::create_selection::route)
             .service(routes::api::dms::delete_selection::route)
+            .service(routes::api::dms::create_gc::route)
+            .service(routes::api::dms::get_gc::route)
             .route("/ws", web::get().to(socket::main_ws))
             .wrap(middleware::Logger::default())
     });

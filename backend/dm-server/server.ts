@@ -13,6 +13,18 @@ import fs from "fs";
 import moment from "moment";
 
 const UserModel = mongoose.model("User", {} as any, "Users");
+const GCModel = mongoose.model(
+    "GroupChat",
+    {
+        owner: String,
+        group_id: String,
+        members: Array,
+        name: String,
+        avatar: String,
+        creation_date: Date,
+    } as any,
+    "DmGroupChats",
+);
 const app = express();
 const ssl_options = {
     key: process.env["USE_SSL"] === "yes" ? fs.readFileSync("../priv.key").toString() : "",
@@ -108,26 +120,36 @@ io.on("connection", (socket) => {
         // sockets.push({ socket, id: socket.id, handle });
     });
 
-    socket.on("message", async (msg: any, self_user: any, to: string) => {
+    socket.on("message", async (msg: any, self_user: any, to: string, is_group?: boolean) => {
         const user = sockets_handle.get(to);
 
         const id = randomUUID();
         const db_msg = await MessageDM.create({
             author: msg.author,
             content: msg.content,
-            timestamp: moment().utc(false).unix(),
+            timestamp: moment().utc(true).unix(),
             msg_id: id,
             edited: false,
             replying_to: msg.replying_to ?? undefined,
-            channel: `${to};${msg.author}`,
+            channel: is_group ? to : `${to};${msg.author}`,
         });
         console.log(db_msg, db_msg.collection.name);
         console.log("Received a message from", msg.author, "to", to, "userfind:", user ? "true" : "false");
         socket.emit("message-receive", db_msg);
-        if (!user) return;
+
         msg.msg_id = id;
-        console.log("emitting....");
-        user.socket.emit("message-receive", db_msg);
+        if (is_group) {
+            const gc = await GCModel.findOne({ group_id: to });
+            if (!gc) return;
+            for (const member of gc.members as string[]) {
+                const user = sockets_handle.get(member);
+                if (user) user.socket.emit("message-receive", db_msg, true);
+            }
+        } else {
+            if (!user) return;
+            console.log("emitting....");
+            user.socket.emit("message-receive", db_msg, false);
+        }
     });
 
     // Handle Calls

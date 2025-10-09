@@ -4,7 +4,7 @@ const twitter = "https://twitter.com/beezle_lol";
 const youtube = "https://www.youtube.com/@koki10190";
 
 const production_mode = true;
-const api_uri = production_mode ? "https://server.beezle.lol:3000" : "http://localhost:3000";
+const api_uri = !production_mode ? "https://server.beezle.lol:3000" : "http://localhost:3000";
 const ws_uri = production_mode ? "wss://server.beezle.lol:3000/ws" : "ws://localhost:3000/ws";
 const dm_uri = !production_mode ? "https://server.beezle.lol" : "https://localhost";
 const server_uri = production_mode ? "server.beezle.lol" : "localhost";

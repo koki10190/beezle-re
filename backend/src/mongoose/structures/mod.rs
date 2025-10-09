@@ -13,3 +13,4 @@ pub use hive::Hive;
 pub mod poll;
 pub mod dm_msg;
 pub mod dm_selections;
+pub mod dm_gc;

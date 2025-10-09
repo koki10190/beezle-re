@@ -5,7 +5,21 @@ declare namespace BeezleDM {
         timestamp: number;
         replying_to?: string;
         edited?: boolean;
+        channel?: string;
         msg_id: string;
+    }
+
+    interface GroupChat {
+        owner: boolean;
+        name: string;
+        group_id: string;
+        members: Array<string>;
+        avatar: string;
+        creation_date: {
+            $date: {
+                $numberLong: string;
+            };
+        };
     }
 
     interface DmOption {

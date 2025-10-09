@@ -1,0 +1,22 @@
+.creator-gc-icon {
+    cursor: pointer;
+    border-radius: 5px;
+    width: 75px;
+    height: 75px;
+    background-color: grey;
+    border: 3px solid black;
+    box-sizing: border-box;
+    transition: ease-in-out 150ms;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+.creator-gc-icon:hover {
+    border: 3px solid rgb(var(--orange));
+}
+
+.creator-gc-icon p {
+    position: absolute;
+    margin-left: 80px;
+    margin-top: 25px;
+}

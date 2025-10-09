@@ -18,7 +18,8 @@ use crate::{
 #[derive(Deserialize)]
 struct GetUserQuery {
     offset: i64,
-    handle: String
+    handle: String,
+    is_group: bool
 }
 
 #[post("/api/dms/get_messages")]
@@ -43,13 +44,21 @@ pub async fn route(
     println!("^({};{}|{};{})$", token_data.handle, body.handle, body.handle, token_data.handle);
 
     let options = AggregateOptions::builder().allow_disk_use(true).build();
+    
+    let mut pattern = "".to_string();
+    if body.is_group {
+        pattern = body.handle.clone();
+    } else {
+        pattern = format!("^({};{}|{};{})$", token_data.handle, body.handle, body.handle, token_data.handle);
+    }
+    
     let mut cursor = coll
         .aggregate(
             vec![
                 doc! {
                     "$match": doc! {
                         "channel": mongodb::bson::Regex {
-                            pattern: format!("^({};{}|{};{})$", token_data.handle, body.handle, body.handle, token_data.handle),
+                            pattern: pattern,
                             options: "i".to_string()
                         }
                     }
