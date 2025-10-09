@@ -18,6 +18,7 @@ import GetAuthToken from "../../functions/GetAuthHeader";
 import CStatus from "../../functions/StatusToClass";
 import RepToIcon from "../../Components/RepToIcon";
 import Username from "../../Components/Username";
+import dmSocket from "../../types/DM";
 
 interface DmUserBoxData {
     dm_option: BeezleDM.DmOption;
@@ -45,12 +46,31 @@ function DmUserBox({ dm_option, selected, self_user, onClick, setSelection }: Dm
             return _new;
         });
 
-        const res = await axios.delete(`${api_uri}/api/dms/delete_selection`, {
-            params: {
-                selection_id: dm_option.selection_id,
-            },
-            headers: GetAuthToken(),
-        });
+        if (dm_option.group_id) {
+            const res = await axios.delete(`${api_uri}/api/dms/leave_gc`, {
+                params: {
+                    group_id: dm_option.group_id,
+                },
+                headers: GetAuthToken(),
+            });
+            console.log(res.data);
+
+            const msg: BeezleDM.Message = {
+                author: self_user.handle,
+                content: `<b>${self_user.handle} left the group chat </b>`,
+                msg_id: Math.random().toString(),
+                timestamp: moment().utc().unix(),
+                replying_to: undefined,
+            };
+            dmSocket.emit("message", msg, self_user, dm_option.group_id, true);
+        } else {
+            const res = await axios.delete(`${api_uri}/api/dms/delete_selection`, {
+                params: {
+                    selection_id: dm_option.selection_id,
+                },
+                headers: GetAuthToken(),
+            });
+        }
     };
 
     useEffect(() => {

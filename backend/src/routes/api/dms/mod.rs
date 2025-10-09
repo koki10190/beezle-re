@@ -4,3 +4,7 @@ pub mod create_selection;
 pub mod delete_selection;
 pub mod create_gc;
 pub mod get_gc;
+pub mod leave_gc;
+pub mod edit_gc;
+pub mod gc_add_member;
+pub mod gc_remove_member;

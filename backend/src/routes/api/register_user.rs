@@ -107,7 +107,7 @@ pub async fn route(
                 doc! {"email": struct_user_doc.email, "handle": struct_user_doc.handle.to_lowercase()},
             )
             .await;
-            let authID = uuid::Uuid::new();
+            let authID = uuid::Uuid::new().to_string();
             let struct_auth_doc = mongoose::structures::auth::Auth {
                 id: None,
                 handle: act_handle.to_lowercase(),

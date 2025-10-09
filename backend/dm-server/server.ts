@@ -137,12 +137,15 @@ io.on("connection", (socket) => {
         });
         console.log(db_msg, db_msg.collection.name);
         console.log("Received a message from", self?.handle, "to", to, "userfind:", user ? "true" : "false");
-        socket.emit("message-receive", db_msg, true);
+        socket.emit("message-receive", db_msg, is_group);
 
         msg.msg_id = id;
         if (is_group) {
             const gc = await GCModel.findOne({ group_id: to });
+
             if (!gc) return;
+            if ((gc.members as string[]).findIndex((x) => x === self.handle) < 0) return;
+
             for (const member of gc.members as string[]) {
                 if (member === self?.handle) continue;
                 const user = sockets_handle.get(member);

@@ -29,6 +29,9 @@ import GetAuthToken from "../../functions/GetAuthHeader";
 import Username from "../../Components/Username";
 import UploadToImgurVideoByFile from "../../functions/UploadToImgurVideoByFile";
 import { fetchGroupChat } from "../../functions/fetchGroupChat";
+import DmEditGC from "./Components/DmEditGC";
+import DmEditGCMember from "./Components/DmEditGCMember";
+import sanitize from "sanitize-html";
 
 function truncate(input: string, length: number) {
     if (input.length > length) {
@@ -297,10 +300,12 @@ function Loaded({ self_user, handle, setDisableIcon }: { self_user: UserPrivate;
     const textareaRef = useRef<HTMLTextAreaElement>();
     const dmContentPanel = useRef<HTMLDivElement>();
     const usersContainer = useRef<HTMLDivElement>();
+    const gcEditAddMemberInputRef = useRef<HTMLInputElement>();
 
     const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
     const [gifPickerOpen, setGifPickerOpen] = useState(false);
     const [_selected, setSelected] = useState<DmSelection>();
+    const [gcEditing, setGcEditing] = useState<BeezleDM.GroupChat>();
 
     const [savedMessages, setSavedMessages] = useState<{ [handle: string]: BeezleDM.Message[] }>({});
     const [fetchedMessages, setFetchedMessages] = useState<{ [handle: string]: boolean }>({});
@@ -429,9 +434,13 @@ function Loaded({ self_user, handle, setDisableIcon }: { self_user: UserPrivate;
         })();
 
         dmSocket.on("message-receive", async (message: BeezleDM.Message, is_group?: boolean) => {
-            if (selected?.handle === message.author || self_user.handle === message.author || selected?.group_id === message.channel) {
-                setMessages((old) => [...old, message]);
-            } else if (self_user.status_db != "dnd") {
+            if (selected?.handle && !is_group) setMessages((old) => [...old, message]);
+            if (is_group && selected?.group_id) setMessages((old) => [...old, message]);
+
+            if (
+                self_user.status_db != "dnd" &&
+                ((is_group && message.channel !== selected?.group_id) || (!is_group && message.author !== selected?.handle))
+            ) {
                 const userOrGroup: DmSelection = (
                     is_group ? await fetchGroupChat(message.channel) : await fetchUserPublic(message.author)
                 ) as DmSelection;
@@ -456,7 +465,7 @@ function Loaded({ self_user, handle, setDisableIcon }: { self_user: UserPrivate;
                             }
                             className="dm-toast-avatar"
                         ></div>{" "}
-                        <b>{!is_group ? `@${message.author}` : userOrGroup.name}</b>: {message.content}
+                        <b>{!is_group ? `@${message.author}` : userOrGroup.name}</b>: {sanitize(message.content)}
                     </div>,
                     {
                         progressClassName: "var-color",
@@ -913,6 +922,65 @@ function Loaded({ self_user, handle, setDisableIcon }: { self_user: UserPrivate;
 
     return (
         <>
+            {gcEditing ? (
+                <div className="dm-popup">
+                    <div className="dm-gc-members-list">
+                        <h1>
+                            <i className="fa-solid fa-gears"></i> {gcEditing?.name} Settings
+                        </h1>
+                        <a onClick={() => setGcEditing(null)} className="close-popup-btn">
+                            <i className="fa-solid fa-x" />
+                        </a>
+                        {gcEditing.owner === self_user.handle ? (
+                            <>
+                                <Divider />
+                                <DmEditGC gc={gcEditing} options={dmSelections} setOptions={setDmSelections} />
+                                <Divider />
+                                <h2>
+                                    <i className="fa-solid fa-users-gear"></i> Manage Members
+                                </h2>
+                                <form
+                                    onSubmit={async (e) => {
+                                        e.preventDefault();
+                                        toast.info("Adding member...");
+                                        const value = gcEditAddMemberInputRef.current!.value as string;
+                                        const res = await axios.patch(
+                                            `${api_uri}/api/dms/gc_add_member`,
+                                            {
+                                                handle: value,
+                                                group_id: gcEditing.group_id,
+                                            },
+                                            GetFullAuth(),
+                                        );
+                                        if (res.data.error) toast.error(res.data.error);
+                                        else toast.success(res.data.message + ", Please refresh.");
+                                    }}
+                                >
+                                    <label>Add New Member</label>
+                                    <input
+                                        ref={gcEditAddMemberInputRef}
+                                        style={{ width: "100%" }}
+                                        className="input-field"
+                                        placeholder="User's Handle"
+                                    />
+                                    <button className="button-field">
+                                        <i className="fa-solid fa-user-plus"></i> Add Friend
+                                    </button>
+                                </form>
+                            </>
+                        ) : null}
+                        <Divider />
+                        <div className="user-list">
+                            {gcEditing.members.map((member) => (
+                                <DmEditGCMember self_user={self_user} gc={gcEditing} handle={member} />
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            ) : (
+                ""
+            )}
+
             <div className="dm-screen">
                 <div style={{ display: userListOpen ? "inline-block" : "none" }} className="dms-user-list">
                     <div onScroll={handleScroll} className="dm-user-list">
@@ -1080,8 +1148,13 @@ function Loaded({ self_user, handle, setDisableIcon }: { self_user: UserPrivate;
                             <div className="info-buttons">
                                 {selected?.group_id ? (
                                     <>
-                                        <a onClick={() => {}} className="info-button">
-                                            <i className="fa-solid fa-users"></i>
+                                        <a
+                                            onClick={() => {
+                                                setGcEditing(selected);
+                                            }}
+                                            className="info-button"
+                                        >
+                                            <i className="fa-solid fa-users-gear"></i>
                                         </a>
                                     </>
                                 ) : (

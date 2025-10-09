@@ -10,7 +10,7 @@ declare namespace BeezleDM {
     }
 
     interface GroupChat {
-        owner: boolean;
+        owner: string;
         name: string;
         group_id: string;
         members: Array<string>;
