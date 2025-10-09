@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, redirect } from "react-router-dom";
+import { BrowserRouter, Routes, Route, redirect, useNavigate } from "react-router-dom";
 import React, { createContext } from "react";
 import Home from "./Home/Home";
 import LoggedIn_Home from "./Pages/LoggedIn/Home";
@@ -46,6 +46,11 @@ import Twemoji from "react-twemoji";
 import { SetSavedCSSProperties } from "./functions/cssFuncs";
 import DMs_Home from "./Pages/DMs/Home";
 import dmSocket from "./types/DM";
+import { DmSelection } from "./types/DmSelection";
+import { fetchGroupChat } from "./functions/fetchGroupChat";
+import { fetchUserPublic } from "./functions/fetchUserPublic";
+import { AVATAR_SHAPES } from "./types/cosmetics/AvatarShapes";
+import sanitize from "sanitize-html";
 
 enum UserStatus {
     ONLINE,
@@ -63,7 +68,7 @@ export const SiteContext = createContext(null);
 
 function App() {
     const [notifCounter, setNotifCounter] = useState(0);
-    const [PrivateUser, setPrivateUser] = useState<UserPublic>();
+    const [PrivateUser, setPrivateUser] = useState<UserPrivate>();
 
     socket.listen("from_other", (data: { message: string }) => {
         // console.log("ALERT! DATA GOT", data);
@@ -75,11 +80,58 @@ function App() {
             let interval = setInterval(() => {
                 if (localStorage.getItem("access_token")) {
                     dmSocket.emit("beezle-connect", localStorage.getItem("access_token"));
+
                     console.log("[BEEZLE-DMS] Data sent & received");
                     clearInterval(interval);
                 }
             }, 100);
         });
+
+        dmSocket.on("message-receive", async (message: BeezleDM.Message, is_group?: boolean) => {
+            const PrivateUser = await fetchUserPrivate();
+            if (PrivateUser.status_db === "dnd") return;
+            if (window.location.href.includes("/dms")) return;
+
+            const userOrGroup: DmSelection = (
+                is_group ? await fetchGroupChat(message.channel) : await fetchUserPublic(message.author)
+            ) as DmSelection;
+            toast(
+                <div className="dm-toast-icon">
+                    <div
+                        style={
+                            is_group
+                                ? { backgroundImage: `url(${userOrGroup.avatar})`, borderRadius: "5px" }
+                                : {
+                                      backgroundImage: `url(${userOrGroup.avatar})`,
+                                      clipPath: AVATAR_SHAPES[userOrGroup.customization?.square_avatar]
+                                          ? AVATAR_SHAPES[userOrGroup.customization?.square_avatar].style
+                                          : "",
+                                      borderRadius:
+                                          AVATAR_SHAPES[userOrGroup.customization?.square_avatar]?.name !== "Circle Avatar Shape"
+                                              ? userOrGroup.customization?.square_avatar
+                                                  ? "5px"
+                                                  : "100%"
+                                              : "100%",
+                                  }
+                        }
+                        className="dm-toast-avatar"
+                    ></div>{" "}
+                    <b>{!is_group ? `@${message.author}` : userOrGroup.name}</b>: {sanitize(message.content)}
+                </div>,
+                {
+                    progressClassName: "var-color",
+                    onClick: async (ev) => {
+                        window.location.href = `/dms/${userOrGroup.group_id ?? userOrGroup.handle}`;
+                    },
+                },
+            );
+            // const audio = new Audio(chatNotif);
+            // audio.play();
+            // setTimeout(() => {
+            //     audio.remove();
+            // }, 1100);
+        });
+
         (async () => {
             const privUser = await fetchUserPrivate();
             setPrivateUser(privUser);

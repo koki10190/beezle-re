@@ -32,6 +32,7 @@ import { fetchGroupChat } from "../../functions/fetchGroupChat";
 import DmEditGC from "./Components/DmEditGC";
 import DmEditGCMember from "./Components/DmEditGCMember";
 import sanitize from "sanitize-html";
+import { DmSelection } from "../../types/DmSelection";
 
 function truncate(input: string, length: number) {
     if (input.length > length) {
@@ -145,7 +146,7 @@ function Message({
                     }}
                     className="dm-attrib"
                 >
-                    <i className="fa-solid fa-reply" /> Replying to {truncate(replyingTo.content, 24)}
+                    <i className="fa-solid fa-reply" /> Replying to {truncate(replyingTo.content, 24).replace(/(<([^>]+)>)/gi, "")}
                 </a>
             ) : null}
             <div className="dm-msg-author">
@@ -245,8 +246,6 @@ const CallUser = forwardRef<HTMLVideoElement, CallUserProps>((props: CallUserPro
         </div>
     );
 });
-
-interface DmSelection extends UserPublic, BeezleDM.GroupChat {}
 
 let selected: DmSelection = null;
 

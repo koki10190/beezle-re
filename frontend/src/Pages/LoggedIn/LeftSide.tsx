@@ -65,7 +65,7 @@ function LeftSide() {
                     color: "rgba(255,255,255,0.2)",
                 }}
             >
-                Alpha v2.2.1
+                Alpha v3.0.0
             </h2>
             <div
                 style={{
