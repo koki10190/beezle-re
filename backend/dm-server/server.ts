@@ -137,7 +137,7 @@ io.on("connection", (socket) => {
         });
         console.log(db_msg, db_msg.collection.name);
         console.log("Received a message from", self?.handle, "to", to, "userfind:", user ? "true" : "false");
-        socket.emit("message-receive", db_msg);
+        // socket.emit("message-receive", db_msg);
 
         msg.msg_id = id;
         if (is_group) {
