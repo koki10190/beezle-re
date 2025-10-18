@@ -7,7 +7,7 @@ use std::{collections::HashMap, env, sync::{Arc, Mutex}};
 use actix_web::{get, http::StatusCode, post, web, App, HttpRequest, HttpResponse, HttpServer, Responder};
 
 use crate::{
-    beezle::{self, auth::verify_token, is_user_online},
+    beezle::{self, auth::{get_token, verify_token}, is_user_online},
     mongoose::{self, structures::user},
     poison::LockResultExt, routes::api::connections::steam_get_game::get_steam_playing_now,
 };
@@ -62,7 +62,22 @@ pub async fn route(
 
             let status = is_user_online(&ws_sessions, &body.handle);
             let cloned = _document.clone();
-            let status_string = cloned.get("status").unwrap_or(&bson::Bson::Null).as_str().unwrap_or("online");
+            
+            let reqwest_client = reqwest::Client::new();
+            let response = reqwest_client.get(
+                format!("https://server.beezle.lol/status/{}", &body.handle)
+            )
+            .header("Content-Type", "application/json")
+            .header("Authorization", format!("{}", get_token(&req).unwrap()))
+            .send()
+            .await
+            .unwrap()
+            .json::<Document>()
+            .await
+            .unwrap();
+            // let status_string = cloned.get("status").unwrap_or(&bson::Bson::Null).as_str().unwrap_or("online");
+            let status_string = response.get("status").unwrap().as_str().unwrap_or("online");
+        
             _document.insert("status", if status {status_string} else {"offline"});
             _document.insert("status_db", status_string);
 
