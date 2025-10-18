@@ -84,6 +84,7 @@ function PostBox({
     );
     const [replyChainCounter, setReplyChainCounter] = useState(reply_chain_counter);
     const [user, setUser] = useState<UserPublic>();
+    const [userStatus, setUserStatus] = useState("offline");
 
     const [isLiked, setLiked] = useState(false);
     const [isReposted, setReposted] = useState(false);

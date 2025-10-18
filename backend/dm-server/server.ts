@@ -91,14 +91,12 @@ app.get("/status/:handle", async (req, res) => {
     // if (!token) res.status(404).send("no auth header");
     // const decoded = jwt.verify(token!, process.env["TOKEN_SECRET"] as string) as jwt.JwtPayload;
 
-    if (sockets_handle.get(handle)) {
-        const user = await UserModel.findOne({ handle });
-        return res.json(user.get("status").replace('"', ""));
-    } else return res.json({ status: "offline" });
+    const socket = sockets_handle.get(handle);
+    return res.json({ status: socket ? socket.status : "offline" });
 });
 
 const sockets: Map<string, { socket: Socket; id: string; handle: string }> = new Map();
-const sockets_handle: Map<string, { socket: Socket; id: string; handle: string }> = new Map();
+const sockets_handle: Map<string, { socket: Socket; id: string; handle: string; status: string }> = new Map();
 
 io.on("connection", (socket) => {
     console.log("a user has connected");
@@ -109,12 +107,18 @@ io.on("connection", (socket) => {
         sockets.delete(socket.id);
     });
 
-    socket.on("beezle-connect", (token) => {
+    socket.on("beezle-connect", async (token) => {
         try {
             const decoded = jwt.verify(token, process.env["TOKEN_SECRET"] as string) as jwt.JwtPayload;
             console.log("BEEZLE Connection:", decoded.handle);
+
+            const user = await UserModel.findOne({ handle: decoded.handle });
             sockets.set(socket.id, { socket, id: socket.id, handle: decoded.handle });
-            sockets_handle.set(decoded.handle, { socket, id: socket.id, handle: decoded.handle });
+
+            let status = user.get("status").replace('"', "");
+            if (!status || status.length < 1) status = "online";
+
+            sockets_handle.set(decoded.handle, { socket, id: socket.id, handle: decoded.handle, status });
         } catch (err) {
             console.error(err);
             console.log("Invalid token dooodoo");
