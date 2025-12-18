@@ -40,7 +40,9 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
     const [activity, setActivity] = useState<string>(user.activity);
     const [fontFamily, setFontFamily] = useState("Paws");
     const [status, setStatus] = useState<string>(user.status_db ?? "online");
-    const [avatarShape, setAvatarShape] = useState<AvatarShape>(user.customization?.square_avatar ?? AvatarShape.SquareAvatarShape);
+    const [avatarShape, setAvatarShape] = useState<AvatarShape>(
+        (user.customization?.square_avatar ? AvatarShape.SquareAvatarShape : undefined) ?? AvatarShape.SquareAvatarShape,
+    );
     const [profileBgImg, setProfileBgImage] = useState(user.customization?.profile_postbox_img_bought ? user.customization.profile_postbox_img : "");
     const [g1, setG1] = useState<string>(user.customization?.profile_gradient ? user.customization.profile_gradient.color1 : "#000000");
     const [g2, setG2] = useState<string>(user.customization?.profile_gradient ? user.customization.profile_gradient.color2 : "#000000");
