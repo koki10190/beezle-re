@@ -306,6 +306,8 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                 if (steam_data) setSteamData(steam_data[Object.keys(steam_data)[0]].data);
                 const steam_ps_res = await axios.get(`${api_uri}/api/connections/steam_get?steam_id=${user.connections.steam.id}`, GetFullAuth());
                 if (steam_ps_res.data) setSteamUserData(steam_ps_res.data as Steam.PlayerSummary);
+
+                console.log(steam_data);
             }
             // setSteamData(Object.keys(user?.steam_data ?? {}).length > 0 ? user.steam_data[Object.keys(user.steam_data)[0]].data : null);
 
@@ -722,7 +724,7 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                                     <div className="steam-game-header" style={{ backgroundImage: `url(${steamData.header_image})` }}></div>
                                     <div className="steam-game-name">
                                         <p>{steamData.name}</p>
-                                        <p className="steam-game-author">By {steamData.developers.join(",")}</p>
+                                        <p className="steam-game-author">By {steamData.developers?.join(",") ?? "Unknown"}</p>
                                     </div>
                                 </div>
                             </div>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 function PostTyperImageEmbed({
     url,
@@ -29,14 +29,14 @@ function PostTyperImageEmbed({
         });
     };
 
-    getMeta(url, (err: string | Event, img: HTMLImageElement) => {
-        setSize({
-            width: `${img.naturalWidth}px`,
-            height: `${img.naturalHeight}px`,
+    useEffect(() => {
+        getMeta(url, (err: string | Event, img: HTMLImageElement) => {
+            setSize({
+                width: `${img.naturalWidth}px`,
+                height: `${img.naturalHeight}px`,
+            });
         });
-    });
-    // useEffect(() => {
-    // }, []);
+    }, []);
     return (
         <div style={{ width: size.width, height: size.height, backgroundImage: `url(${url})` }} className="post-image-embed">
             <a onClick={removeEmbed} className="post-image-embed-button">
