@@ -66,6 +66,30 @@ pub async fn route(
     .unwrap()
     .claims;
 
+    let halfblood_api_key = env::var("STEAM_HALFBLOOD_API_KEY").unwrap();
+    let appid = env::var("HALFBLOOD_APPID").unwrap();
+    let itemdefid = env::var("HALFBLOOD_ITEMDEFID").unwrap();
+
+    let reqwest_client = reqwest::Client::new();
+
+    let body_str = format!(
+        "appid={}&steamid={}&itemdefid[0]={}&notify=true",
+        appid,
+        &body.steam_id,
+        itemdefid
+    );
+
+    let response = reqwest_client.post(
+        format!("http://api.steampowered.com/IInventoryService/AddPromoItem/v1?key={}", halfblood_api_key)
+    ).body(body_str)
+    .header("Content-Type", "application/x-www-form-urlencoded")
+    .send()
+    .await
+    .unwrap()
+    .json::<Document>()
+    .await
+    .unwrap();
+
     mongoose::update_document(
         &client,
         "beezle",
