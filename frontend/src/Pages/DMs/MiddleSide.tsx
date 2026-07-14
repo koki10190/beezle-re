@@ -11,8 +11,8 @@ import DmUserBox from "./DMUserBox";
 import { AVATAR_SHAPES } from "../../types/cosmetics/AvatarShapes";
 import moment from "moment";
 import EmojiPicker, { EmojiClickData, EmojiStyle, Theme } from "emoji-picker-react";
-import { api_uri, dm_uri, server_uri, tenor_api_key } from "../../links";
-import GifPicker, { TenorImage } from "gif-picker-react";
+import { api_uri, dm_uri, klipy_api_key, server_uri, tenor_api_key } from "../../links";
+import { Gif, GifPicker } from "gif-picker-react";
 import parseURLs from "../../functions/parseURLs";
 import { useNavigate } from "react-router-dom";
 import Divider from "../../Components/Divider";
@@ -33,6 +33,7 @@ import DmEditGC from "./Components/DmEditGC";
 import DmEditGCMember from "./Components/DmEditGCMember";
 import sanitize from "sanitize-html";
 import { DmSelection } from "../../types/DmSelection";
+import { Klipy } from "gif-picker-react/providers/klipy";
 
 function truncate(input: string, length: number) {
     if (input.length > length) {
@@ -1205,10 +1206,10 @@ function Loaded({ self_user, handle, setDisableIcon }: { self_user: UserPrivate;
                                         {gifPickerOpen ? (
                                             <div className="dm-picker-gif">
                                                 <GifPicker
-                                                    onGifClick={(gif: TenorImage) => {
-                                                        textareaRef.current!.value += ` ${gif.url}`;
+                                                    onGifClick={(gif: Gif) => {
+                                                        textareaRef.current!.value += ` ${gif.imageUrl}`;
                                                     }}
-                                                    tenorApiKey={tenor_api_key}
+                                                    provider={Klipy(klipy_api_key)}
                                                     theme={Theme.DARK}
                                                 />
                                             </div>

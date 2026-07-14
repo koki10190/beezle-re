@@ -55,18 +55,42 @@ function parseURLs(
         : sanitize(content);
     // console.log(content);
     if (embed) {
-        const matched = content.match(/\bhttps?:\/\/media\.tenor\.com\S+/gi);
+        //Tenor
+        {
+            const matched = content.match(/\bhttps?:\/\/media\.tenor\.com\S+/gi);
 
-        let i = 0;
-        matched?.forEach((match) => {
-            content = content.replace(match, "");
-            if (i > 2) return;
+            let i = 0;
+            matched?.forEach((match) => {
+                content = content.replace(match, "");
+                if (i > 2) return;
 
-            const isVideo = match.match(/.mp4|.wmv/gi) ? true : false;
-            const embed = ReactDOMServer.renderToStaticMarkup(isVideo ? <VideoEmbed url={match} /> : <ImageEmbed url={match} />);
-            htmlToEmbed += embed;
-            i++;
-        });
+                const isVideo = match.match(/.mp4|.wmv/gi) ? true : false;
+                const embed = ReactDOMServer.renderToStaticMarkup(isVideo ? <VideoEmbed url={match} /> : <ImageEmbed url={match} />);
+                htmlToEmbed += embed;
+                i++;
+            });
+        }
+        // Klipy
+        {
+            const matched = content.match(/https?:\/\/[a-z0-9.]+\.klipy\.com\/[^?\s]+\.(gif|mp4|wmv)/gi);
+            console.log("KLIPY MATCHES", matched);
+            if (matched) {
+                let i = 0;
+                for (const match of matched) {
+                    console.log("GIF", match);
+                    content = content.replace(match, "");
+
+                    if (i > 2) continue;
+
+                    const isVideo = match.toLowerCase().endsWith(".mp4") || match.toLowerCase().endsWith(".wmv");
+
+                    const embed = ReactDOMServer.renderToStaticMarkup(isVideo ? <VideoEmbed url={match} /> : <ImageEmbed url={match} />);
+
+                    htmlToEmbed += embed;
+                    i++;
+                }
+            }
+        }
     }
 
     if (embed) {

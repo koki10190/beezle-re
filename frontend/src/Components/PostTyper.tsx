@@ -2,10 +2,10 @@ import axios from "axios";
 import { FormEvent, LegacyRef, MouseEventHandler, useEffect, useRef, useState } from "react";
 import { BrowserRouter, Routes, Route, redirect } from "react-router-dom";
 import "./PostTyper.css";
-import { api_uri, tenor_api_key } from "../links";
+import { api_uri, klipy_api_key, tenor_api_key } from "../links";
 import { Post } from "../types/Post";
 import EmojiPicker, { Categories, Emoji, EmojiClickData, EmojiStyle, Theme } from "emoji-picker-react";
-import GifPicker, { GifPickerProps, TenorImage } from "gif-picker-react";
+// import  from "gif-picker-react";
 import ImageEmbed from "./ImageEmbed";
 import ReactDOMServer from "react-dom/server";
 import UploadToImgur from "../functions/UploadToImgur";
@@ -24,6 +24,8 @@ import Divider from "./Divider";
 import Poll from "./Poll";
 import Twemoji from "react-twemoji";
 import ReactEmojiTextArea from "@nikaera/react-emoji-textarea";
+import { Klipy } from "gif-picker-react/providers/klipy";
+import { Gif, GifPicker } from "gif-picker-react";
 
 interface FileType {
     file: File;
@@ -232,7 +234,7 @@ function PostTyper({ onSend, replying_to = "", hive_post = null }: { onSend: (da
             <textarea
                 onPaste={PasteImage}
                 minLength={1}
-                maxLength={300}
+                maxLength={1250}
                 ref={textarea}
                 placeholder="Press here to type."
                 className="post-typer noto-emoji-google"
@@ -319,10 +321,10 @@ function PostTyper({ onSend, replying_to = "", hive_post = null }: { onSend: (da
             )}
             {isTenorOpened ? (
                 <GifPicker
-                    onGifClick={(gif: TenorImage) => {
-                        textarea.current!.value += ` ${gif.url}`;
+                    onGifClick={(gif: Gif) => {
+                        textarea.current!.value += ` ${gif.imageUrl}`;
                     }}
-                    tenorApiKey={tenor_api_key}
+                    provider={Klipy(klipy_api_key)}
                     theme={Theme.DARK}
                 />
             ) : (
