@@ -26,7 +26,7 @@ pub async fn route(
     body: web::Json<RegistrationInfo>,
     client: web::Data<mongodb::Client>,
 ) -> impl Responder {
-    // return HttpResponse::Ok().json(doc! { "error": "Registrations to the website are currently closed! Sorry for the inconvenience." });
+    return HttpResponse::Ok().json(doc! { "error": "Registrations to the website are currently closed! Sorry for the inconvenience." });
     if body.email == "" {
         return HttpResponse::Ok().json(doc! { "error": "No email provided!" });
     }
