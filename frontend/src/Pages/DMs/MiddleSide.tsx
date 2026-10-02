@@ -1001,7 +1001,7 @@ function Loaded({ self_user, handle, setDisableIcon }: { self_user: UserPrivate;
                                 }}
                                 className="open-close-dms"
                             >
-                                <i className="nf nf-fa-left_to_line"></i>
+                                <i className="nf nf-md-arrow_collapse_left"></i>
                             </a>
 
                             <div>

@@ -222,7 +222,7 @@ function RightSide({ setPage }: { setPage: any }) {
             </div>
             {window_width < 1100 ? (
                 <a onClick={ExpandRightSide} className="open-panel-button">
-                    <i className="nf nf-left-to-line"></i>
+                    <i className="nf nf-md-arrow_collapse_left"></i>
                 </a>
             ) : (
                 ""
