@@ -142,7 +142,7 @@ function MiddleSide() {
         return (
             <div className="page-sides side-middle home-middle">
                 <h1>
-                    <i className="fa-solid fa-bee"></i> Loading Hive...
+                    <i className="nf nf-md-bee"></i> Loading Hive...
                 </h1>
             </div>
         );
@@ -189,19 +189,19 @@ function MiddleSide() {
                         </span>
                     </p>
                     <p style={{ marginTop: "-10px" }}>
-                        <i style={{ color: "rgb(255, 208, 108)" }} className="fa-solid fa-coins"></i> {hive?.coins?.toLocaleString("en-US") ?? 0}
+                        <i style={{ color: "rgb(255, 208, 108)" }} className="nf nf-fa-coins"></i> {hive?.coins?.toLocaleString("en-US") ?? 0}
                     </p>
                 </div>
                 <div>
                     <h4 className="bee-queen-h5">
-                        <i className="fa-solid fa-crown" /> Bee Queen (Owner)
+                        <i className="nf nf-fa-crown" /> Bee Queen (Owner)
                     </h4>
                     <FollowBox handle={hive.owner} self_user={self} />
                 </div>
                 <div className="hive-page-section">
                     <div className="hive-page-section-header">
                         <h5>
-                            <i className="fa-solid fa-bee" /> Description
+                            <i className="nf nf-md-bee" /> Description
                         </h5>
                         <p style={{ whiteSpace: "pre-line" }}>{hive.description}</p>
                     </div>
@@ -231,7 +231,7 @@ function MiddleSide() {
                         onClick={() => navigate(`/hives/dashboard/${hive.hive_id}`)}
                         className="button-field button-field-blurple"
                     >
-                        <i className="fa-solid fa-shield-halved" /> Dashboard
+                        <i className="nf nf-fa-shield_halved" /> Dashboard
                     </button>
                 ) : (
                     ""
@@ -268,12 +268,12 @@ function MiddleSide() {
             <div className="hive-page-post-seperators">
                 <div onClick={() => setPostUri(POST_SELECTION.RightNow)} className="hive-page-post-selector">
                     <p>
-                        <i className="fa-solid fa-sparkles" /> Right Now
+                        <i className="nf nf-cod-sparkle_filled" /> Right Now
                     </p>
                 </div>
                 <div onClick={() => setPostUri(POST_SELECTION.Explore)} className="hive-page-post-selector">
                     <p>
-                        <i className="fa-solid fa-globe" /> Explore
+                        <i className="nf nf-fa-globe" /> Explore
                     </p>
                 </div>
             </div>

@@ -189,6 +189,24 @@
     position: relative;
 }
 
+.post-audio-embed {
+    -webkit-appearance: none;
+    appearance: none;
+    box-shadow: none;
+    text-shadow: none;
+    /* background-color: white; */
+    /* color: red; */
+}
+
+.post-audio-embed::-webkit-media-controls-play-button,
+.post-audio-embed::-webkit-media-controls-panel {
+    background-color: rgb(255, 255, 255);
+    color: #000;
+    box-shadow: none;
+    border: none;
+    text-shadow: none;
+}
+
 .post-image-embed-button {
     cursor: pointer;
     font-size: 25px;

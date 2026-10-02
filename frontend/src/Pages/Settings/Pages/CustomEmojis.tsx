@@ -92,7 +92,7 @@ function CustomEmojis({ user }: Props) {
         <>
             <div className="page-sides side-middle home-middle">
                 <h1>
-                    <i className="fa-solid fa-icons"></i> Custom Emojis
+                    <i className="nf nf-fa-icons"></i> Custom Emojis
                 </h1>
                 <Divider />
                 <div
@@ -120,7 +120,7 @@ function CustomEmojis({ user }: Props) {
                     ref={idRef}
                 />
                 <p style={{ marginTop: "25px", marginBottom: "0px" }}>
-                    Costs <i className="fa-solid fa-coins" /> 500
+                    Costs <i className="nf nf-fa-coins" /> 500
                 </p>
                 <button onClick={UploadEmoji} style={{ marginBottom: "25px" }} ref={buttonRef} type="submit" className="button-field">
                     Upload Emoji

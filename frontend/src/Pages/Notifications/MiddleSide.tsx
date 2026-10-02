@@ -89,11 +89,11 @@ function MiddleSide() {
     return (
         <div onScroll={handleScroll} className="page-sides side-middle home-middle">
             <h1>
-                <i className="fa-solid fa-bookmark"></i> Notifications
+                <i className="nf nf-fa-bookmark"></i> Notifications
             </h1>
             <Divider />
             <a onClick={ClearNotifs} className="notif-clear">
-                <i className="fa-solid fa-broom-wide"></i> Clear Notifications
+                <i className="nf nf-md-broom"></i> Clear Notifications
             </a>
             <Divider />
             {cached

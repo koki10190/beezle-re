@@ -153,7 +153,7 @@ function MiddleSide() {
     return (
         <div onScroll={page === HivePages.EXPLORE ? handleScroll : () => {}} className="page-sides side-middle home-middle">
             <h1>
-                <i className="fa-solid fa-bee"></i> Hives
+                <i className="nf nf-md-bee"></i> Hives
             </h1>
             <p>
                 Discover hives to be apart of inside Beezle
@@ -189,7 +189,7 @@ function MiddleSide() {
                 </p>
                 <div className="hive-button-section">
                     <button type="button" onClick={() => setPage(HivePages.SEARCH)} className="button-field button-field-gray">
-                        <i className="fa-solid fa-bee"></i> Search Hives
+                        <i className="nf nf-md-bee"></i> Search Hives
                     </button>
                     <button
                         type="button"
@@ -199,7 +199,7 @@ function MiddleSide() {
                         }}
                         className="button-field button-field-gray"
                     >
-                        <i className="fa-solid fa-bee"></i> Joined Hives
+                        <i className="nf nf-md-bee"></i> Joined Hives
                     </button>
                     <button
                         type="button"
@@ -209,7 +209,7 @@ function MiddleSide() {
                         }}
                         className="button-field button-field-gray"
                     >
-                        <i className="fa-solid fa-sparkles"></i> Discover Hives
+                        <i className="nf nf-cod-sparkle_filled"></i> Discover Hives
                     </button>
                 </div>
             </form>

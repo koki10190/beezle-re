@@ -49,7 +49,7 @@ function SpotifyAuth() {
         <>
             <div className="centered">
                 <h1>
-                    <i className="fa-brands fa-spotify" /> <span ref={authMessage}>Authenticating...</span>
+                    <i className="nf nf-fa-spotify" /> <span ref={authMessage}>Authenticating...</span>
                 </h1>
             </div>
         </>

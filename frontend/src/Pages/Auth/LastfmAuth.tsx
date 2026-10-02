@@ -49,7 +49,7 @@ function LastfmAuth() {
         <>
             <div className="centered">
                 <h1>
-                    <i className="fa-brands fa-lastfm" /> <span ref={authMessage}>Authenticating...</span>
+                    <i className="nf nf-fa-lastfm" /> <span ref={authMessage}>Authenticating...</span>
                 </h1>
             </div>
         </>

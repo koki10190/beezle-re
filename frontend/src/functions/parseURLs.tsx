@@ -13,6 +13,9 @@ import { Links, marked } from "marked";
 import { Post } from "../types/Post";
 import FetchHive from "./FetchHive";
 import twemoji from "twemoji";
+import GetFileTypeEnum from "./GetFileTypeEnum";
+import FileTypeEnum from "../types/FileTypeEnum";
+import AudioEmbed from "../Components/AudioEmbed";
 
 function MentionHover({ handle }: { handle: string }) {
     return (
@@ -73,7 +76,7 @@ function parseURLs(
         // Klipy
         {
             const matched = content.match(/https?:\/\/[a-z0-9.]+\.klipy\.com\/[^?\s]+\.(gif|mp4|wmv)/gi);
-            console.log("KLIPY MATCHES", matched);
+            // console.log("KLIPY MATCHES", matched);
             if (matched) {
                 let i = 0;
                 for (const match of matched) {
@@ -129,8 +132,26 @@ function parseURLs(
             content = content.replace(match, "");
             if (i > 2) return;
 
-            const isVideo = match.match(/.mp4|.wmv/gi) ? true : false;
-            const embed = ReactDOMServer.renderToStaticMarkup(isVideo ? <VideoEmbed url={match} /> : <ImageEmbed url={match} />);
+            // const isVideo = match.match(/.mp4|.wmv/gi) ? true : false;
+            const type = GetFileTypeEnum(match.split(".")[--match.split(".").length]);
+
+            let embed = "";
+            switch (type) {
+                case FileTypeEnum.Image: {
+                    embed = ReactDOMServer.renderToStaticMarkup(<ImageEmbed url={match} />);
+                    break;
+                }
+                case FileTypeEnum.Video: {
+                    embed = ReactDOMServer.renderToStaticMarkup(<VideoEmbed url={match} />);
+                    break;
+                }
+                case FileTypeEnum.Audio: {
+                    embed = ReactDOMServer.renderToStaticMarkup(<AudioEmbed url={match} />);
+                    break;
+                }
+            }
+
+            // const embed = ReactDOMServer.renderToStaticMarkup(isVideo ? <VideoEmbed url={match} /> : <ImageEmbed url={match} />);
             htmlToEmbed += embed;
             i++;
         });

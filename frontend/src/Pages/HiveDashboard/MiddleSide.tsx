@@ -124,7 +124,7 @@ function MiddleSide() {
     return (
         <div className="page-sides side-middle home-middle">
             <h1>
-                <i className="fa-solid fa-bee"></i> Hive Dashboard
+                <i className="nf nf-md-bee"></i> Hive Dashboard
             </h1>
             <p>Manage users & posts</p>
             <hr
@@ -146,7 +146,7 @@ function MiddleSide() {
                     style={{ width: "100%" }}
                 />
                 <button onClick={KickUser} className="button-field button-field-red">
-                    <i className="fa-solid fa-ban"></i> Kick User
+                    <i className="nf nf-fa-ban"></i> Kick User
                 </button>
                 <hr
                     style={{
@@ -166,7 +166,7 @@ function MiddleSide() {
                     style={{ width: "100%" }}
                 />
                 <button onClick={DeletePost} className="button-field button-field-red">
-                    <i className="fa-solid fa-ban"></i> Delete Post
+                    <i className="nf nf-fa-ban"></i> Delete Post
                 </button>
                 <hr
                     style={{
@@ -186,7 +186,7 @@ function MiddleSide() {
                     style={{ width: "100%" }}
                 />
                 <button onClick={() => GrantOrRevokeMod(true)} className="button-field button-field-blurple">
-                    <i className="fa-solid fa-shield-halved"></i> Grant Moderator
+                    <i className="nf nf-fa-shield_halved"></i> Grant Moderator
                 </button>
                 <hr
                     style={{
@@ -206,7 +206,7 @@ function MiddleSide() {
                     style={{ width: "100%" }}
                 />
                 <button onClick={() => GrantOrRevokeMod(false)} className="button-field button-field-red">
-                    <i className="fa-solid fa-shield-halved"></i> Remove Moderator
+                    <i className="nf nf-fa-shield_halved"></i> Remove Moderator
                 </button>
                 <hr
                     style={{

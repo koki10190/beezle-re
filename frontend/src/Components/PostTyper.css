@@ -81,18 +81,25 @@
     margin-top: 15px;
 }
 
-.post-typer-video-embed {
+.post-typer-video-embed,
+.post-typer-audio-embed {
     position: relative;
 }
 
-.post-video-embed-button {
+.post-audio-embed {
+    width: 100%;
+}
+
+.post-video-embed-button,
+.post-audio-embed-button {
     cursor: pointer;
     font-size: 25px;
     float: right;
     color: rgba(255, 255, 255, 0.5);
     transition: color ease-in-out 150ms;
 }
-.post-video-embed-button:hover {
+.post-video-embed-button:hover,
+.post-audio-embed-button:hover {
     color: rgba(255, 255, 255, 1);
 }
 

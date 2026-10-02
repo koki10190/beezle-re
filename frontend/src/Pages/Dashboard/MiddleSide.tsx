@@ -112,7 +112,7 @@ function RightSide({ setPage }: { setPage: any }) {
                         setExpanded(false);
                         setPage(Pages.REPORTS);
                     }}
-                    iconClass="fa-solid fa-flag"
+                    iconClass="nf nf-fa-flag"
                     text="Reports"
                     style={undefined}
                 />
@@ -121,7 +121,7 @@ function RightSide({ setPage }: { setPage: any }) {
                         setExpanded(false);
                         setPage(Pages.BAN_USER);
                     }}
-                    iconClass="fa-solid fa-hammer-crash"
+                    iconClass="nf nf-fa-hammer"
                     text="Ban User"
                     style={undefined}
                 />
@@ -130,7 +130,7 @@ function RightSide({ setPage }: { setPage: any }) {
                         setExpanded(false);
                         setPage(Pages.DELETE_POST);
                     }}
-                    iconClass="fa-solid fa-trash"
+                    iconClass="nf nf-fa-trash"
                     text="Delete Post"
                     style={undefined}
                 />
@@ -139,7 +139,7 @@ function RightSide({ setPage }: { setPage: any }) {
                         setExpanded(false);
                         setPage(Pages.VERIFY_USER);
                     }}
-                    iconClass="fa-solid fa-badge-check"
+                    iconClass="nf nf-md-check_decagram"
                     text="Verify User"
                     style={undefined}
                 />
@@ -147,14 +147,14 @@ function RightSide({ setPage }: { setPage: any }) {
                     onClick={() => {
                         navigate("/home");
                     }}
-                    iconClass="fa-solid fa-home"
+                    iconClass="nf nf-fa-home"
                     text="Go Back"
                     style={undefined}
                 />
             </div>
             {window_width < 1100 ? (
                 <a onClick={ExpandRightSide} className="open-panel-button">
-                    <i className="fa-solid fa-left-to-line"></i>
+                    <i className="nf nf-md-arrow_collapse_left"></i>
                 </a>
             ) : (
                 ""

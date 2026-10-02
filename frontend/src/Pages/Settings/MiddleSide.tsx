@@ -146,7 +146,7 @@ function RightSide({ setPage }: { setPage: any }) {
                         setPage(Pages.DETAILS);
                         setExpanded(false);
                     }}
-                    iconClass="fa-solid fa-id-badge"
+                    iconClass="nf nf-fa-id_badge"
                     text="Details"
                     style={undefined}
                 />
@@ -155,7 +155,7 @@ function RightSide({ setPage }: { setPage: any }) {
                         setPage(Pages.API);
                         setExpanded(false);
                     }}
-                    iconClass="fa-solid fa-square-code"
+                    iconClass="nf nf-md-code_greater_than_or_equal"
                     text="API"
                     style={undefined}
                 />
@@ -164,7 +164,7 @@ function RightSide({ setPage }: { setPage: any }) {
                         setPage(Pages.REPORT);
                         setExpanded(false);
                     }}
-                    iconClass="fa-solid fa-flag"
+                    iconClass="nf nf-fa-flag"
                     text="Report"
                     style={undefined}
                 />
@@ -173,7 +173,7 @@ function RightSide({ setPage }: { setPage: any }) {
                         setPage(Pages.CONNECTIONS);
                         setExpanded(false);
                     }}
-                    iconClass="fa-solid fa-address-card"
+                    iconClass="nf nf-fa-address_card"
                     text="Connections"
                     style={undefined}
                 />
@@ -182,7 +182,7 @@ function RightSide({ setPage }: { setPage: any }) {
                         setPage(Pages.CUSTOM_EMOJIS);
                         setExpanded(false);
                     }}
-                    iconClass="fa-solid fa-icons"
+                    iconClass="nf nf-fa-icons"
                     text="Custom Emojis"
                     style={undefined}
                 />
@@ -191,7 +191,7 @@ function RightSide({ setPage }: { setPage: any }) {
                         setPage(Pages.CUSTOMIZE);
                         setExpanded(false);
                     }}
-                    iconClass="fa-solid fa-paint-roller"
+                    iconClass="nf nf-fa-paint_roller"
                     text="Customize"
                     style={undefined}
                 />
@@ -200,21 +200,21 @@ function RightSide({ setPage }: { setPage: any }) {
                         setPage(Pages.CHANGE_ACCOUNTS);
                         setExpanded(false);
                     }}
-                    iconClass="fa-solid fa-users"
+                    iconClass="nf nf-fa-users"
                     text="Accounts"
                     style={undefined}
                 />
-                {/* <SettingsButton onClick={() => setPage(Pages.POST_PREFERENCES)} iconClass="fa-solid fa-comment" text="Posts" style={undefined} /> */}
+                {/* <SettingsButton onClick={() => setPage(Pages.POST_PREFERENCES)} iconClass="nf nf-comment" text="Posts" style={undefined} /> */}
                 <SettingsButton
                     onClick={() => {
                         navigate("/home");
                     }}
-                    iconClass="fa-solid fa-home"
+                    iconClass="nf nf-fa-home"
                     text="Go Back"
                     style={undefined}
                 />
                 <SettingsButton
-                    iconClass="fa-solid fa-trash"
+                    iconClass="nf nf-fa-trash"
                     text="Delete Account"
                     onClick={() => (sureRef.current!.style.display = "flex")}
                     style={{ color: "red" }}
@@ -222,7 +222,7 @@ function RightSide({ setPage }: { setPage: any }) {
             </div>
             {window_width < 1100 ? (
                 <a onClick={ExpandRightSide} className="open-panel-button">
-                    <i className="fa-solid fa-left-to-line"></i>
+                    <i className="nf nf-left-to-line"></i>
                 </a>
             ) : (
                 ""

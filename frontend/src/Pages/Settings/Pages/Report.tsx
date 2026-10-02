@@ -51,7 +51,7 @@ function Report({ user }: Props) {
         <>
             <div className="page-sides side-middle home-middle">
                 <h1>
-                    <i className="fa-solid fa-flag" /> Report
+                    <i className="nf nf-fa-flag" /> Report
                 </h1>
                 <Divider />
                 <form onSubmit={SendReport}>

@@ -115,24 +115,24 @@ function RightSide({ forceExpansion, disableIcon }: { forceExpansion?: boolean; 
                 }
                 className="page-sides side-right"
             >
-                <SettingsButton redirect="/home" iconClass="fa-solid fa-house" text="Home" style={undefined} />
+                <SettingsButton redirect="/home" iconClass="nf nf-fa-house" text="Home" style={undefined} />
                 <SettingsButton
                     redirect="/notifications"
-                    iconClass="fa-solid fa-bell"
+                    iconClass="nf nf-fa-bell"
                     force_redirect={false}
                     text={`Notifs (${notifCount})`}
                     style={{ color: notifColor }}
                 />
-                <SettingsButton redirect="/dms" iconClass="fa-solid fa-messages" text="DMs" style={undefined} />
-                <SettingsButton redirect="/most-used-hashtags" iconClass="fa-solid fa-hashtag" text="Hashtags" style={undefined} />
-                <SettingsButton redirect="/bookmarks" iconClass="fa-solid fa-bookmark" text="Bookmarks" style={undefined} />
-                <SettingsButton redirect="/shop" iconClass="fa-solid fa-shop" text="Shop" style={undefined} />
-                <SettingsButton redirect="/search" iconClass="fa-solid fa-magnifying-glass" text="Search" style={undefined} />
-                <SettingsButton redirect="/hives" iconClass="fa-solid fa-bee" text="Hives" style={undefined} />
-                <SettingsButton redirect="/settings" iconClass="fa-solid fa-cog" text="Settings" style={undefined} />
+                <SettingsButton redirect="/dms" iconClass="nf nf-fa-message" text="DMs" style={undefined} />
+                <SettingsButton redirect="/most-used-hashtags" iconClass="nf nf-fa-hashtag" text="Hashtags" style={undefined} />
+                <SettingsButton redirect="/bookmarks" iconClass="nf nf-fa-bookmark" text="Bookmarks" style={undefined} />
+                <SettingsButton redirect="/shop" iconClass="nf nf-fa-shop" text="Shop" style={undefined} />
+                <SettingsButton redirect="/search" iconClass="nf nf-oct-search" text="Search" style={undefined} />
+                <SettingsButton redirect="/hives" iconClass="nf nf-md-beehive_outline" text="Hives" style={undefined} />
+                <SettingsButton redirect="/settings" iconClass="nf nf-fa-cog" text="Settings" style={undefined} />
                 {self_user ? (
                     self_user?.badges?.findIndex((x) => x == BadgeType.OWNER || x == BadgeType.MODERATOR) > -1 ? (
-                        <SettingsButton redirect="/dashboard" iconClass="fa-solid fa-shield" text="Dashboard" style={undefined} />
+                        <SettingsButton redirect="/dashboard" iconClass="nf nf-fa-shield" text="Dashboard" style={undefined} />
                     ) : (
                         ""
                     )
@@ -168,11 +168,11 @@ function RightSide({ forceExpansion, disableIcon }: { forceExpansion?: boolean; 
                     </span>
                 </a>
 
-                <SettingsButton redirect="/logout" style={{ color: "red" }} iconClass="fa-solid fa-right-from-bracket" text="Log out" />
+                <SettingsButton redirect="/logout" style={{ color: "red" }} iconClass="nf nf-fa-right_from_bracket" text="Log out" />
             </div>
             {(window_width < 1100 || forceExpansion) && !disableIcon ? (
                 <a onClick={ExpandRightSide} className="open-panel-button">
-                    <i className="fa-solid fa-left-to-line"></i>
+                    <i className="nf nf-md-arrow_collapse_left"></i>
                 </a>
             ) : (
                 ""

@@ -40,7 +40,7 @@ function VerifyUser({ user }: Props) {
         <>
             <div className="page-sides side-middle home-middle">
                 <h1>
-                    <i className="fa-solid fa-badge-check" /> Verify User
+                    <i className="nf nf-md-check_decagram" /> Verify User
                 </h1>
                 <p>Moderators! If you verify anyone without owner's permission, you'll be executed by the Queen Bee!</p>
                 <Divider />
@@ -49,22 +49,22 @@ function VerifyUser({ user }: Props) {
                     onClick={() => _verify_user_api(BadgeType.VERIFIED)}
                     className="button-field button-field-blue inline-block margin-right-10px"
                 >
-                    <i className="fa-solid fa-badge-check" /> Give Verify Badge
+                    <i className="nf nf-md-check_decagram" /> Give Verify Badge
                 </button>
                 <button
                     onClick={() => _verify_user_api(BadgeType.OLD_TESTER)}
                     className="button-field button-field-blurple inline-block margin-right-10px"
                 >
-                    <i className="fa-solid fa-vial-circle-check" /> Give Tester Badge
+                    <i className="nf nf-fa-vial" /> Give Tester Badge
                 </button>
                 <button
                     onClick={() => _verify_user_api(BadgeType.CONTRIBUTOR)}
                     className="button-field button-field-pink inline-block margin-right-10px"
                 >
-                    <i className="fa-solid fa-handshake-angle" /> Give Contrib Badge
+                    <i className="nf nf-fa-handshake_angle" /> Give Contrib Badge
                 </button>
                 <button onClick={() => _verify_user_api(BadgeType.DONATOR)} className="button-field inline-block margin-right-10px">
-                    <i className="fa-solid fa-honey-pot" /> Give Donator Badge
+                    <i className="nf nf-md-bee" /> Give Donator Badge
                 </button>
             </div>
         </>

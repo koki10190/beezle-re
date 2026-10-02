@@ -34,7 +34,7 @@ function HiveBox({ hive, joined = false }: { hive: BeezleHives.Hive; joined?: bo
                 <p className="hive-box-handle">@{hive.handle}</p>
                 <div className="hive-box-desc-container">
                     <p className="hive-box-desc-header">
-                        <i className="fa-solid fa-address-card"></i> Description
+                        <i className="nf nf-fa-address_card"></i> Description
                     </p>
                     <p className="hive-box-desc">{hive.description}</p>
                 </div>

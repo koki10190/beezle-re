@@ -21,13 +21,13 @@ interface HashtagCounter {
 function GetTrophy({ index }: { index: number }) {
     switch (index) {
         case 0:
-            return <i className="fa-solid fa-trophy-star" style={{ color: "#ffbb29" }}></i>;
+            return <i className="nf nf-md-trophy_award" style={{ color: "#ffbb29" }}></i>;
         case 1:
-            return <i className="fa-solid fa-trophy" style={{ color: "#c2c2c" }}></i>;
+            return <i className="nf nf-fa-trophy" style={{ color: "#c2c2c" }}></i>;
         case 2:
-            return <i className="fa-solid fa-trophy" style={{ color: "#cd7f32" }}></i>;
+            return <i className="nf nf-fa-trophy" style={{ color: "#cd7f32" }}></i>;
         default:
-            return <i className="fa-solid fa-award" style={{ color: "#ffffff" }}></i>;
+            return <i className="nf nf-fa-award" style={{ color: "#ffffff" }}></i>;
     }
 }
 
@@ -86,7 +86,7 @@ function MiddleSide() {
     return (
         <div className="page-sides side-middle home-middle">
             <h1>
-                <i className="fa-solid fa-hashtag"></i> Most Used Hashtags
+                <i className="nf nf-fa-hashtag"></i> Most Used Hashtags
             </h1>
             <Divider />
             {hashtags.length < 1

@@ -241,7 +241,7 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
             <div style={{ marginTop: "82px" }}>
                 <div className="profile-container-nom">
                     <p className="profile-container-header">
-                        <i className="fa-solid fa-user"></i> About Me
+                        <i className="nf nf-fa-user"></i> About Me
                     </p>
                     <textarea
                         maxLength={1000}
@@ -260,7 +260,7 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
                         }}
                         className="post-typer-button"
                     >
-                        <i className="fa-solid fa-face-awesome" /> Emojis
+                        <i className="nf nf-md-sticker_emoji" /> Emojis
                     </a>
                     {isEmojiPickerOpened ? (
                         <EmojiPicker
@@ -281,7 +281,7 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
                 </div>
                 <div className="profile-container-nom">
                     <p className="profile-container-header">
-                        <i className="fa-solid fa-person-running-fast"></i> Activity
+                        <i className="nf nf-fa-person_running"></i> Activity
                     </p>
                     <textarea maxLength={35} value={activity} onChange={(e) => setActivity(e.target.value)} className="about_me input-field">
                         {user.activity}
@@ -289,7 +289,7 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
                 </div>
                 <div className="profile-container-nom">
                     <p className="profile-container-header">
-                        <i className="fa-solid fa-signal"></i> Status
+                        <i className="nf nf-fa-signal"></i> Status
                     </p>
                     <br></br>
                     <select
@@ -310,7 +310,7 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
                 {user.customization?.profile_gradient_bought ? (
                     <div className="profile-container-nom">
                         <p className="profile-container-header">
-                            <i className="fa-solid fa-fill-drip"></i> Profile Gradient
+                            <i className="nf nf-fa-fill_drip"></i> Profile Gradient
                         </p>
                         <input
                             value={g1}
@@ -327,7 +327,7 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
                 {user.customization?.name_color_bought ? (
                     <div className="profile-container-nom">
                         <p className="profile-container-header">
-                            <i className="fa-solid fa-palette"></i> Name Color Gradient
+                            <i className="nf nf-fa-palette"></i> Name Color Gradient
                         </p>
                         <input
                             value={ng1}
@@ -343,7 +343,7 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
                 )}
                 <div className="profile-container-nom">
                     <p className="profile-container-header">
-                        <i className="fa-solid fa-hexagon"></i> Avatar Shape
+                        <i className="nf nf-fae-hexagon"></i> Avatar Shape
                     </p>
                     <br></br>
                     <select
@@ -369,7 +369,7 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
                 {user?.customization?.profile_image?.bought ? (
                     <div className="profile-container-nom">
                         <p className="profile-container-header">
-                            <i className="fa-solid fa-images"></i> Background Image
+                            <i className="nf nf-fa-images"></i> Background Image
                         </p>
                         <br></br>
                         <input
@@ -444,7 +444,7 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
                 {user?.customization?.display_name?.font?.bought ? (
                     <div className="profile-container-nom">
                         <p className="profile-container-header">
-                            <i className="fa-solid fa-book-font"></i> Display Name Font
+                            <i className="nf nf-seti-font"></i> Display Name Font
                         </p>
                         <div style={{ marginTop: "30px" }} />
                         <select
@@ -515,7 +515,7 @@ function Loaded({ user }: { user: UserPublic | UserPrivate }) {
                 {/* {user.connections?.steam?.id && steamInventory?.descriptions ? (
                     <div className="profile-container-nom">
                         <p className="profile-container-header">
-                            <i className="fa-brands fa-steam" /> Steam Inventory
+                            <i className="nf nf-fa-steam" /> Steam Inventory
                         </p>
                         <div
                             style={{ "--cols": Math.ceil(steamInventory.descriptions.length / 5) } as React.CSSProperties}

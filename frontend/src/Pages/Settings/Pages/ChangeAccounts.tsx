@@ -65,15 +65,15 @@ function AccountDisplay({ main_token, token, accounts, setAccounts }: AccountDis
             <div className="change-acc-buttons">
                 {main_token !== token ? (
                     <button onClick={SelectAccount} className="button-field button-field-small button-field-blurple">
-                        <i className="fa-solid fa-check"></i> Select
+                        <i className="nf nf-fa-check"></i> Select
                     </button>
                 ) : (
                     <button disabled className="button-field button-field-small">
-                        <i className="fa-solid fa-check"></i> Already Selected
+                        <i className="nf nf-fa-check"></i> Already Selected
                     </button>
                 )}
                 <button onClick={RemoveAccount} className="button-field button-field-small button-field-red">
-                    <i className="fa-solid fa-x"></i> Remove
+                    <i className="nf nf-oct-x"></i> Remove
                 </button>
             </div>
         </div>
@@ -136,7 +136,7 @@ function ChangeAccounts({ user }: Props) {
         <>
             <div className="page-sides side-middle home-middle">
                 <h1>
-                    <i className="fa-solid fa-users"></i> Change Accounts
+                    <i className="nf nf-fa-users"></i> Change Accounts
                 </h1>
                 <Divider />
                 <form onSubmit={AddAccount} className="change-acc-add-acc">
@@ -144,7 +144,7 @@ function ChangeAccounts({ user }: Props) {
                     <input className="input-field" ref={email} name="email" placeholder="Email or Handle"></input>
                     <input className="input-field" ref={password} type="password" name="password" placeholder="Password"></input>
                     <button className="button-field button-field-small button-field-blurple">
-                        <i className="fa-solid fa-check"></i> Add Account
+                        <i className="nf nf-fa-check"></i> Add Account
                     </button>
                 </form>
 

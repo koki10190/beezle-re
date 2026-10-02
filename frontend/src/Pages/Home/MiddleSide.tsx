@@ -130,7 +130,7 @@ function MiddleSide() {
                     className="hive-page-post-selector"
                 >
                     <p>
-                        <i className="fa-solid fa-home" /> Home
+                        <i className="nf nf-fa-home" /> Home
                     </p>
                 </div>
                 <div
@@ -140,7 +140,7 @@ function MiddleSide() {
                     className="hive-page-post-selector"
                 >
                     <p>
-                        <i className="fa-solid fa-sparkles" /> Right Now
+                        <i className="nf nf-cod-sparkle_filled" /> Right Now
                     </p>
                 </div>
                 <div
@@ -150,14 +150,14 @@ function MiddleSide() {
                     className="hive-page-post-selector"
                 >
                     <p>
-                        <i className="fa-solid fa-globe" /> Explore
+                        <i className="nf nf-fa-globe" /> Explore
                     </p>
                 </div>
             </div>
             <p>
                 You're viewing {pageText} -{" "}
                 <span onClick={() => FetchPosts(0, self_user)} className="text-btn">
-                    <i className="fa-solid fa-repeat" /> Reload Posts
+                    <i className="nf nf-fa-repeat" /> Reload Posts
                 </span>
             </p>
             {self_user?.is_bot ? <p>Bot Accounts are not allowed to use the site.</p> : ""}

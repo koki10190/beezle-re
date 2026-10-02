@@ -119,7 +119,7 @@ function DmUserBox({ dm_option, selected, self_user, onClick, setSelection }: Dm
         >
             <div onClick={onClick} className="user-detail">
                 <a onClick={DeleteSelection} className="dmuserbox-delete">
-                    <i className="fa-solid fa-x"></i>
+                    <i className="nf nf-oct-x"></i>
                 </a>
                 <div className="avatar-container">
                     <div

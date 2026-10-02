@@ -54,7 +54,7 @@ function ShopBox({
                         {title}
                     </p>
                     <p className="shop-box-price">
-                        <i className="fa-solid fa-coins" /> Costs {price.toLocaleString("en-US")}
+                        <i className="nf nf-fa-coins" /> Costs {price.toLocaleString("en-US")}
                     </p>
                     {level_required ? (
                         <p style={{ marginTop: "-15px" }}>

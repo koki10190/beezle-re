@@ -26,10 +26,16 @@ import Twemoji from "react-twemoji";
 import ReactEmojiTextArea from "@nikaera/react-emoji-textarea";
 import { Klipy } from "gif-picker-react/providers/klipy";
 import { Gif, GifPicker } from "gif-picker-react";
+import { Catbox } from "node-catbox";
+import UploadFileToCatbox from "../functions/UploadFileToCatbox";
+import FileTypeEnum from "../types/FileTypeEnum";
+import GetFileTypeEnum from "../functions/GetFileTypeEnum";
+import PostTyperAudioEmbed from "./PostTyperAudioEmbed";
 
 interface FileType {
     file: File;
-    isVideo: boolean;
+    link?: string;
+    type: FileTypeEnum;
 }
 
 function PostTyper({ onSend, replying_to = "", hive_post = null }: { onSend: (data: Post) => void; replying_to?: string; hive_post?: string }) {
@@ -80,18 +86,27 @@ function PostTyper({ onSend, replying_to = "", hive_post = null }: { onSend: (da
             for (const file of files) {
                 sendButtonRef.current!.disabled = true;
                 sendButtonRef.current!.innerText = "Posting...";
-                let vid = await UploadToImgurVideoByFile(file.file);
-                if (!vid) {
-                    sendButtonRef.current!.disabled = false;
-                    sendButtonRef.current!.innerText = "Send";
-                    return;
+                try {
+                    const uploadedFile = await UploadFileToCatbox(file.file);
+                    console.log("CATBOX.MOE RES:", uploadedFile);
+                    links += uploadedFile.link + " ";
+                } catch (err) {
+                    const imgurFile = await UploadToImgurFile(file.file);
+                    if (!imgurFile) {
+                        sendButtonRef.current!.disabled = false;
+                        sendButtonRef.current!.innerText = "Send";
+                        return;
+                    }
+                    console.log(imgurFile);
+                    if (imgurFile.data.link == undefined) {
+                        toast.error("There was an error uploading the image using a fallback: " + imgurFile.data.error);
+                        sendButtonRef.current!.disabled = false;
+                        sendButtonRef.current!.innerText = "Send";
+                        return;
+                    }
+
+                    links += imgurFile.data.link + " ";
                 }
-                console.log(vid);
-                if (vid.data.link == undefined) {
-                    toast.error("There was an error uploading the image using a fallback: " + vid.data.error);
-                    continue;
-                }
-                links += file.isVideo ? vid.data.link + " " : (await UploadToImgurFile(file.file)).data.link + " ";
             }
 
             if (!textarea.current || !canCreate || (textarea.current.value.replace(/ /g, "") == "" && links == "")) {
@@ -136,17 +151,19 @@ function PostTyper({ onSend, replying_to = "", hive_post = null }: { onSend: (da
         })();
     };
 
-    const UploadImage = (e: any) => {
+    const UploadFile = (e: any) => {
         const target = filesToUploadRef.current!;
         const files = fileRef.current!.files as FileList;
         const link = window.URL.createObjectURL(files[0]);
         const ext = files[0].type;
         const isVideo = ext.match(/mp4|wmv/gi) ? true : false;
+        console.log(files[0].name, files[0].type, GetFileTypeEnum(ext));
         setFiles((old) => [
             ...old,
             {
                 file: files[0],
-                isVideo,
+                link: window.URL.createObjectURL(files[0]),
+                type: GetFileTypeEnum(ext),
             },
         ]);
         // target.innerHTML += ReactDOMServer.renderToStaticMarkup(isVideo ? <VideoEmbed url={link} /> : <ImageEmbed url={link} />);
@@ -169,7 +186,8 @@ function PostTyper({ onSend, replying_to = "", hive_post = null }: { onSend: (da
                 ...old,
                 {
                     file: blob,
-                    isVideo,
+                    link: window.URL.createObjectURL(blob),
+                    type: GetFileTypeEnum(ext),
                 },
             ]);
         }
@@ -240,23 +258,16 @@ function PostTyper({ onSend, replying_to = "", hive_post = null }: { onSend: (da
                 className="post-typer noto-emoji-google"
             ></textarea>
             <div ref={filesToUploadRef} className="files-to-upload">
-                {files.map((file, index) =>
-                    file.isVideo ? (
-                        <PostTyperVideoEmbed
-                            setFiles={setFiles}
-                            index={index}
-                            key={window.URL.createObjectURL(file.file)}
-                            url={window.URL.createObjectURL(file.file)}
-                        />
-                    ) : (
-                        <PostTyperImageEmbed
-                            setFiles={setFiles}
-                            index={index}
-                            key={window.URL.createObjectURL(file.file)}
-                            url={window.URL.createObjectURL(file.file)}
-                        />
-                    ),
-                )}
+                {files.map((file, index) => {
+                    switch (file.type) {
+                        case FileTypeEnum.Video:
+                            return <PostTyperVideoEmbed setFiles={setFiles} index={index} key={`FileViewerIndex-${index}`} url={file.link} />;
+                        case FileTypeEnum.Image:
+                            return <PostTyperImageEmbed setFiles={setFiles} index={index} key={`FileViewerIndex-${index}`} url={file.link} />;
+                        case FileTypeEnum.Audio:
+                            return <PostTyperAudioEmbed setFiles={setFiles} index={index} key={`FileViewerIndex-${index}`} url={file.link} />;
+                    }
+                })}
             </div>
             {poll ? (
                 <div>
@@ -272,9 +283,9 @@ function PostTyper({ onSend, replying_to = "", hive_post = null }: { onSend: (da
             )}
             <div className="post-typer-buttons">
                 <a onClick={() => fileRef.current!.click()} className="post-typer-button">
-                    <i className="fa-solid fa-image" />
+                    <i className="nf nf-fa-image" />
                 </a>
-                <input onChange={UploadImage} accept=".jpeg,.gif,.png,.jpg,.mp4" ref={fileRef} type="file" style={{ display: "none" }} />
+                <input onChange={UploadFile} accept="audio/*, image/*, video/*" ref={fileRef} type="file" style={{ display: "none" }} />
                 <a
                     onClick={() => {
                         setEmojiPickerOpened(!isEmojiPickerOpened);
@@ -282,7 +293,7 @@ function PostTyper({ onSend, replying_to = "", hive_post = null }: { onSend: (da
                     }}
                     className="post-typer-button"
                 >
-                    <i className="fa-solid fa-face-awesome" />
+                    <i className="nf nf-md-sticker_emoji" />
                 </a>
                 <a
                     onClick={() => {
@@ -291,7 +302,7 @@ function PostTyper({ onSend, replying_to = "", hive_post = null }: { onSend: (da
                     }}
                     className="post-typer-button"
                 >
-                    <i className="fa-solid fa-gif" />
+                    <i className="nf nf-md-file_gif_box" />
                 </a>
                 <a
                     onClick={() => {
@@ -299,7 +310,7 @@ function PostTyper({ onSend, replying_to = "", hive_post = null }: { onSend: (da
                     }}
                     className="post-typer-button"
                 >
-                    <i className="fa-solid fa-poll-people" />
+                    <i className="nf nf-fa-square_poll_vertical" />
                 </a>
                 <button ref={sendButtonRef} onClick={CreatePost} className="post-typer-button button-field post-typer-sender">
                     Send
@@ -334,7 +345,7 @@ function PostTyper({ onSend, replying_to = "", hive_post = null }: { onSend: (da
             {isPollOpened ? (
                 <FullPopup>
                     <h1 style={{ marginTop: "10px", marginBottom: "5px" }}>
-                        <i className="fa-solid fa-square-poll-vertical"></i> Poll Creator
+                        <i className="nf nf-fa-square-poll-vertical"></i> Poll Creator
                     </h1>
                     <label htmlFor="cpoll-title">Poll Title</label>
                     <input
@@ -418,7 +429,7 @@ function PostTyper({ onSend, replying_to = "", hive_post = null }: { onSend: (da
                         className="divider"
                     ></hr>
                     <h3 style={{ marginTop: "10px", marginBottom: "10px" }}>
-                        <i className="fa-solid fa-bars-progress"></i> Poll Options
+                        <i className="nf nf-fa-bars-progress"></i> Poll Options
                     </h3>
                     <label htmlFor="cpoll-option-title">Option</label>
                     <input
@@ -443,7 +454,7 @@ function PostTyper({ onSend, replying_to = "", hive_post = null }: { onSend: (da
                                 <div className="cpoll-option">
                                     <p className="cpoll-option-text">{option}</p>
                                     <button onClick={() => RemoveOption(i)} className="button-field button-field-red">
-                                        <i className="fa-solid fa-delete-left"></i>
+                                        <i className="nf nf-fa-delete_left"></i>
                                     </button>
                                 </div>
                             );

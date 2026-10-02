@@ -65,7 +65,7 @@ function LeftSide() {
                     color: "rgba(255,255,255,0.2)",
                 }}
             >
-                Alpha v3.0.1
+                Alpha v3.0.2
             </h2>
             <div
                 style={{
@@ -80,28 +80,28 @@ function LeftSide() {
                     onClick={() => window.open(github, "_blank")?.focus()}
                     className="button-field button-field-grayblack"
                 >
-                    <i className="fa-brands fa-github-alt"></i>
+                    <i className="nf nf-fa-github_alt"></i>
                 </button>
                 <button
                     style={{ fontFamily: "Open Sans, sans-serif" }}
                     onClick={() => window.open(discord, "_blank")?.focus()}
                     className="button-field button-field-blurple"
                 >
-                    <i className="fa-brands fa-discord"></i>
+                    <i className="nf nf-fa-discord"></i>
                 </button>
                 <button
                     style={{ fontFamily: "Open Sans, sans-serif" }}
                     onClick={() => window.open(twitter, "_blank")?.focus()}
                     className="button-field button-field-blue"
                 >
-                    <i className="fa-brands fa-twitter"></i>
+                    <i className="nf nf-fa-twitter"></i>
                 </button>
                 <button
                     style={{ fontFamily: "Open Sans, sans-serif" }}
                     onClick={() => window.open(youtube, "_blank")?.focus()}
                     className="button-field button-field-red"
                 >
-                    <i className="fa-brands fa-youtube"></i>
+                    <i className="nf nf-fa-youtube"></i>
                 </button>
             </div>
             <p>

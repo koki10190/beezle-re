@@ -41,7 +41,7 @@ function MiddleSide() {
     return (
         <div className="page-sides side-middle home-middle">
             <h1>
-                <i className="fa-solid fa-bee"></i> Joined Hives
+                <i className="nf nf-md-bee"></i> Joined Hives
             </h1>
             <hr
                 style={{

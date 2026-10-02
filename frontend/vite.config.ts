@@ -37,5 +37,13 @@ export default defineConfig({
             "X-Frame-Options": "DENY", // Stops your site being used as an iframe
             "X-XSS-Protection": "1; mode=block", // Gives XSS protection to legacy browsers
         },
+        proxy: {
+            "/api-catbox": {
+                target: "https://catbox.moe",
+                changeOrigin: true,
+                secure: true,
+                rewrite: (path) => path.replace(/^\/api-catbox/, ""),
+            },
+        },
     },
 });

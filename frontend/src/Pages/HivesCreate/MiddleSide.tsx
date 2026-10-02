@@ -100,7 +100,7 @@ function MiddleSide() {
     return (
         <div className="page-sides side-middle home-middle">
             <h1>
-                <i className="fa-solid fa-bee"></i> Create a Hive
+                <i className="nf nf-md-bee"></i> Create a Hive
             </h1>
             <p>
                 Create a hive of your own inside Beezle

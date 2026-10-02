@@ -87,7 +87,7 @@ function Connections({ user }: Props) {
                 {steam_connected ? (
                     <>
                         <p>
-                            <i className="fa-brands fa-steam"></i> Steam ID: {user.connections.steam.id}
+                            <i className="nf nf-fa-steam"></i> Steam ID: {user.connections.steam.id}
                         </p>
                         <button
                             onClick={async () => {
@@ -100,12 +100,12 @@ function Connections({ user }: Props) {
                             }}
                             className="button-field button-field-red"
                         >
-                            <i className="fa-brands fa-steam"></i> Disconnect Steam
+                            <i className="nf nf-fa-steam"></i> Disconnect Steam
                         </button>
                     </>
                 ) : (
                     <button onClick={() => PopupToSteamAuth(`${window.location.origin}/connect/steam`)} className="button-field button-field-blue">
-                        <i className="fa-brands fa-steam"></i> Connect Steam
+                        <i className="nf nf-fa-steam"></i> Connect Steam
                     </button>
                 )}
 
@@ -114,7 +114,7 @@ function Connections({ user }: Props) {
                 {spotify_connected ? (
                     <>
                         <p>
-                            <i className="fa-brands fa-spotify"></i> Spotify:{" "}
+                            <i className="nf nf-fa-spotify"></i> Spotify:{" "}
                             <div
                                 style={{
                                     backgroundImage: `url(${user.connections.spotify.images[0].url})`,
@@ -134,19 +134,19 @@ function Connections({ user }: Props) {
                             }}
                             className="button-field button-field-red"
                         >
-                            <i className="fa-brands fa-spotify"></i> Disconnect Spotify
+                            <i className="nf nf-fa-spotify"></i> Disconnect Spotify
                         </button>
                     </>
                 ) : (
                     <button onClick={SpotifyAuth} className="button-field button-field-green">
-                        <i className="fa-brands fa-spotify"></i> Connect Spotify
+                        <i className="nf nf-fa-spotify"></i> Connect Spotify
                     </button>
                 )}
                 <Divider />
                 {discord_connected ? (
                     <>
                         <p>
-                            <i className="fa-brands fa-discord"></i> Discord:{" "}
+                            <i className="nf nf-fa-discord"></i> Discord:{" "}
                             <div
                                 style={{
                                     backgroundImage: `url(https://cdn.discordapp.com/avatars/${user.connections.discord.data.discord_id}/${user.connections.discord.data.avatar}.webp?size=128&animated=true)`,
@@ -166,13 +166,13 @@ function Connections({ user }: Props) {
                             }}
                             className="button-field button-field-red"
                         >
-                            <i className="fa-brands fa-discord"></i> Disconnect Discord
+                            <i className="nf nf-fa-discord"></i> Disconnect Discord
                         </button>
                     </>
                 ) : (
                     <>
                         <button onClick={() => (window.location.href = discord_auth_uri)} className="button-field button-field-blurple">
-                            <i className="fa-brands fa-discord"></i> Connect Discord
+                            <i className="nf nf-fa-discord"></i> Connect Discord
                         </button>
                     </>
                 )}
@@ -180,7 +180,7 @@ function Connections({ user }: Props) {
                 {lastfm_connected ? (
                     <>
                         <p>
-                            <i className="fa-brands fa-lastfm"></i> last.fm: {user.connections.lastfm.username}
+                            <i className="nf nf-fa-lastfm"></i> last.fm: {user.connections.lastfm.username}
                         </p>
                         <button onClick={LastFmSetShowScorbbling} className={`button-field button-field-${show_scrobbling ? "red" : "green"}`}>
                             {show_scrobbling ? "Disable Showcase" : "Enable Showcase"}
@@ -196,7 +196,7 @@ function Connections({ user }: Props) {
                             }}
                             className="button-field button-field-red"
                         >
-                            <i className="fa-brands fa-lastfm"></i> Disconnect last.fm
+                            <i className="nf nf-fa-lastfm"></i> Disconnect last.fm
                         </button>
                     </>
                 ) : (
@@ -204,7 +204,7 @@ function Connections({ user }: Props) {
                         <form className="lastfm-connection-form" onSubmit={ConnectLastFM}>
                             <input style={{ width: "100%" }} className="input-field" ref={lastfm_username} placeholder="last.fm username" />
                             <button className="button-field button-field-blurple">
-                                <i className="fa-brands fa-lastfm"></i> Connect last.fm
+                                <i className="nf nf-fa-lastfm"></i> Connect last.fm
                             </button>
                         </form>
                     </>

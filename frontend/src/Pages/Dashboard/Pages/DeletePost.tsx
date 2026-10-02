@@ -39,7 +39,7 @@ function DeletePost({ user }: Props) {
         <>
             <div className="page-sides side-middle home-middle">
                 <h1>
-                    <i className="fa-solid fa-trash" /> Delete Post
+                    <i className="nf nf-fa-trash" /> Delete Post
                 </h1>
                 <Divider />
                 <input value={PostID} onChange={(e: any) => setPostID(e.target.value)} className="input-field fixed-100" placeholder="Post ID" />

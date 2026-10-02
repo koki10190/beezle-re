@@ -99,7 +99,7 @@ function Reports({ user }: Props) {
         <>
             <div className="page-sides side-middle home-middle">
                 <h1>
-                    <i className="fa-solid fa-flag" /> Reports
+                    <i className="nf nf-fa-flag" /> Reports
                 </h1>
                 <Divider />
                 {reports.map((report) => (

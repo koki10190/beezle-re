@@ -511,7 +511,7 @@ function MiddleSide() {
                         <>
                             {post.repost ? (
                                 <h4 onClick={() => navigate(`/profile/${post.handle}`)} className="post-attr">
-                                    <i className="fa-solid fa-repeat"></i> Repost by @{post.handle}
+                                    <i className="nf nf-fa-repeat"></i> Repost by @{post.handle}
                                 </h4>
                             ) : (
                                 ""
@@ -533,7 +533,7 @@ function MiddleSide() {
 
                             {isPostEdited ? (
                                 <h4 className="post-attr">
-                                    <i className="fa-solid fa-pencil"></i> Edited
+                                    <i className="nf nf-fa-pencil"></i> Edited
                                 </h4>
                             ) : (
                                 ""
@@ -541,7 +541,7 @@ function MiddleSide() {
 
                             {post.is_reply && replyingToPost ? (
                                 <h4 onClick={() => navigate(replyingToPost?.content ? `/post/${post.replying_to}` : `/`)} className="post-attr">
-                                    <i className="fa-solid fa-comment"></i> Replying to{" "}
+                                    <i className="nf nf-fa-comment"></i> Replying to{" "}
                                     {replyingToPost?.content ? TrimToDots(replyingToPost.content, 100) : "[REDACTED]"}
                                 </h4>
                             ) : (
@@ -658,7 +658,7 @@ function MiddleSide() {
                     {poll && self_user ? <Poll poll={poll} self_user={self_user} /> : ""}
                     <div className="post-interaction-btn">
                         <a style={isReposted ? { color: "rgb(60, 255, 86)" } : {}} onClick={RepostInteraction} className="post-inter post-inter-lime">
-                            <i className=" fa-solid fa-repeat"></i>{" "}
+                            <i className=" nf nf-fa-repeat"></i>{" "}
                             <FlipNumbers
                                 height={15}
                                 width={15}
@@ -677,7 +677,7 @@ function MiddleSide() {
                             style={isLiked ? { color: "rgb(255, 73, 73)" } : {}}
                             className="post-inter post-inter-red"
                         >
-                            <i className="fa-solid fa-heart"></i>{" "}
+                            <i className="nf nf-fa-heart"></i>{" "}
                             <FlipNumbers
                                 height={15}
                                 width={15}
@@ -690,37 +690,37 @@ function MiddleSide() {
                             />
                         </a>
                         <a onClick={ReactionInteraction} className="post-inter-orange">
-                            <i className="fa-solid fa-face-awesome"></i>{" "}
+                            <i className="nf nf-md-sticker_emoji"></i>{" "}
                         </a>
 
                         <a onClick={() => setMenuOpened((old) => !old)} className="post-inter">
-                            <i className="fa-solid fa-ellipsis"></i>
+                            <i className="nf nf-fa-ellipsis"></i>
                         </a>
 
                         {menuOpened ? (
                             <RightClickMenu
                                 onClickAnywhere={() => setTimeout(() => setMenuOpened(false), 100)}
                                 mouse_pos={mousePos}
-                                icon={<i className="fa-solid fa-envelope" />}
+                                icon={<i className="nf nf-fa-envelope" />}
                                 name="Post Interactions"
                             >
                                 {self_user.handle === post.handle && !post.repost ? (
                                     <>
                                         <button onClick={EditInteraction} className="rcm-button">
-                                            <i className="fa-solid fa-pen-to-square" /> Edit Post
+                                            <i className="nf nf-fa-pen_to_square" /> Edit Post
                                         </button>
                                         <button onClick={DeleteInteraction} className="rcm-button post-inter-red">
-                                            <i className=" fa-solid fa-trash"></i> Delete Post
+                                            <i className=" nf nf-fa-trash"></i> Delete Post
                                         </button>
                                     </>
                                 ) : (
                                     ""
                                 )}
                                 <button onClick={PinInteraction} className="rcm-button post-inter-blue">
-                                    <i className="fa-solid fa-thumbtack" /> {isPinned ? "Unpin Post" : "Pin Post"}
+                                    <i className="nf nf-fa-thumbtack" /> {isPinned ? "Unpin Post" : "Pin Post"}
                                 </button>
                                 <button onClick={BookmarkInteraction} className="rcm-button post-inter-blue">
-                                    <i className="fa-solid fa-bookmark" /> {isBookmarked ? "Unbookmark" : "Bookmark"}
+                                    <i className="nf nf-fa-bookmark" /> {isBookmarked ? "Unbookmark" : "Bookmark"}
                                 </button>
                             </RightClickMenu>
                         ) : (

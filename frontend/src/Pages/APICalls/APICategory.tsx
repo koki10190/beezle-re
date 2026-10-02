@@ -21,7 +21,7 @@ function APICategory(props: Props) {
                 <h2>
                     {props.name}{" "}
                     <a onClick={() => setOpen((old) => !old)} className={`api-category-button ${open ? "api-category-button-close" : ""}`}>
-                        <i className={`fa-solid fa-arrow-${open ? "up" : "down"}`} />
+                        <i className={`nf nf-fa-arrow_${open ? "up" : "down"}`} />
                     </a>
                 </h2>
             </div>

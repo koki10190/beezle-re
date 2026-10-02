@@ -669,7 +669,7 @@ function PostBox({
                 <div className="post-attributes">
                     {post.repost ? (
                         <h4 onClick={() => navigate(`/profile/${post.handle}`)} className="post-attr">
-                            <i className="fa-solid fa-repeat"></i> Repost by @{post.handle}
+                            <i className="nf nf-fa-repeat"></i> Repost by @{post.handle}
                         </h4>
                     ) : (
                         ""
@@ -689,14 +689,14 @@ function PostBox({
                     )}
                     {isPostEdited ? (
                         <h4 className="post-attr">
-                            <i className="fa-solid fa-pencil"></i> Edited
+                            <i className="nf nf-fa-pencil"></i> Edited
                         </h4>
                     ) : (
                         ""
                     )}
                     {pinned ? (
                         <h4 className="post-attr">
-                            <i className="fa-solid fa-thumbtack"></i> Pinned
+                            <i className="nf nf-fa-thumbtack"></i> Pinned
                         </h4>
                     ) : (
                         ""
@@ -704,7 +704,7 @@ function PostBox({
                     {allow_reply_attribute && !post.repost && replyChainCounter < MAX_REPLY_CHAIN && post.is_reply ? (
                         <>
                             <h1 className="post-replying-to">
-                                <i className="fa-solid fa-reply"></i>{" "}
+                                <i className="nf nf-fa-reply"></i>{" "}
                                 {replyingToPost == undefined || (replyingToPost as any).error
                                     ? "Replying to a deleted post"
                                     : `Replying to @${replyingToPost.handle}`}
@@ -718,7 +718,7 @@ function PostBox({
                             onClick={() => (window.location.href = replyingToPost?.content ? `/post/${post.replying_to}` : `/`)}
                             className="post-attr"
                         >
-                            <i className="fa-solid fa-comment"></i> Replying to{" "}
+                            <i className="nf nf-fa-comment"></i> Replying to{" "}
                             {replyingToPost?.content ? TrimToDots(replyingToPost?.content, 16) : "[REDACTED]"}
                         </h4>
                     ) : (
@@ -762,7 +762,7 @@ function PostBox({
                             <span style={{ color: "white" }}>- {sanitize(user.activity.replace(/(.{35})..+/, "$1…"), { allowedTags: [] })}</span>
                         ) : user && steamData ? (
                             <span style={{ color: "white" }}>
-                                - <i className="fa-brands fa-steam" /> Playing {steamData.name}
+                                - <i className="nf nf-fa-steam" /> Playing {steamData.name}
                             </span>
                         ) : (
                             ""
@@ -854,7 +854,7 @@ function PostBox({
                 {user ? (
                     <div className="post-interaction-btn">
                         <a onClick={ReplyInteraction} className="post-inter-blue">
-                            <i className=" fa-solid fa-comment"></i>{" "}
+                            <i className=" nf nf-fa-comment"></i>{" "}
                             <FlipNumbers
                                 height={15}
                                 width={15}
@@ -867,7 +867,7 @@ function PostBox({
                             />
                         </a>
                         <a style={isReposted ? { color: "rgb(60, 255, 86)" } : {}} onClick={RepostInteraction} className="post-inter-lime">
-                            <i className=" fa-solid fa-repeat"></i>{" "}
+                            <i className=" nf nf-fa-repeat"></i>{" "}
                             <FlipNumbers
                                 height={15}
                                 width={15}
@@ -886,7 +886,7 @@ function PostBox({
                             style={isLiked ? { color: "rgb(225, 54, 54)" } : {}}
                             className="post-inter-red"
                         >
-                            <i className=" fa-solid fa-heart"></i>{" "}
+                            <i className=" nf nf-fa-heart"></i>{" "}
                             <FlipNumbers
                                 height={15}
                                 width={15}
@@ -899,39 +899,39 @@ function PostBox({
                             />
                         </a>
                         <a onClick={ReactionInteraction} className="post-inter-orange">
-                            <i className="fa-solid fa-face-awesome"></i>{" "}
+                            <i className="nf nf-md-sticker_emoji"></i>{" "}
                         </a>
                         {menuOpened ? (
                             <RightClickMenu
                                 onClickAnywhere={() => setTimeout(() => setMenuOpened(false), 100)}
                                 mouse_pos={mousePos}
-                                icon={<i className="fa-solid fa-envelope" />}
+                                icon={<i className="nf nf-fa-envelope" />}
                                 name="Post Interactions"
                             >
                                 {self_user.handle === post.handle && !post.repost ? (
                                     <>
                                         <button onClick={EditInteraction} className="rcm-button">
-                                            <i className="fa-solid fa-pen-to-square" /> Edit Post
+                                            <i className="nf nf-fa-pen_to_square" /> Edit Post
                                         </button>
                                         <button onClick={DeleteInteraction} className="rcm-button post-inter-red">
-                                            <i className=" fa-solid fa-trash"></i> Delete Post
+                                            <i className=" nf nf-fa-trash"></i> Delete Post
                                         </button>
                                     </>
                                 ) : (
                                     ""
                                 )}
                                 <button onClick={PinInteraction} className="rcm-button post-inter-blue">
-                                    <i className="fa-solid fa-thumbtack" /> {isPinned ? "Unpin Post" : "Pin Post"}
+                                    <i className="nf nf-fa-thumbtack" /> {isPinned ? "Unpin Post" : "Pin Post"}
                                 </button>
                                 <button onClick={BookmarkInteraction} className="rcm-button post-inter-blue">
-                                    <i className="fa-solid fa-bookmark" /> {isBookmarked ? "Unbookmark" : "Bookmark"}
+                                    <i className="nf nf-fa-bookmark" /> {isBookmarked ? "Unbookmark" : "Bookmark"}
                                 </button>
                             </RightClickMenu>
                         ) : (
                             ""
                         )}
                         <a onClick={() => setMenuOpened((old) => !old)} className="post-inter">
-                            <i className=" fa-solid fa-ellipsis"></i>
+                            <i className="nf nf-fa-ellipsis"></i>
                         </a>
                     </div>
                 ) : (

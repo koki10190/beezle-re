@@ -135,10 +135,10 @@ function MiddleSide() {
     return (
         <div className="page-sides side-middle home-middle">
             <h1>
-                <i className="fa-solid fa-shop"></i> The Customization Shop
+                <i className="nf nf-fa-shop"></i> The Customization Shop
             </h1>
             <p style={{ marginTop: "-15px" }}>
-                <i className="fa-solid fa-coins"></i> {self_user?.coins.toLocaleString("en-US")}
+                <i className="nf nf-fa-coins"></i> {self_user?.coins.toLocaleString("en-US")}
             </p>
             {/* <a onClick={() => setMuted(!muted)} className="mute-music">
                 {muted ? "Unmute Music" : "Mute Music"}

@@ -28,7 +28,7 @@ function MiddleSide() {
     return (
         <div className="page-sides side-middle home-middle">
             <h1>
-                <i className="fa-solid fa-bookmark"></i> Bookmarks
+                <i className="nf nf-fa-bookmark"></i> Bookmarks
             </h1>
             <Divider />
             {self_user

@@ -39,7 +39,7 @@ function MiddleSide() {
     return (
         <div className="page-sides side-middle home-middle">
             <h1>
-                <i className="fa-solid fa-magnifying-glass"></i> Search Posts
+                <i className="nf nf-fa-magnifying_glass"></i> Search Posts
             </h1>
             <Divider />
             <form onSubmit={Search}>
@@ -50,7 +50,7 @@ function MiddleSide() {
                     }}
                     className="button-field fixed-100"
                 >
-                    <i className="fa-solid fa-magnifying-glass"></i> Search
+                    <i className="nf nf-fa-magnifying_glass"></i> Search
                 </button>
             </form>
             <Divider />

@@ -57,11 +57,11 @@ function API({ user }: Props) {
                 <Divider />
                 {is_bot ? (
                     <button onClick={BotButtonInteraction} className="button-field button-field-red">
-                        <i className="fa-solid fa-robot" /> Disable Bot Account
+                        <i className="nf nf-md-robot" /> Disable Bot Account
                     </button>
                 ) : (
                     <button onClick={BotButtonInteraction} className="button-field button-field-blurple">
-                        <i className="fa-solid fa-robot" /> Enable Bot Account
+                        <i className="nf nf-md-robot" /> Enable Bot Account
                     </button>
                 )}
                 <Divider />
@@ -70,7 +70,7 @@ function API({ user }: Props) {
                     for you! we have a list of all API calls!
                 </p>
                 <button onClick={() => (window.location.href = "/api-calls")} className="button-field">
-                    <i className="fa-solid fa-code"></i> API Calls
+                    <i className="nf nf-fa-code"></i> API Calls
                 </button>
             </div>
         </>

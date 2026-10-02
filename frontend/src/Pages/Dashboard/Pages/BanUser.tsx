@@ -41,7 +41,7 @@ function BanUser({ user }: Props) {
         <>
             <div className="page-sides side-middle home-middle">
                 <h1>
-                    <i className="fa-solid fa-hammer-crash" /> Ban User
+                    <i className="nf nf-fa-hammer" /> Ban User
                 </h1>
                 <Divider />
                 <input value={toBan} onChange={(e: any) => setToBan(e.target.value)} className="input-field fixed-100" placeholder="User Handle" />

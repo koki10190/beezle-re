@@ -444,7 +444,7 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                     </p>
                     <div className="inline-stats">
                         <p>
-                            <i style={{ color: "rgb(255, 208, 108)" }} className="fa-solid fa-coins"></i> {user.coins.toLocaleString("en-US")}
+                            <i style={{ color: "rgb(255, 208, 108)" }} className="nf nf-fa-coins"></i> {user.coins.toLocaleString("en-US")}
                         </p>
                         <RepToParagraph reputation={user.reputation} />
                         {followsYou ? <p className="follows-you">Follows you</p> : ""}
@@ -470,7 +470,7 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                                 style={{ marginTop: "50px" }}
                                 className="button-field button-field-red profile-edit-button"
                             >
-                                <i className="fa-solid fa-bell-on" />
+                                <i className="nf nf-md-bell_check" />
                             </button>
                         ) : (
                             <button
@@ -478,7 +478,7 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                                 style={{ marginTop: "50px" }}
                                 className="button-field button-field-blurple profile-edit-button"
                             >
-                                <i className="fa-solid fa-bell-plus" />
+                                <i className="nf nf-md-bell_plus" />
                             </button>
                         )
                     ) : (
@@ -487,11 +487,11 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                     {user.handle !== self?.handle ? (
                         !blockBtn ? (
                             <button onClick={BlockUser} className="button-field button-field-red profile-edit-button profile-block-button">
-                                <i className="fa-solid fa-ban"></i> Block
+                                <i className="nf nf-fa-ban"></i> Block
                             </button>
                         ) : (
                             <button onClick={BlockUser} className="button-field button-field-green profile-edit-button profile-block-button">
-                                <i className="fa-solid fa-ban"></i> Unblock
+                                <i className="nf nf-fa-ban"></i> Unblock
                             </button>
                         )
                     ) : (
@@ -545,7 +545,7 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                             className="profile-container"
                         >
                             <p className="profile-container-header">
-                                <i className="fa-solid fa-link"></i> Connections
+                                <i className="nf nf-fa-link"></i> Connections
                             </p>
                             <div className="profile-connections">
                                 {user.connections.discord ? (
@@ -564,7 +564,7 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                                         target="_blank"
                                         href={`https://discord.com/users/${user.connections.discord.data.discord_id}`}
                                     >
-                                        <i className="fa-brands fa-discord"></i> Discord:{" "}
+                                        <i className="nf nf-fa-discord"></i> Discord:{" "}
                                         <div
                                             style={{
                                                 backgroundImage: `url(https://cdn.discordapp.com/avatars/${user.connections.discord.data.discord_id}/${user.connections.discord.data.avatar}.webp?size=128&animated=true)`,
@@ -585,7 +585,7 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                                         href={`https://steamcommunity.com/profiles/${user.connections.steam.id}`}
                                         target="_blank"
                                     >
-                                        <i className="fa-brands fa-steam"></i> Steam:{" "}
+                                        <i className="nf nf-fa-steam"></i> Steam:{" "}
                                         <div
                                             style={{
                                                 backgroundImage: `url(${steam_user_data?.avatar ?? "0"})`,
@@ -606,7 +606,7 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                                         href={`https://last.fm/user/${user.connections.lastfm.username}`}
                                         target="_blank"
                                     >
-                                        <i className="fa-brands fa-lastfm"></i> last.fm:{" "}
+                                        <i className="nf nf-fa-lastfm"></i> last.fm:{" "}
                                         <div
                                             style={{
                                                 backgroundImage: `url(${lastfmUserData?.user.image[0]["#text"] ?? ""})`,
@@ -627,7 +627,7 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                                         href={`${user.connections.spotify.external_urls.spotify}`}
                                         target="_blank"
                                     >
-                                        <i className="fa-brands fa-spotify"></i> Spotify:{" "}
+                                        <i className="nf nf-fa-spotify"></i> Spotify:{" "}
                                         <div
                                             style={{
                                                 backgroundImage: `url(${user?.connections?.spotify?.images[0]?.url})`,
@@ -655,7 +655,7 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                             className="profile-container"
                         >
                             <p className="profile-container-header">
-                                <i className="fa-solid fa-trophy-star" /> Milestones
+                                <i className="nf nf-md-trophy_award" /> Milestones
                             </p>
                             {user.milestones.map((milestone, index) => {
                                 return (
@@ -676,7 +676,7 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                             className="profile-container"
                         >
                             <p className="profile-container-header">
-                                <i className="fa-brands fa-steam" /> Steam Inventory
+                                <i className="nf nf-fa-steam" /> Steam Inventory
                             </p>
 
                             <div
@@ -717,7 +717,7 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                             onClick={() => window.open(`https://store.steampowered.com/app/${steamData.steam_appid}`)}
                         >
                             <p style={{ marginBottom: "5px" }} className="profile-container-header">
-                                <i className="fa-brands fa-steam" /> Playing Game
+                                <i className="nf nf-fa-steam" /> Playing Game
                             </p>
                             <div className="about_me">
                                 <div className="steam-game-container">
@@ -742,7 +742,7 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                             onClick={() => window.open(`${spotifyData?.item.external_urls?.spotify}`)}
                         >
                             <p style={{ marginBottom: "5px" }} className="profile-container-header">
-                                <i className="fa-brands fa-spotify" /> Listening To Music
+                                <i className="nf nf-fa-spotify" /> Listening To Music
                             </p>
                             <div className="about_me">
                                 <div className="steam-game-container">
@@ -797,7 +797,7 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                             onClick={() => window.open(`${lastfmData.url}`)}
                         >
                             <p style={{ marginBottom: "5px" }} className="profile-container-header">
-                                <i className="fa-brands fa-lastfm" /> Scrobbling Now
+                                <i className="nf nf-fa-lastfm" /> Scrobbling Now
                             </p>
                             <div className="about_me">
                                 <div className="steam-game-container">
@@ -844,7 +844,7 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                             className="profile-page-selector"
                         >
                             <p>
-                                <i className="fa-solid fa-sparkles" /> Newest
+                                <i className="nf nf-cod-sparkle_filled" /> Newest
                             </p>
                         </div>
                         <div
@@ -855,7 +855,7 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                             className="profile-page-selector"
                         >
                             <p>
-                                <i className="fa-solid fa-scroll-old"></i> Oldest
+                                <i className="nf nf-fa-scroll"></i> Oldest
                             </p>
                         </div>
                         <div
@@ -866,7 +866,7 @@ function Loaded({ user, self }: { user: UserPublic | UserPrivate; self: UserPriv
                             className="profile-page-selector"
                         >
                             <p>
-                                <i className="fa-solid fa-photo-film"></i> Media
+                                <i className="nf nf-fa-photo_film"></i> Media
                             </p>
                         </div>
                     </div>

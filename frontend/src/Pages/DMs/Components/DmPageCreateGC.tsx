@@ -71,7 +71,7 @@ function DmPageCreateGC({
         <form onSubmit={Create}>
             <Divider />
             <h1>
-                <i className="fa-solid fa-users"></i> Create a Group Chat
+                <i className="nf nf-fa-users"></i> Create a Group Chat
             </h1>
             <Divider />
             <label>Group Chat Icon</label>
@@ -97,7 +97,7 @@ function DmPageCreateGC({
                 placeholder="koki, beezle, poww"
             />
             <button className="button-field">
-                <i className="fa-solid fa-plus" /> Create Group Chat
+                <i className="nf nf-fa-plus" /> Create Group Chat
             </button>
         </form>
     );

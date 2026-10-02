@@ -118,7 +118,7 @@ function DisplayCustomization({ user }: Props) {
         <>
             <div className="page-sides side-middle home-middle">
                 <h1>
-                    <i className="fa-solid fa-icons"></i> Display Customization
+                    <i className="nf nf-fa-icons"></i> Display Customization
                 </h1>
                 <Divider />
                 <label>

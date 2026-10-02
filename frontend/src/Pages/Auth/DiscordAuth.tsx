@@ -49,7 +49,7 @@ function DiscordAuth() {
         <>
             <div className="centered">
                 <h1>
-                    <i className="fa-brands fa-discord" /> <span ref={authMessage}>Authenticating...</span>
+                    <i className="nf nf-fa-discord" /> <span ref={authMessage}>Authenticating...</span>
                 </h1>
             </div>
         </>

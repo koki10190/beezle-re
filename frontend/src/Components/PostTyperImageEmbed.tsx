@@ -1,14 +1,7 @@
 import { useEffect, useState } from "react";
+import SetFilesType from "../types/setFilesType";
 
-function PostTyperImageEmbed({
-    url,
-    setFiles,
-    index,
-}: {
-    url: string;
-    setFiles: React.Dispatch<React.SetStateAction<{ file: File; isVideo: boolean }[]>>;
-    index: number;
-}) {
+function PostTyperImageEmbed({ url, setFiles, index }: { url: string; setFiles: SetFilesType; index: number }) {
     const getMeta = (url: string, cb: any) => {
         const img = new Image();
         img.onload = () => cb(null, img);
@@ -40,7 +33,7 @@ function PostTyperImageEmbed({
     return (
         <div style={{ width: size.width, height: size.height, backgroundImage: `url(${url})` }} className="post-image-embed">
             <a onClick={removeEmbed} className="post-image-embed-button">
-                <i className="fa-solid fa-x"></i>
+                <i className="nf nf-oct-x"></i>
             </a>
         </div>
     );

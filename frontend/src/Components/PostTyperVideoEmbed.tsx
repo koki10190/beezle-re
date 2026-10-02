@@ -1,14 +1,8 @@
 import { useState } from "react";
+import FileTypeEnum from "../types/FileTypeEnum";
+import SetFilesType from "../types/setFilesType";
 
-function PostTyperVideoEmbed({
-    url,
-    setFiles,
-    index,
-}: {
-    url: string;
-    setFiles: React.Dispatch<React.SetStateAction<{ file: File; isVideo: boolean }[]>>;
-    index: number;
-}) {
+function PostTyperVideoEmbed({ url, setFiles, index }: { url: string; setFiles: SetFilesType; index: number }) {
     const removeEmbed = () => {
         setFiles((old) => {
             const new_arr = [...old];
@@ -21,7 +15,7 @@ function PostTyperVideoEmbed({
         <>
             <div className="post-typer-video-embed">
                 <a onClick={removeEmbed} target="_blank" className="post-video-embed-button">
-                    <i className="fa-solid fa-x"></i>
+                    <i className="nf nf-oct-x"></i>
                 </a>
                 <video className="post-video-embed" controls>
                     <source src={url} type="video/mp4" />

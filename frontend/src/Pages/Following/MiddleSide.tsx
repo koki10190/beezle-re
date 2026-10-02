@@ -34,7 +34,7 @@ function MiddleSide() {
     return (
         <div className="page-sides side-middle home-middle">
             <h1>
-                <i className="fa-solid fa-users"></i> Following
+                <i className="nf nf-fa-users"></i> Following
             </h1>
             <p style={{ marginTop: "-15px" }}>@{user?.handle}</p>
             <Divider />

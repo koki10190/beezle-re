@@ -55,7 +55,7 @@ pub async fn route(
     }
 
     let mut doc = mongoose::get_document(
-        &client,
+        client.get_ref(),
         "beezle",
         "Users",
         doc! {"$or": [
@@ -99,10 +99,10 @@ pub async fn route(
             let serialized_user_doc = mongodb::bson::to_bson(&struct_user_doc).unwrap();
             let document = serialized_user_doc.as_document().unwrap();
 
-            mongoose::insert_document(&client, "beezle", "Users", document.clone()).await;
+            mongoose::insert_document(client.get_ref(), "beezle", "Users", document.clone()).await;
 
             doc = mongoose::get_document(
-                &client,
+                client.get_ref(),
                 "beezle",
                 "Users",
                 doc! {"email": struct_user_doc.email, "handle": struct_user_doc.handle.to_lowercase()},
@@ -119,7 +119,7 @@ pub async fn route(
             let serialized_auth_doc = mongodb::bson::to_bson(&struct_auth_doc).unwrap();
             let auth_document = serialized_auth_doc.as_document().unwrap();
 
-            mongoose::insert_document(&client, "beezle", "Auths", auth_document.clone()).await;
+            mongoose::insert_document(client.get_ref(), "beezle", "Auths", auth_document.clone()).await;
 
             if let Some(val) = req.connection_info().realip_remote_addr() {
                 beezle::mail::send(

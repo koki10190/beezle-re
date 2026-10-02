@@ -35,28 +35,28 @@ function Home() {
                 </h1>
                 <div className="homepage-links login-page-links">
                     <button onClick={() => window.open(github, "_blank")?.focus()} className="button-field button-field-grayblack">
-                        <i className="fa-brands fa-github-alt"></i>
+                        <i className="nf nf-fa-github_alt"></i>
                     </button>
                     <button
                         style={{ width: "65px" }}
                         onClick={() => window.open(discord, "_blank")?.focus()}
                         className="button-field button-field-blurple"
                     >
-                        <i className="fa-brands fa-discord"></i>
+                        <i className="nf nf-fa-discord"></i>
                     </button>
                     <button
                         style={{ width: "57px" }}
                         onClick={() => window.open(twitter, "_blank")?.focus()}
                         className="button-field button-field-blue"
                     >
-                        <i className="fa-brands fa-twitter"></i>
+                        <i className="nf nf-fa-twitter"></i>
                     </button>
                     <button
                         style={{ width: "60px" }}
                         onClick={() => window.open(youtube, "_blank")?.focus()}
                         className="button-field button-field-red"
                     >
-                        <i className="fa-brands fa-youtube"></i>
+                        <i className="nf nf-fa-youtube"></i>
                     </button>
                 </div>
                 <TypeAnimation

@@ -38,7 +38,7 @@ pub async fn route(
 
     let handle = body.user_handle.clone().unwrap_or("".to_string());
     let id = uuid::Uuid::new().to_string();
-    mongoose::insert_document(&client, "beezle", "DmSelections", doc! {
+    mongoose::insert_document(client.get_ref(), "beezle", "DmSelections", doc! {
         "is_group": body.is_group,
         "user_handle": handle,
         "belongs_to": &token_data.handle,

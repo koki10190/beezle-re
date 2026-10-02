@@ -36,7 +36,7 @@ function PostPreferences({ user }: Props) {
         <>
             <div className="page-sides side-middle home-middle">
                 <h1>
-                    <i className="fa-solid fa-comment" /> Post Preferences
+                    <i className="nf nf-fa-comment" /> Post Preferences
                 </h1>
                 <Divider />
                 <div>

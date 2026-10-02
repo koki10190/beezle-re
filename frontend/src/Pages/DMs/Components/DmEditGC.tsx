@@ -83,7 +83,7 @@ function DmEditGC({
                 placeholder="Group Chat's Name"
             />
             <button className="button-field">
-                <i className="fa-solid fa-pencil" /> Edit Group Chat
+                <i className="nf nf-fa-pencil" /> Edit Group Chat
             </button>
         </form>
     );

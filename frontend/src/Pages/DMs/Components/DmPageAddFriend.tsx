@@ -69,13 +69,13 @@ function DmPageAddFriend({
         <form onSubmit={OnSubmit}>
             <Divider />
             <h1>
-                <i className="fa-solid fa-user"></i> Add a Friend
+                <i className="nf nf-fa-user"></i> Add a Friend
             </h1>
             <Divider />
             <label>Mutual's Handle</label>
             <input ref={inputRef} style={{ width: "100%" }} className="input-field" placeholder="User's Handle" />
             <button className="button-field">
-                <i className="fa-solid fa-user-plus"></i> Add Friend
+                <i className="nf nf-fa-user_plus"></i> Add Friend
             </button>
         </form>
     );

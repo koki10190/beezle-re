@@ -64,13 +64,13 @@ function DmEditGCMember({ handle, gc, self_user }: { handle: string; gc: BeezleD
             <div style={{ marginLeft: "5px" }} className="btn-list">
                 {gc.owner === self_user.handle && gc.owner !== user.handle ? (
                     <a onClick={BanMember} className="btn">
-                        <i className="fa-solid fa-ban" /> Remove Member
+                        <i className="nf nf-fa-ban" /> Remove Member
                     </a>
                 ) : null}
 
                 {gc.owner === user.handle ? (
                     <span className="crown">
-                        <i className="fa-solid fa-crown" />
+                        <i className="nf nf-fa-crown" />
                     </span>
                 ) : null}
             </div>

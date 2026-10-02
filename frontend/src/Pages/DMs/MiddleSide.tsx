@@ -52,13 +52,13 @@ function TyperEmbed({ isVid, url, onXClick }: { onXClick: any; isVid: boolean; u
                         <source src={url} type="video/ogg" />
                     </video>
                     <a onClick={onXClick} className="dm-typer-embed-button">
-                        <i className="fa-solid fa-x"></i>
+                        <i className="nf nf-oct-x"></i>
                     </a>
                 </div>
             ) : (
                 <div style={{ backgroundImage: `url(${url})` }} className="dm-typer-embed">
                     <a onClick={onXClick} className="dm-typer-embed-button">
-                        <i className="fa-solid fa-x"></i>
+                        <i className="nf nf-oct-x"></i>
                     </a>
                 </div>
             )}
@@ -134,7 +134,7 @@ function Message({
         >
             {msg.edited ? (
                 <a className="dm-attrib">
-                    <i className="fa-solid fa-pencil" /> Edited
+                    <i className="nf nf-fa-pencil" /> Edited
                 </a>
             ) : null}
             {replyingTo ? (
@@ -147,7 +147,7 @@ function Message({
                     }}
                     className="dm-attrib"
                 >
-                    <i className="fa-solid fa-reply" /> Replying to {truncate(replyingTo.content, 24).replace(/(<([^>]+)>)/gi, "")}
+                    <i className="nf nf-fa-reply" /> Replying to {truncate(replyingTo.content, 24).replace(/(<([^>]+)>)/gi, "")}
                 </a>
             ) : null}
             <div className="dm-msg-author">
@@ -159,15 +159,15 @@ function Message({
                             }}
                             className="dm-msg-edit-panel-btn"
                         >
-                            <i className="fa-solid fa-reply"></i>
+                            <i className="nf nf-fa-reply"></i>
                         </a>
                         {user?.handle === self_user?.handle ? (
                             <>
                                 <a onClick={() => setEditing((old) => !old)} className="dm-msg-edit-panel-btn">
-                                    <i className="fa-solid fa-pencil"></i>
+                                    <i className="nf nf-fa-pencil"></i>
                                 </a>
                                 <a onClick={Delete} className="dm-msg-edit-panel-btn dm-msg-edit-panel-btn-red">
-                                    <i className="fa-solid fa-trash"></i>
+                                    <i className="nf nf-fa-trash"></i>
                                 </a>
                             </>
                         ) : null}
@@ -931,10 +931,10 @@ function Loaded({ self_user, handle, setDisableIcon }: { self_user: UserPrivate;
                 <div className="dm-popup">
                     <div className="dm-gc-members-list">
                         <h1>
-                            <i className="fa-solid fa-gears"></i> {gcEditing?.name} Settings
+                            <i className="nf nf-fa-gears"></i> {gcEditing?.name} Settings
                         </h1>
                         <a onClick={() => setGcEditing(null)} className="close-popup-btn">
-                            <i className="fa-solid fa-x" />
+                            <i className="nf nf-oct-x" />
                         </a>
                         {gcEditing.owner === self_user.handle ? (
                             <>
@@ -942,7 +942,7 @@ function Loaded({ self_user, handle, setDisableIcon }: { self_user: UserPrivate;
                                 <DmEditGC gc={gcEditing} options={dmSelections} setOptions={setDmSelections} />
                                 <Divider />
                                 <h2>
-                                    <i className="fa-solid fa-users-gear"></i> Manage Members
+                                    <i className="nf nf-fa-users_gear"></i> Manage Members
                                 </h2>
                                 <form
                                     onSubmit={async (e) => {
@@ -969,7 +969,7 @@ function Loaded({ self_user, handle, setDisableIcon }: { self_user: UserPrivate;
                                         placeholder="User's Handle"
                                     />
                                     <button className="button-field">
-                                        <i className="fa-solid fa-user-plus"></i> Add Friend
+                                        <i className="nf nf-fa-user_plus"></i> Add Friend
                                     </button>
                                 </form>
                             </>
@@ -1001,7 +1001,7 @@ function Loaded({ self_user, handle, setDisableIcon }: { self_user: UserPrivate;
                                 }}
                                 className="open-close-dms"
                             >
-                                <i className="fa-solid fa-left-to-line"></i>
+                                <i className="nf nf-fa-left_to_line"></i>
                             </a>
 
                             <div>
@@ -1012,11 +1012,11 @@ function Loaded({ self_user, handle, setDisableIcon }: { self_user: UserPrivate;
                                     }}
                                     className="dm-btn"
                                 >
-                                    <i className="fa-solid fa-house" /> Home
+                                    <i className="nf nf-fa-house" /> Home
                                 </a>
                                 <Divider />
                                 <h4 className="dm-header">
-                                    <i className="fa-solid fa-messages"></i> Direct Messages
+                                    <i className="nf nf-fa-messages"></i> Direct Messages
                                 </h4>
                             </div>
                             <div>
@@ -1097,7 +1097,7 @@ function Loaded({ self_user, handle, setDisableIcon }: { self_user: UserPrivate;
                                     }
                                     className={"dm-call-button " + (callSettings.video ? "bg-var" : "bg-red")}
                                 >
-                                    <i className={"fa-solid fa-video" + (callSettings.video ? "" : "-slash")}></i>
+                                    <i className={"nf nf-fa-video" + (callSettings.video ? "" : "-slash")}></i>
                                 </button>
                                 <button
                                     onClick={() =>
@@ -1109,19 +1109,19 @@ function Loaded({ self_user, handle, setDisableIcon }: { self_user: UserPrivate;
                                     }
                                     className={"dm-call-button " + (callSettings.muted ? "bg-red" : "bg-var")}
                                 >
-                                    <i className={"fa-solid fa-microphone" + (callSettings.muted ? "-slash" : "")}></i>
+                                    <i className={"nf nf-fa-microphone" + (callSettings.muted ? "-slash" : "")}></i>
                                 </button>
                                 <button onClick={DeclineCall} className={`dm-call-button bg-red`}>
-                                    <i className={`fa-solid fa-phone-hangup`}></i>
+                                    <i className={`nf nf-fa-phone_hangup`}></i>
                                 </button>
                             </>
                         ) : (
                             <>
                                 <button onClick={AnswerCall} className={`dm-call-button bg-green`}>
-                                    <i className={`fa-solid fa-phone`}></i>
+                                    <i className={`nf nf-fa-phone`}></i>
                                 </button>
                                 <button onClick={DeclineCall} className={`dm-call-button bg-red`}>
-                                    <i className={`fa-solid fa-phone-hangup`}></i>
+                                    <i className={`nf nf-fa-phone_hangup`}></i>
                                 </button>
                             </>
                         )}
@@ -1159,13 +1159,13 @@ function Loaded({ self_user, handle, setDisableIcon }: { self_user: UserPrivate;
                                             }}
                                             className="info-button"
                                         >
-                                            <i className="fa-solid fa-users-gear"></i>
+                                            <i className="nf nf-fa-users_gear"></i>
                                         </a>
                                     </>
                                 ) : (
                                     <>
                                         <a onClick={() => Call({ video: false })} className="info-button">
-                                            <i className="fa-solid fa-phone-volume"></i>
+                                            <i className="nf nf-fa-phone_volume"></i>
                                         </a>
                                     </>
                                 )}
@@ -1219,11 +1219,11 @@ function Loaded({ self_user, handle, setDisableIcon }: { self_user: UserPrivate;
                                         {typerReplier ? (
                                             <div className="dm-typer-replyer">
                                                 <p>
-                                                    <i className="fa-solid fa-reply" /> Replying to @{typerReplier.author}
+                                                    <i className="nf nf-fa-reply" /> Replying to @{typerReplier.author}
                                                 </p>
                                                 <div className="dm-typer-replyer-buttons">
                                                     <a onClick={() => setTyperReplyer(null)}>
-                                                        <i className="fa-solid fa-x"></i>
+                                                        <i className="nf nf-oct-x"></i>
                                                     </a>
                                                 </div>
                                             </div>
@@ -1267,16 +1267,16 @@ function Loaded({ self_user, handle, setDisableIcon }: { self_user: UserPrivate;
                                                 style={{ display: "none" }}
                                             />{" "}
                                             <a onClick={() => fileRef.current!.click()} className="dm-panel-button">
-                                                <i className="fa-solid fa-image"></i>
+                                                <i className="nf nf-fa-image"></i>
                                             </a>
                                             <a onClick={() => setEmojiPickerOpen((old) => !old)} className="dm-panel-button">
-                                                <i className="fa-solid fa-face-awesome"></i>
+                                                <i className="nf nf-md-sticker_emoji"></i>
                                             </a>
                                             <a onClick={() => setGifPickerOpen((old) => !old)} className="dm-panel-button">
-                                                <i className="fa-solid fa-gif"></i>
+                                                <i className="nf nf-md-file_gif_box"></i>
                                             </a>
                                             <a onClick={SendMessage} className="dm-panel-button dm-send-button">
-                                                <i className="fa-solid fa-paper-plane-top"></i>
+                                                <i className="nf nf-fa-paper_plane"></i>
                                             </a>
                                         </div>
                                     </div>
@@ -1303,10 +1303,10 @@ function Loaded({ self_user, handle, setDisableIcon }: { self_user: UserPrivate;
                         <p style={{ margin: "0" }}>Start buzzing with your friends by adding channels on the left panel & selecting them.</p>
                         <div className="dm-home-button-container">
                             <button onClick={() => setHomePageEnum(HomePageType.AddFriend)} className="button-field">
-                                <i className="fa-solid fa-user-plus"></i> Add Friend
+                                <i className="nf nf-fa-user_plus"></i> Add Friend
                             </button>
                             <button onClick={() => setHomePageEnum(HomePageType.CreateGC)} className="button-field">
-                                <i className="fa-solid fa-users"></i> Create a Group Chat
+                                <i className="nf nf-fa-users"></i> Create a Group Chat
                             </button>
                         </div>
 
@@ -1329,7 +1329,7 @@ function Loaded({ self_user, handle, setDisableIcon }: { self_user: UserPrivate;
                     }
                     className="open-close-dms2"
                 >
-                    <i className="fa-solid fa-right-to-line"></i>
+                    <i className="nf nf-md-sticker_emoji"></i>
                 </a>
             ) : (
                 ""

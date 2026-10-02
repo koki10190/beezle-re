@@ -14,7 +14,7 @@ function SetServerStatus(is_on: boolean) {
 
 function ServerDownMessage() {
     toast.error("Lost connection to the web socket! Retrying..", {
-        icon: <i style={{ color: "#ff5050" }} className="fa-solid fa-heart-crack"></i>,
+        icon: <i style={{ color: "#ff5050" }} className="nf nf-fa-heart_crack"></i>,
     });
 }
 

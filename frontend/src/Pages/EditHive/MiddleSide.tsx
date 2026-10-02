@@ -151,7 +151,7 @@ function MiddleSide() {
     return (
         <div className="page-sides side-middle home-middle">
             <h1>
-                <i className="fa-solid fa-bee"></i> Edit Hive
+                <i className="nf nf-md-bee"></i> Edit Hive
             </h1>
             <p>
                 Create a hive of your own inside Beezle
@@ -250,7 +250,7 @@ function MiddleSide() {
                     type="checkbox"
                 />
                 <button onClick={DeleteHive} disabled={!delCheck} ref={buttonRef} type="button" className="button-field button-field-red">
-                    <i className="fa-solid fa-trash" /> Delete Hive
+                    <i className="nf nf-fa-trash" /> Delete Hive
                 </button>
             </form>
         </div>

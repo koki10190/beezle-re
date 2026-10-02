@@ -24,7 +24,7 @@ function ImageEmbed({ url }: { url: string }) {
     return (
         <div style={{ width: size.width, marginTop: "10px", height: size.height, backgroundImage: `url(${url})` }} className="post-image-embed">
             <a href={url} download={`image.${url.split(".")[url.split(".").length - 1]}`} target="_blank" className="post-image-embed-button">
-                <i className="fa-solid fa-download"></i>
+                <i className="nf nf-fa-download"></i>
             </a>
         </div>
     );
